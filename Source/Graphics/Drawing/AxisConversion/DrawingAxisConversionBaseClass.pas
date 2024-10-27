@@ -12,11 +12,14 @@ interface
                 var
                     canvasSpace : TRect;
                 //modifiers
+                    //canvas boundaries
+                        procedure setCanvasHeight(const heightIn : integer); inline;
+                        procedure setCanvasWidth(const widthIn : integer); inline;
                     //drawing space boundaries
-                        //x bounds
+                        //domain
                             procedure setDomainMin(const domainMinIn : double); inline;
                             procedure setDomainMax(const domainMaxIn : double); inline;
-                        //y bounds
+                        //range
                             procedure setRangeMin(const rangeMinIn : double); inline;
                             procedure setRangeMax(const rangeMaxIn : double); inline;
             protected
@@ -35,9 +38,6 @@ interface
                         function regionRangeMax() : double; inline;
                         function calculateRegionRangeCentre() : double; inline;
                 //modifiers
-                    //canvas boundaries
-                        procedure setCanvasHeight(const heightIn : integer); inline;
-                        procedure setCanvasWidth(const widthIn : integer); inline;
                     //drawing space boundaries
                         procedure setDomain(const domainMinIn, domainMaxIn : double); inline;
                         procedure setRange(const rangeMinIn, rangeMaxIn : double); inline;
@@ -48,16 +48,12 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingRegion() : TGeomBox; inline;
                 //modifiers
                     //canvas boundaries
                         procedure setCanvasRegion(const heightIn, widthIn : integer); inline;
                     //drawing space boundaries
                         procedure setDrawingRegion( const bufferIn : double;
-                                                    const regionIn : TGeomBox ); overload;
-                        procedure setDrawingSpaceRatio( const adjustByDomainIn    : boolean;
-                                                        const ratioIn             : double    );
-                        procedure setDrawingSpaceRatioOneToOne();
+                                                    const regionIn : TGeomBox ); overload; virtual;
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double; inline;
@@ -121,9 +117,7 @@ implementation
 
                 function TDrawingAxisConverterBase.calculateRegionDomainCentre() : double;
                     begin
-                        result := Mean(
-                                        [regionDomainMin(), regionDomainMax()]
-                                      );
+                        result := drawingRegion.getCentreX();
                     end;
 
             //range
@@ -139,9 +133,7 @@ implementation
 
                 function TDrawingAxisConverterBase.calculateRegionRangeCentre() : double;
                     begin
-                        result := Mean(
-                                        [regionRangeMin(), regionRangeMax()]
-                                      );
+                        result := drawingRegion.getCentreY();
                     end;
 
         //modifiers
@@ -195,12 +187,6 @@ implementation
                     inherited destroy();
                 end;
 
-        //accessors
-            function TDrawingAxisConverterBase.getDrawingRegion() : TGeomBox;
-                begin
-                    result := drawingRegion;
-                end;
-
         //modifiers
             //canvasSpace boundaries
                 procedure TDrawingAxisConverterBase.setCanvasRegion(const heightIn, widthIn : integer);
@@ -243,78 +229,6 @@ implementation
                             newRangeMax := regionIn.maxPoint.y + rangeBuffer  / 2;
 
                         setDrawingRegion(newDomainMin, newDomainMax, newRangeMin, newRangeMax);
-                    end;
-
-                procedure TDrawingAxisConverterBase.setDrawingSpaceRatio(   const adjustByDomainIn    : boolean;
-                                                                            const ratioIn             : double    );
-                    begin
-                        //the ratio is defined as the value that satisfies: h/w = r(R/D)
-
-                        //adjust-by-domain means that the domain remains constant and
-                        //a new range is calculated to match the domain based on the input ratio
-
-                        if (adjustByDomainIn) then
-                            begin
-                                var drawDomain, newRange, newRangeMin, rangeMiddle, newRangeMax : double;
-
-                                drawDomain := calculateRegionDomain();
-
-                                //calculate new range: R = D(1/r)(h/w)
-                                    newRange := (1 / ratioIn) * drawDomain * ( canvasHeight() / canvasWidth() );
-
-                                //calculate the range middle
-                                    rangeMiddle := calculateRegionRangeCentre();
-
-                                //calcualte the range top and bottom
-                                    newRangeMin := rangeMiddle - newRange / 2;
-                                    newRangeMax := rangeMiddle + newRange / 2;
-
-                                setRange( newRangeMin, newRangeMax );
-                            end
-                        else
-                            begin
-                                var drawRange, newDomain, newDomainMin, domainMiddle, newDomainMax : double;
-
-                                drawRange := calculateRegionRange();
-
-                                //calculate new domain: D = R(r)(w/h)
-                                    newDomain := ratioIn * drawRange * ( canvasWidth() / canvasHeight() );
-
-                                //calculate the domain middle
-                                    domainMiddle := calculateRegionDomainCentre();
-
-                                //calculate the domain left and right
-                                    newDomainMin := domainMiddle - newDomain / 2;
-                                    newDomainMax := domainMiddle + newDomain / 2;
-
-                                setDomain( newDomainMin, newDomainMax );
-                            end;
-                    end;
-
-                procedure TDrawingAxisConverterBase.setDrawingSpaceRatioOneToOne();
-                    var
-                        adjustByDomain          : boolean;
-                        domainRatio, rangeRatio : double;
-                        drawingRegionTemp       : TGeomBox;
-                    begin
-                        drawingRegionTemp := drawingRegion;
-
-//                        //this function ensures that if a drawing space ratio is set 1:1 the drawing does not shrink as the window is resized
-//                        //must be called before adjustByDomain is calculated
-//                            zoomForConstantDrawingSpaceRatio();
-
-                        //if the domain/width ratio is larger you must size by the domain
-                            domainRatio := ( calculateRegionDomain() / canvasWidth() );
-
-                        //if the range/height ratio is larger you must size by the range
-                            rangeRatio := ( calculateRegionRange() / canvasHeight() );
-
-                            adjustByDomain := ( domainRatio > rangeRatio );
-
-                        setDrawingSpaceRatio(adjustByDomain, 1);
-
-                        //shift to correct position
-//                            panForConstantDrawingSpaceRatio(drawingRegionTemp);
                     end;
 
         //helper methods

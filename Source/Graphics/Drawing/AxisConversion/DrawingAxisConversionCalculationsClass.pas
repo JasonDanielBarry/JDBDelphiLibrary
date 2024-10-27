@@ -30,11 +30,11 @@ interface
                     destructor destroy(); override;
                 //space conversions
                     //canvas to region
-                        function dL_To_dX(const dL_In : double) : double;
-                        function dT_To_dY(const dT_In : double) : double;
+                        function dL_To_dX(const dL_In : double) : double; inline;
+                        function dT_To_dY(const dT_In : double) : double; inline;
                     //region to canvas
-                        function dX_To_dL(const dX_In : double) : double;
-                        function dY_To_dT(const dY_In : double) : double;
+                        function dX_To_dL(const dX_In : double) : double; inline;
+                        function dY_To_dT(const dY_In : double) : double; inline;
                 //convertion calculations
                     //canvas-to-drawing
                         function LT_to_XY(const pointIn : TPointF) : TGeomPoint; overload;
@@ -55,43 +55,53 @@ implementation
     //private
         //canvasSpace-to-drawing
             function TDrawingAxisConvertionCalculator.L_to_X(const L_In : double) : double;
+                var
+                    deltaX : double;
                 begin
                     //x(l) = (D/w)l + xmin
 
-                    result := (( calculateRegionDomain() / canvasWidth() ) * L_In) + drawingRegion.minPoint.x;
+                    deltaX := dL_To_dX( L_In );
+
+                    result := drawingRegion.minPoint.x + deltaX;
+
+//                    result := (( calculateRegionDomain() / canvasWidth() ) * L_In) + drawingRegion.minPoint.x;
                 end;
 
             function TDrawingAxisConvertionCalculator.T_to_Y(const T_In : double) : double;
+                var
+                    deltaY : double;
                 begin
                     //y(t) = -(R/h)t + ymax
 
-                    result := -(( calculateRegionRange() / canvasHeight() ) * T_In) + drawingRegion.maxPoint.y;
+                    deltaY := dT_To_dY( T_In );
+
+                    result := drawingRegion.maxPoint.y + deltaY;
+                    
+//                    result := -(( calculateRegionRange() / canvasHeight() ) * T_In) + drawingRegion.maxPoint.y;
                 end;
 
         //drawing-to-canvas
             //double verions
                 function TDrawingAxisConvertionCalculator.X_to_L(const X_In : double) : double;
                     var
-                        deltaX, drawDomain : double;
+                        deltaX : double;
                     begin
                         //l(x) = (w/D)(x - xmin)
 
                         deltaX := X_In - drawingRegion.minPoint.x;
-                        drawDomain := calculateRegionDomain();
 
-                        result := ( canvasWidth() / drawDomain ) * deltaX;
+                        result := dX_To_dL( deltaX );
                     end;
 
                 function TDrawingAxisConvertionCalculator.Y_to_T(const Y_In : double) : double;
                     var
-                        deltaY, drawRange : double;
+                        deltaY : double;
                     begin
-                        //t(y) = (h/R)(ymax - y)
+                        //t(y) = -(h/R)(y - ymax)
 
-                        deltaY := drawingRegion.maxPoint.y - Y_In;
-                        drawRange := calculateRegionRange();
+                        deltaY := Y_In - drawingRegion.maxPoint.y;
 
-                        result := ( canvasHeight() / drawRange ) * deltaY;
+                        result := dY_To_dT( deltaY );
                     end;
 
         //canvasSpace-to-drawing
@@ -142,27 +152,33 @@ implementation
             //canvas to region
                 function TDrawingAxisConvertionCalculator.dL_To_dX(const dL_In : double) : double;
                     begin
-                        result := L_to_X( dL_In );
+                        //dx/dl = (D/w)
+                        //dx = dl(D/w)
+
+                        result := dL_In * (calculateRegionDomain() / canvasWidth());
                     end;
 
                 function TDrawingAxisConvertionCalculator.dT_To_dY(const dT_In : double) : double;
-                    var
-                        regionRange : double;
                     begin
-                        regionRange := calculateRegionRange();
+                        //dy/dt = -(R/h)
+                        //dy = -dt(R/h)
 
-                        result := regionRange - T_to_Y( dT_In );
+                        result := -dT_In * (calculateRegionRange() / canvasHeight());
                     end;
 
             //region to canvas
                 function TDrawingAxisConvertionCalculator.dX_To_dL(const dX_In : double) : double;
                     begin
-                        result := X_to_L( dX_In );
+                        //dl/dx = (w/D)
+
+                        result := dX_In * (canvasWidth() / calculateRegionDomain());
                     end;
 
                 function TDrawingAxisConvertionCalculator.dY_To_dT(const dY_In : double) : double;
                     begin
-                        result := canvasHeight() - Y_to_T( dY_In );
+                        //dt/dy = -(h/R)
+
+                        result := -dY_In * (canvasHeight() / calculateRegionRange());
                     end;
 
         //convertion calculations

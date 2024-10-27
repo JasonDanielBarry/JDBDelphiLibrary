@@ -10,7 +10,7 @@ interface
         Graphic2DFrame;
 
     type
-        TGraphic2D = class(TCustomComponentPanel)
+        TJDBGraphic2D = class(TCustomComponentPanel)
             private
                 var
                     customGraphic : TCustomGraphic2D;
@@ -28,18 +28,18 @@ interface
 implementation
 
     //private
-        procedure TGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+        procedure TJDBGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
             begin
                 customGraphic.setOnGraphicUpdateGeometryEvent(graphicDrawEventIn);
             end;
 
-        function TGraphic2D.getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
+        function TJDBGraphic2D.getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
             begin
                 result := customGraphic.getOnGraphicUpdateGeometryEvent();
             end;
 
     //public
-        constructor TGraphic2D.Create(AOwner: TComponent);
+        constructor TJDBGraphic2D.Create(AOwner: TComponent);
             begin
                 inherited create(AOwner);
 
@@ -52,19 +52,19 @@ implementation
                 customGraphic.zoomAll();
             end;
 
-        destructor TGraphic2D.Destroy();
+        destructor TJDBGraphic2D.Destroy();
             begin
                 FreeAndNil( customGraphic );
 
                 inherited Destroy();
             end;
 
-        procedure TGraphic2D.redrawGraphic();
+        procedure TJDBGraphic2D.redrawGraphic();
             begin
                 customGraphic.redrawGraphic();
             end;
 
-        procedure TGraphic2D.updateGeometry();
+        procedure TJDBGraphic2D.updateGeometry();
             begin
                 customGraphic.updateGeometry();
             end;

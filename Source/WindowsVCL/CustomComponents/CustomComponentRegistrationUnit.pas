@@ -13,7 +13,7 @@ implementation
 
     procedure register();
         begin
-            RegisterComponents('JDBDelphiLibrary', [TGraphic2D]);
+            RegisterComponents('JDBDelphiLibrary', [TJDBGraphic2D]);
         end;
 
 end.

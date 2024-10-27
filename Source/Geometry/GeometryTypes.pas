@@ -45,6 +45,11 @@ interface
             //construction
                 constructor create(const point1In, point2In : TGeomPoint); overload;
                 constructor create(const arrGeomBoxesIn : TArray<TGeomBox>); overload;
+            //centre point
+                function getCentreX() : double; inline;
+                function getCentreY() : double; inline;
+                function getCentreZ() : double; inline;
+                function getCentrePoint() : TGeomPoint;
             //set points
                 procedure setPoints(const point1In, point2In : TGeomPoint);
             //shift box
@@ -188,6 +193,33 @@ implementation
             constructor TGeomBox.create(const arrGeomBoxesIn : TArray<TGeomBox>);
                 begin
                     Self := determineBoundingBox(arrGeomBoxesIn);
+                end;
+
+        //centre point
+            function TGeomBox.getCentreX() : double;
+                begin
+                    result := mean([minPoint.x, maxPoint.x]);
+                end;
+
+            function TGeomBox.getCentreY() : double;
+                begin
+                    result := mean([minPoint.y, maxPoint.y]);
+                end;
+
+            function TGeomBox.getCentreZ() : double;
+                begin
+                    result := mean([minPoint.z, maxPoint.z]);
+                end;
+
+            function TGeomBox.getCentrePoint() : TGeomPoint;
+                var
+                    centreX, centreY, centreZ : double;
+                begin
+                    centreX := getCentreX();
+                    centreY := getCentreY();
+                    centreZ := getCentreZ();
+
+                    result := TGeomPoint.create(centreX, centreY, centreZ);
                 end;
 
         //set points

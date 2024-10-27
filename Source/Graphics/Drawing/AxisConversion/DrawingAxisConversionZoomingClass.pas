@@ -27,13 +27,16 @@ interface
                     procedure zoom( const newZoomPercentageIn   : double;
                                     const zoomAboutPointIn      : TGeomPoint ); overload;
                     procedure zoom(const newZoomPercentageIn : double); overload;
-
             protected
                 var
                     geometryBoundary : TGeomBox; //the drawing boundary stores a geometry group's boundary
                 //helper methods
-                    function calculateBoundaryDomain() : double;
-                    function calculateBoundaryRange() : double;
+                    //boundary dimensions
+                        function calculateBoundaryDomain() : double; inline;
+                        function calculateBoundaryRange() : double; inline;
+                    //boundary centre
+                        function calculateBoundaryDomainCentre() : double; inline;
+                        function calculateBoundaryRangeCentre() : double; inline;
             public
                 //constructor
                     constructor create();
@@ -64,8 +67,8 @@ implementation
                     currentZoomPercentage : double;
                 begin
                     //the scale factor is used to size the domain and range
-                    // < 1 the region shrinks which zooms in the drawing
-                    // > 1 the region grows which zooms out the drawing
+                    // < 1 the region shrinks which zooms the drawing in
+                    // > 1 the region grows which zooms the drawing out
 
                     currentZoomPercentage := calculateCurrentZoomPercentage();
 
@@ -90,23 +93,22 @@ implementation
                                                                                 scaleFactorIn,                  scaleAboutValueIn           : double) : TArray<double>;
                 var
                     newRegionDimension,
-                    newRegionDimensionMin,
-                    newRegionDimensionMax,
+                    newRegionDimensionMin, newRegionDimensionMax,
                     RegionDimensionDifference,
                     minToAbout, minToAboutRatio, regionDimensionMinShift,
                     aboutToMax, aboutToMaxRatio, RegionDimensionMaxShift : double;
                 begin
-                    //calculate the new domain
+                    //calculate the new dimesion
                         newRegionDimension := currentRegionDimensionIn * scaleFactorIn;
 
                     //calculate the difference between the new and current domains (sign is important)
                         RegionDimensionDifference := newRegionDimension - currentRegionDimensionIn;
 
-                    //calculate lengths to the left and right of the scaleAboutX value
+                    //calculate lengths to the min and max of the scaleAbout value
                         minToAbout := scaleAboutValueIn - currentRegionDimensionMinIn;
                         aboutToMax := currentRegionDimensionMaxIn - scaleAboutValueIn;
 
-                    //calculate the ratio between the about length and the current domain
+                    //calculate the ratio between the about length and the current dimension
                         minToAboutRatio := minToAbout / currentRegionDimensionIn;
                         aboutToMaxRatio := aboutToMax / currentRegionDimensionIn;
 
@@ -114,7 +116,7 @@ implementation
                         regionDimensionMinShift := (RegionDimensionDifference * minToAboutRatio);
                         RegionDimensionMaxShift := (RegionDimensionDifference * aboutToMaxRatio);
 
-                    //calculate the new domain min and max
+                    //calculate the new dimension min and max
                         newRegionDimensionMin := currentRegionDimensionMinIn - regionDimensionMinShift;
                         newRegionDimensionMax := currentRegionDimensionMaxIn + RegionDimensionMaxShift;
 
@@ -135,12 +137,12 @@ implementation
 
                     //calculate new domain min and max
                         regionDomainMinAndMax := rescaleRegionDimension(
-                                                                    currentRegionDomain,
-                                                                    currentRegionDomainMin,
-                                                                    currentRegionDomainMax,
-                                                                    scaleFactorIn,
-                                                                    scaleAboutXIn
-                                                                 );
+                                                                            currentRegionDomain,
+                                                                            currentRegionDomainMin,
+                                                                            currentRegionDomainMax,
+                                                                            scaleFactorIn,
+                                                                            scaleAboutXIn
+                                                                       );
 
                         newRegionDomainMin := regionDomainMinAndMax[0];
                         newRegionDomainMax := regionDomainMinAndMax[1];
@@ -162,12 +164,12 @@ implementation
 
                     //calculate new range min and max
                         rangeRegionMinAndMax := rescaleRegionDimension(
-                                                                    currentRegionRange,
-                                                                    currentRegionRangeMin,
-                                                                    currentRegionRangeMax,
-                                                                    scaleFactorIn,
-                                                                    scaleAboutYIn
-                                                                );
+                                                                            currentRegionRange,
+                                                                            currentRegionRangeMin,
+                                                                            currentRegionRangeMax,
+                                                                            scaleFactorIn,
+                                                                            scaleAboutYIn
+                                                                      );
 
                         newRegionRangeMin := rangeRegionMinAndMax[0];
                         newRegionRangeMax := rangeRegionMinAndMax[1];
@@ -189,8 +191,6 @@ implementation
                     //calculate the new zoom percentage
                         if ( newZoomPercentageIn < 1e-3) then
                             exit();
-
-//                        resetDrawingRegionToGeometryBoundary();
 
                     //zoom to the desired factor about the specified point
                         //get the zoom factor
@@ -217,15 +217,27 @@ implementation
 
     //protected
         //helper methods
-            function TDrawingAxisZoomingConverter.calculateBoundaryDomain() : double;
-                begin
-                    result := geometryBoundary.maxPoint.x - geometryBoundary.minPoint.x
-                end;
+            //boundary dimensions
+                function TDrawingAxisZoomingConverter.calculateBoundaryDomain() : double;
+                    begin
+                        result := geometryBoundary.maxPoint.x - geometryBoundary.minPoint.x;
+                    end;
 
-            function TDrawingAxisZoomingConverter.calculateBoundaryRange() : double;
-                begin
-                    result := geometryBoundary.maxPoint.y - geometryBoundary.minPoint.y
-                end;
+                function TDrawingAxisZoomingConverter.calculateBoundaryRange() : double;
+                    begin
+                        result := geometryBoundary.maxPoint.y - geometryBoundary.minPoint.y;
+                    end;
+
+            //boundary centre
+                function TDrawingAxisZoomingConverter.calculateBoundaryDomainCentre() : double;
+                    begin
+                        result := geometryBoundary.getCentreX();
+                    end;
+
+                function TDrawingAxisZoomingConverter.calculateBoundaryRangeCentre() : double;
+                    begin
+                        result := geometryBoundary.getCentreY();
+                    end;
 
     //public
         //constructor

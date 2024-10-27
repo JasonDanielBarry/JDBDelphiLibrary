@@ -3,8 +3,7 @@ object CustomGraphic2D: TCustomGraphic2D
   Top = 0
   Width = 1231
   Height = 736
-  DoubleBuffered = True
-  DoubleBufferedMode = dbmRequested
+  DoubleBuffered = False
   ParentDoubleBuffered = False
   TabOrder = 0
   DesignSize = (
@@ -16,6 +15,9 @@ object CustomGraphic2D: TCustomGraphic2D
     Width = 1231
     Height = 711
     Align = alClient
+    OnMouseEnter = SkPaintBoxGraphicMouseEnter
+    OnMouseLeave = SkPaintBoxGraphicMouseLeave
+    OnMouseMove = SkPaintBoxGraphicMouseMove
     OnDraw = SkPaintBoxGraphicDraw
     ExplicitTop = 31
   end
@@ -56,6 +58,11 @@ object CustomGraphic2D: TCustomGraphic2D
         Column = 1
         Control = SpeedButtonShiftDown
         Row = 2
+      end
+      item
+        Column = 1
+        Control = SpeedButtonCentre
+        Row = 1
       end>
     ParentColor = True
     RowCollection = <
@@ -79,10 +86,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Caption = '<'
       Flat = True
       OnClick = SpeedButtonShiftLeftClick
-      ExplicitLeft = 608
-      ExplicitTop = 8
-      ExplicitWidth = 23
-      ExplicitHeight = 22
+      ExplicitLeft = -6
+      ExplicitTop = 19
     end
     object SpeedButtonShiftRight: TSpeedButton
       Left = 50
@@ -127,6 +132,19 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitWidth = 23
       ExplicitHeight = 22
     end
+    object SpeedButtonCentre: TSpeedButton
+      Left = 25
+      Top = 25
+      Width = 25
+      Height = 25
+      Align = alClient
+      Anchors = []
+      Caption = 'C'
+      Flat = True
+      OnClick = SpeedButtonCentreClick
+      ExplicitLeft = 8
+      ExplicitTop = 8
+    end
   end
   object PanelZoom: TPanel
     Left = 0
@@ -137,7 +155,7 @@ object CustomGraphic2D: TCustomGraphic2D
     BevelOuter = bvNone
     TabOrder = 1
     object SpeedButtonUpdateGeometry: TSpeedButton
-      Left = 1161
+      Left = 1155
       Top = 0
       Width = 25
       Height = 25
@@ -148,7 +166,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 0
     end
     object SpeedButtonZoomExtents: TSpeedButton
-      Left = 1136
+      Left = 1130
       Top = 0
       Width = 25
       Height = 25
@@ -159,7 +177,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 0
     end
     object SpeedButtonZoomOut: TSpeedButton
-      Left = 1111
+      Left = 1105
       Top = 0
       Width = 25
       Height = 25
@@ -167,11 +185,10 @@ object CustomGraphic2D: TCustomGraphic2D
       Caption = '-'
       Flat = True
       OnClick = SpeedButtonZoomOutClick
-      ExplicitLeft = 1105
       ExplicitTop = -6
     end
     object SpeedButtonZoomIn: TSpeedButton
-      Left = 1086
+      Left = 1080
       Top = 0
       Width = 25
       Height = 25
@@ -179,14 +196,18 @@ object CustomGraphic2D: TCustomGraphic2D
       Caption = '+'
       Flat = True
       OnClick = SpeedButtonZoomInClick
-      ExplicitLeft = 1080
       ExplicitTop = -6
     end
     object ComboBoxZoomPercent: TComboBox
-      Left = 1186
+      AlignWithMargins = True
+      Left = 1180
       Top = 0
-      Width = 45
+      Width = 50
       Height = 23
+      Margins.Left = 0
+      Margins.Top = 0
+      Margins.Right = 1
+      Margins.Bottom = 0
       Align = alRight
       TabOrder = 0
       Text = '100'
@@ -205,6 +226,7 @@ object CustomGraphic2D: TCustomGraphic2D
         '300'
         '400'
         '500')
+      ExplicitLeft = 1181
     end
   end
 end
