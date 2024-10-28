@@ -23,7 +23,6 @@ interface
                     procedure rescaleRange(const scaleAboutYIn, scaleFactorIn : double);
                     procedure rescaleRegion(const scaleAboutXIn, scaleAboutYIn, scaleFactorIn : double);
                 //zooming by percent
-                    procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); overload;
                     procedure zoom( const newZoomPercentageIn   : double;
                                     const zoomAboutPointIn      : TGeomPoint ); overload;
                     procedure zoom(const newZoomPercentageIn : double); overload;
@@ -37,6 +36,8 @@ interface
                     //boundary centre
                         function calculateBoundaryDomainCentre() : double; inline;
                         function calculateBoundaryRangeCentre() : double; inline;
+                //zooming by percent
+                    procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); overload; virtual;
             public
                 //constructor
                     constructor create();

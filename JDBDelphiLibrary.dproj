@@ -154,8 +154,7 @@
                     <Source Name="MainSource">JDBDelphiLibrary.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl">File C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl not found</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">

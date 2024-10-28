@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   CustomComponentPanelClass, Graphic2DComponent, SkiaDrawingClass,
   GeometryTypes,
-  GeomLineClass, GeomPolyLineClass;
+  GeomLineClass, GeomPolyLineClass, GeomPolygonClass;
 
 type
   TForm1 = class(TForm)
@@ -35,6 +35,7 @@ var
     point1, point2  : TGeomPoint;
     line            : TGeomLine;
     polyline        : TGeomPolyLine;
+    polygon         : TGeomPolygon;
 begin
     //line 1
          point1 := TGeomPoint.create(10, 10);
@@ -58,6 +59,16 @@ begin
             end;
 
         ASkiaDrawer.addPolyline(polyline, 3, TAlphaColors.Deepskyblue);
+
+    //box
+        polygon := TGeomPolygon.create();
+
+        polygon.addVertex(10, 10);
+        polygon.addVertex(100, 10);
+        polygon.addVertex(100, 100);
+        polygon.addVertex(10, 100);
+
+        ASkiaDrawer.addPolygon( polygon, 3, TAlphaColors.Null, TAlphaColors.Darkred );
 end;
 
 end.

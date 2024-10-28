@@ -53,7 +53,7 @@ interface
                     procedure addPolyline(  const polylineIn        : TGeomPolyLine;
                                             const lineThicknessIn   : integer = 2;
                                             const colourIn          : TAlphaColor = TAlphaColors.Black  );
-                    procedure addPolygon(   const polygonIn         : TGeomLine;
+                    procedure addPolygon(   const polygonIn         : TGeomPolygon;
                                             const lineThicknessIn   : integer = 2;
                                             const fillColourIn      : TAlphaColor = TAlphaColors.Null;
                                             const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
@@ -204,7 +204,7 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TSkiaGeomDrawer.addPolygon(   const polygonIn         : TGeomLine;
+            procedure TSkiaGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
                                                     const lineThicknessIn   : integer = 2;
                                                     const fillColourIn      : TAlphaColor = TAlphaColors.Null;
                                                     const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
