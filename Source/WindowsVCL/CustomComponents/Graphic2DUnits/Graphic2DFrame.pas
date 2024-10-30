@@ -4,7 +4,7 @@ interface
 
     uses
       Winapi.Windows, Winapi.Messages,
-      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes, system.Threading, system.Math,
+      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes, system.Threading, system.Math, system.Diagnostics,
       Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
       Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia,
       GeometryTypes,
@@ -26,7 +26,7 @@ interface
             ComboBoxZoomPercent: TComboBox;
             GridPanelDirectionalPan: TGridPanel;
             PanelZoom: TPanel;
-    SpeedButtonCentre: TSpeedButton;
+            SpeedButtonCentre: TSpeedButton;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -44,12 +44,12 @@ interface
                 procedure SpeedButtonCentreClick(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseEnter(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseLeave(Sender: TObject);
-                procedure SkPaintBoxGraphicMouseMove(   Sender  : TObject;
-                                                        Shift   : TShiftState;
-                                                        X, Y    : Integer       );
+                procedure FrameResize(Sender: TObject);
             private
                 var
                     mouseOnCanvas, mousePanningActive   : boolean;
+                    graphicImage                        : ISkImage;
+                    stopWatch                           : TStopwatch;
                     mousePanningOrigin                  : TPoint;
                     regionPanningOrigin                 : TGeomPoint;
                     skiaGeomDrawer                      : TSkiaGeomDrawer;
@@ -59,17 +59,20 @@ interface
                 //drawing procedure
                     procedure preDrawGraphic(const canvasIn : ISkCanvas); virtual;
                     procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
+                    procedure updateGraphicImage();
                 //panning methods
                     procedure shiftDomain(const shiftXIn : double);
                     procedure shiftRange(const shiftYIn : double);
                     procedure shiftRegion(const shiftXIn, shiftYIn : double);
-                    procedure shiftRegionWithMouse(const currentMouseXIn, currentMouseYIn : integer); inline;
+                    procedure shiftRegionWithMouse(const currentMouseXIn, currentMouseYIn : integer);
+                    procedure activateMousePanning();
                 //zooming methods
-                    procedure zoomIn(const zoomPercentageIn : double); inline;
-                    procedure zoomInRelativeToMouse(); inline;
-                    procedure zoomOut(const zoomPercentageIn : double); inline;
-                    procedure zoomOutRelativeToMouse(); inline;
-                    procedure setZoom(const zoomPercentageIn : double); inline;
+                    procedure zoomIn(const zoomPercentageIn : double);
+                    procedure zoomInRelativeToMouse();
+                    procedure zoomOut(const zoomPercentageIn : double);
+                    procedure zoomOutRelativeToMouse();
+                    procedure setZoom(const zoomPercentageIn : double);
+                    procedure updateZoomPercentage();
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -102,11 +105,7 @@ implementation
                                                             const ADest     : TRectF;
                                                             const AOpacity  : Single    );
             begin
-                preDrawGraphic( ACanvas );
-
-                skiaGeomDrawer.drawAllGeometry( ACanvas, axisConverter );
-
-                postDrawGraphic( ACanvas )
+                ACanvas.DrawImage( graphicImage, 0, 0 );
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
@@ -117,13 +116,6 @@ implementation
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
             begin
                 mouseOnCanvas := False;
-            end;
-
-        procedure TCustomGraphic2D.SkPaintBoxGraphicMouseMove(  Sender  : TObject;
-                                                                Shift   : TShiftState;
-                                                                X, Y: Integer           );
-            begin
-//                shiftRegionWithMouse(X, Y);
             end;
 
         procedure TCustomGraphic2D.SpeedButtonCentreClick(Sender: TObject);
@@ -137,7 +129,7 @@ implementation
             begin
                 drawingRange := axisConverter.calculateRegionRange();
 
-                shiftRange( -drawingRange / 10 );
+                shiftRange( drawingRange / 10 );
             end;
 
         procedure TCustomGraphic2D.SpeedButtonShiftLeftClick(Sender: TObject);
@@ -146,7 +138,7 @@ implementation
             begin
                 drawingDomain := axisConverter.calculateRegionDomain();
 
-                shiftDomain( -drawingDomain / 10 );
+                shiftDomain( drawingDomain / 10 );
             end;
 
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
@@ -168,7 +160,7 @@ implementation
             begin
                 drawingDomain := axisConverter.calculateRegionDomain();
 
-                shiftDomain( drawingDomain / 10 );
+                shiftDomain( -drawingDomain / 10 );
             end;
 
         procedure TCustomGraphic2D.SpeedButtonShiftUpClick(Sender: TObject);
@@ -177,7 +169,7 @@ implementation
             begin
                 drawingRange := axisConverter.calculateRegionRange();
 
-                shiftRange( drawingRange / 10 );
+                shiftRange( -drawingRange / 10 );
             end;
 
         procedure TCustomGraphic2D.SpeedButtonUpdateGeometryClick(Sender: TObject);
@@ -200,11 +192,14 @@ implementation
                 zoomOut(10);
             end;
 
+        procedure TCustomGraphic2D.FrameResize(Sender: TObject);
+            begin
+                redrawGraphic();
+            end;
+
     //protected
         //drawing procedure
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
-                var
-                    currentZoomPercentage : double;
                 begin
                     //make sure canvas is clear
                         canvasIn.Clear( TAlphaColors.Null );
@@ -213,9 +208,6 @@ implementation
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
 
                         axisConverter.setDrawingSpaceRatioOneToOne();
-
-                    currentZoomPercentage := axisConverter.getCurrentZoomPercentage();
-                    ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
@@ -230,8 +222,26 @@ implementation
                                             RectF(0, 0, SkPaintBoxGraphic.Width - 1, SkPaintBoxGraphic.Height - 1),
                                             paint
                                          );
+                end;
 
-                    GridPanelDirectionalPan.Refresh();
+            procedure TCustomGraphic2D.updateGraphicImage();
+                var
+                    surface : ISkSurface;
+                begin
+                    //create a skia surface
+                        surface := TSkSurface.MakeRaster( SkPaintBoxGraphic.Width, SkPaintBoxGraphic.Height );
+
+                    //draw to the surface
+                        preDrawGraphic( surface.Canvas );
+
+                        skiaGeomDrawer.drawAllGeometry( surface.Canvas, axisConverter );
+
+                        postDrawGraphic( surface.Canvas );
+
+                    //export to image
+                        graphicImage := surface.MakeImageSnapshot();
+
+                    updateZoomPercentage();
                 end;
 
         //panning methods
@@ -277,13 +287,32 @@ implementation
                         newRegionCentreX := regionPanningOrigin.x + regionShiftX;
                         newRegionCentreY := regionPanningOrigin.y + regionShiftY;
 
-                    //
+                    //move region to new position
                         axisConverter.setDrawingRegionShift(newRegionCentreX, newRegionCentreY);
 
                     var mouseShift : integer := round(sqrt( power(mouse_dL, 2) + power(mouse_dT, 2) ));
 
-                    if ( (mouseShift mod 5) = 0 ) then
+//                    if ( (mouseShift mod 5) = 0 ) then
                         redrawGraphic();
+                end;
+
+            procedure TCustomGraphic2D.activateMousePanning();
+                begin
+                    if (NOT(mouseOnCanvas)) then
+                        begin
+                            exit();
+                            mousePanningActive := False;
+                        end;
+
+                    if (mousePanningActive) then
+                        exit();
+
+                    var mousePoint : TPoint := mouse.CursorPos;
+
+                    mousePanningActive := True;
+
+                    mousePanningOrigin  := SkPaintBoxGraphic.ScreenToClient( mousePoint );
+                    regionPanningOrigin := axisConverter.getCurrentRegionCentrePoint();
                 end;
 
         //zooming methods
@@ -336,25 +365,20 @@ implementation
                     redrawGraphic();
                 end;
 
+            procedure TCustomGraphic2D.updateZoomPercentage();
+                var
+                    currentZoomPercentage : double;
+                begin
+                    currentZoomPercentage := axisConverter.getCurrentZoomPercentage();
+                    ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
+                end;
+
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 begin
                     case (messageInOut.Msg) of
                         WM_MBUTTONDOWN:
-                            begin
-                                if (NOT(mouseOnCanvas)) then
-                                    begin
-                                        exit();
-                                        mousePanningActive := False;
-                                    end;
-
-                                var mousePoint : TPoint := mouse.CursorPos;
-
-                                mousePanningActive := True;
-
-                                mousePanningOrigin  := SkPaintBoxGraphic.ScreenToClient( mousePoint );
-                                regionPanningOrigin := axisConverter.getCurrentRegionCentrePoint();
-                            end;
+                            activateMousePanning();
 
                         WM_MBUTTONUP:
                             mousePanningActive := False;
@@ -393,7 +417,7 @@ implementation
                     skiaGeomDrawer := TSkiaGeomDrawer.create();
 
                     updateGeometry();
-                    redrawGraphic();
+                    zoomall();
                 end;
 
         //destructor
@@ -418,8 +442,20 @@ implementation
 
         //redraw the graphic
             procedure TCustomGraphic2D.redrawGraphic();
+//                var
+//                    tick1, tick2, tick3 : integer;
                 begin
+//                    stopWatch.Reset();
+//                    stopWatch.Start();
+
+
+                    updateGraphicImage();
+
+                    sleep(round(1000 / 60));
+
                     SkPaintBoxGraphic.Redraw();
+
+                    GridPanelDirectionalPan.Refresh();
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();

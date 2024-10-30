@@ -21,6 +21,7 @@ interface
                 destructor Destroy; override;
                 procedure redrawGraphic();
                 procedure updateGeometry();
+                procedure zoomAll();
             published
                 property OnUpdateGeometry : TGraphicUpdateGeometryEvent read getOnGraphicDrawEvent write setOnGraphicUpdateGeometryEvent;
         end;
@@ -67,6 +68,11 @@ implementation
         procedure TJDBGraphic2D.updateGeometry();
             begin
                 customGraphic.updateGeometry();
+            end;
+
+        procedure TJDBGraphic2D.zoomAll();
+            begin
+                customGraphic.zoomAll();
             end;
 
 end.

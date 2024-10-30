@@ -8,7 +8,9 @@ interface
             System.Skia, Vcl.Skia,
         //custom
             DrawingAxisConversionClass,
-            GeometryTypes, GeomLineClass, GeomPolyLineClass, GeomPolygonClass;
+            GeometryDrawingTypes,
+            GeometryTypes,
+            GeometryBaseClass, GeomLineClass, GeomPolyLineClass, GeomPolygonClass;
 
     //draw line
         procedure drawSkiaLine( const lineIn            : TGeomLine;
@@ -33,7 +35,13 @@ interface
                                     const   axisConverterIn : TDrawingAxisConverter;
                                     var     canvasInOut     : ISkCanvas;
                                     const   freePolyLineIn  : boolean = True;
-                                    const   lineThicknessIn : integer = 1           );
+                                    const   lineThicknessIn : integer = 2           );
+
+    //draw geometry
+        procedure drawSkiaGeometry( const skiaDrawingGeometryIn : TSkiaDrawingGeometry;
+                                    const axisConverterIn       : TDrawingAxisConverter;
+                                    var canvasInOut             : ISkCanvas;
+                                    const freeGeometryIn        : boolean = True        );
 
 implementation
 
@@ -128,7 +136,7 @@ implementation
                                     const   axisConverterIn : TDrawingAxisConverter;
                                     var     canvasInOut     : ISkCanvas;
                                     const   freePolyLineIn  : boolean = True;
-                                    const   lineThicknessIn : integer = 1           );
+                                    const   lineThicknessIn : integer = 2           );
             var
                 drawingPoints   : TArray<TPointF>;
                 pathbuilder     : ISkPathBuilder;
@@ -169,6 +177,55 @@ implementation
 
                 if (freePolyLineIn) then
                     FreeAndNil(polygonIn);
+            end;
+
+    //draw geometry
+        procedure drawSkiaGeometry( const skiaDrawingGeometryIn : TSkiaDrawingGeometry;
+                                    const axisConverterIn       : TDrawingAxisConverter;
+                                    var canvasInOut             : ISkCanvas;
+                                    const freeGeometryIn        : boolean = True        );
+            var
+                lineThickness           : integer;
+                geometryType            : EGeomType;
+                fillColour, lineColour  : TAlphaColor;
+                geometry                : TGeomBase;
+            begin
+                lineThickness   := skiaDrawingGeometryIn.getLineThickness();
+                fillColour      := skiaDrawingGeometryIn.getFillColour();
+                lineColour      := skiaDrawingGeometryIn.getLineColour();
+                geometry        := skiaDrawingGeometryIn.getGeometry();
+
+                geometryType    := geometry.getGeomType();
+
+                case (geometryType) of
+                    EGeomType.gtLine:
+                        drawSkiaLine(   TGeomLine(geometry),
+                                        lineColour,
+                                        axisConverterIn,
+                                        canvasInOut,
+                                        False,
+                                        lineThickness       );
+
+                    EGeomType.gtPolyline:
+                        drawSkiaPolyline(   TGeomPolyLine(geometry),
+                                            lineColour,
+                                            axisConverterIn,
+                                            canvasInOut,
+                                            False,
+                                            lineThickness           );
+
+                    EGeomType.gtPolygon:
+                        drawSkiaPolygon(    TGeomPolygon(geometry),
+                                            fillColour,
+                                            lineColour,
+                                            axisConverterIn,
+                                            canvasInOut,
+                                            False,
+                                            lineThickness           );
+                end;
+
+                if (freeGeometryIn) then
+                    FreeAndNil(skiaDrawingGeometryIn);
             end;
 
 end.

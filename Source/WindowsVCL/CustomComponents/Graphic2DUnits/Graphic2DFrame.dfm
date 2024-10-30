@@ -3,9 +3,8 @@ object CustomGraphic2D: TCustomGraphic2D
   Top = 0
   Width = 1231
   Height = 736
-  DoubleBuffered = False
-  ParentDoubleBuffered = False
   TabOrder = 0
+  OnResize = FrameResize
   DesignSize = (
     1231
     736)
@@ -17,7 +16,6 @@ object CustomGraphic2D: TCustomGraphic2D
     Align = alClient
     OnMouseEnter = SkPaintBoxGraphicMouseEnter
     OnMouseLeave = SkPaintBoxGraphicMouseLeave
-    OnMouseMove = SkPaintBoxGraphicMouseMove
     OnDraw = SkPaintBoxGraphicDraw
     ExplicitTop = 31
   end
@@ -153,6 +151,7 @@ object CustomGraphic2D: TCustomGraphic2D
     Height = 25
     Align = alTop
     BevelOuter = bvNone
+    ParentColor = True
     TabOrder = 1
     object SpeedButtonUpdateGeometry: TSpeedButton
       Left = 1155
@@ -226,7 +225,6 @@ object CustomGraphic2D: TCustomGraphic2D
         '300'
         '400'
         '500')
-      ExplicitLeft = 1181
     end
   end
 end

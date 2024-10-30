@@ -5,11 +5,13 @@ object Form1: TForm1
   ClientHeight = 661
   ClientWidth = 1275
   Color = clBtnFace
+  DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnShow = FormShow
   TextHeight = 15
   object JDBGraphic2D1: TJDBGraphic2D
     Left = 0

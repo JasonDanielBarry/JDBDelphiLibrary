@@ -14,10 +14,12 @@ type
     JDBGraphic2D1: TJDBGraphic2D;
     procedure JDBGraphic2D1UpdateGeometry(  ASender         : TObject;
                                             var ASkiaDrawer : TSkiaGeomDrawer   );
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+        constructor create();
   end;
 
 var
@@ -26,6 +28,17 @@ var
 implementation
 
 {$R *.dfm}
+
+constructor TForm1.create();
+    begin
+        inherited create(nil);
+    end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+    JDBGraphic2D1.updateGeometry();
+    JDBGraphic2D1.zoomAll();
+end;
 
 procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender         : TObject;
                                                 var ASkiaDrawer : TSkiaGeomDrawer);

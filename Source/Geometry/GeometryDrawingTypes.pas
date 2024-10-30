@@ -12,53 +12,145 @@ interface
             ;
 
     type
-        TDrawingGeometry = record
-            lineThickness   : integer;
-            fillColour,
-            lineColour      : TAlphaColor;
-            geometry        : TGeomBase;
-            constructor create( const   lineThicknessIn : integer;
-                                const   fillColourIn,
-                                        lineColourIn    : TAlphaColor;
-                                const   geometryIn      : TGeomBase     );
-            procedure setValues(const   lineThicknessIn : integer;
-                                const   fillColourIn,
-                                        lineColourIn    : TAlphaColor;
-                                const   geometryIn      : TGeomBase     );
-            procedure freeGeometry();
+//----------------------------------------------------------------------------------------------------
+        TDrawingGeometry = Class
+            private
+                var
+                    lineThickness   : integer;
+//                    fillColour,
+//                    lineColour      : TAlphaColor;
+                    geometry        : TGeomBase;
+                procedure freeGeometry();
+            public
+                constructor create( const   lineThicknessIn : integer;
+                                    const   geometryIn      : TGeomBase     );
+                destructor destroy(); override;
+                function getLineThickness() : integer;
+                function getGeometry() : TGeomBase;
         end;
+//----------------------------------------------------------------------------------------------------
+        TSkiaDrawingGeometry = class(TDrawingGeometry)
+            private
+                var
+                    fillColour, lineColour : TAlphaColor;
+            public
+                constructor create( const   lineThicknessIn : integer;
+                                    const   fillColourIn,
+                                            lineColourIn    : TAlphaColor;
+                                    const   geometryIn      : TGeomBase     );
+                destructor destroy(); override;
+                function getFillColour() : TAlphaColor;
+                function getLineColour() : TAlphaColor;
+        end;
+//----------------------------------------------------------------------------------------------------
+        TD2DDrawingGeometry = class(TDrawingGeometry)
+            private
+                var
+                    fillColour, lineColour : TColor;
+            public
+                constructor create( const   lineThicknessIn : integer;
+                                    const   fillColourIn,
+                                            lineColourIn    : TColor;
+                                    const   geometryIn      : TGeomBase );
+                destructor destroy(); override;
+                function getFillColour() : TColor;
+                function getLineColour() : TColor;
+        end;
+//----------------------------------------------------------------------------------------------------
 
 implementation
 
-    constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
-                                        const   fillColourIn,
-                                                lineColourIn    : TAlphaColor;
-                                        const   geometryIn      : TGeomBase     );
-        begin
-            setValues(  lineThicknessIn,
-                        fillColourIn,
-                        lineColourIn,
-                        geometryIn      );
-        end;
+//----------------------------------------------------------------------------------------------------
+    //private
+        procedure TDrawingGeometry.freeGeometry();
+            begin
+                try
+                    FreeAndNil( geometry );
+                except
 
-    procedure TDrawingGeometry.setValues(   const   lineThicknessIn : integer;
+                end;
+            end;
+
+    //public
+        constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
+                                            const   geometryIn      : TGeomBase     );
+            begin
+                inherited create();
+
+                freeGeometry();
+
+                lineThickness   := lineThicknessIn;
+                geometry        := geometryIn;
+            end;
+
+        destructor TDrawingGeometry.destroy();
+            begin
+                freeGeometry();
+
+                inherited destroy();
+            end;
+
+        function TDrawingGeometry.getLineThickness() : integer;
+            begin
+                result := lineThickness;
+            end;
+
+        function TDrawingGeometry.getGeometry() : TGeomBase;
+            begin
+                result := geometry;
+            end;
+//----------------------------------------------------------------------------------------------------
+    constructor TSkiaDrawingGeometry.create(const   lineThicknessIn : integer;
                                             const   fillColourIn,
                                                     lineColourIn    : TAlphaColor;
                                             const   geometryIn      : TGeomBase     );
         begin
-            lineThickness   := lineThicknessIn;
-            geometry        := geometryIn;
-            fillColour      := fillColourIn;
-            lineColour      := lineColourIn;
+            inherited create(lineThicknessIn, geometryIn);
+
+            fillColour := fillColourIn;
+            lineColour := lineColourIn;
         end;
 
-    procedure TDrawingGeometry.freeGeometry();
+    destructor TSkiaDrawingGeometry.destroy();
         begin
-            try
-                FreeAndNil( geometry );
-            except
-
-            end;
+            inherited destroy();
         end;
+
+    function TSkiaDrawingGeometry.getFillColour() : TAlphaColor;
+        begin
+            result := fillColour;
+        end;
+
+    function TSkiaDrawingGeometry.getLineColour() : TAlphaColor;
+        begin
+            result := lineColour;
+        end;
+//----------------------------------------------------------------------------------------------------
+    constructor TD2DDrawingGeometry.create( const   lineThicknessIn : integer;
+                                            const   fillColourIn,
+                                                    lineColourIn    : TColor;
+                                            const   geometryIn      : TGeomBase );
+        begin
+            inherited create(lineThicknessIn, geometryIn);
+
+            fillColour := fillColourIn;
+            lineColour := lineColourIn;
+        end;
+
+    destructor TD2DDrawingGeometry.destroy();
+        begin
+            inherited destroy();
+        end;
+
+    function TD2DDrawingGeometry.getFillColour() : TColor;
+        begin
+            result := fillColour;
+        end;
+
+    function TD2DDrawingGeometry.getLineColour() : TColor;
+        begin
+            result := lineColour;
+        end;
+//----------------------------------------------------------------------------------------------------
 
 end.

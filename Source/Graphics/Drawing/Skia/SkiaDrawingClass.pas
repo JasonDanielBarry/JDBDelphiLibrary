@@ -17,7 +17,7 @@ interface
         TSkiaGeomDrawer = class
             private
                 var
-                    arrDrawingGeom      : TArray<TDrawingGeometry>;
+                    arrDrawingGeom      : TArray<TSkiaDrawingGeometry>;
                     skiaDrawingCanvas   : ISkCanvas;
                     axisConverter       : TDrawingAxisConverter;
                 //helper methods
@@ -87,7 +87,7 @@ implementation
                         SetLength( arrGeomOut, arrLen );
 
                         for i := 0 to (arrLen - 1) do
-                            arrGeomOut[i] := arrDrawingGeom[i].geometry;
+                            arrGeomOut[i] := arrDrawingGeom[i].getGeometry();
 
                         result := arrGeomOut;
                     end;
@@ -110,7 +110,7 @@ implementation
                 procedure TSkiaGeomDrawer.drawLine(const drawingLineIn : TDrawingGeometry);
                     begin
                         drawSkiaLine(
-                                        TGeomLine(drawingLineIn.geometry),
+                                        TGeomLine( drawingLineIn.getGeometry() ),
                                         drawingLineIn.lineColour,
                                         axisConverter,
                                         skiaDrawingCanvas,
@@ -130,7 +130,6 @@ implementation
                                             false,
                                             drawingPolylineIn.lineThickness
                                         );
-
                     end;
 
             //polygon
