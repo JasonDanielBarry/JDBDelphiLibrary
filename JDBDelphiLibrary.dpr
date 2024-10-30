@@ -47,7 +47,8 @@ uses
   Graphic2DFrame in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DFrame.pas' {CustomGraphic2D: TFrame},
   Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
-  StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas';
+  StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
+  GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

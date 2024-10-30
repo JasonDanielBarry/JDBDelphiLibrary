@@ -133,6 +133,7 @@
         <DCCReference Include="Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -173,7 +174,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\JDBDelphiLibrary.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\BuildOutput\JDBDelphiLibrary.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>JDBDelphiLibrary.exe</RemoteName>
                         <Overwrite>true</Overwrite>

@@ -13,12 +13,10 @@ interface
 
     type
 //----------------------------------------------------------------------------------------------------
-        TDrawingGeometry = Class
+        TDrawingGeometry = class
             private
                 var
                     lineThickness   : integer;
-//                    fillColour,
-//                    lineColour      : TAlphaColor;
                     geometry        : TGeomBase;
                 procedure freeGeometry();
             public
