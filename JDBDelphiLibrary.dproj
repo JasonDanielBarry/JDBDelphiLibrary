@@ -97,7 +97,6 @@
         <DCCReference Include="Source\Engineering\LimitStateAngleClass.pas"/>
         <DCCReference Include="Source\Engineering\LimitStateMaterialClass.pas"/>
         <DCCReference Include="Source\Geometry\GeometryBaseClass.pas"/>
-        <DCCReference Include="Source\Geometry\GeometryDrawingTypes.pas"/>
         <DCCReference Include="Source\Geometry\GeometryMathMethods.pas"/>
         <DCCReference Include="Source\Geometry\GeometryTypes.pas"/>
         <DCCReference Include="Source\Geometry\GeomLineClass.pas"/>
@@ -134,6 +133,7 @@
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\DrawingGeometryClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

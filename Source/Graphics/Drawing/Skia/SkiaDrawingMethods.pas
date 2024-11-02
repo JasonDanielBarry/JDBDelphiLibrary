@@ -4,11 +4,11 @@ interface
 
     uses
         //Delphi
-            system.SysUtils, system.types, system.UITypes,
+            system.SysUtils, system.types, system.UITypes, system.UIConsts,
             System.Skia, Vcl.Skia,
         //custom
             DrawingAxisConversionClass,
-            GeometryDrawingTypes,
+            DrawingGeometryClass,
             GeometryTypes,
             GeometryBaseClass, GeomLineClass, GeomPolyLineClass, GeomPolygonClass;
 
@@ -38,10 +38,10 @@ interface
                                     const   lineThicknessIn : integer = 2           );
 
     //draw geometry
-        procedure drawSkiaGeometry( const skiaDrawingGeometryIn : TSkiaDrawingGeometry;
-                                    const axisConverterIn       : TDrawingAxisConverter;
-                                    var canvasInOut             : ISkCanvas;
-                                    const freeGeometryIn        : boolean = True        );
+        procedure drawSkiaGeometry( const drawingGeometryIn : TDrawingGeometry;
+                                    const axisConverterIn   : TDrawingAxisConverter;
+                                    var canvasInOut         : ISkCanvas;
+                                    const freeGeometryIn    : boolean = True        );
 
 implementation
 
@@ -180,20 +180,20 @@ implementation
             end;
 
     //draw geometry
-        procedure drawSkiaGeometry( const skiaDrawingGeometryIn : TSkiaDrawingGeometry;
-                                    const axisConverterIn       : TDrawingAxisConverter;
-                                    var canvasInOut             : ISkCanvas;
-                                    const freeGeometryIn        : boolean = True        );
+        procedure drawSkiaGeometry( const drawingGeometryIn : TDrawingGeometry;
+                                    const axisConverterIn   : TDrawingAxisConverter;
+                                    var canvasInOut         : ISkCanvas;
+                                    const freeGeometryIn    : boolean = True        );
             var
                 lineThickness           : integer;
                 geometryType            : EGeomType;
                 fillColour, lineColour  : TAlphaColor;
                 geometry                : TGeomBase;
             begin
-                lineThickness   := skiaDrawingGeometryIn.getLineThickness();
-                fillColour      := skiaDrawingGeometryIn.getFillColour();
-                lineColour      := skiaDrawingGeometryIn.getLineColour();
-                geometry        := skiaDrawingGeometryIn.getGeometry();
+                lineThickness   := drawingGeometryIn.getLineThickness();
+                fillColour      := drawingGeometryIn.getFillAlphaColour();
+                lineColour      := drawingGeometryIn.getLineAlphaColour();
+                geometry        := drawingGeometryIn.getGeometry();
 
                 geometryType    := geometry.getGeomType();
 
@@ -225,7 +225,7 @@ implementation
                 end;
 
                 if (freeGeometryIn) then
-                    FreeAndNil(skiaDrawingGeometryIn);
+                    FreeAndNil(drawingGeometryIn);
             end;
 
 end.

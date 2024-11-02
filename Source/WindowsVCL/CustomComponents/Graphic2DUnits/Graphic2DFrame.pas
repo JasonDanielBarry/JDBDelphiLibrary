@@ -200,6 +200,8 @@ implementation
     //protected
         //drawing procedure
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
+                var
+                    currentZoomPercentage : double;
                 begin
                     //make sure canvas is clear
                         canvasIn.Clear( TAlphaColors.Null );
@@ -207,7 +209,12 @@ implementation
                     //give axis converter canvas dimensions
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
 
+                    //make sure setting ratio 1:1 does not cause drawing to shrink by catching the correct zoom percentage
+                        currentZoomPercentage := axisConverter.getCurrentZoomPercentage();
+
                         axisConverter.setDrawingSpaceRatioOneToOne();
+
+                        axisConverter.setZoom( currentZoomPercentage );
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
@@ -448,12 +455,23 @@ implementation
 //                    stopWatch.Reset();
 //                    stopWatch.Start();
 
-
                     updateGraphicImage();
 
-                    sleep(round(1000 / 60));
+//                    tick1 := stopWatch.ElapsedMilliseconds;
+//                    stopWatch.Reset();
+//                    stopWatch.Start();
+
+//                    sleep(round(1000 / 60));
+
+//                    tick2 := stopWatch.ElapsedMilliseconds;
+//                    stopWatch.Reset();
+//                    stopWatch.Start();
 
                     SkPaintBoxGraphic.Redraw();
+
+//                    tick3 := stopWatch.ElapsedMilliseconds;
+//                    stopWatch.Reset();
+//                    stopWatch.Start();
 
                     GridPanelDirectionalPan.Refresh();
                 end;

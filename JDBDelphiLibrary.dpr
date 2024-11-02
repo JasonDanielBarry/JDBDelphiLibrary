@@ -16,7 +16,6 @@ uses
   LimitStateAngleClass in 'Source\Engineering\LimitStateAngleClass.pas',
   LimitStateMaterialClass in 'Source\Engineering\LimitStateMaterialClass.pas',
   GeometryBaseClass in 'Source\Geometry\GeometryBaseClass.pas',
-  GeometryDrawingTypes in 'Source\Geometry\GeometryDrawingTypes.pas',
   GeometryMathMethods in 'Source\Geometry\GeometryMathMethods.pas',
   GeometryTypes in 'Source\Geometry\GeometryTypes.pas',
   GeomLineClass in 'Source\Geometry\GeomLineClass.pas',
@@ -48,7 +47,8 @@ uses
   Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
-  GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas';
+  GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas',
+  DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
