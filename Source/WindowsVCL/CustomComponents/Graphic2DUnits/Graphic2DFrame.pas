@@ -299,7 +299,7 @@ implementation
 
                     var mouseShift : integer := round(sqrt( power(mouse_dL, 2) + power(mouse_dT, 2) ));
 
-//                    if ( (mouseShift mod 5) = 0 ) then
+                    if ( (mouseShift mod 6) = 0 ) then
                         redrawGraphic();
                 end;
 
@@ -449,31 +449,10 @@ implementation
 
         //redraw the graphic
             procedure TCustomGraphic2D.redrawGraphic();
-//                var
-//                    tick1, tick2, tick3 : integer;
                 begin
-//                    stopWatch.Reset();
-//                    stopWatch.Start();
-
                     updateGraphicImage();
 
-//                    tick1 := stopWatch.ElapsedMilliseconds;
-//                    stopWatch.Reset();
-//                    stopWatch.Start();
-
-//                    sleep(round(1000 / 60));
-
-//                    tick2 := stopWatch.ElapsedMilliseconds;
-//                    stopWatch.Reset();
-//                    stopWatch.Start();
-
                     SkPaintBoxGraphic.Redraw();
-
-//                    tick3 := stopWatch.ElapsedMilliseconds;
-//                    stopWatch.Reset();
-//                    stopWatch.Start();
-
-                    GridPanelDirectionalPan.Refresh();
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
