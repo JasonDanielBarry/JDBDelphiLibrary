@@ -189,7 +189,7 @@ implementation
                 var
                     zoomScaleFactor : double;
                 begin
-                    //calculate the new zoom percentage
+                    //check new zoom percentage
                         if ( newZoomPercentageIn < 1e-3) then
                             exit();
 

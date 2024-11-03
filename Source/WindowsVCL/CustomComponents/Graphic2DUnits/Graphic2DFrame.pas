@@ -47,7 +47,8 @@ interface
                 procedure FrameResize(Sender: TObject);
             private
                 var
-                    mouseOnCanvas, mousePanningActive   : boolean;
+                    mouseOnCanvas, mousePanningActive,
+                    mustRedrawGraphic                   : boolean;
                     graphicImage                        : ISkImage;
                     stopWatch                           : TStopwatch;
                     mousePanningOrigin                  : TPoint;
@@ -88,9 +89,9 @@ interface
                     procedure redrawGraphic();
                     procedure updateGeometry();
                 //panning methods
-                    procedure recentreAll();
+                    procedure recentreAll(const redrawGraphicIn : boolean = False);
                 //zooming methods
-                    procedure zoomAll();
+                    procedure zoomAll(const redrawGraphicIn : boolean = False);
         end;
 
 
@@ -106,6 +107,8 @@ implementation
                                                             const AOpacity  : Single    );
             begin
                 ACanvas.DrawImage( graphicImage, 0, 0 );
+
+                mustRedrawGraphic := False;
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
@@ -194,7 +197,7 @@ implementation
 
         procedure TCustomGraphic2D.FrameResize(Sender: TObject);
             begin
-                redrawGraphic();
+                updateGraphicImage();
             end;
 
     //protected
@@ -244,6 +247,8 @@ implementation
                         graphicImage := surface.MakeImageSnapshot();
 
                     updateZoomPercentage();
+
+                    mustRedrawGraphic := True;
                 end;
 
         //panning methods
@@ -251,21 +256,21 @@ implementation
                 begin
                     axisConverter.shiftDrawingDomain( shiftXIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.shiftRange(const shiftYIn : double);
                 begin
                     axisConverter.shiftDrawingRange( shiftYIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.shiftRegion(const shiftXIn, shiftYIn : double);
                 begin
                     axisConverter.shiftDrawingRegion( shiftXIn, shiftYIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.shiftRegionWithMouse(const currentMouseXIn, currentMouseYIn : integer);
@@ -292,10 +297,7 @@ implementation
                     //move region to new position
                         axisConverter.setDrawingRegionShift(newRegionCentreX, newRegionCentreY);
 
-                    var mouseShift : integer := round(sqrt( power(mouse_dL, 2) + power(mouse_dT, 2) ));
-
-                    if ( (mouseShift mod 6) = 0 ) then
-                        redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.activateMousePanning();
@@ -322,7 +324,7 @@ implementation
                 begin
                     axisConverter.zoomIn( zoomPercentageIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.zoomInRelativeToMouse();
@@ -336,14 +338,14 @@ implementation
 
                     axisConverter.zoomIn(10, regionPoint);
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.zoomOut(const zoomPercentageIn : double);
                 begin
                     axisConverter.zoomOut( zoomPercentageIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.zoomOutRelativeToMouse();
@@ -357,14 +359,14 @@ implementation
 
                     axisConverter.zoomOut(10, regionPoint);
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.setZoom(const zoomPercentageIn : double);
                 begin
                     axisConverter.setZoom( zoomPercentageIn );
 
-                    redrawGraphic();
+                    updateGraphicImage();
                 end;
 
             procedure TCustomGraphic2D.updateZoomPercentage();
@@ -400,6 +402,9 @@ implementation
                                 shiftRegionWithMouse(currentMousePos.X, currentMousePos.Y);
                             end;
                     end;
+
+                    if (mustRedrawGraphic) then
+                        SkPaintBoxGraphic.Redraw();
 
                     inherited wndProc(messageInOut);
                 end;
@@ -469,20 +474,26 @@ implementation
                 end;
 
         //panning methods
-            procedure TCustomGraphic2D.recentreAll();
+            procedure TCustomGraphic2D.recentreAll(const redrawGraphicIn : boolean = False);
                 begin
                     axisConverter.recentreDrawingRegion();
 
-                    redrawGraphic();
+                    if (redrawGraphicIn) then
+                        redrawGraphic()
+                    else
+                        updateGraphicImage();
                 end;
 
         //zooming methods
-            procedure TCustomGraphic2D.zoomAll();
+            procedure TCustomGraphic2D.zoomAll(const redrawGraphicIn : boolean = False);
                 begin
                     //make the drawing boundary the drawing region
                         axisConverter.resetDrawingRegionToGeometryBoundary();
 
-                    redrawGraphic();
+                    if (redrawGraphicIn) then
+                        redrawGraphic()
+                    else
+                        updateGraphicImage();
                 end;
 
 end.
