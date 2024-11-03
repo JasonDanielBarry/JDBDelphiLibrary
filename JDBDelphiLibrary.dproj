@@ -134,6 +134,8 @@
         <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\DrawingGeometryClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -11,14 +11,13 @@ interface
             DrawingGeometryClass,
             GeomDrawerBaseClass,
             GeometryBaseClass,
-            GeomLineClass, GeomPolyLineClass, GeomPolygonClass,
             SkiaDrawingMethods;
 
     type
         TSkiaGeomDrawer = class(TGeomDrawerBase)
             private
                 var
-                    skiaDrawingCanvas   : ISkCanvas;
+                    skiaDrawingCanvas : ISkCanvas;
                 //modifiers
                     //drawing canvas
                         procedure setDrawingCanvas(const canvasIn : ISkCanvas);

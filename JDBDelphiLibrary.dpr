@@ -48,7 +48,9 @@ uses
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
   GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas',
-  DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas';
+  DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas',
+  Direct2DDrawingMethods in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas',
+  Direct2DDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

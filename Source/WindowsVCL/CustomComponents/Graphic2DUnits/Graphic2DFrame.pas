@@ -209,12 +209,7 @@ implementation
                     //give axis converter canvas dimensions
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
 
-                    //make sure setting ratio 1:1 does not cause drawing to shrink by catching the correct zoom percentage
-                        currentZoomPercentage := axisConverter.getCurrentZoomPercentage();
-
                         axisConverter.setDrawingSpaceRatioOneToOne();
-
-                        axisConverter.setZoom( currentZoomPercentage );
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);

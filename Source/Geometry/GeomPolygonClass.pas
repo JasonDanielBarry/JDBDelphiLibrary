@@ -51,13 +51,12 @@ implementation
 
                     arrLen := length(arrDrawingPointsOut);
 
-                    SetLength(arrDrawingPointsOut, arrLen + 2);
+                    SetLength(arrDrawingPointsOut, arrLen + 1);
 
-                    arrLen := arrLen + 2;
+                    arrLen := arrLen + 1;
 
                     //close polygon
-                        arrDrawingPointsOut[arrLen - 2] := arrDrawingPointsOut[0];
-                        arrDrawingPointsOut[arrLen - 1] := arrDrawingPointsOut[1];
+                        arrDrawingPointsOut[arrLen - 1] := arrDrawingPointsOut[0];
 
                     result := arrDrawingPointsOut;
                 end;

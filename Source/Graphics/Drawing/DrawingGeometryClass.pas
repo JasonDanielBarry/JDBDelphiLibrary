@@ -24,18 +24,16 @@ interface
             public
                 //constructor
                     constructor create( const   lineThicknessIn : integer;
-                                    const   fillColourIn,
-                                            lineColourIn    : TAlphaColor;
-                                    const   geometryIn      : TGeomBase );
+                                        const   fillColourIn,
+                                                lineColourIn    : TAlphaColor;
+                                        const   geometryIn      : TGeomBase     );
                 //destructor
                     destructor destroy(); override;
                 //line thickness
                     function getLineThickness() : integer;
                 //colours
-                    function getFillAlphaColour() : TAlphaColor;
-                    function getLineAlphaColour() : TAlphaColor;
-                    function getFillColour() : TColor;
-                    function getLineColour() : TColor;
+                    function getFillColour() : TAlphaColor;
+                    function getLineColour() : TAlphaColor;
                 //get the geometry object
                     function getGeometry() : TGeomBase;
         end;
@@ -84,24 +82,14 @@ implementation
                 end;
 
         //colours
-            function TDrawingGeometry.getFillAlphaColour() : TAlphaColor;
+            function TDrawingGeometry.getFillColour() : TAlphaColor;
                 begin
                     result := fillColour;
                 end;
 
-            function TDrawingGeometry.getLineAlphaColour() : TAlphaColor;
+            function TDrawingGeometry.getLineColour() : TAlphaColor;
                 begin
                     result := lineColour;
-                end;
-
-            function TDrawingGeometry.getFillColour : TColor;
-                begin
-                    result := AlphaColorToColor( fillColour );
-                end;
-
-            function TDrawingGeometry.getLineColour : TColor;
-                begin
-                    result := AlphaColorToColor( lineColour );
                 end;
 
         //get the geometry object

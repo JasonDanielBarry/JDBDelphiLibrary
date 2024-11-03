@@ -157,6 +157,8 @@ implementation
 
                             pathbuilder.PolylineTo(drawingPoints);
 
+                            pathbuilder.LineTo(drawingPoints[1]); //with skia this is necessary to ensure final corner is closed smoothly
+
                             path := pathbuilder.Detach();
 
                         //draw the shape
@@ -191,8 +193,8 @@ implementation
                 geometry                : TGeomBase;
             begin
                 lineThickness   := drawingGeometryIn.getLineThickness();
-                fillColour      := drawingGeometryIn.getFillAlphaColour();
-                lineColour      := drawingGeometryIn.getLineAlphaColour();
+                fillColour      := drawingGeometryIn.getFillColour();
+                lineColour      := drawingGeometryIn.getLineColour();
                 geometry        := drawingGeometryIn.getGeometry();
 
                 geometryType    := geometry.getGeomType();
