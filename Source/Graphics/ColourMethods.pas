@@ -5,13 +5,24 @@ interface
     uses
         Winapi.Windows, system.UIConsts, system.UITypes;
 
-    function colourToAlphaColour(const colourIn : TColor) : TAlphaColor;
+    function colourToAlphaColour(   const colourIn  : TColor;
+                                    const opacityIn : integer = 255) : TAlphaColor;
 
 implementation
 
-    function colourToAlphaColour(const colourIn : TColor) : TAlphaColor;
+    function colourToAlphaColour(   const colourIn  : TColor;
+                                    const opacityIn : integer = 255) : TAlphaColor;
+        var
+            redGreenBlue        : TRGBTriple;
+            colourReferenceHex  : LongInt;
         begin
-            result := TColorRec.ColorToRGB(colourIn);
+            colourReferenceHex := TColorRec.ColorToRGB(colourIn);
+
+            redGreenBlue.rgbtRed    := GetRValue( colourReferenceHex );
+            redGreenBlue.rgbtGreen  := GetGValue( colourReferenceHex );
+            redGreenBlue.rgbtBlue   := GetBValue( colourReferenceHex );
+
+            result := MakeColor( redGreenBlue.rgbtRed, redGreenBlue.rgbtGreen, redGreenBlue.rgbtBlue, opacityIn );
         end;
 
 end.
