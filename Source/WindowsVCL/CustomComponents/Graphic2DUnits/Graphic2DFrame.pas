@@ -210,12 +210,13 @@ implementation
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
                 var
                     currentZoomPercentage   : double;
-                    defaultCanvasColour     : TAlphaColor;
+                    parentColour            : TAlphaColor;
                 begin
-                    defaultCanvasColour := colourToAlphaColour(self.Color);
+                    //get the colour of the parent and convert it to an alpha colour
+                        parentColour := colourToAlphaColour(self.Color);
 
-                    //make sure canvas is clear
-                        canvasIn.Clear( defaultCanvasColour );
+                    //make sure canvas is the same colour as the parent
+                        canvasIn.Clear( parentColour );
 
                     //give axis converter canvas dimensions
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
