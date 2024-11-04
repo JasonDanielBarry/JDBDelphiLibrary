@@ -50,6 +50,16 @@ var
     polyline        : TGeomPolyLine;
     polygon         : TGeomPolygon;
 begin
+    //box
+        polygon := TGeomPolygon.create();
+
+        polygon.addVertex(10, 10);
+        polygon.addVertex(100, 10);
+        polygon.addVertex(100, 100);
+        polygon.addVertex(10, 100);
+
+        ASkiaDrawer.addPolygon( polygon, 10, TAlphaColors.Aqua, TAlphaColors.Darkred );
+
     //line 1
          point1 := TGeomPoint.create(10, 10);
          point2 := TGeomPoint.create(100, 100);
@@ -71,17 +81,7 @@ begin
                 polyline.addVertex(x, y);
             end;
 
-        ASkiaDrawer.addPolyline(polyline, 3, TAlphaColors.Deepskyblue);
-
-    //box
-        polygon := TGeomPolygon.create();
-
-        polygon.addVertex(10, 10);
-        polygon.addVertex(100, 10);
-        polygon.addVertex(100, 100);
-        polygon.addVertex(10, 100);
-
-        ASkiaDrawer.addPolygon( polygon, 3, TAlphaColors.Null, TAlphaColors.Darkred );
+        ASkiaDrawer.addPolyline(polyline, 3, TAlphaColors.Blue);
 end;
 
 end.
