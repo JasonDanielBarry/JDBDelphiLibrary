@@ -208,10 +208,12 @@ implementation
         //drawing procedure
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
                 var
-                    currentZoomPercentage : double;
+                    currentZoomPercentage   : double;
+                    selfColour              : TColor;
+                    selfAlphaColour         : TAlphaColor;
                 begin
                     //make sure canvas is clear
-                        canvasIn.Clear( TAlphaColors.Null );
+                        canvasIn.Clear( TColorRec.ColorToRGB(self.Color) );
 
                     //give axis converter canvas dimensions
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
