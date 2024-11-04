@@ -59,7 +59,7 @@
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <SanitizedProjectName>JDBDelphiPackage</SanitizedProjectName>
         <DCC_BplOutput>..\BuildOutput\</DCC_BplOutput>
-        <DCC_UnitSearchPath>..\JDBDelphiLibrary\Source\Engineering;..\JDBDelphiLibrary\Source\Mathematics;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra\Matrices;..\JDBDelphiLibrary\Source\Geometry;..\JDBDelphiLibrary\Source\Graphics\Drawing;..\JDBDelphiLibrary\Source\Graphics\Drawing\AxisConversion;..\JDBDelphiLibrary\Source\Graphics\Drawing\Skia;..\JDBDelphiLibrary\Source\WindowsVCL;..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Graphic2DUnits;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\JDBDelphiLibrary\Source\Engineering;..\JDBDelphiLibrary\Source\Mathematics;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra\Matrices;..\JDBDelphiLibrary\Source\Geometry;..\JDBDelphiLibrary\Source\Graphics;..\JDBDelphiLibrary\Source\Graphics\Drawing;..\JDBDelphiLibrary\Source\Graphics\Drawing\AxisConversion;..\JDBDelphiLibrary\Source\Graphics\Drawing\Skia;..\JDBDelphiLibrary\Source\WindowsVCL;..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Graphic2DUnits;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>7177</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
@@ -102,11 +102,6 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="Skia.Package.VCL.dcp"/>
-        <DCCReference Include="Skia.Package.RTL.dcp"/>
-        <DCCReference Include="Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -128,9 +123,7 @@
                     <Source Name="MainSource">JDBDelphiPackage.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="D:\Users\jason\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl">File D:\Users\jason\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl not found</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl">File C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl not found</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">

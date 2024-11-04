@@ -4,13 +4,14 @@ interface
 
     uses
       Winapi.Windows, Winapi.Messages,
-      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes, system.Threading, system.Math, system.Diagnostics,
+      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes, system.UIConsts, system.Threading, system.Math, system.Diagnostics,
       Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia,
+      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
+      ColourMethods,
       GeometryTypes,
       DrawingAxisConversionClass,
       SkiaDrawingClass,
-      Graphic2DTypes, Vcl.StdCtrls;
+      Graphic2DTypes;
 
     type
         TCustomGraphic2D = class(TFrame)
@@ -209,11 +210,12 @@ implementation
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
                 var
                     currentZoomPercentage   : double;
-                    selfColour              : TColor;
-                    selfAlphaColour         : TAlphaColor;
+                    defaultCanvasColour     : TAlphaColor;
                 begin
+                    defaultCanvasColour := colourToAlphaColour(self.Color);
+
                     //make sure canvas is clear
-                        canvasIn.Clear( TColorRec.ColorToRGB(self.Color) );
+                        canvasIn.Clear( defaultCanvasColour );
 
                     //give axis converter canvas dimensions
                         axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);

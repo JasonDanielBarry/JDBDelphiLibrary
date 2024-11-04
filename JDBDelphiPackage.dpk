@@ -27,13 +27,13 @@ package JDBDelphiPackage;
 {$ENDIF IMPLICITBUILDING}
 {$IMPLICITBUILD ON}
 
-requires
+rrequires
   rtl,
   vcl,
   Skia.Package.VCL,
   Skia.Package.RTL;
 
-contains
+ocontains
   CustomComponentRegistrationUnit in 'Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas';
 
-end.
+d.

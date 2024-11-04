@@ -50,7 +50,8 @@ uses
   GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas',
   DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas',
   Direct2DDrawingMethods in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas',
-  Direct2DDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas';
+  Direct2DDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas',
+  ColourMethods in 'Source\Graphics\ColourMethods.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
