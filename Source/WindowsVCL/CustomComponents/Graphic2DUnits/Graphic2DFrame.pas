@@ -65,13 +65,14 @@ interface
                     procedure shiftDomain(const shiftXIn : double);
                     procedure shiftRange(const shiftYIn : double);
                     procedure shiftRegion(const shiftXIn, shiftYIn : double);
-                    procedure shiftRegionWithMouse(const currentMouseXIn, currentMouseYIn : integer);
+                    procedure shiftRegionWithMouse();
                     procedure activateMousePanning();
                 //zooming methods
                     procedure zoomIn(const zoomPercentageIn : double);
                     procedure zoomInRelativeToMouse();
                     procedure zoomOut(const zoomPercentageIn : double);
                     procedure zoomOutRelativeToMouse();
+                    procedure zoomRelativeToMouse(const messageIn : TMessage);
                     procedure setZoom(const zoomPercentageIn : double);
                     procedure updateZoomPercentage();
                 //process windows messages
@@ -106,6 +107,9 @@ implementation
                                                             const ADest     : TRectF;
                                                             const AOpacity  : Single    );
             begin
+                if (NOT(mustRedrawGraphic)) then
+                    exit();
+
                 ACanvas.DrawImage( graphicImage, 0, 0 );
 
                 mustRedrawGraphic := False;
@@ -273,18 +277,22 @@ implementation
                     updateGraphicImage();
                 end;
 
-            procedure TCustomGraphic2D.shiftRegionWithMouse(const currentMouseXIn, currentMouseYIn : integer);
+            procedure TCustomGraphic2D.shiftRegionWithMouse();
                 var
                     mouse_dL,           mouse_dT            : integer;
                     regionShiftX,       regionShiftY,
                     newRegionCentreX,   newRegionCentreY    : double;
+                    currentMousePos                         : TPoint;
                 begin
                     if (NOT(mousePanningActive)) then
                         exit();
 
+                    //get current mouse position
+                        currentMousePos := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
+
                     //calculate how much the mouse moves from the point where the middle mouse button is pressed down
-                        mouse_dL := mousePanningOrigin.X - currentMouseXIn;
-                        mouse_dT := mousePanningOrigin.Y - currentMouseYIn;
+                        mouse_dL := mousePanningOrigin.X - currentMousePos.X;
+                        mouse_dT := mousePanningOrigin.Y - currentMousePos.Y;
 
                     //convert mouse shift to drawing shift
                         regionShiftX := axisConverter.dL_To_dX( mouse_dL );
@@ -362,6 +370,14 @@ implementation
                     updateGraphicImage();
                 end;
 
+            procedure TCustomGraphic2D.zoomRelativeToMouse(const messageIn : TMessage);
+                begin
+                    if (messageIn.WParam = 7864320) then
+                        zoomInRelativeToMouse()
+                    else
+                        zoomOutRelativeToMouse();
+                end;
+
             procedure TCustomGraphic2D.setZoom(const zoomPercentageIn : double);
                 begin
                     axisConverter.setZoom( zoomPercentageIn );
@@ -387,20 +403,14 @@ implementation
                         WM_MBUTTONUP:
                             mousePanningActive := False;
 
+                        WM_MBUTTONDBLCLK:
+                            zoomAll();
+
                         WM_MOUSEWHEEL:
-                            begin
-                                if (messageInOut.WParam = 7864320) then
-                                    zoomInRelativeToMouse()
-                                else
-                                    zoomOutRelativeToMouse();
-                            end;
+                            zoomRelativeToMouse(messageInOut);
 
                         WM_MOUSEMOVE:
-                            begin
-                                var currentMousePos : TPoint := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
-
-                                shiftRegionWithMouse(currentMousePos.X, currentMousePos.Y);
-                            end;
+                            shiftRegionWithMouse();
                     end;
 
                     if (mustRedrawGraphic) then

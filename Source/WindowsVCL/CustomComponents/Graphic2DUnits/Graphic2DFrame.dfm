@@ -22,8 +22,8 @@ object CustomGraphic2D: TCustomGraphic2D
   object GridPanelDirectionalPan: TGridPanel
     Left = 1153
     Top = 29
-    Width = 75
-    Height = 75
+    Width = 70
+    Height = 70
     Anchors = [akTop, akRight]
     BevelOuter = bvNone
     ColumnCollection = <
@@ -76,9 +76,9 @@ object CustomGraphic2D: TCustomGraphic2D
     TabOrder = 0
     object SpeedButtonShiftLeft: TSpeedButton
       Left = 0
-      Top = 25
-      Width = 25
-      Height = 25
+      Top = 23
+      Width = 23
+      Height = 24
       Align = alClient
       Anchors = []
       Caption = '<'
@@ -86,12 +86,14 @@ object CustomGraphic2D: TCustomGraphic2D
       OnClick = SpeedButtonShiftLeftClick
       ExplicitLeft = -6
       ExplicitTop = 19
+      ExplicitWidth = 25
+      ExplicitHeight = 25
     end
     object SpeedButtonShiftRight: TSpeedButton
-      Left = 50
-      Top = 25
-      Width = 25
-      Height = 25
+      Left = 47
+      Top = 23
+      Width = 23
+      Height = 24
       Align = alClient
       Anchors = []
       Caption = '>'
@@ -99,14 +101,13 @@ object CustomGraphic2D: TCustomGraphic2D
       OnClick = SpeedButtonShiftRightClick
       ExplicitLeft = 608
       ExplicitTop = 8
-      ExplicitWidth = 23
       ExplicitHeight = 22
     end
     object SpeedButtonShiftUp: TSpeedButton
-      Left = 25
+      Left = 23
       Top = 0
-      Width = 25
-      Height = 25
+      Width = 24
+      Height = 23
       Align = alClient
       Anchors = []
       Caption = '/\'
@@ -114,12 +115,14 @@ object CustomGraphic2D: TCustomGraphic2D
       OnClick = SpeedButtonShiftUpClick
       ExplicitLeft = 1028
       ExplicitTop = -6
+      ExplicitWidth = 25
+      ExplicitHeight = 25
     end
     object SpeedButtonShiftDown: TSpeedButton
-      Left = 25
-      Top = 50
-      Width = 25
-      Height = 25
+      Left = 23
+      Top = 47
+      Width = 24
+      Height = 23
       Align = alClient
       Anchors = []
       Caption = '\/'
@@ -131,10 +134,10 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitHeight = 22
     end
     object SpeedButtonCentre: TSpeedButton
-      Left = 25
-      Top = 25
-      Width = 25
-      Height = 25
+      Left = 23
+      Top = 23
+      Width = 24
+      Height = 24
       Align = alClient
       Anchors = []
       Caption = 'C'
@@ -142,6 +145,8 @@ object CustomGraphic2D: TCustomGraphic2D
       OnClick = SpeedButtonCentreClick
       ExplicitLeft = 8
       ExplicitTop = 8
+      ExplicitWidth = 25
+      ExplicitHeight = 25
     end
   end
   object PanelZoom: TPanel

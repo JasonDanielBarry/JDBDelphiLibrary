@@ -26,5 +26,9 @@ object Form1: TForm1
     ShowCaption = False
     TabOrder = 0
     OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
+    ExplicitLeft = 344
+    ExplicitTop = 360
+    ExplicitWidth = 185
+    ExplicitHeight = 41
   end
 end
