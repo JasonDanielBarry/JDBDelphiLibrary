@@ -30,15 +30,15 @@ interface
                     destructor destroy(); override;
                 //space conversions
                     //canvas to region
-                        function dL_To_dX(const dL_In : double) : double;
-                        function dT_To_dY(const dT_In : double) : double;
+                        function dL_To_dX(const dL_In : double) : double; inline;
+                        function dT_To_dY(const dT_In : double) : double; inline;
                     //region to canvas
-                        function dX_To_dL(const dX_In : double) : double;
-                        function dY_To_dT(const dY_In : double) : double;
+                        function dX_To_dL(const dX_In : double) : double; inline;
+                        function dY_To_dT(const dY_In : double) : double; inline;
                 //convertion calculations
                     //canvas-to-drawing
-                        function LT_to_XY(const pointIn : TPointF) : TGeomPoint; overload;
-                        function LT_to_XY(const pointIn : TPoint) : TGeomPoint; overload;
+                        function LT_to_XY(const pointIn : TPointF) : TGeomPoint; overload; inline;
+                        function LT_to_XY(const pointIn : TPoint) : TGeomPoint; overload; inline;
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPointF>) : TArray<TGeomPoint>; overload;
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPoint>) : TArray<TGeomPoint>; overload;
                     //drawing-to-canvas

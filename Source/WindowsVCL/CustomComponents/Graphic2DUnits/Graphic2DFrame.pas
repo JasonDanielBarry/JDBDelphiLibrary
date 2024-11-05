@@ -28,7 +28,7 @@ interface
             GridPanelDirectionalPan: TGridPanel;
             PanelZoom: TPanel;
             SpeedButtonCentre: TSpeedButton;
-    labelCoords: TLabel;
+            labelCoords: TLabel;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -52,7 +52,6 @@ interface
                     mouseOnCanvas, mousePanningActive,
                     mustRedrawGraphic                   : boolean;
                     graphicImage                        : ISkImage;
-                    stopWatch                           : TStopwatch;
                     currentMousePos, mousePanningOrigin : TPoint;
                     regionPanningOrigin                 : TGeomPoint;
                     skiaGeomDrawer                      : TSkiaGeomDrawer;

@@ -166,7 +166,6 @@ implementation
                         setDomain(domainMinIn, domainMaxIn);
                         setRange(rangeMinIn, rangeMaxIn);
                     end;
-
         
     //public
         //constructor
