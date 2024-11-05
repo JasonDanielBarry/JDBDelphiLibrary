@@ -13,8 +13,8 @@ implementation
     function colourToAlphaColour(   const colourIn  : TColor;
                                     const opacityIn : integer = 255) : TAlphaColor;
         var
-            redGreenBlue        : TRGBTriple;
             colourReferenceHex  : LongInt;
+            redGreenBlue        : TRGBTriple;
         begin
             colourReferenceHex := TColorRec.ColorToRGB(colourIn);
 
