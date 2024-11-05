@@ -30,7 +30,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getCurrentRegionCentrePoint() : TGeomPoint;
+                    function getCurrentRegionCentreShift() : TGeomPoint;
                 //shift drawing region
                     procedure shiftDrawingDomain(const deltaXIn : double);
                     procedure shiftDrawingRange(const deltaYIn : double);
@@ -89,7 +89,7 @@ implementation
                 end;
 
         //accessors
-            function TDrawingAxisPanningConverter.getCurrentRegionCentrePoint() : TGeomPoint;
+            function TDrawingAxisPanningConverter.getCurrentRegionCentreShift() : TGeomPoint;
                 begin
                     result := TGeomPoint.create(
                                                     currentRegionShift.xShift,

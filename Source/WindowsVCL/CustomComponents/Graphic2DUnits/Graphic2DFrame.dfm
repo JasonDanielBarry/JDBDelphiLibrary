@@ -19,6 +19,14 @@ object CustomGraphic2D: TCustomGraphic2D
     OnDraw = SkPaintBoxGraphicDraw
     ExplicitTop = 31
   end
+  object labelCoords: TLabel
+    Left = 80
+    Top = 576
+    Width = 20
+    Height = 15
+    Anchors = [akLeft, akBottom]
+    Caption = 'X, Y'
+  end
   object GridPanelDirectionalPan: TGridPanel
     Left = 1153
     Top = 29
