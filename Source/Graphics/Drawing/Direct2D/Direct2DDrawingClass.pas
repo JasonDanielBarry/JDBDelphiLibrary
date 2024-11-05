@@ -74,8 +74,6 @@ implementation
         //draw all geometry
             procedure TDirect2DGeomDrawer.drawAllGeometry(  const canvasIn          : TDirect2DCanvas;
                                                             const axisConverterIn   : TDrawingAxisConverter );
-                var
-                    i : integer;
                 begin
                     //set canvas
                         setDrawingCanvas( canvasIn );

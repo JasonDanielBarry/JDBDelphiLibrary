@@ -5,7 +5,7 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeometryTypes,
-        DrawingAxisConversionPanningClass;
+        DrawingAxisConversionBaseClass, DrawingAxisConversionPanningClass;
 
     type
         TDrawingAxisConverter = class(TDrawingAxisPanningConverter)

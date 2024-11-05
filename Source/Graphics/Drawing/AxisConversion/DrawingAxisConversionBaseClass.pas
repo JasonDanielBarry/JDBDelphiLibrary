@@ -50,15 +50,15 @@ interface
                 //accessors
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasRegion(const heightIn, widthIn : integer); inline;
+                        procedure setCanvasRegion(const heightIn, widthIn : integer);
                     //drawing space boundaries
                         procedure setDrawingRegion( const bufferIn : double;
                                                     const regionIn : TGeomBox ); overload; virtual;
                 //helper methods
                     //domain
-                        function calculateRegionDomain() : double; inline;
+                        function calculateRegionDomain() : double;
                     //range
-                        function calculateRegionRange() : double; inline;
+                        function calculateRegionRange() : double;
 
         end;
 

@@ -82,7 +82,6 @@ implementation
                     function calculateT(const   x0, y0, u0, v0,
                                                 x1, y1, u1, v1  : double) : TLAVector;
                         var
-                            detU        : double;
                             TOut, dX    : TLAVector;
                             U           : TLAMatrix;
                         begin

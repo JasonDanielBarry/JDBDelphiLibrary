@@ -187,7 +187,6 @@ implementation
     //test if 2 matrices are the same size
         function matricesAreSameSize(const matrix1In, matrix2In : TLAMatrix) : boolean;
             var
-                colCount1,  colCount2,
                 row,
                 rowCount1,  rowCount2   : integer;
                 rowVector1, rowVector2  : TLAVector;

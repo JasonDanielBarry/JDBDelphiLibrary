@@ -73,8 +73,6 @@ implementation
         //draw all geometry
             procedure TSkiaGeomDrawer.drawAllGeometry(  const canvasIn          : ISkCanvas;
                                                         const axisConverterIn   : TDrawingAxisConverter );
-                var
-                    i : integer;
                 begin
                     //set canvas
                         setDrawingCanvas( canvasIn );

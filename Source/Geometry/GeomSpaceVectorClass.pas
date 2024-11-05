@@ -134,8 +134,6 @@ implementation
 
             //add component
                 procedure TGeomSpaceVector.addComponent(componentValueIn : double);
-                    var
-                        arrLen : integer;
                     begin
                         setDimensions(dimensions + 1);
 

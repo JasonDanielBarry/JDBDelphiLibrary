@@ -126,8 +126,6 @@ implementation
             var
                 l1x0, l1y0, l1x1, l1y1,
                 l2x0, l2y0, l2x1, l2y1  : double;
-                intersectionPoint       : TGeomPoint;
-                intersectionDataOut     : TGeomLineIntersectionData;
             begin
                 //line 1 info
                     l1x0 := line1Point0In.x;

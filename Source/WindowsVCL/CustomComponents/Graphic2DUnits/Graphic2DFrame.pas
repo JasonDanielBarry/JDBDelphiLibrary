@@ -369,8 +369,7 @@ implementation
         //drawing procedure
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
                 var
-                    currentZoomPercentage   : double;
-                    parentColour            : TAlphaColor;
+                    parentColour : TAlphaColor;
                 begin
                     //get the colour of the parent and convert it to an alpha colour
                         parentColour := colourToAlphaColour(self.Color);
@@ -386,8 +385,7 @@ implementation
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
                 var
-                    mouseCoords : string;
-                    paint       : ISkPaint;
+                    paint : ISkPaint;
                 begin
                     //draw a border around the paintbox edge
                         paint               := TSkPaint.Create( TSkPaintStyle.Stroke );

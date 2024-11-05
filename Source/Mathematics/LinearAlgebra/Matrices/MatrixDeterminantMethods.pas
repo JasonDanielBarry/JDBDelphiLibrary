@@ -271,9 +271,8 @@ implementation
             function determinantLaplace(const matrixIn : TLAMatrix) : double;
                 var
                     j, dimension        : integer;
-                    a_ij, C_ij, M_ij,
+                    a_ij, C_ij,
                     determinantValueOut : double;
-                    minorMatrix         : TLAMatrix;
                 begin
                     //if N = 1 then the determinant is the matrix value
                         dimension := length(matrixIn);

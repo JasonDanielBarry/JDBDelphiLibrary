@@ -6,7 +6,7 @@ interface
         System.SysUtils, system.Math, system.Types,
         GeneralMathMethods,
         GeometryTypes,
-        DrawingAxisConversionZoomingClass
+        DrawingAxisConversionBaseClass, DrawingAxisConversionZoomingClass
         ;
 
     type
