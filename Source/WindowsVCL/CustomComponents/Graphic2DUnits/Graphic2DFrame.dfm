@@ -225,7 +225,6 @@ object CustomGraphic2D: TCustomGraphic2D
       Margins.Bottom = 0
       Align = alRight
       TabOrder = 0
-      Text = '100'
       OnChange = ComboBoxZoomPercentChange
       Items.Strings = (
         '10'
@@ -240,7 +239,10 @@ object CustomGraphic2D: TCustomGraphic2D
         '250'
         '300'
         '400'
-        '500')
+        '500'
+        '750'
+        '1000'
+        '1500')
     end
   end
   object ActionList1: TActionList
@@ -262,12 +264,14 @@ object CustomGraphic2D: TCustomGraphic2D
       Category = 'Zoom'
       Caption = 'Zoom &Extents'
       Hint = 'Reset zoom to graphic extents'
+      ShortCut = 16453
       OnExecute = ActionZoomExtentsExecute
     end
     object ActionRecentre: TAction
       Category = 'Zoom'
       Caption = 'Recen&tre'
       Hint = 'Recentre graphic'
+      ShortCut = 16468
       OnExecute = ActionRecentreExecute
     end
     object ActionUpdateGeometry: TAction
