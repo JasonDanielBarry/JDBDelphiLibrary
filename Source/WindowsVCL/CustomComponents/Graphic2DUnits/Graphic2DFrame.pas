@@ -26,7 +26,7 @@ interface
             SpeedButtonUpdateGeometry: TSpeedButton;
             ComboBoxZoomPercent: TComboBox;
             GridPanelDirectionalPan: TGridPanel;
-    PanelGraphicControls: TPanel;
+            PanelGraphicControls: TPanel;
             SpeedButtonCentre: TSpeedButton;
             labelCoords: TLabel;
             ActionList1: TActionList;
@@ -35,22 +35,22 @@ interface
             ActionZoomExtents: TAction;
             ActionRecentre: TAction;
             ActionUpdateGeometry: TAction;
-    ActionPanLeft: TAction;
-    ActionPanRight: TAction;
-    ActionPanUp: TAction;
-    ActionPanDown: TAction;
-    PopupMenuGraphicControls: TPopupMenu;
-    ZoomExtents1: TMenuItem;
-    ZoomIn1: TMenuItem;
-    ZoomOut1: TMenuItem;
-    Recentre1: TMenuItem;
-    N1: TMenuItem;
-    UpdateGeometry1: TMenuItem;
-    N2: TMenuItem;
-    PanLeft1: TMenuItem;
-    PanRight1: TMenuItem;
-    PanDown1: TMenuItem;
-    PanRight2: TMenuItem;
+            ActionPanLeft: TAction;
+            ActionPanRight: TAction;
+            ActionPanUp: TAction;
+            ActionPanDown: TAction;
+            PopupMenuGraphicControls: TPopupMenu;
+            ZoomExtents1: TMenuItem;
+            ZoomIn1: TMenuItem;
+            ZoomOut1: TMenuItem;
+            Recentre1: TMenuItem;
+            N1: TMenuItem;
+            UpdateGeometry1: TMenuItem;
+            N2: TMenuItem;
+            PanLeft1: TMenuItem;
+            PanRight1: TMenuItem;
+            PanDown1: TMenuItem;
+            PanRight2: TMenuItem;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -64,11 +64,11 @@ interface
                 procedure ActionZoomExtentsExecute(Sender: TObject);
                 procedure ActionZoomInExecute(Sender: TObject);
                 procedure ActionZoomOutExecute(Sender: TObject);
-    procedure ActionUpdateGeometryExecute(Sender: TObject);
-    procedure ActionPanLeftExecute(Sender: TObject);
-    procedure ActionPanRightExecute(Sender: TObject);
-    procedure ActionPanUpExecute(Sender: TObject);
-    procedure ActionPanDownExecute(Sender: TObject);
+                procedure ActionUpdateGeometryExecute(Sender: TObject);
+                procedure ActionPanLeftExecute(Sender: TObject);
+                procedure ActionPanRightExecute(Sender: TObject);
+                procedure ActionPanUpExecute(Sender: TObject);
+                procedure ActionPanDownExecute(Sender: TObject);
 
             private
                 var
@@ -133,9 +133,6 @@ implementation
                                                             const ADest     : TRectF;
                                                             const AOpacity  : Single    );
             begin
-                if (NOT(mustRedrawGraphic)) then
-                    exit();
-
                 ACanvas.DrawImage( graphicImage, 0, 0 );
 
                 mustRedrawGraphic := False;
