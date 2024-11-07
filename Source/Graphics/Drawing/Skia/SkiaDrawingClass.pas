@@ -33,6 +33,8 @@ interface
                 //draw all geometry
                     procedure drawAllGeometry(  const canvasIn          : ISkCanvas;
                                                 const axisConverterIn   : TDrawingAxisConverter );
+                    function drawAllGeometryToSurface(  const heightIn, widthIn : integer;
+                                                        const axisConverterIn   : TDrawingAxisConverter ) : ISkSurface;
         end;
 
 implementation
@@ -79,6 +81,26 @@ implementation
 
                     //draw all geometry
                         inherited drawAllGeometry( axisConverterIn );
+                end;
+
+            function TSkiaGeomDrawer.drawAllGeometryToSurface(  const heightIn, widthIn : integer;
+                                                                const axisConverterIn   : TDrawingAxisConverter ) : ISkSurface;
+                var
+                    skiaSurface : ISkSurface;
+                begin
+                    //create a skia skiaSurface
+                        skiaSurface := TSkSurface.MakeRaster( widthIn, heightIn );
+
+                    //clear the skiaSurface
+                        skiaSurface.Canvas.Clear( drawingBackgroundColour );
+
+                    //give axis converter canvas dimensions
+                        axisConverterIn.setCanvasRegion( heightIn, widthIn );
+
+                    //draw all geometry on skiaSurface canvas
+                        drawAllGeometry( skiaSurface.Canvas, axisConverterIn );
+
+                    result := skiaSurface
                 end;
 
 end.

@@ -98,7 +98,7 @@ interface
                     procedure updateZoomPercentage();
             protected
                 //drawing procedure
-                    procedure preDrawGraphic(const canvasIn : ISkCanvas); virtual;
+                    procedure preDrawGraphic(); virtual;
                     procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
                     procedure updateGraphicImage();
                 //process windows messages
@@ -387,20 +387,17 @@ implementation
 
     //protected
         //drawing procedure
-            procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : ISkCanvas);
+            procedure TCustomGraphic2D.preDrawGraphic();
                 var
-                    parentColour : TAlphaColor;
+                    graphicBackgroundColour : TAlphaColor;
                 begin
                     //get the colour of the parent and convert it to an alpha colour
-                        parentColour := colourToAlphaColour(self.Color);
+                        graphicBackgroundColour := colourToAlphaColour( self.Color );
 
                     //make sure canvas is the same colour as the parent
-                        canvasIn.Clear( parentColour );
+                        skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
 
-                    //give axis converter canvas dimensions
-                        axisConverter.setCanvasRegion(SkPaintBoxGraphic.Height, SkPaintBoxGraphic.Width);
-
-                        axisConverter.setDrawingSpaceRatioOneToOne();
+                    axisConverter.setDrawingSpaceRatioOneToOne();
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
@@ -422,13 +419,12 @@ implementation
                 var
                     surface : ISkSurface;
                 begin
-                    //create a skia surface
-                        surface := TSkSurface.MakeRaster( SkPaintBoxGraphic.Width, SkPaintBoxGraphic.Height );
-
                     //draw to the surface
-                        preDrawGraphic( surface.Canvas );
+                        preDrawGraphic();
 
-                        skiaGeomDrawer.drawAllGeometry( surface.Canvas, axisConverter );
+                        surface := skiaGeomDrawer.drawAllGeometryToSurface( SkPaintBoxGraphic.Height,
+                                                                            SkPaintBoxGraphic.Width,
+                                                                            axisConverter           );
 
                         postDrawGraphic( surface.Canvas );
 

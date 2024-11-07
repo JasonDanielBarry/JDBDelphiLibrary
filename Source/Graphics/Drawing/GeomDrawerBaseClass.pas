@@ -26,6 +26,8 @@ interface
                     //add geometry to the geometry array
                         procedure addGeometry(const drawingGeometryIn : TDrawingGeometry);
             strict protected
+                var
+                    drawingBackgroundColour : TAlphaColor;
                 //drawing procedures
                     //draw a drawing geometry object
                         procedure drawGeometry( const drawingGeometryIn : TDrawingGeometry;
@@ -48,6 +50,8 @@ interface
                                             const lineThicknessIn   : integer = 2;
                                             const fillColourIn      : TAlphaColor = TAlphaColors.Null;
                                             const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
+                //modifiers
+                    procedure setDrawingBackgroundColour(const colourIn : TAlphaColor);
                 //geometry net bounding box
                     function determineGeomBoundingBox() : TGeomBox;
                 //reset
@@ -166,6 +170,12 @@ implementation
                                                                     polygonIn       );
 
                     addGeometry( newDrawingGeometry );
+                end;
+
+        //modifiers
+            procedure TGeomDrawerBase.setDrawingBackgroundColour(const colourIn : TAlphaColor);
+                begin
+                    drawingBackgroundColour := colourIn;
                 end;
 
         //geometry net bounding box
