@@ -10,14 +10,16 @@ object CustomGraphic2D: TCustomGraphic2D
     736)
   object SkPaintBoxGraphic: TSkPaintBox
     Left = 0
-    Top = 25
+    Top = 23
     Width = 1231
-    Height = 711
+    Height = 713
     Align = alClient
+    PopupMenu = PopupMenuGraphicControls
     OnMouseEnter = SkPaintBoxGraphicMouseEnter
     OnMouseLeave = SkPaintBoxGraphicMouseLeave
     OnDraw = SkPaintBoxGraphicDraw
-    ExplicitTop = 31
+    ExplicitTop = 26
+    ExplicitHeight = 711
   end
   object labelCoords: TLabel
     Left = 80
@@ -87,11 +89,11 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 23
       Width = 23
       Height = 24
+      Action = ActionPanLeft
       Align = alClient
       Anchors = []
       Caption = '<'
       Flat = True
-      OnClick = SpeedButtonShiftLeftClick
       ExplicitLeft = -6
       ExplicitTop = 19
       ExplicitWidth = 25
@@ -102,11 +104,11 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 23
       Width = 23
       Height = 24
+      Action = ActionPanRight
       Align = alClient
       Anchors = []
       Caption = '>'
       Flat = True
-      OnClick = SpeedButtonShiftRightClick
       ExplicitLeft = 608
       ExplicitTop = 8
       ExplicitHeight = 22
@@ -116,11 +118,11 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 0
       Width = 24
       Height = 23
+      Action = ActionPanUp
       Align = alClient
       Anchors = []
       Caption = '/\'
       Flat = True
-      OnClick = SpeedButtonShiftUpClick
       ExplicitLeft = 1028
       ExplicitTop = -6
       ExplicitWidth = 25
@@ -131,11 +133,11 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 47
       Width = 24
       Height = 23
+      Action = ActionPanDown
       Align = alClient
       Anchors = []
       Caption = '\/'
       Flat = True
-      OnClick = SpeedButtonShiftDownClick
       ExplicitLeft = 608
       ExplicitTop = 8
       ExplicitWidth = 23
@@ -146,69 +148,69 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 23
       Width = 24
       Height = 24
+      Action = ActionRecentre
       Align = alClient
       Anchors = []
       Caption = 'C'
       Flat = True
-      OnClick = SpeedButtonCentreClick
       ExplicitLeft = 8
       ExplicitTop = 8
       ExplicitWidth = 25
       ExplicitHeight = 25
     end
   end
-  object PanelZoom: TPanel
+  object PanelGraphicControls: TPanel
     Left = 0
     Top = 0
     Width = 1231
-    Height = 25
+    Height = 23
     Align = alTop
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
     object SpeedButtonUpdateGeometry: TSpeedButton
-      Left = 1155
+      Left = 1157
       Top = 0
-      Width = 25
-      Height = 25
+      Width = 23
+      Height = 23
+      Action = ActionUpdateGeometry
       Align = alRight
       Caption = 'U'
       Flat = True
-      OnClick = SpeedButtonUpdateGeometryClick
-      ExplicitLeft = 0
+      ExplicitLeft = 1155
     end
     object SpeedButtonZoomExtents: TSpeedButton
-      Left = 1130
+      Left = 1134
       Top = 0
-      Width = 25
-      Height = 25
+      Width = 23
+      Height = 23
+      Action = ActionZoomExtents
       Align = alRight
       Caption = 'E'
       Flat = True
-      OnClick = SpeedButtonZoomExtentsClick
-      ExplicitLeft = 0
+      ExplicitLeft = 1132
     end
     object SpeedButtonZoomOut: TSpeedButton
-      Left = 1105
+      Left = 1111
       Top = 0
-      Width = 25
-      Height = 25
+      Width = 23
+      Height = 23
+      Action = ActionZoomOut
       Align = alRight
       Caption = '-'
       Flat = True
-      OnClick = SpeedButtonZoomOutClick
-      ExplicitTop = -6
+      ExplicitLeft = 1109
     end
     object SpeedButtonZoomIn: TSpeedButton
-      Left = 1080
+      Left = 1088
       Top = 0
-      Width = 25
-      Height = 25
+      Width = 23
+      Height = 23
+      Action = ActionZoomIn
       Align = alRight
       Caption = '+'
       Flat = True
-      OnClick = SpeedButtonZoomInClick
-      ExplicitTop = -6
+      ExplicitLeft = 1084
     end
     object ComboBoxZoomPercent: TComboBox
       AlignWithMargins = True
@@ -216,6 +218,7 @@ object CustomGraphic2D: TCustomGraphic2D
       Top = 0
       Width = 50
       Height = 23
+      Hint = 'Set zoom'
       Margins.Left = 0
       Margins.Top = 0
       Margins.Right = 1
@@ -238,6 +241,101 @@ object CustomGraphic2D: TCustomGraphic2D
         '300'
         '400'
         '500')
+    end
+  end
+  object ActionList1: TActionList
+    Left = 728
+    Top = 256
+    object ActionZoomIn: TAction
+      Category = 'Zoom'
+      Caption = 'Zoom &In'
+      Hint = 'Zoom in'
+      OnExecute = ActionZoomInExecute
+    end
+    object ActionZoomOut: TAction
+      Category = 'Zoom'
+      Caption = 'Zoom &Out'
+      Hint = 'Zoom out'
+      OnExecute = ActionZoomOutExecute
+    end
+    object ActionZoomExtents: TAction
+      Category = 'Zoom'
+      Caption = 'Zoom &Extents'
+      Hint = 'Reset zoom to graphic extents'
+      OnExecute = ActionZoomExtentsExecute
+    end
+    object ActionRecentre: TAction
+      Category = 'Zoom'
+      Caption = 'Recen&tre'
+      Hint = 'Recentre graphic'
+      OnExecute = ActionRecentreExecute
+    end
+    object ActionUpdateGeometry: TAction
+      Category = 'Geometry'
+      Caption = '&Update Geometry'
+      Hint = 'Update the graphic'#39's geometry'
+      OnExecute = ActionUpdateGeometryExecute
+    end
+    object ActionPanLeft: TAction
+      Category = 'Pan'
+      Caption = 'Pan &Left'
+      Hint = 'Shift graphic left'
+      OnExecute = ActionPanLeftExecute
+    end
+    object ActionPanRight: TAction
+      Category = 'Pan'
+      Caption = 'Pan &Right'
+      Hint = 'Shift graphic right'
+      OnExecute = ActionPanRightExecute
+    end
+    object ActionPanUp: TAction
+      Category = 'Pan'
+      Caption = 'Pan U&p'
+      Hint = 'Shift graphic up'
+      OnExecute = ActionPanUpExecute
+    end
+    object ActionPanDown: TAction
+      Category = 'Pan'
+      Caption = 'Pan &Down'
+      Hint = 'Shift graphic down'
+      OnExecute = ActionPanDownExecute
+    end
+  end
+  object PopupMenuGraphicControls: TPopupMenu
+    Left = 264
+    Top = 376
+    object ZoomExtents1: TMenuItem
+      Action = ActionZoomExtents
+    end
+    object ZoomIn1: TMenuItem
+      Action = ActionZoomIn
+    end
+    object ZoomOut1: TMenuItem
+      Action = ActionZoomOut
+    end
+    object Recentre1: TMenuItem
+      Action = ActionRecentre
+    end
+    object N1: TMenuItem
+      Caption = '-'
+    end
+    object UpdateGeometry1: TMenuItem
+      Action = ActionUpdateGeometry
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object PanLeft1: TMenuItem
+      Action = ActionPanUp
+    end
+    object PanRight1: TMenuItem
+      Action = ActionPanLeft
+    end
+    object PanDown1: TMenuItem
+      Action = ActionPanDown
+    end
+    object PanRight2: TMenuItem
+      Action = ActionPanRight
     end
   end
 end

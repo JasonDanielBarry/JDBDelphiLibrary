@@ -11,7 +11,7 @@ interface
       GeometryTypes,
       DrawingAxisConversionClass,
       SkiaDrawingClass,
-      Graphic2DTypes;
+      Graphic2DTypes, System.Actions, Vcl.ActnList, Vcl.Menus;
 
     type
         TCustomGraphic2D = class(TFrame)
@@ -26,27 +26,50 @@ interface
             SpeedButtonUpdateGeometry: TSpeedButton;
             ComboBoxZoomPercent: TComboBox;
             GridPanelDirectionalPan: TGridPanel;
-            PanelZoom: TPanel;
+    PanelGraphicControls: TPanel;
             SpeedButtonCentre: TSpeedButton;
             labelCoords: TLabel;
+            ActionList1: TActionList;
+            ActionZoomIn: TAction;
+            ActionZoomOut: TAction;
+            ActionZoomExtents: TAction;
+            ActionRecentre: TAction;
+            ActionUpdateGeometry: TAction;
+    ActionPanLeft: TAction;
+    ActionPanRight: TAction;
+    ActionPanUp: TAction;
+    ActionPanDown: TAction;
+    PopupMenuGraphicControls: TPopupMenu;
+    ZoomExtents1: TMenuItem;
+    ZoomIn1: TMenuItem;
+    ZoomOut1: TMenuItem;
+    Recentre1: TMenuItem;
+    N1: TMenuItem;
+    UpdateGeometry1: TMenuItem;
+    N2: TMenuItem;
+    PanLeft1: TMenuItem;
+    PanRight1: TMenuItem;
+    PanDown1: TMenuItem;
+    PanRight2: TMenuItem;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
                                                 const ADest     : TRectF;
                                                 const AOpacity  : Single    );
-                procedure SpeedButtonZoomExtentsClick(Sender: TObject);
-                procedure SpeedButtonUpdateGeometryClick(Sender: TObject);
-                procedure SpeedButtonZoomInClick(Sender: TObject);
-                procedure SpeedButtonZoomOutClick(Sender: TObject);
                 procedure ComboBoxZoomPercentChange(Sender: TObject);
-                procedure SpeedButtonShiftLeftClick(Sender: TObject);
-                procedure SpeedButtonShiftRightClick(Sender: TObject);
-                procedure SpeedButtonShiftUpClick(Sender: TObject);
-                procedure SpeedButtonShiftDownClick(Sender: TObject);
-                procedure SpeedButtonCentreClick(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseEnter(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseLeave(Sender: TObject);
                 procedure FrameResize(Sender: TObject);
+                procedure ActionRecentreExecute(Sender: TObject);
+                procedure ActionZoomExtentsExecute(Sender: TObject);
+                procedure ActionZoomInExecute(Sender: TObject);
+                procedure ActionZoomOutExecute(Sender: TObject);
+    procedure ActionUpdateGeometryExecute(Sender: TObject);
+    procedure ActionPanLeftExecute(Sender: TObject);
+    procedure ActionPanRightExecute(Sender: TObject);
+    procedure ActionPanUpExecute(Sender: TObject);
+    procedure ActionPanDownExecute(Sender: TObject);
+
             private
                 var
                     mouseOnCanvas, mousePanningActive,
@@ -78,7 +101,6 @@ interface
                     procedure preDrawGraphic(const canvasIn : ISkCanvas); virtual;
                     procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
                     procedure updateGraphicImage();
-
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -92,7 +114,7 @@ interface
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 //redraw the graphic
                     procedure redrawGraphic();
-                    procedure updateGeometry();
+                    procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
                 //panning methods
                     procedure recentreAll(const mustRedrawGraphicIn : boolean = False);
                 //zooming methods
@@ -129,29 +151,6 @@ implementation
                 mouseOnCanvas := False;
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonCentreClick(Sender: TObject);
-            begin
-                recentreAll();
-            end;
-
-        procedure TCustomGraphic2D.SpeedButtonShiftDownClick(Sender: TObject);
-            var
-                drawingRange : double;
-            begin
-                drawingRange := axisConverter.calculateRegionRange();
-
-                shiftRange( drawingRange / 10 );
-            end;
-
-        procedure TCustomGraphic2D.SpeedButtonShiftLeftClick(Sender: TObject);
-            var
-                drawingDomain : double;
-            begin
-                drawingDomain := axisConverter.calculateRegionDomain();
-
-                shiftDomain( drawingDomain / 10 );
-            end;
-
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
             var
                 newZoomPercent : double;
@@ -165,7 +164,30 @@ implementation
                 setZoom( newZoomPercent );
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonShiftRightClick(Sender: TObject);
+        procedure TCustomGraphic2D.FrameResize(Sender: TObject);
+            begin
+                updateGraphicImage();
+            end;
+
+        procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
+            var
+                drawingRange : double;
+            begin
+                drawingRange := axisConverter.calculateRegionRange();
+
+                shiftRange( drawingRange / 10 );
+            end;
+
+        procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
+            var
+                drawingDomain : double;
+            begin
+                drawingDomain := axisConverter.calculateRegionDomain();
+
+                shiftDomain( drawingDomain / 10 );
+            end;
+
+        procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
             var
                 drawingDomain : double;
             begin
@@ -174,7 +196,7 @@ implementation
                 shiftDomain( -drawingDomain / 10 );
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonShiftUpClick(Sender: TObject);
+        procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
             var
                 drawingRange : double;
             begin
@@ -183,30 +205,31 @@ implementation
                 shiftRange( -drawingRange / 10 );
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonUpdateGeometryClick(Sender: TObject);
+        procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
+            begin
+                recentreAll();
+            end;
+
+        procedure TCustomGraphic2D.ActionUpdateGeometryExecute(Sender: TObject);
             begin
                 updateGeometry();
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonZoomExtentsClick(Sender: TObject);
+        procedure TCustomGraphic2D.ActionZoomExtentsExecute(Sender: TObject);
             begin
                 zoomAll();
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonZoomInClick(Sender: TObject);
+        procedure TCustomGraphic2D.ActionZoomInExecute(Sender: TObject);
             begin
                 zoomIn(10);
             end;
 
-        procedure TCustomGraphic2D.SpeedButtonZoomOutClick(Sender: TObject);
+        procedure TCustomGraphic2D.ActionZoomOutExecute(Sender: TObject);
             begin
                 zoomOut(10);
             end;
 
-        procedure TCustomGraphic2D.FrameResize(Sender: TObject);
-            begin
-                updateGraphicImage();
-            end;
 
     //private
         //mouse location
@@ -278,6 +301,7 @@ implementation
 
                     updateGraphicImage();
                 end;
+
 
             procedure TCustomGraphic2D.activateMousePanning();
                 begin
@@ -456,10 +480,10 @@ implementation
                     inherited create(AOwner);
 
                     labelCoords.Left := labelCoords.Height div 2;
-                    labelCoords.top := PanelZoom.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
+                    labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
 
-                    GridPanelDirectionalPan.Left := PanelZoom.Width - GridPanelDirectionalPan.Width - 1;
-                    GridPanelDirectionalPan.top := PanelZoom.Height + 1;
+                    GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
+                    GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
 
                     GridPanelDirectionalPan.BringToFront();
 
@@ -498,7 +522,7 @@ implementation
                     SkPaintBoxGraphic.Redraw();
                 end;
 
-            procedure TCustomGraphic2D.updateGeometry();
+            procedure TCustomGraphic2D.updateGeometry(const mustRedrawGraphicIn : boolean = False);
                 var
                     newGeometryBoundary : TGeomBox;
                 begin
@@ -514,6 +538,11 @@ implementation
 
                     //store the geometry group boundary in the axis converter for quick access
                         axisConverter.setGeometryBoundary( newGeometryBoundary );
+
+                    if (mustRedrawGraphicIn) then
+                        redrawGraphic()
+                    else
+                        updateGraphicImage();
                 end;
 
         //panning methods
