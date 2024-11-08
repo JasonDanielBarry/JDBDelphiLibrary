@@ -72,14 +72,13 @@ interface
 
             private
                 var
-                    mouseOnCanvas, mousePanningActive,
-                    mustRedrawGraphic                   : boolean;
-                    graphicImage                        : ISkImage;
-                    currentMousePos, mousePanningOrigin : TPoint;
-                    regionPanningOrigin                 : TGeomPoint;
-                    skiaGeomDrawer                      : TSkiaGeomDrawer;
-                    axisConverter                       : TDrawingAxisConverter;
-                    onGraphicUpdateGeometryEvent        : TGraphicUpdateGeometryEvent;
+                    mouseOnCanvas,
+                    mustRedrawGraphic               : boolean;
+                    graphicImage                    : ISkImage;
+                    currentMousePos                 : TPoint;
+                    skiaGeomDrawer                  : TSkiaGeomDrawer;
+                    axisConverter                   : TDrawingAxisConverter;
+                    onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //mouse location
                     procedure updateMouseCoordinates();
                 //panning methods
