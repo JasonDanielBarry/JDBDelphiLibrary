@@ -20,10 +20,9 @@ interface
                     currentRegionShift : TRegionShift;
                 //calculate the shift of the drawing region relative to the geometry boundary
                     procedure updateRegionShift();
+            protected
                 //zooming
                     procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); override;
-            protected
-                //
             public
                 //constructor
                     constructor create();
@@ -61,10 +60,12 @@ implementation
                         boundaryCentreX := calculateBoundaryDomainCentre();
                         boundaryCentreY := calculateBoundaryRangeCentre();
 
-                currentRegionShift.xShift := regionCentreX - boundaryCentreX;
-                currentRegionShift.yShift := regionCentreY - boundaryCentreY;
+                //calculate the region's centre shift relative to the geometry boundary's
+                    currentRegionShift.xShift := regionCentreX - boundaryCentreX;
+                    currentRegionShift.yShift := regionCentreY - boundaryCentreY;
             end;
 
+    //protected
         //zooming
             procedure TDrawingAxisPanningConverter.zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double);
                 begin

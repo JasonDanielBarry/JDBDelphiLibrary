@@ -5,10 +5,10 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeometryTypes,
-        DrawingAxisConversionBaseClass, DrawingAxisConversionPanningClass;
+        DrawingAxisConversionBaseClass, DrawingAxisConversionMouseControlClass;
 
     type
-        TDrawingAxisConverter = class(TDrawingAxisPanningConverter)
+        TDrawingAxisConverter = class(TDrawingAxisMouseControlConverter)
             private
                 //adjust the drawing region to assume the desired aspect ratio
                     procedure adjustDrawingRegionAspectRatio(const ratioIn : double);

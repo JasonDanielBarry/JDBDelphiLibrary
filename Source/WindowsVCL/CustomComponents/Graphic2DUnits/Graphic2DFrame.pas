@@ -86,14 +86,9 @@ interface
                     procedure shiftDomain(const shiftXIn : double);
                     procedure shiftRange(const shiftYIn : double);
                     procedure shiftRegion(const shiftXIn, shiftYIn : double);
-                    procedure shiftRegionWithMouse();
-                    procedure activateMousePanning();
                 //zooming methods
                     procedure zoomIn(const zoomPercentageIn : double);
-                    procedure zoomInRelativeToMouse();
                     procedure zoomOut(const zoomPercentageIn : double);
-                    procedure zoomOutRelativeToMouse();
-                    procedure zoomRelativeToMouse(const messageIn : TMessage);
                     procedure setZoom(const zoomPercentageIn : double);
                     procedure updateZoomPercentage();
             protected
@@ -140,11 +135,13 @@ implementation
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
             begin
+                axisConverter.activateMouseControl();
                 mouseOnCanvas := True;
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
             begin
+                axisConverter.deactivateMouseControl();
                 mouseOnCanvas := False;
             end;
 
@@ -227,7 +224,6 @@ implementation
                 zoomOut(10);
             end;
 
-
     //private
         //mouse location
             procedure TCustomGraphic2D.updateMouseCoordinates();
@@ -272,66 +268,10 @@ implementation
                     updateGraphicImage();
                 end;
 
-            procedure TCustomGraphic2D.shiftRegionWithMouse();
-                var
-                    mouse_dL,           mouse_dT            : integer;
-                    regionShiftX,       regionShiftY,
-                    newRegionCentreX,   newRegionCentreY    : double;
-                begin
-                    if (NOT(mousePanningActive)) then
-                        exit();
-
-                    //calculate how much the mouse moves from the point where the middle mouse button is pressed down
-                        mouse_dL := mousePanningOrigin.X - currentMousePos.X;
-                        mouse_dT := mousePanningOrigin.Y - currentMousePos.Y;
-
-                    //convert mouse shift to drawing shift
-                        regionShiftX := axisConverter.dL_To_dX( mouse_dL );
-                        regionShiftY := axisConverter.dT_To_dY( mouse_dT );
-
-                    //calculate new region centre point
-                        newRegionCentreX := regionPanningOrigin.x + regionShiftX;
-                        newRegionCentreY := regionPanningOrigin.y + regionShiftY;
-
-                    //move region to new position
-                        axisConverter.setDrawingRegionShift(newRegionCentreX, newRegionCentreY);
-
-                    updateGraphicImage();
-                end;
-
-
-            procedure TCustomGraphic2D.activateMousePanning();
-                begin
-                    if (NOT(mouseOnCanvas)) then
-                        begin
-                            exit();
-                            mousePanningActive := False;
-                        end;
-
-                    if (mousePanningActive) then
-                        exit();
-
-                    mousePanningActive := True;
-
-                    mousePanningOrigin  := currentMousePos;
-                    regionPanningOrigin := axisConverter.getCurrentRegionCentreShift();
-                end;
-
         //zooming methods
             procedure TCustomGraphic2D.zoomIn(const zoomPercentageIn : double);
                 begin
                     axisConverter.zoomIn( zoomPercentageIn );
-
-                    updateGraphicImage();
-                end;
-
-            procedure TCustomGraphic2D.zoomInRelativeToMouse();
-                var
-                    regionPoint : TGeomPoint;
-                begin
-                    regionPoint := axisConverter.LT_to_XY(currentMousePos);
-
-                    axisConverter.zoomIn(10, regionPoint);
 
                     updateGraphicImage();
                 end;
@@ -341,28 +281,6 @@ implementation
                     axisConverter.zoomOut( zoomPercentageIn );
 
                     updateGraphicImage();
-                end;
-
-            procedure TCustomGraphic2D.zoomOutRelativeToMouse();
-                var
-                    mousePoint  : TPoint;
-                    regionPoint : TGeomPoint;
-                begin
-                    mousePoint := SkPaintBoxGraphic.ScreenToClient(mouse.CursorPos);
-
-                    regionPoint := axisConverter.LT_to_XY(mousePoint);
-
-                    axisConverter.zoomOut(10, regionPoint);
-
-                    updateGraphicImage();
-                end;
-
-            procedure TCustomGraphic2D.zoomRelativeToMouse(const messageIn : TMessage);
-                begin
-                    if (messageIn.WParam = 7864320) then
-                        zoomInRelativeToMouse()
-                    else
-                        zoomOutRelativeToMouse();
                 end;
 
             procedure TCustomGraphic2D.setZoom(const zoomPercentageIn : double);
@@ -390,7 +308,7 @@ implementation
                         graphicBackgroundColour := colourToAlphaColour( self.Color );
 
                     //make sure canvas is the same colour as the parent
-                        skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
+                        skiaGeomDrawer.setDrawingBackgroundColour( TAlphaColors.Null );
 
                     axisConverter.setDrawingSpaceRatioOneToOne();
                 end;
@@ -433,27 +351,18 @@ implementation
 
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
+                var
+                    mustUpdateGraphicImage : boolean;
                 begin
                     case (messageInOut.Msg) of
-                        WM_MBUTTONDOWN:
-                            activateMousePanning();
-
-                        WM_MBUTTONUP:
-                            mousePanningActive := False;
-
-                        WM_MBUTTONDBLCLK:
-                            zoomAll();
-
-                        WM_MOUSEWHEEL:
-                            zoomRelativeToMouse(messageInOut);
-
                         WM_MOUSEMOVE:
-                            begin
-                                updateMouseCoordinates();
-
-                                shiftRegionWithMouse();
-                            end;
+                            updateMouseCoordinates();
                     end;
+
+                    mustUpdateGraphicImage := axisConverter.processWindowsMessages( currentMousePos, messageInOut );
+
+                    if (mustUpdateGraphicImage) then
+                        updateGraphicImage();
 
                     if (mustRedrawGraphic) then
                         SkPaintBoxGraphic.Redraw();
@@ -465,29 +374,29 @@ implementation
         //constructor
             constructor TCustomGraphic2D.create(AOwner : TComponent);
                 begin
+                    //create required classes (must be created before inherited as inherited calls wndProc with axisConverter = nil)
+                        axisConverter := TDrawingAxisConverter.create();
+                        skiaGeomDrawer := TSkiaGeomDrawer.create();
+
                     inherited create(AOwner);
 
-                    labelCoords.Left := labelCoords.Height div 2;
-                    labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
+                    //place graphic controls
+                        labelCoords.Left := labelCoords.Height div 2;
+                        labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
 
-                    GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
-                    GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
+                        GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
+                        GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
 
-                    GridPanelDirectionalPan.BringToFront();
-
-                    axisConverter := TDrawingAxisConverter.create();
-                    skiaGeomDrawer := TSkiaGeomDrawer.create();
-
-                    updateGeometry();
-                    zoomall();
+                        GridPanelDirectionalPan.BringToFront();
                 end;
 
         //destructor
             destructor TCustomGraphic2D.destroy();
                 begin
-                    FreeAndNil(axisConverter);
+                    FreeAndNil( axisConverter );
+                    FreeAndNil( skiaGeomDrawer );
 
-                    inherited Destroy();
+                    inherited destroy();
                 end;
 
         //accessors
