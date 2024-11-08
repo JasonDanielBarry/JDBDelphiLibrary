@@ -137,6 +137,7 @@
         <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas"/>
         <DCCReference Include="Source\Graphics\ColourMethods.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

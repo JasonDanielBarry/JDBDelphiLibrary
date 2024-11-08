@@ -311,11 +311,9 @@ implementation
                     if (mousePanningActive) then
                         exit();
 
-                    var mousePoint : TPoint := mouse.CursorPos;
-
                     mousePanningActive := True;
 
-                    mousePanningOrigin  := SkPaintBoxGraphic.ScreenToClient( mousePoint );
+                    mousePanningOrigin  := currentMousePos;
                     regionPanningOrigin := axisConverter.getCurrentRegionCentreShift();
                 end;
 
@@ -329,12 +327,9 @@ implementation
 
             procedure TCustomGraphic2D.zoomInRelativeToMouse();
                 var
-                    mousePoint  : TPoint;
                     regionPoint : TGeomPoint;
                 begin
-                    mousePoint := SkPaintBoxGraphic.ScreenToClient(mouse.CursorPos);
-
-                    regionPoint := axisConverter.LT_to_XY(mousePoint);
+                    regionPoint := axisConverter.LT_to_XY(currentMousePos);
 
                     axisConverter.zoomIn(10, regionPoint);
 
