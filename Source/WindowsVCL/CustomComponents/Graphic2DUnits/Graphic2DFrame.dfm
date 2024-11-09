@@ -3,6 +3,12 @@ object CustomGraphic2D: TCustomGraphic2D
   Top = 0
   Width = 1231
   Height = 736
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  ParentFont = False
   TabOrder = 0
   OnResize = FrameResize
   DesignSize = (
@@ -18,8 +24,8 @@ object CustomGraphic2D: TCustomGraphic2D
     OnMouseEnter = SkPaintBoxGraphicMouseEnter
     OnMouseLeave = SkPaintBoxGraphicMouseLeave
     OnDraw = SkPaintBoxGraphicDraw
-    ExplicitTop = 26
-    ExplicitHeight = 711
+    ExplicitLeft = -120
+    ExplicitTop = -33
   end
   object labelCoords: TLabel
     Left = 80
@@ -212,6 +218,19 @@ object CustomGraphic2D: TCustomGraphic2D
       Flat = True
       ExplicitLeft = 1084
     end
+    object SpeedButtonAxisSettings: TSpeedButton
+      Left = 1065
+      Top = 0
+      Width = 23
+      Height = 23
+      Action = ActionEditAxes
+      Align = alRight
+      AllowAllUp = True
+      Caption = 'S'
+      Flat = True
+      ExplicitLeft = 1059
+      ExplicitTop = -6
+    end
     object ComboBoxZoomPercent: TComboBox
       AlignWithMargins = True
       Left = 1180
@@ -243,6 +262,181 @@ object CustomGraphic2D: TCustomGraphic2D
         '750'
         '1000'
         '1500')
+    end
+  end
+  object GridPanelAxisOptions: TGridPanel
+    Left = 1009
+    Top = 29
+    Width = 150
+    Height = 100
+    Anchors = [akTop, akRight]
+    BevelKind = bkFlat
+    BevelOuter = bvNone
+    BevelWidth = 2
+    ColumnCollection = <
+      item
+        Value = 50.000000000000000000
+      end
+      item
+        SizeStyle = ssAbsolute
+        Value = 35.000000000000000000
+      end
+      item
+        Value = 50.000000000000000000
+      end>
+    ControlCollection = <
+      item
+        Column = 0
+        ColumnSpan = 3
+        Control = LabelXAxis
+        Row = 0
+      end
+      item
+        Column = 0
+        Control = EditXMin
+        Row = 1
+      end
+      item
+        Column = 1
+        Control = LabelXBounds
+        Row = 1
+      end
+      item
+        Column = 2
+        Control = EditXMax
+        Row = 1
+      end
+      item
+        Column = 0
+        ColumnSpan = 3
+        Control = LabelYAxis
+        Row = 2
+      end
+      item
+        Column = 0
+        Control = EditYMin
+        Row = 3
+      end
+      item
+        Column = 1
+        Control = LabelYBounds
+        Row = 3
+      end
+      item
+        Column = 2
+        Control = EditYMax
+        Row = 3
+      end>
+    ParentColor = True
+    RowCollection = <
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end
+      item
+        Value = 25.000000000000000000
+      end>
+    TabOrder = 2
+    object LabelXAxis: TLabel
+      AlignWithMargins = True
+      Left = 5
+      Top = 0
+      Width = 141
+      Height = 24
+      Margins.Left = 5
+      Margins.Top = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alClient
+      Caption = 'X-Axis:'
+      Layout = tlCenter
+      ExplicitWidth = 37
+      ExplicitHeight = 15
+    end
+    object EditXMin: TEdit
+      Left = 0
+      Top = 24
+      Width = 56
+      Height = 24
+      Align = alClient
+      TabOrder = 0
+      OnKeyPress = EditAxisValueKeyPress
+      ExplicitHeight = 23
+    end
+    object LabelXBounds: TLabel
+      Left = 56
+      Top = 24
+      Width = 35
+      Height = 24
+      Align = alClient
+      Alignment = taCenter
+      Caption = '< x <'
+      Layout = tlCenter
+      ExplicitWidth = 28
+      ExplicitHeight = 15
+    end
+    object EditXMax: TEdit
+      Left = 91
+      Top = 24
+      Width = 55
+      Height = 24
+      Align = alClient
+      TabOrder = 1
+      OnKeyPress = EditAxisValueKeyPress
+      ExplicitHeight = 23
+    end
+    object LabelYAxis: TLabel
+      AlignWithMargins = True
+      Left = 5
+      Top = 48
+      Width = 141
+      Height = 24
+      Margins.Left = 5
+      Margins.Top = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alClient
+      Caption = 'Y-Axis:'
+      Layout = tlCenter
+      ExplicitWidth = 37
+      ExplicitHeight = 15
+    end
+    object EditYMin: TEdit
+      Left = 0
+      Top = 72
+      Width = 56
+      Height = 24
+      Align = alClient
+      TabOrder = 2
+      OnKeyPress = EditAxisValueKeyPress
+      ExplicitHeight = 23
+    end
+    object LabelYBounds: TLabel
+      Left = 56
+      Top = 72
+      Width = 35
+      Height = 24
+      Align = alClient
+      Alignment = taCenter
+      Caption = '< y <'
+      Layout = tlCenter
+      ExplicitWidth = 28
+      ExplicitHeight = 15
+    end
+    object EditYMax: TEdit
+      Left = 91
+      Top = 72
+      Width = 55
+      Height = 24
+      Align = alClient
+      TabOrder = 3
+      OnKeyPress = EditAxisValueKeyPress
+      ExplicitHeight = 23
     end
   end
   object ActionList1: TActionList
@@ -304,6 +498,11 @@ object CustomGraphic2D: TCustomGraphic2D
       Hint = 'Shift graphic down'
       OnExecute = ActionPanDownExecute
     end
+    object ActionEditAxes: TAction
+      Category = 'Axes'
+      Caption = 'Edit Axes'
+      OnExecute = ActionEditAxesExecute
+    end
   end
   object PopupMenuGraphicControls: TPopupMenu
     Left = 264
@@ -340,6 +539,12 @@ object CustomGraphic2D: TCustomGraphic2D
     end
     object PanRight2: TMenuItem
       Action = ActionPanRight
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object EditAxes1: TMenuItem
+      Action = ActionEditAxes
     end
   end
 end

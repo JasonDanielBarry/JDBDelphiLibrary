@@ -42,18 +42,18 @@ interface
                         procedure setDomain(const domainMinIn, domainMaxIn : double); inline;
                         procedure setRange(const rangeMinIn, rangeMaxIn : double); inline;
                         procedure setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload; inline;
+                        procedure setDrawingRegion( const bufferIn : double;
+                                                    const regionIn : TGeomBox ); overload; virtual;
             public
                 //constructor
                     constructor create();
                 //destructor
                     destructor destroy(); override;
                 //accessors
+                    function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
                         procedure setCanvasRegion(const heightIn, widthIn : integer);
-                    //drawing space boundaries
-                        procedure setDrawingRegion( const bufferIn : double;
-                                                    const regionIn : TGeomBox ); overload; virtual;
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double;
@@ -184,6 +184,12 @@ implementation
             destructor TDrawingAxisConverterBase.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //accessors
+            function TDrawingAxisConverterBase.getDrawingRegion() : TGeomBox;
+                begin
+                    result := drawingRegion;
                 end;
 
         //modifiers

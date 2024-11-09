@@ -4,14 +4,17 @@ interface
 
     uses
       Winapi.Windows, Winapi.Messages,
-      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes, system.UIConsts, system.Threading, system.Math, system.Diagnostics,
+      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
+      system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
       Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls,
+      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus,
+      GeneralComponentHelperMethods,
       ColourMethods,
       GeometryTypes,
       DrawingAxisConversionClass,
       SkiaDrawingClass,
-      Graphic2DTypes, System.Actions, Vcl.ActnList, Vcl.Menus;
+      Graphic2DTypes
+      ;
 
     type
         TCustomGraphic2D = class(TFrame)
@@ -51,6 +54,19 @@ interface
             PanRight1: TMenuItem;
             PanDown1: TMenuItem;
             PanRight2: TMenuItem;
+            GridPanelAxisOptions: TGridPanel;
+            LabelXAxis: TLabel;
+            EditXMin: TEdit;
+            LabelXBounds: TLabel;
+            EditXMax: TEdit;
+            LabelYAxis: TLabel;
+            EditYMin: TEdit;
+            LabelYBounds: TLabel;
+            EditYMax: TEdit;
+            SpeedButtonAxisSettings: TSpeedButton;
+            ActionEditAxes: TAction;
+    N3: TMenuItem;
+    EditAxes1: TMenuItem;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -69,9 +85,11 @@ interface
                 procedure ActionPanRightExecute(Sender: TObject);
                 procedure ActionPanUpExecute(Sender: TObject);
                 procedure ActionPanDownExecute(Sender: TObject);
-
+                procedure ActionEditAxesExecute(Sender: TObject);
+                procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
             private
                 var
+                    axisSettingsVisible,
                     mouseOnCanvas,
                     mustRedrawGraphic               : boolean;
                     graphicImage                    : ISkImage;
@@ -79,6 +97,9 @@ interface
                     skiaGeomDrawer                  : TSkiaGeomDrawer;
                     axisConverter                   : TDrawingAxisConverter;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
+                //axis Settings
+                    procedure updateAxisSettingsValues();
+                    procedure writeAxisSettingsValuesToAxisConverter();
                 //mouse location
                     procedure updateMouseCoordinates();
                 //panning methods
@@ -162,6 +183,27 @@ implementation
                 updateGraphicImage();
             end;
 
+        procedure TCustomGraphic2D.ActionEditAxesExecute(Sender: TObject);
+            begin
+                axisSettingsVisible := NOT(axisSettingsVisible);
+
+                if (axisSettingsVisible) then
+                    setSpeedButtonDown(1, SpeedButtonAxisSettings)
+                else
+                    SpeedButtonAxisSettings.Down := False;
+
+                if (axisSettingsVisible) then
+                    begin
+                        GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
+                        GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
+
+                        GridPanelAxisOptions.Visible := True;
+                        GridPanelAxisOptions.BringToFront;
+                    end
+                else
+                    GridPanelAxisOptions.Visible := False;
+            end;
+
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
             var
                 drawingRange : double;
@@ -223,7 +265,62 @@ implementation
                 zoomOut(10);
             end;
 
+        procedure TCustomGraphic2D.EditAxisValueKeyPress(   Sender  : TObject;
+                                                            var Key : Char      );
+            begin
+                if (integer(key) = 13) then
+                    writeAxisSettingsValuesToAxisConverter();
+            end;
+
     //private
+        //axis Settings
+            procedure TCustomGraphic2D.updateAxisSettingsValues();
+                var
+                    xMin, xMax,
+                    yMin, yMax      : double;
+                    drawingRegion   : TGeomBox;
+                begin
+                    drawingRegion := axisConverter.getDrawingRegion();
+
+                    xMin := drawingRegion.minPoint.x;
+                    xMax := drawingRegion.maxPoint.x;
+                    yMin := drawingRegion.minPoint.y;
+                    yMax := drawingRegion.maxPoint.y;
+
+                    EditXMin.Text := FloatToStrF(xMin, ffFixed, 5, 2);
+                    EditXMax.Text := FloatToStrF(xMax, ffFixed, 5, 2);
+                    EditYMin.Text := FloatToStrF(yMin, ffFixed, 5, 2);
+                    EditYMax.Text := FloatToStrF(yMax, ffFixed, 5, 2);
+                end;
+
+            procedure TCustomGraphic2D.writeAxisSettingsValuesToAxisConverter();
+                var
+                    validXmin, validXMax,
+                    validYMin, validYMax,
+                    validValues             : boolean;
+                    newDrawingRegion        : TGeomBox;
+                begin
+                    //check for valid values
+                        validXmin := TryStrToFloat( EditXMin.Text, newDrawingRegion.minPoint.x );
+                        validXMax := TryStrToFloat( EditXMax.Text, newDrawingRegion.maxPoint.x );
+
+                        validYmin := TryStrToFloat( EditYMin.Text, newDrawingRegion.minPoint.y );
+                        validYMax := TryStrToFloat( EditYMax.Text, newDrawingRegion.maxPoint.y );
+
+                        validValues := (validXmin AND validXMax AND validYMin AND validYMax);
+
+                        if ( NOT(validValues) ) then
+                            exit();
+
+                    //write new drawing region to axis converter
+                        newDrawingRegion.minPoint.z := 0;
+                        newDrawingRegion.maxPoint.z := 0;
+
+                        axisConverter.setDrawingRegion(0, newDrawingRegion);
+
+                    updateGraphicImage();
+                end;
+
         //mouse location
             procedure TCustomGraphic2D.updateMouseCoordinates();
                 var
@@ -345,6 +442,8 @@ implementation
 
                     updateZoomPercentage();
 
+                    updateAxisSettingsValues();
+
                     mustRedrawGraphic := True;
                 end;
 
@@ -379,14 +478,21 @@ implementation
 
                     inherited create(AOwner);
 
-                    //place graphic controls
-                        labelCoords.Left := labelCoords.Height div 2;
-                        labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
+                    //set up graphic controls
+                        //coordinates label
+                            labelCoords.Left := labelCoords.Height div 2;
+                            labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
 
-                        GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
-                        GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
+                        //direction pan
+                            GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
+                            GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
+                            GridPanelDirectionalPan.BringToFront();
 
-                        GridPanelDirectionalPan.BringToFront();
+                        //axis settings
+                            axisSettingsVisible := False;
+                            SpeedButtonAxisSettings.Down := axisSettingsVisible;
+                            GridPanelAxisOptions.Visible := axisSettingsVisible;
+                            GridPanelAxisOptions.Width := self.Width - SpeedButtonAxisSettings.Left - 2;
                 end;
 
         //destructor
@@ -398,7 +504,9 @@ implementation
                     inherited destroy();
                 end;
 
-        //accessors
+
+
+//accessors
             function TCustomGraphic2D.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 begin
                     result := onGraphicUpdateGeometryEvent;
