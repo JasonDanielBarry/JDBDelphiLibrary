@@ -3,7 +3,7 @@ unit DrawingAxisConversionClass;
 interface
 
     uses
-        System.SysUtils, system.Math, system.Types,
+        System.SysUtils, system.Math, system.Types, vcl.Controls,
         GeometryTypes,
         DrawingAxisConversionBaseClass, DrawingAxisConversionMouseControlClass;
 
@@ -14,7 +14,7 @@ interface
                     procedure adjustDrawingRegionAspectRatio(const ratioIn : double);
             public
                 //constructor
-                    constructor create();
+                    constructor create(const graphicControlComponentIn : TGraphicControl); override;
                 //destructor
                     destructor destroy(); override;
                 //set the drawing region range/domain ratio
@@ -49,9 +49,9 @@ implementation
 
     //public
         //constructor
-            constructor TDrawingAxisConverter.create();
+            constructor TDrawingAxisConverter.create(const graphicControlComponentIn : TGraphicControl);
                 begin
-                    inherited create();
+                    inherited create( graphicControlComponentIn );
                 end;
 
         //destructor

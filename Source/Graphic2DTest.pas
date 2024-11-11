@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, system.UITypes,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, vcl.Styles, vcl.Themes,
   CustomComponentPanelClass, Graphic2DComponent, SkiaDrawingClass,
   GeometryTypes,
   GeomLineClass, GeomPolyLineClass, GeomPolygonClass;
@@ -19,7 +19,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-        constructor create();
+        constructor create(AOwner: TComponent); override;
   end;
 
 var
@@ -29,9 +29,11 @@ implementation
 
 {$R *.dfm}
 
-constructor TForm1.create();
+constructor TForm1.create(AOwner: TComponent);
     begin
         inherited create(nil);
+
+//        TStyleManager.SetStyle('Windows11 Modern Dark');
     end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -50,6 +52,9 @@ var
     polyline        : TGeomPolyLine;
     polygon         : TGeomPolygon;
 begin
+//    canvas
+
+
     //box
         polygon := TGeomPolygon.create();
 

@@ -46,7 +46,7 @@ interface
                                                     const regionIn : TGeomBox ); overload; virtual;
             public
                 //constructor
-                    constructor create();
+                    constructor create(); virtual;
                 //destructor
                     destructor destroy(); override;
                 //accessors
@@ -223,8 +223,8 @@ implementation
                             regionInRange    := regionIn.maxPoint.y - regionIn.minPoint.y;
 
                         //calculate the region buffers
-                            domainBuffer := (bufferIn / 100) * regionInDomain;
-                            rangeBuffer  := (bufferIn / 100) * regionInRange;
+                            domainBuffer := (buffer / 100) * regionInDomain;
+                            rangeBuffer  := (buffer / 100) * regionInRange;
 
                         //calculate new mins and maxes
                             newDomainMin := regionIn.minPoint.x - domainBuffer / 2;

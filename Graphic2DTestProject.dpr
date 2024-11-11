@@ -2,7 +2,9 @@ program Graphic2DTestProject;
 
 uses
   Vcl.Forms,
-  Graphic2DTest in 'Source\Graphic2DTest.pas' {Form1};
+  Graphic2DTest in 'Source\Graphic2DTest.pas' {Form1},
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 

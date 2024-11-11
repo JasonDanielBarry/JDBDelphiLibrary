@@ -7,7 +7,7 @@ interface
       System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
       system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
       Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus,
+      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
       GeneralComponentHelperMethods,
       ColourMethods,
       GeometryTypes,
@@ -32,7 +32,7 @@ interface
             PanelGraphicControls: TPanel;
             SpeedButtonCentre: TSpeedButton;
             labelCoords: TLabel;
-            ActionList1: TActionList;
+            ActionListControls: TActionList;
             ActionZoomIn: TAction;
             ActionZoomOut: TAction;
             ActionZoomExtents: TAction;
@@ -65,8 +65,8 @@ interface
             EditYMax: TEdit;
             SpeedButtonAxisSettings: TSpeedButton;
             ActionEditAxes: TAction;
-    N3: TMenuItem;
-    EditAxes1: TMenuItem;
+            N3: TMenuItem;
+            EditAxes1: TMenuItem;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -90,16 +90,17 @@ interface
             private
                 var
                     axisSettingsVisible,
-                    mouseOnCanvas,
                     mustRedrawGraphic               : boolean;
                     graphicImage                    : ISkImage;
-                    currentMousePos                 : TPoint;
+                    graphicBackgroundColour         : TAlphaColor;
                     skiaGeomDrawer                  : TSkiaGeomDrawer;
                     axisConverter                   : TDrawingAxisConverter;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
                     procedure updateAxisSettingsValues();
                     procedure writeAxisSettingsValuesToAxisConverter();
+                //background colour
+                    procedure setGraphicBackgroundColour(); inline;
                 //mouse location
                     procedure updateMouseCoordinates();
                 //panning methods
@@ -112,7 +113,7 @@ interface
                     procedure setZoom(const zoomPercentageIn : double);
                     procedure updateZoomPercentage();
             protected
-                //drawing procedure
+                //drawing procedures
                     procedure preDrawGraphic(); virtual;
                     procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
                     procedure updateGraphicImage();
@@ -156,13 +157,11 @@ implementation
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
             begin
                 axisConverter.activateMouseControl();
-                mouseOnCanvas := True;
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
             begin
                 axisConverter.deactivateMouseControl();
-                mouseOnCanvas := False;
             end;
 
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
@@ -186,6 +185,8 @@ implementation
         procedure TCustomGraphic2D.ActionEditAxesExecute(Sender: TObject);
             begin
                 axisSettingsVisible := NOT(axisSettingsVisible);
+
+                EditAxes1.Checked := axisSettingsVisible;
 
                 if (axisSettingsVisible) then
                     setSpeedButtonDown(1, SpeedButtonAxisSettings)
@@ -321,13 +322,25 @@ implementation
                     updateGraphicImage();
                 end;
 
+        //background colour
+            procedure TCustomGraphic2D.setGraphicBackgroundColour();
+                var
+                    themeColour : TColor;
+                begin
+                    //get the colour of the parent and convert it to an alpha colour
+                        themeColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
+
+                        graphicBackgroundColour := colourToAlphaColour( themeColour );
+                end;
+
         //mouse location
             procedure TCustomGraphic2D.updateMouseCoordinates();
                 var
                     mouseCoordStr   : string;
+                    currentMousePos : TPoint;
                     mousePointXY    : TGeomPoint;
                 begin
-                    if (not(mouseOnCanvas)) then
+                    if (NOT( axisConverter.MouseControlActive )) then
                         exit();
 
                     //get current mouse position
@@ -395,16 +408,11 @@ implementation
                 end;
 
     //protected
-        //drawing procedure
+        //drawing procedures
             procedure TCustomGraphic2D.preDrawGraphic();
-                var
-                    graphicBackgroundColour : TAlphaColor;
                 begin
-                    //get the colour of the parent and convert it to an alpha colour
-                        graphicBackgroundColour := colourToAlphaColour( self.Color );
-
                     //make sure canvas is the same colour as the parent
-                        skiaGeomDrawer.setDrawingBackgroundColour( TAlphaColors.Null );
+                        skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
 
                     axisConverter.setDrawingSpaceRatioOneToOne();
                 end;
@@ -457,7 +465,7 @@ implementation
                             updateMouseCoordinates();
                     end;
 
-                    mustUpdateGraphicImage := axisConverter.processWindowsMessages( currentMousePos, messageInOut );
+                    mustUpdateGraphicImage := axisConverter.processWindowsMessages( messageInOut );
 
                     if (mustUpdateGraphicImage) then
                         updateGraphicImage();
@@ -472,11 +480,11 @@ implementation
         //constructor
             constructor TCustomGraphic2D.create(AOwner : TComponent);
                 begin
-                    //create required classes (must be created before inherited as inherited calls wndProc with axisConverter = nil)
-                        axisConverter := TDrawingAxisConverter.create();
-                        skiaGeomDrawer := TSkiaGeomDrawer.create();
-
                     inherited create(AOwner);
+
+                    //create required classes
+                        axisConverter := TDrawingAxisConverter.create( SkPaintBoxGraphic );
+                        skiaGeomDrawer := TSkiaGeomDrawer.create();
 
                     //set up graphic controls
                         //coordinates label
@@ -504,9 +512,7 @@ implementation
                     inherited destroy();
                 end;
 
-
-
-//accessors
+        //accessors
             function TCustomGraphic2D.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 begin
                     result := onGraphicUpdateGeometryEvent;
@@ -530,6 +536,8 @@ implementation
                 var
                     newGeometryBoundary : TGeomBox;
                 begin
+                    setGraphicBackgroundColour();
+
                     //reset the stored geometry
                         skiaGeomDrawer.resetDrawingGeometry();
 

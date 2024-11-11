@@ -25,7 +25,7 @@ interface
                     function XY_to_LT(const X_In, Y_In : double) : TPoint; overload; inline;
             public
                 //constructor
-                    constructor create();
+                    constructor create(); override;
                 //destructor
                     destructor destroy(); override;
                 //space conversions

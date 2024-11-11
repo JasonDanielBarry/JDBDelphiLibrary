@@ -25,7 +25,7 @@ interface
                     procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); override;
             public
                 //constructor
-                    constructor create();
+                    constructor create(); override;
                 //destructor
                     destructor destroy(); override;
                 //accessors

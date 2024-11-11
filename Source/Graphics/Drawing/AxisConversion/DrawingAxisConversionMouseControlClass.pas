@@ -4,7 +4,7 @@ interface
 
     uses
         system.SysUtils, system.math, system.Types,
-        {vcl.Controls,} Winapi.Windows, winapi.Messages,
+        vcl.Controls, Winapi.Windows, winapi.Messages,
         DrawingAxisConversionBaseClass, DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
         GeometryTypes
         ;
@@ -18,28 +18,32 @@ interface
                     currentMousePosition,
                     mousePanningOrigin      : TPoint;
                     regionPanningOrigin     : TGeomPoint;
+                    graphicControlComponent : TGraphicControl;
                 //activate/deactivate mouse panning
                     procedure activateMousePanning();
                     procedure deactivateMousePanning(); inline;
                 //panning with mouse
                     procedure panRegionWithMouse();
+                //set current mouse position
+                    procedure updateCurrentMousePosition();
+                //set the graphic control
+                    procedure setGraphicControlComponent(const componentIn : TGraphicControl);
                 //zooming relative to mouse
                     procedure zoomInRelativeToMouse(); inline;
                     procedure zoomOutRelativeToMouse(); inline;
                     procedure zoomRelativeToMouse(const messageIn : TMessage);
             public
                 //constructor
-                    constructor create();
+                    constructor create(const graphicControlComponentIn : TGraphicControl); virtual;
                 //destructor
                     destructor destroy(); override;
+                //accessors
+                    property MouseControlActive : boolean read mouseControlIsActive;
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
-                //set current mouse position
-                    procedure setCurrentMousePosition(const mousePositionIn : TPoint);
                 //process windows messages
-                    function processWindowsMessages(const [ref] mousePositionIn : TPoint;
-                                                    const messageInOut          : Tmessage) : boolean;
+                    function processWindowsMessages(const messageIn : Tmessage) : boolean;
         end;
 
 implementation
@@ -126,9 +130,11 @@ implementation
 
     //public
         //constructor
-            constructor TDrawingAxisMouseControlConverter.create();
+            constructor TDrawingAxisMouseControlConverter.create(const graphicControlComponentIn : TGraphicControl);
                 begin
                     inherited create();
+
+                    setGraphicControlComponent( graphicControlComponentIn );
 
                     deactivateMouseControl();
                 end;
@@ -137,6 +143,12 @@ implementation
             destructor TDrawingAxisMouseControlConverter.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //set the graphic control
+            procedure TDrawingAxisMouseControlConverter.setGraphicControlComponent(const componentIn : TGraphicControl);
+                begin
+                    graphicControlComponent := componentIn;
                 end;
 
         //activate/deactivate mouse control
@@ -153,21 +165,25 @@ implementation
                 end;
 
         //set current mouse position
-            procedure TDrawingAxisMouseControlConverter.setCurrentMousePosition(const mousePositionIn : TPoint);
+            procedure TDrawingAxisMouseControlConverter.updateCurrentMousePosition();
                 begin
-                    currentMousePosition := mousePositionIn;
+                    currentMousePosition := graphicControlComponent.ScreenToClient( mouse.CursorPos );
                 end;
 
         //process windows messages
-            function TDrawingAxisMouseControlConverter.processWindowsMessages(  const [ref] mousePositionIn : TPoint;
-                                                                                const messageInOut          : Tmessage  ) : boolean;
+            function TDrawingAxisMouseControlConverter.processWindowsMessages(const messageIn : Tmessage) : boolean;
                 begin
                     result := false;
 
-                    if (NOT(mouseControlIsActive)) then
-                        exit();
+                    //ensure the axis convertsion class is created before processing any messages
+                        if (self = nil) then
+                            exit();
 
-                    case (messageInOut.Msg) of
+                    //procedure must only run if mouse control is activated
+                        if ( NOT(mouseControlIsActive) ) then
+                            exit();
+
+                    case (messageIn.Msg) of
                         WM_MBUTTONDOWN:
                             activateMousePanning();
 
@@ -182,13 +198,13 @@ implementation
 
                         WM_MOUSEWHEEL:
                             begin
-                                zoomRelativeToMouse(messageInOut);
+                                zoomRelativeToMouse(messageIn);
                                 result := True;
                             end;
 
                         WM_MOUSEMOVE:
                             begin
-                                setCurrentMousePosition(mousePositionIn);
+                                updateCurrentMousePosition();
 
                                 panRegionWithMouse();
 

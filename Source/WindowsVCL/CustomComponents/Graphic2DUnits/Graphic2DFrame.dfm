@@ -3,12 +3,6 @@ object CustomGraphic2D: TCustomGraphic2D
   Top = 0
   Width = 1231
   Height = 736
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -12
-  Font.Name = 'Segoe UI'
-  Font.Style = []
-  ParentFont = False
   TabOrder = 0
   OnResize = FrameResize
   DesignSize = (
@@ -364,6 +358,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Width = 56
       Height = 24
       Align = alClient
+      Color = clWhite
+      NumbersOnly = True
       TabOrder = 0
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -377,8 +373,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Alignment = taCenter
       Caption = '< x <'
       Layout = tlCenter
-      ExplicitWidth = 28
-      ExplicitHeight = 15
+      ExplicitLeft = 50
+      ExplicitTop = 21
     end
     object EditXMax: TEdit
       Left = 91
@@ -386,6 +382,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Width = 55
       Height = 24
       Align = alClient
+      Color = clWhite
+      NumbersOnly = True
       TabOrder = 1
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -412,6 +410,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Width = 56
       Height = 24
       Align = alClient
+      Color = clWhite
+      NumbersOnly = True
       TabOrder = 2
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -434,12 +434,15 @@ object CustomGraphic2D: TCustomGraphic2D
       Width = 55
       Height = 24
       Align = alClient
+      Color = clWhite
+      NumbersOnly = True
       TabOrder = 3
       OnKeyPress = EditAxisValueKeyPress
-      ExplicitHeight = 23
+      ExplicitLeft = 97
+      ExplicitTop = 74
     end
   end
-  object ActionList1: TActionList
+  object ActionListControls: TActionList
     Left = 728
     Top = 256
     object ActionZoomIn: TAction
