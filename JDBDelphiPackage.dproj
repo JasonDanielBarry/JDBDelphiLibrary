@@ -102,6 +102,11 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="Skia.Package.VCL.dcp"/>
+        <DCCReference Include="Skia.Package.RTL.dcp"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
