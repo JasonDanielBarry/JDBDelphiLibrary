@@ -259,7 +259,7 @@ object CustomGraphic2D: TCustomGraphic2D
     end
   end
   object GridPanelAxisOptions: TGridPanel
-    Left = 1009
+    Left = 997
     Top = 29
     Width = 150
     Height = 100
@@ -504,6 +504,7 @@ object CustomGraphic2D: TCustomGraphic2D
     object ActionEditAxes: TAction
       Category = 'Axes'
       Caption = 'Edit Axes'
+      Hint = 'Edit axis boundaries'
       OnExecute = ActionEditAxesExecute
     end
   end
