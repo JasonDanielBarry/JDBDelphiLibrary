@@ -20,7 +20,7 @@ interface
                 constructor Create(AOwner: TComponent); override;
                 destructor Destroy; override;
                 procedure redrawGraphic();
-                procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
+                procedure updateGeometry();
                 procedure zoomAll();
             published
                 property OnUpdateGeometry : TGraphicUpdateGeometryEvent read getOnGraphicDrawEvent write setOnGraphicUpdateGeometryEvent;
@@ -65,9 +65,9 @@ implementation
                 customGraphic.redrawGraphic();
             end;
 
-        procedure TJDBGraphic2D.updateGeometry(const mustRedrawGraphicIn : boolean = False);
+        procedure TJDBGraphic2D.updateGeometry();
             begin
-                customGraphic.updateGeometry(mustRedrawGraphicIn);
+                customGraphic.updateGeometry();
             end;
 
         procedure TJDBGraphic2D.zoomAll();

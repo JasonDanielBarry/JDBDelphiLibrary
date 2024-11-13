@@ -88,8 +88,6 @@ interface
                 procedure ActionEditAxesExecute(Sender: TObject);
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
             private
-                const
-                    WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
                     axisSettingsVisible,
                     mustRedrawGraphic               : boolean;
@@ -133,7 +131,7 @@ interface
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 //redraw the graphic
                     procedure redrawGraphic();
-                    procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
+                    procedure updateGeometry();
                 //zooming methods
                     procedure zoomAll();
         end;
@@ -360,6 +358,8 @@ implementation
             procedure TCustomGraphic2D.recentreAll();
                 begin
                     axisConverter.recentreDrawingRegion();
+
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.shiftDomain(const shiftXIn : double);
@@ -538,10 +538,10 @@ implementation
             procedure TCustomGraphic2D.redrawGraphic();
                 begin
                     //this message is sent to wndProc where the graphic is updated and redrawn
-                        SendMessage(self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0);
+                        PostMessage(self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0);
                 end;
 
-            procedure TCustomGraphic2D.updateGeometry(const mustRedrawGraphicIn : boolean = False);
+            procedure TCustomGraphic2D.updateGeometry();
                 var
                     newGeometryBoundary : TGeomBox;
                 begin
@@ -560,8 +560,11 @@ implementation
                     //store the geometry group boundary in the axis converter for quick access
                         axisConverter.setGeometryBoundary( newGeometryBoundary );
 
-                    if (mustRedrawGraphicIn) then
+                    //send message to redraw
                         redrawGraphic();
+
+                    //must ensure that geometry is updated to draw
+                        Application.ProcessMessages();
                 end;
 
         //zooming methods
