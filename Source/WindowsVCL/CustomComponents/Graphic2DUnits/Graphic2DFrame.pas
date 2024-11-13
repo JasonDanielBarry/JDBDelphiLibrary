@@ -93,7 +93,7 @@ interface
                 var
                     axisSettingsVisible,
                     mustRedrawGraphic               : boolean;
-                    graphicImage                    : ISkImage;
+                    currentGraphicImage             : ISkImage;
                     graphicBackgroundColour         : TAlphaColor;
                     skiaGeomDrawer                  : TSkiaGeomDrawer;
                     axisConverter                   : TDrawingAxisConverter;
@@ -119,7 +119,7 @@ interface
                 //drawing procedures
                     procedure preDrawGraphic(); virtual;
                     procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
-                    procedure updateGraphicImage();
+                    function updateGraphicImage() : ISkImage;
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -134,10 +134,8 @@ interface
                 //redraw the graphic
                     procedure redrawGraphic();
                     procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
-                //panning methods
-
                 //zooming methods
-                    procedure zoomAll(const mustRedrawGraphicIn : boolean = False);
+                    procedure zoomAll();
         end;
 
 
@@ -152,7 +150,7 @@ implementation
                                                             const ADest     : TRectF;
                                                             const AOpacity  : Single    );
             begin
-                ACanvas.DrawImage( graphicImage, 0, 0 );
+                ACanvas.DrawImage( currentGraphicImage, 0, 0 );
 
                 mustRedrawGraphic := False;
             end;
@@ -440,7 +438,7 @@ implementation
                                          );
                 end;
 
-            procedure TCustomGraphic2D.updateGraphicImage();
+            function TCustomGraphic2D.updateGraphicImage() : ISkImage;
                 var
                     surface : ISkSurface;
                 begin
@@ -453,32 +451,34 @@ implementation
 
                         postDrawGraphic( surface.Canvas );
 
+                    //update relevate properties
+                        updateZoomPercentage();
+
+                        updateAxisSettingsValues();
+
+                        mustRedrawGraphic := True;
+
                     //export to image
-                        graphicImage := surface.MakeImageSnapshot();
-
-                    updateZoomPercentage();
-
-                    updateAxisSettingsValues();
-
-                    mustRedrawGraphic := True;
+                        result := surface.MakeImageSnapshot();
                 end;
 
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
-                    mustUpdateGraphicImage : boolean;
+                    mouseInputRequiresRedraw,
+                    mustUpdateGraphicImage      : boolean;
                 begin
                     case (messageInOut.Msg) of
                         WM_MOUSEMOVE:
                             updateMouseCoordinates();
                     end;
 
-                    mustUpdateGraphicImage := axisConverter.processWindowsMessages( messageInOut );
+                    mouseInputRequiresRedraw := axisConverter.processWindowsMessages( messageInOut );
 
-                    mustUpdateGraphicImage := (mustUpdateGraphicImage OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC));
+                    mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
 
                     if (mustUpdateGraphicImage) then
-                        updateGraphicImage();
+                        currentGraphicImage := updateGraphicImage();
 
                     if (mustRedrawGraphic) then
                         SkPaintBoxGraphic.Redraw();
@@ -565,13 +565,12 @@ implementation
                 end;
 
         //zooming methods
-            procedure TCustomGraphic2D.zoomAll(const mustRedrawGraphicIn : boolean = False);
+            procedure TCustomGraphic2D.zoomAll();
                 begin
                     //make the drawing boundary the drawing region
                         axisConverter.resetDrawingRegionToGeometryBoundary();
 
-                    if (mustRedrawGraphicIn) then
-                        redrawGraphic();
+                    redrawGraphic();
                 end;
 
 end.

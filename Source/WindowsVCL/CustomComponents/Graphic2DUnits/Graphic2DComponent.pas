@@ -21,7 +21,7 @@ interface
                 destructor Destroy; override;
                 procedure redrawGraphic();
                 procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
-                procedure zoomAll(const mustRedrawGraphicIn : boolean = False);
+                procedure zoomAll();
             published
                 property OnUpdateGeometry : TGraphicUpdateGeometryEvent read getOnGraphicDrawEvent write setOnGraphicUpdateGeometryEvent;
         end;
@@ -70,9 +70,9 @@ implementation
                 customGraphic.updateGeometry(mustRedrawGraphicIn);
             end;
 
-        procedure TJDBGraphic2D.zoomAll(const mustRedrawGraphicIn : boolean = False);
+        procedure TJDBGraphic2D.zoomAll();
             begin
-                customGraphic.zoomAll(mustRedrawGraphicIn);
+                customGraphic.zoomAll();
             end;
 
 end.

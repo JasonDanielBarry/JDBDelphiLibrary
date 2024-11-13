@@ -54,9 +54,6 @@ var
     polyline        : TGeomPolyLine;
     polygon         : TGeomPolygon;
 begin
-//    canvas
-
-
     //box
         polygon := TGeomPolygon.create();
 
@@ -78,7 +75,7 @@ begin
     //polyline
         polyline := TGeomPolyLine.create();
 
-        const NUM_POINTS : integer = 600;
+        const NUM_POINTS : integer = 1200;
 
         for i := 0 to NUM_POINTS do
             begin
