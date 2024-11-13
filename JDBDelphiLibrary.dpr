@@ -52,7 +52,8 @@ uses
   Direct2DDrawingMethods in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas',
   Direct2DDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas',
   ColourMethods in 'Source\Graphics\ColourMethods.pas',
-  DrawingAxisConversionMouseControlClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas';
+  DrawingAxisConversionMouseControlClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas',
+  GeomDrawerAxisConversionInterfaceClass in 'Source\Graphics\Drawing\GeomDrawerAxisConversionInterfaceClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
