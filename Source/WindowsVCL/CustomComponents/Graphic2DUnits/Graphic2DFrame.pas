@@ -88,6 +88,8 @@ interface
                 procedure ActionEditAxesExecute(Sender: TObject);
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
             private
+                const
+                    WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
                     axisSettingsVisible,
                     mustRedrawGraphic               : boolean;
@@ -104,6 +106,7 @@ interface
                 //mouse location
                     procedure updateMouseCoordinates();
                 //panning methods
+                    procedure recentreAll();
                     procedure shiftDomain(const shiftXIn : double);
                     procedure shiftRange(const shiftYIn : double);
                     procedure shiftRegion(const shiftXIn, shiftYIn : double);
@@ -132,7 +135,7 @@ interface
                     procedure redrawGraphic();
                     procedure updateGeometry(const mustRedrawGraphicIn : boolean = False);
                 //panning methods
-                    procedure recentreAll(const mustRedrawGraphicIn : boolean = False);
+
                 //zooming methods
                     procedure zoomAll(const mustRedrawGraphicIn : boolean = False);
         end;
@@ -179,7 +182,7 @@ implementation
 
         procedure TCustomGraphic2D.FrameResize(Sender: TObject);
             begin
-                updateGraphicImage();
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionEditAxesExecute(Sender: TObject);
@@ -319,7 +322,7 @@ implementation
 
                         axisConverter.setDrawingRegion(0, newDrawingRegion);
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
         //background colour
@@ -356,25 +359,30 @@ implementation
                 end;
 
         //panning methods
+            procedure TCustomGraphic2D.recentreAll();
+                begin
+                    axisConverter.recentreDrawingRegion();
+                end;
+
             procedure TCustomGraphic2D.shiftDomain(const shiftXIn : double);
                 begin
                     axisConverter.shiftDrawingDomain( shiftXIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.shiftRange(const shiftYIn : double);
                 begin
                     axisConverter.shiftDrawingRange( shiftYIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.shiftRegion(const shiftXIn, shiftYIn : double);
                 begin
                     axisConverter.shiftDrawingRegion( shiftXIn, shiftYIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
         //zooming methods
@@ -382,21 +390,21 @@ implementation
                 begin
                     axisConverter.zoomIn( zoomPercentageIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.zoomOut(const zoomPercentageIn : double);
                 begin
                     axisConverter.zoomOut( zoomPercentageIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.setZoom(const zoomPercentageIn : double);
                 begin
                     axisConverter.setZoom( zoomPercentageIn );
 
-                    updateGraphicImage();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.updateZoomPercentage();
@@ -467,6 +475,8 @@ implementation
 
                     mustUpdateGraphicImage := axisConverter.processWindowsMessages( messageInOut );
 
+                    mustUpdateGraphicImage := (mustUpdateGraphicImage OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC));
+
                     if (mustUpdateGraphicImage) then
                         updateGraphicImage();
 
@@ -527,9 +537,8 @@ implementation
         //redraw the graphic
             procedure TCustomGraphic2D.redrawGraphic();
                 begin
-                    updateGraphicImage();
-
-                    SkPaintBoxGraphic.Redraw();
+                    //this message is sent to wndProc where the graphic is updated and redrawn
+                        SendMessage(self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0);
                 end;
 
             procedure TCustomGraphic2D.updateGeometry(const mustRedrawGraphicIn : boolean = False);
@@ -552,20 +561,7 @@ implementation
                         axisConverter.setGeometryBoundary( newGeometryBoundary );
 
                     if (mustRedrawGraphicIn) then
-                        redrawGraphic()
-                    else
-                        updateGraphicImage();
-                end;
-
-        //panning methods
-            procedure TCustomGraphic2D.recentreAll(const mustRedrawGraphicIn : boolean = False);
-                begin
-                    axisConverter.recentreDrawingRegion();
-
-                    if (mustRedrawGraphicIn) then
-                        redrawGraphic()
-                    else
-                        updateGraphicImage();
+                        redrawGraphic();
                 end;
 
         //zooming methods
@@ -575,9 +571,7 @@ implementation
                         axisConverter.resetDrawingRegionToGeometryBoundary();
 
                     if (mustRedrawGraphicIn) then
-                        redrawGraphic()
-                    else
-                        updateGraphicImage();
+                        redrawGraphic();
                 end;
 
 end.

@@ -336,6 +336,7 @@ object CustomGraphic2D: TCustomGraphic2D
         Value = 25.000000000000000000
       end>
     TabOrder = 2
+    Visible = False
     object LabelXAxis: TLabel
       AlignWithMargins = True
       Left = 5
@@ -373,8 +374,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Alignment = taCenter
       Caption = '< x <'
       Layout = tlCenter
-      ExplicitLeft = 50
-      ExplicitTop = 21
+      ExplicitWidth = 28
+      ExplicitHeight = 15
     end
     object EditXMax: TEdit
       Left = 91
@@ -438,8 +439,7 @@ object CustomGraphic2D: TCustomGraphic2D
       NumbersOnly = True
       TabOrder = 3
       OnKeyPress = EditAxisValueKeyPress
-      ExplicitLeft = 97
-      ExplicitTop = 74
+      ExplicitHeight = 23
     end
   end
   object ActionListControls: TActionList

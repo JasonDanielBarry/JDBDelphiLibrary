@@ -95,7 +95,7 @@ implementation
                         skiaSurface.Canvas.Clear( drawingBackgroundColour );
 
                     //give axis converter canvas dimensions
-                        axisConverterIn.setCanvasRegion( heightIn, widthIn );
+                        axisConverterIn.setCanvasDimensions( heightIn, widthIn );
 
                     //draw all geometry on skiaSurface canvas
                         drawAllGeometry( skiaSurface.Canvas, axisConverterIn );

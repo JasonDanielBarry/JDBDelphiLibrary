@@ -53,7 +53,7 @@ interface
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasRegion(const heightIn, widthIn : integer);
+                        procedure setCanvasDimensions(const heightIn, widthIn : integer);
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double;
@@ -194,7 +194,7 @@ implementation
 
         //modifiers
             //canvasSpace boundaries
-                procedure TDrawingAxisConverterBase.setCanvasRegion(const heightIn, widthIn : integer);
+                procedure TDrawingAxisConverterBase.setCanvasDimensions(const heightIn, widthIn : integer);
                     begin
                         setCanvasHeight(heightIn);
                         setCanvasWidth(widthIn);

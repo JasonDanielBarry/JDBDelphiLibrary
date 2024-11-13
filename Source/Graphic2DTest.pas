@@ -40,6 +40,8 @@ procedure TForm1.FormShow(Sender: TObject);
 begin
     JDBGraphic2D1.updateGeometry();
     JDBGraphic2D1.zoomAll();
+    JDBGraphic2D1.redrawGraphic();
+
 end;
 
 procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender         : TObject;
