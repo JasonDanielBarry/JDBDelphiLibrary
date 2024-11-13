@@ -42,6 +42,8 @@ interface
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
+                //match the graphic control dimensions with the axis converter canvas size
+                    procedure matchGraphicControlDimensionsToCanvas();
                 //process windows messages
                     function processWindowsMessages(const messageIn : Tmessage) : boolean;
         end;
@@ -162,6 +164,12 @@ implementation
                     deactivateMousePanning();
 
                     mouseControlIsActive := False;
+                end;
+
+        //match the graphic control dimensions with the axis converter canvas size
+            procedure TDrawingAxisMouseControlConverter.matchGraphicControlDimensionsToCanvas();
+                begin
+                    setCanvasDimensions( graphicControlComponent.Height, graphicControlComponent.Width );
                 end;
 
         //set current mouse position

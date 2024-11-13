@@ -46,10 +46,17 @@ interface
                 constructor create(const point1In, point2In : TGeomPoint); overload;
                 constructor create(const arrGeomBoxesIn : TArray<TGeomBox>); overload;
             //centre point
-                function getCentreX() : double; inline;
-                function getCentreY() : double; inline;
-                function getCentreZ() : double; inline;
+                function getCentreX() : double;
+                function getCentreY() : double;
+                function getCentreZ() : double;
                 function getCentrePoint() : TGeomPoint;
+            //set boundaries
+                procedure setXBounds(const xMinIn, xMaxIn : double);
+                procedure setYBounds(const yMinIn, yMaxIn : double);
+                procedure setZBounds(const zMinIn, zMaxIn : double);
+                procedure setBounds(const   xMinIn, xMaxIn,
+                                            yMinIn, yMaxIn,
+                                            zMinIn, zMaxIn  : double);
             //set points
                 procedure setPoints(const point1In, point2In : TGeomPoint);
             //shift box
@@ -221,6 +228,33 @@ implementation
 
                     result := TGeomPoint.create(centreX, centreY, centreZ);
                 end;
+
+            //set boundaries
+                procedure TGeomBox.setXBounds(const xMinIn, xMaxIn : double);
+                    begin
+                        minPoint.x := xMinIn;
+                        maxPoint.x := xMaxIn;
+                    end;
+
+                procedure TGeomBox.setYBounds(const yMinIn, yMaxIn : double);
+                    begin
+                        minPoint.y := yMinIn;
+                        maxPoint.y := yMaxIn;
+                    end;
+
+                procedure TGeomBox.setZBounds(const zMinIn, zMaxIn : double);
+                    begin
+                        minPoint.z := zMinIn;
+                        maxPoint.z := zMaxIn;
+                    end;
+
+                procedure TGeomBox.setBounds(const  xMinIn, xMaxIn,
+                                                    yMinIn, yMaxIn,
+                                                    zMinIn, zMaxIn  : double);
+                    begin
+                        minPoint.setPoint(xMinIn, yMinIn, zMinIn);
+                        maxPoint.setPoint(xMaxIn, yMaxIn, zMaxIn);
+                    end;
 
         //set points
             procedure TGeomBox.setPoints(const point1In, point2In : TGeomPoint);

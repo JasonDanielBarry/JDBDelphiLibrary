@@ -268,7 +268,7 @@ implementation
         procedure TCustomGraphic2D.EditAxisValueKeyPress(   Sender  : TObject;
                                                             var Key : Char      );
             begin
-                if (integer(key) = 13) then
+                if ( integer(key) = VK_RETURN ) then
                     writeAxisSettingsValuesToAxisConverter();
             end;
 

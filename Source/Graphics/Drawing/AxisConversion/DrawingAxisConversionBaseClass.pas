@@ -89,8 +89,6 @@ implementation
                             drawingRegion.maxPoint.y := rangeMaxIn;
                         end;
 
-
-
     //protected
         //helper methods
             //canvas
@@ -151,20 +149,19 @@ implementation
             //drawingRegion space boundaries
                 procedure TDrawingAxisConverterBase.setDomain(const domainMinIn, domainMaxIn : double);
                     begin
-                        setDomainMin(domainMinIn);
-                        setDomainMax(domainMaxIn);
+                        drawingRegion.setXBounds( domainMinIn, domainMaxIn );
                     end;
 
                 procedure TDrawingAxisConverterBase.setRange(const rangeMinIn, rangeMaxIn : double);
                     begin
-                        setRangeMin(rangeMinIn);
-                        setRangeMax(rangeMaxIn);
+                        drawingRegion.setYBounds( rangeMinIn, rangeMaxIn );
                     end;
 
                 procedure TDrawingAxisConverterBase.setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double);
                     begin
-                        setDomain(domainMinIn, domainMaxIn);
-                        setRange(rangeMinIn, rangeMaxIn);
+                        drawingRegion.setBounds(domainMinIn,    domainMaxIn,
+                                                rangeMinIn,     rangeMaxIn,
+                                                0,              0           );
                     end;
         
     //public
