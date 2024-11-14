@@ -97,9 +97,6 @@ implementation
                     end;
 
     //protected
-        //accessors
-
-
         //drawing procedures
             //draw all geometry
                 procedure TGeomDrawerBase.drawAllGeometry(const canvasHeightIn, canvasWidthIn : integer);
