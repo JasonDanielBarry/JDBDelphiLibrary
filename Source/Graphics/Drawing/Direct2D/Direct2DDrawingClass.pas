@@ -10,12 +10,12 @@ interface
         //custom
             DrawingAxisConversionClass,
             DrawingGeometryClass,
-            GeomDrawerBaseClass,
+            GeomDrawerAxisConversionInterfaceClass,
             GeometryBaseClass,
             Direct2DDrawingMethods;
 
     type
-        TDirect2DGeomDrawer = class(TGeomDrawerBase)
+        TDirect2DGeomDrawer = class(TGeomDrawerAxisConversionInterface)
             private
                 var
                     Direct2DDrawingCanvas : TDirect2DCanvas;
@@ -24,8 +24,7 @@ interface
                         procedure setDrawingCanvas(const canvasIn : TDirect2DCanvas);
                 //drawing procedures
                     //auto detect geom type
-                        procedure drawGeometry( const drawingGeometryIn : TDrawingGeometry;
-                                                const axisConverterIn   : TDrawingAxisConverter ); override;
+                        procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
             public
                 //constructor
                     constructor create();
@@ -49,11 +48,10 @@ implementation
         //drawing procedures
 
             //auto detect geom type
-                procedure TDirect2DGeomDrawer.drawGeometry( const drawingGeometryIn : TDrawingGeometry;
-                                                            const axisConverterIn   : TDrawingAxisConverter);
+                procedure TDirect2DGeomDrawer.drawGeometry(const drawingGeometryIn : TDrawingGeometry);
                     begin
                         drawDirect2DGeometry(   drawingGeometryIn,
-                                                axisConverterIn,
+                                                axisConverter,
                                                 Direct2DDrawingCanvas,
                                                 false                   );
                     end;
@@ -79,7 +77,7 @@ implementation
                         setDrawingCanvas( canvasIn );
 
                     //draw all geometry
-                        inherited drawAllGeometry( axisConverterIn );
+                        inherited drawAllGeometry();
                 end;
 
 end.
