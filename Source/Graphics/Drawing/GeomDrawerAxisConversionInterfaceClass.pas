@@ -6,6 +6,7 @@ interface
         system.SysUtils, system.math, system.Types,
         Winapi.Messages,
         vcl.Controls,
+        GeometryTypes, GeomBox,
         DrawingAxisConversionClass,
         GeomDrawerBaseClass
         ;
@@ -19,19 +20,19 @@ interface
                     destructor destroy(); override;
                 //axis conversion interface
                     //drawing region
-
-
-                        asdf    //make methods to get and set the drawing region
-                                //also modify the TGeomBox so that is has the functionality contained in the axis converter base class
-                                //so that the region can be used as easily as possible to get rid of unnecessary functions
-                                //to improve performance
-
-
+                        function getDrawingRegion() : TGeomBox;
+                        procedure setDrawingRegion( const bufferIn : double;
+                                                    const regionIn : TGeomBox );
+                    //draw space ratio
+                        procedure setDrawingSpaceRatio(const ratioIn : double);
+                    //mouse coordinates
+                        function getMouseCoordinatesXY() : TGeomPoint;
                     //panning
                         procedure recentre();
                         procedure shiftDomain(const percentageIn : double);
                         procedure shiftRange(const percentageIn : double);
                     //zooming
+                        function getCurrentZoomPercentage() : double;
                         procedure setZoom(const percentageIn : double);
                         procedure zoomIn(const percentageIn : double);
                         procedure zoomOut(const percentageIn : double);
@@ -42,7 +43,6 @@ interface
                     function getMouseControlActive() : boolean;
                     function processWindowsMessages(const messageIn             : Tmessage;
                                                     const newMousePositionIn    : TPoint    ) : boolean;
-
         end;
 
 implementation
@@ -61,6 +61,30 @@ implementation
                 end;
 
         //axis conversion methods
+            //drawing region
+                function TGeomDrawerAxisConversionInterface.getDrawingRegion() : TGeomBox;
+                    begin
+                        result := axisConverter.getDrawingRegion();
+                    end;
+
+                procedure TGeomDrawerAxisConversionInterface.setDrawingRegion(  const bufferIn : double;
+                                                                                const regionIn : TGeomBox   );
+                    begin
+                        axisConverter.setDrawingRegion(bufferIn, regionIn);
+                    end;
+
+            //draw space ratio
+                procedure TGeomDrawerAxisConversionInterface.setDrawingSpaceRatio(const ratioIn : double);
+                    begin
+                        axisConverter.setDrawingSpaceRatio( ratioIn );
+                    end;
+
+            //mouse coordinates
+                function TGeomDrawerAxisConversionInterface.getMouseCoordinatesXY() : TGeomPoint;
+                    begin
+                        result := axisConverter.getMouseCoordinatesXY();
+                    end;
+
             //panning
                 procedure TGeomDrawerAxisConversionInterface.recentre();
                     begin
@@ -90,6 +114,11 @@ implementation
                     end;
 
             //zooming
+                function TGeomDrawerAxisConversionInterface.getCurrentZoomPercentage() : double;
+                    begin
+                        axisConverter.getCurrentZoomPercentage();
+                    end;
+
                 procedure TGeomDrawerAxisConversionInterface.setZoom(const percentageIn : double);
                     begin
                         axisConverter.setZoom( percentageIn );

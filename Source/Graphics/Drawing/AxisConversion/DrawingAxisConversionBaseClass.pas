@@ -4,44 +4,18 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Types,
-        GeometryTypes;
+        GeometryTypes,
+        GeomBox;
 
     type
         TDrawingAxisConverterBase = class
-            private
-                var
-                    canvasSpace : TRect;
-                //modifiers
-                    //canvas boundaries
-                        procedure setCanvasHeight(const heightIn : integer); inline;
-                        procedure setCanvasWidth(const widthIn : integer); inline;
-                    //drawing space boundaries
-                        //domain
-                            procedure setDomainMin(const domainMinIn : double); inline;
-                            procedure setDomainMax(const domainMaxIn : double); inline;
-                        //range
-                            procedure setRangeMin(const rangeMinIn : double); inline;
-                            procedure setRangeMax(const rangeMaxIn : double); inline;
             protected
                 var
-                    drawingRegion : TGeomBox;
-                //helper methods
-                    //canvas
-                        function canvasHeight() : integer; inline;
-                        function canvasWidth() : integer; inline;
-                    //domain
-                        function regionDomainMin() : double; inline;
-                        function regionDomainMax() : double; inline;
-                        function calculateRegionDomainCentre() : double; inline;
-                    //range
-                        function regionRangeMin() : double; inline;
-                        function regionRangeMax() : double; inline;
-                        function calculateRegionRangeCentre() : double; inline;
+                    canvasDimensions    : TRect;
+                    drawingRegion       : TGeomBox;
                 //modifiers
                     //drawing space boundaries
-                        procedure setDomain(const domainMinIn, domainMaxIn : double); inline;
-                        procedure setRange(const rangeMinIn, rangeMaxIn : double); inline;
-                        procedure setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload; inline;
+                        procedure setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload;
                         procedure setDrawingRegion( const bufferIn : double;
                                                     const regionIn : TGeomBox ); overload; virtual;
             public
@@ -53,7 +27,7 @@ interface
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasDimensions(const heightIn, widthIn : integer);
+                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double;
@@ -64,99 +38,9 @@ interface
 
 implementation
 
-    //private
-        //modifiers
-            //drawingRegion space boundaries
-                //x bounds
-                    procedure TDrawingAxisConverterBase.setDomainMin(const domainMinIn : double);
-                        begin
-                            drawingRegion.minPoint.x := domainMinIn;
-                        end;
-
-                    procedure TDrawingAxisConverterBase.setDomainMax(const domainMaxIn : double);
-                        begin
-                            drawingRegion.maxPoint.x := domainMaxIn;
-                        end;
-
-                //y bounds
-                    procedure TDrawingAxisConverterBase.setRangeMin(const rangeMinIn : double);
-                        begin
-                            drawingRegion.minPoint.y := rangeMinIn;
-                        end;
-
-                    procedure TDrawingAxisConverterBase.setRangeMax(const rangeMaxIn : double);
-                        begin
-                            drawingRegion.maxPoint.y := rangeMaxIn;
-                        end;
-
     //protected
-        //helper methods
-            //canvas
-                function TDrawingAxisConverterBase.canvasHeight() : integer;
-                    begin
-                        result := canvasSpace.Height;
-                    end;
-
-                function TDrawingAxisConverterBase.canvasWidth() : integer;
-                    begin
-                        result := canvasSpace.Width;
-                    end;
-
-            //domain
-                function TDrawingAxisConverterBase.regionDomainMin() : double;
-                    begin
-                        result := drawingRegion.minPoint.x;
-                    end;
-
-                function TDrawingAxisConverterBase.regionDomainMax() : double;
-                    begin
-                        result := drawingRegion.maxPoint.x;
-                    end;
-
-                function TDrawingAxisConverterBase.calculateRegionDomainCentre() : double;
-                    begin
-                        result := drawingRegion.getCentreX();
-                    end;
-
-            //range
-                function TDrawingAxisConverterBase.regionRangeMin() : double;
-                    begin
-                        result := drawingRegion.minPoint.y;
-                    end;
-
-                function TDrawingAxisConverterBase.regionRangeMax() : double;
-                    begin
-                        result := drawingRegion.maxPoint.y;
-                    end;
-
-                function TDrawingAxisConverterBase.calculateRegionRangeCentre() : double;
-                    begin
-                        result := drawingRegion.getCentreY();
-                    end;
-
         //modifiers
-            //canvasSpace boundaries
-                procedure TDrawingAxisConverterBase.setCanvasHeight(const heightIn : integer);
-                    begin
-                        canvasSpace.height := heightIn;
-                    end;
-
-                procedure TDrawingAxisConverterBase.setCanvasWidth(const widthIn : integer);
-                    begin
-                        canvasSpace.width := widthIn;
-                    end;
-
             //drawingRegion space boundaries
-                procedure TDrawingAxisConverterBase.setDomain(const domainMinIn, domainMaxIn : double);
-                    begin
-                        drawingRegion.setXBounds( domainMinIn, domainMaxIn );
-                    end;
-
-                procedure TDrawingAxisConverterBase.setRange(const rangeMinIn, rangeMaxIn : double);
-                    begin
-                        drawingRegion.setYBounds( rangeMinIn, rangeMaxIn );
-                    end;
-
                 procedure TDrawingAxisConverterBase.setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double);
                     begin
                         drawingRegion.setBounds(domainMinIn,    domainMaxIn,
@@ -170,11 +54,10 @@ implementation
                 begin
                     inherited create();
 
-                    canvasSpace.Left := 0;
-                    canvasSpace.Top  := 0;
+                    canvasDimensions.Left   := 0;
+                    canvasDimensions.Top    := 0;
 
-                    drawingRegion.minPoint.setPoint( 0, 0, 0 );
-                    drawingRegion.maxPoint.setPoint( 0, 0, 0 );
+                    setDrawingRegion( 0, 0, 0, 0 );
                 end;
 
         //destructor
@@ -191,10 +74,10 @@ implementation
 
         //modifiers
             //canvasSpace boundaries
-                procedure TDrawingAxisConverterBase.setCanvasDimensions(const heightIn, widthIn : integer);
+                procedure TDrawingAxisConverterBase.setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
                     begin
-                        setCanvasHeight(heightIn);
-                        setCanvasWidth(widthIn);
+                        canvasDimensions.Height;
+                        canvasDimensions.Width;
                     end;
 
             //drawingRegion space boundaries
@@ -230,22 +113,20 @@ implementation
                             newRangeMin := regionIn.minPoint.y - rangeBuffer  / 2;
                             newRangeMax := regionIn.maxPoint.y + rangeBuffer  / 2;
 
-                        setDrawingRegion(newDomainMin, newDomainMax, newRangeMin, newRangeMax);
+                        setDrawingRegion( newDomainMin, newDomainMax, newRangeMin, newRangeMax );
                     end;
 
         //helper methods
             //domain
                 function TDrawingAxisConverterBase.calculateRegionDomain() : double;
                     begin
-                        result := regionDomainMax() - regionDomainMin();
+                        result := drawingRegion.calculateXDimension();
                     end;
 
             //range
                 function TDrawingAxisConverterBase.calculateRegionRange() : double;
                     begin
-                        result := regionRangeMax() - regionRangeMin();
+                        result := drawingRegion.calculateYDimension();
                     end;
-
-
 
 end.

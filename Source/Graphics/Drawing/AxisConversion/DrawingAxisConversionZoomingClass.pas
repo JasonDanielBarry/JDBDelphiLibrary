@@ -5,8 +5,8 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeneralMathMethods,
-        GeometryTypes,
-        DrawingAxisConversionBaseClass, DrawingAxisConversionCalculationsClass
+        GeometryTypes, GeomBox,
+        DrawingAxisConversionCalculationsClass
         ;
 
     type
@@ -28,14 +28,7 @@ interface
                     procedure zoom(const newZoomPercentageIn : double); overload;
             protected
                 var
-                    geometryBoundary : TGeomBox; //the drawing boundary stores a geometry group's boundary
-                //helper methods
-                    //boundary dimensions
-                        function calculateBoundaryDomain() : double; inline;
-                        function calculateBoundaryRange() : double; inline;
-                    //boundary centre
-                        function calculateBoundaryDomainCentre() : double; inline;
-                        function calculateBoundaryRangeCentre() : double; inline;
+                    geometryBoundary : TGeomBox; //the geometry boundary stores the geometry group's boundary
                 //zooming by percent
                     procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); overload; virtual;
             public
@@ -82,8 +75,8 @@ implementation
                 begin
                     //zoom is the ratio of the geometry boundary to the drawing region
                     //105 is for the 5% buffer on the drawing region when reset using the geometry boundary
-                        domainZoomPercentage    := 105 * calculateBoundaryDomain() / calculateRegionDomain();
-                        rangeZoomPercentage     := 105 * calculateBoundaryRange() / calculateRegionRange();
+                        domainZoomPercentage    := 105 * geometryBoundary.calculateXDimension() / drawingRegion.calculateXDimension();
+                        rangeZoomPercentage     := 105 * geometryBoundary.calculateYDimension() / drawingRegion.calculateYDimension();
 
                     result := max(domainZoomPercentage, rangeZoomPercentage);
                 end;
@@ -133,8 +126,8 @@ implementation
                 begin
                     //get current info
                         currentRegionDomain       := calculateRegionDomain();
-                        currentRegionDomainMin    := regionDomainMin();
-                        currentRegionDomainMax    := regionDomainMax();
+                        currentRegionDomainMin    := drawingRegion.xMin;
+                        currentRegionDomainMax    := drawingRegion.xMax;
 
                     //calculate new domain min and max
                         regionDomainMinAndMax := rescaleRegionDimension(
@@ -148,7 +141,7 @@ implementation
                         newRegionDomainMin := regionDomainMinAndMax[0];
                         newRegionDomainMax := regionDomainMinAndMax[1];
 
-                    setDomain( newRegionDomainMin, newRegionDomainMax );
+                    drawingRegion.setXBounds( newRegionDomainMin, newRegionDomainMax );
                 end;
 
             procedure TDrawingAxisZoomingConverter.rescaleRange(const scaleAboutYIn, scaleFactorIn : double);
@@ -160,8 +153,8 @@ implementation
                 begin
                     //get current info
                         currentRegionRange       := calculateRegionRange();
-                        currentRegionRangeMin    := regionRangeMin();
-                        currentRegionRangeMax    := regionRangeMax();
+                        currentRegionRangeMin    := drawingRegion.yMin;
+                        currentRegionRangeMax    := drawingRegion.yMax;
 
                     //calculate new range min and max
                         rangeRegionMinAndMax := rescaleRegionDimension(
@@ -175,7 +168,7 @@ implementation
                         newRegionRangeMin := rangeRegionMinAndMax[0];
                         newRegionRangeMax := rangeRegionMinAndMax[1];
 
-                    setRange( newRegionRangeMin, newRegionRangeMax );
+                    drawingRegion.setYBounds( newRegionRangeMin, newRegionRangeMax );
                 end;
 
             procedure TDrawingAxisZoomingConverter.rescaleRegion(const scaleAboutXIn, scaleAboutYIn, scaleFactorIn : double);
@@ -184,6 +177,24 @@ implementation
                     rescaleRange( scaleAboutYIn, scaleFactorIn );
                 end;
 
+        //zooming by percent
+            procedure TDrawingAxisZoomingConverter.zoom(const newZoomPercentageIn   : double;
+                                                        const zoomAboutPointIn      : TGeomPoint);
+                begin
+                    zoom(zoomAboutPointIn.X, zoomAboutPointIn.y, newZoomPercentageIn);
+                end;
+
+            procedure TDrawingAxisZoomingConverter.zoom(const newZoomPercentageIn : double);
+                var
+                    regionDomainCentre, regionRangeCentre : double;
+                begin
+                    regionDomainCentre  := drawingRegion.calculateCentreX();
+                    regionRangeCentre   := drawingRegion.calculateCentreY();
+
+                    zoom( regionDomainCentre, regionRangeCentre, newZoomPercentageIn );
+                end;
+
+    //protected
         //zooming by percent
             procedure TDrawingAxisZoomingConverter.zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double);
                 var
@@ -199,46 +210,6 @@ implementation
 
                         rescaleRegion(zoomAboutXIn, zoomAboutYIn, zoomScaleFactor);
                 end;
-
-            procedure TDrawingAxisZoomingConverter.zoom(const newZoomPercentageIn   : double;
-                                                        const zoomAboutPointIn      : TGeomPoint);
-                begin
-                    zoom(zoomAboutPointIn.X, zoomAboutPointIn.y, newZoomPercentageIn);
-                end;
-
-            procedure TDrawingAxisZoomingConverter.zoom(const newZoomPercentageIn : double);
-                var
-                    regionDomainCentre, regionRangeCentre : double;
-                begin
-                    regionDomainCentre  := calculateRegionDomainCentre();
-                    regionRangeCentre   := calculateRegionRangeCentre();
-
-                    zoom( regionDomainCentre, regionRangeCentre, newZoomPercentageIn );
-                end;
-
-    //protected
-        //helper methods
-            //boundary dimensions
-                function TDrawingAxisZoomingConverter.calculateBoundaryDomain() : double;
-                    begin
-                        result := geometryBoundary.maxPoint.x - geometryBoundary.minPoint.x;
-                    end;
-
-                function TDrawingAxisZoomingConverter.calculateBoundaryRange() : double;
-                    begin
-                        result := geometryBoundary.maxPoint.y - geometryBoundary.minPoint.y;
-                    end;
-
-            //boundary centre
-                function TDrawingAxisZoomingConverter.calculateBoundaryDomainCentre() : double;
-                    begin
-                        result := geometryBoundary.getCentreX();
-                    end;
-
-                function TDrawingAxisZoomingConverter.calculateBoundaryRangeCentre() : double;
-                    begin
-                        result := geometryBoundary.getCentreY();
-                    end;
 
     //public
         //constructor
@@ -316,7 +287,7 @@ implementation
 
                     zoomIn(
                                 zoomPercentageIn,
-                                TGeomPoint.create( calculateRegionDomainCentre(), calculateRegionRangeCentre() )
+                                drawingRegion.getCentrePoint()
                           );
                 end;
 
@@ -342,7 +313,7 @@ implementation
 
                     zoomOut(
                                 zoomPercentageIn,
-                                TGeomPoint.create( calculateRegionDomainCentre(), calculateRegionRangeCentre() )
+                                drawingRegion.getCentrePoint()
                            );
                 end;
 

@@ -10,7 +10,7 @@ interface
       Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
       GeneralComponentHelperMethods,
       ColourMethods,
-      GeometryTypes,
+      GeometryTypes, GeomBox,
       DrawingAxisConversionClass,
       SkiaDrawingClass,
       Graphic2DTypes
@@ -101,16 +101,8 @@ interface
                 //background colour
                     procedure setGraphicBackgroundColour(); inline;
                 //mouse location
-                    function updateMouseCoordinates() : TPoint;
-                //panning methods
-                    procedure recentreAll();
-                    procedure shiftDomain(const shiftXIn : double);
-                    procedure shiftRange(const shiftYIn : double);
-                    procedure shiftRegion(const shiftXIn, shiftYIn : double);
+                    procedure updateMouseCoordinates();
                 //zooming methods
-                    procedure zoomIn(const zoomPercentageIn : double);
-                    procedure zoomOut(const zoomPercentageIn : double);
-                    procedure setZoom(const zoomPercentageIn : double);
                     procedure updateZoomPercentage();
             protected
                 //drawing procedures
@@ -134,8 +126,6 @@ interface
                 //zooming methods
                     procedure zoomAll();
         end;
-
-
 
 implementation
 
@@ -172,7 +162,9 @@ implementation
                     newZoomPercent := 1;
                 end;
 
-                setZoom( newZoomPercent );
+                skiaGeomDrawer.setZoom( newZoomPercent );
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.FrameResize(Sender: TObject);
@@ -225,7 +217,9 @@ implementation
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
             begin
-                recentreAll();
+                skiaGeomDrawer.recentre();
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionUpdateGeometryExecute(Sender: TObject);
@@ -240,12 +234,16 @@ implementation
 
         procedure TCustomGraphic2D.ActionZoomInExecute(Sender: TObject);
             begin
-                zoomIn(10);
+                skiaGeomDrawer.zoomIn(10);
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionZoomOutExecute(Sender: TObject);
             begin
-                zoomOut(10);
+                skiaGeomDrawer.zoomOut(10);
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.EditAxisValueKeyPress(   Sender  : TObject;
@@ -263,7 +261,7 @@ implementation
                     yMin, yMax      : double;
                     drawingRegion   : TGeomBox;
                 begin
-                    drawingRegion := axisConverter.getDrawingRegion();
+                    drawingRegion := skiaGeomDrawer.getDrawingRegion();
 
                     xMin := drawingRegion.minPoint.x;
                     xMax := drawingRegion.maxPoint.x;
@@ -299,7 +297,7 @@ implementation
                         newDrawingRegion.minPoint.z := 0;
                         newDrawingRegion.maxPoint.z := 0;
 
-                        axisConverter.setDrawingRegion(0, newDrawingRegion);
+                        skiaGeomDrawer.setDrawingRegion(0, newDrawingRegion);
 
                     redrawGraphic();
                 end;
@@ -316,85 +314,29 @@ implementation
                 end;
 
         //mouse location
-            function TCustomGraphic2D.updateMouseCoordinates() : TPoint;
+            procedure TCustomGraphic2D.updateMouseCoordinates();
                 var
                     mouseCoordStr   : string;
-                    currentMousePos : TPoint;
                     mousePointXY    : TGeomPoint;
                 begin
-                    if (NOT( axisConverter.MouseControlActive )) then
+                    if (NOT( skiaGeomDrawer.getMouseControlActive() )) then
                         exit();
 
-                    //get current mouse position
-                        currentMousePos := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
-
                     //convert mouse position to XY coordinate
-                        mousePointXY := axisConverter.LT_to_XY( currentMousePos );
+                        mousePointXY := skiaGeomDrawer.getMouseCoordinatesXY();
 
                         mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ')';
 
                     //write to label
                         labelCoords.Caption := mouseCoordStr;
-
-                    result := currentMousePos;
-                end;
-
-        //panning methods
-            procedure TCustomGraphic2D.recentreAll();
-                begin
-                    skiaGeomDrawer.recentre();
-
-                    redrawGraphic();
-                end;
-
-            procedure TCustomGraphic2D.shiftDomain(const shiftXIn : double);
-                begin
-                    axisConverter.shiftDrawingDomain( shiftXIn );
-
-                    redrawGraphic();
-                end;
-
-            procedure TCustomGraphic2D.shiftRange(const shiftYIn : double);
-                begin
-                    axisConverter.shiftDrawingRange( shiftYIn );
-
-                    redrawGraphic();
-                end;
-
-            procedure TCustomGraphic2D.shiftRegion(const shiftXIn, shiftYIn : double);
-                begin
-                    axisConverter.shiftDrawingRegion( shiftXIn, shiftYIn );
-
-                    redrawGraphic();
                 end;
 
         //zooming methods
-            procedure TCustomGraphic2D.zoomIn(const zoomPercentageIn : double);
-                begin
-                    axisConverter.zoomIn( zoomPercentageIn );
-
-                    redrawGraphic();
-                end;
-
-            procedure TCustomGraphic2D.zoomOut(const zoomPercentageIn : double);
-                begin
-                    axisConverter.zoomOut( zoomPercentageIn );
-
-                    redrawGraphic();
-                end;
-
-            procedure TCustomGraphic2D.setZoom(const zoomPercentageIn : double);
-                begin
-                    axisConverter.setZoom( zoomPercentageIn );
-
-                    redrawGraphic();
-                end;
-
             procedure TCustomGraphic2D.updateZoomPercentage();
                 var
                     currentZoomPercentage : double;
                 begin
-                    currentZoomPercentage := axisConverter.getCurrentZoomPercentage();
+                    currentZoomPercentage := skiaGeomDrawer.getCurrentZoomPercentage();
                     ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
                 end;
 
@@ -405,7 +347,7 @@ implementation
                     //make sure canvas is the same colour as the parent
                         skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
 
-                    axisConverter.setDrawingSpaceRatioOneToOne();
+                    skiaGeomDrawer.setDrawingSpaceRatioOneToOne();
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
@@ -455,13 +397,15 @@ implementation
                     currentMousePosition        : TPoint;
                 begin
                     //update the mouse position
-                        case (messageInOut.Msg) of
-                            WM_MOUSEMOVE:
-                                currentMousePosition := updateMouseCoordinates();
-                        end;
+                        if (messageInOut.Msg = WM_MOUSEMOVE) then
+                            currentMousePosition := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
 
                     //process windows message in axis converter
-                        mouseInputRequiresRedraw := axisConverter.processWindowsMessages( messageInOut, currentMousePosition );
+                        mouseInputRequiresRedraw := skiaGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
+
+                    //update mouse XY coordinates
+                        if (messageInOut.Msg = WM_MOUSEMOVE) then
+                            updateMouseCoordinates();
 
                     //determine if redrawing is required
                         mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );

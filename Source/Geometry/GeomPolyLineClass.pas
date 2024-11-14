@@ -4,7 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math,
-        GeometryTypes,
+        GeometryTypes, GeomBox,
         GeometryMathMethods,
         GeometryBaseClass,
         GeomLineClass;

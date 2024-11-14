@@ -5,8 +5,8 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeneralMathMethods,
-        GeometryTypes,
-        DrawingAxisConversionBaseClass, DrawingAxisConversionZoomingClass
+        GeometryTypes, GeomBox,
+        DrawingAxisConversionZoomingClass
         ;
 
     type
@@ -53,12 +53,12 @@ implementation
             begin
                 //calculate centres
                     //region
-                        regionCentreX   := calculateRegionDomainCentre();
-                        regionCentreY   := calculateRegionRangeCentre();
+                        regionCentreX   := drawingRegion.calculateCentreX();
+                        regionCentreY   := drawingRegion.calculateCentreY();
 
                     //boundary
-                        boundaryCentreX := calculateBoundaryDomainCentre();
-                        boundaryCentreY := calculateBoundaryRangeCentre();
+                        boundaryCentreX := geometryBoundary.calculateCentreX();
+                        boundaryCentreY := geometryBoundary.calculateCentreY();
 
                 //calculate the region's centre shift relative to the geometry boundary's
                     currentRegionShift.xShift := regionCentreX - boundaryCentreX;
@@ -139,7 +139,7 @@ implementation
             procedure TDrawingAxisPanningConverter.setDrawingRegion(const bufferIn : double;
                                                                     const regionIn : TGeomBox);
                 begin
-                    inherited setDrawingRegion(bufferIn, regionIn);
+                    inherited setDrawingRegion( bufferIn, regionIn );
 
                     updateRegionShift();
                 end;

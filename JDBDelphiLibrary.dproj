@@ -139,6 +139,7 @@
         <DCCReference Include="Source\Graphics\ColourMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GeomDrawerAxisConversionInterfaceClass.pas"/>
+        <DCCReference Include="Source\Geometry\GeomBox.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

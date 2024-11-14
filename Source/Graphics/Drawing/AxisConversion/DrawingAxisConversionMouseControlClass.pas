@@ -5,7 +5,7 @@ interface
     uses
         system.SysUtils, system.math, system.Types,
         Winapi.Windows, winapi.Messages,
-        DrawingAxisConversionBaseClass, DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
+        DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
         GeometryTypes
         ;
 
@@ -18,13 +18,13 @@ interface
                     currentMousePosition,
                     mousePanningOrigin      : TPoint;
                     regionPanningOrigin     : TGeomPoint;
+                //modifiers
+                    procedure setMousePositionLT(const newMousePositionIn : TPoint);
                 //activate/deactivate mouse panning
                     procedure activateMousePanning();
                     procedure deactivateMousePanning(); inline;
                 //panning with mouse
                     procedure panRegionWithMouse();
-                //set current mouse position
-                    procedure setCurrentMousePosition(const newMousePositionIn : TPoint);
                 //zooming relative to mouse
                     procedure zoomInRelativeToMouse(); inline;
                     procedure zoomOutRelativeToMouse(); inline;
@@ -36,6 +36,7 @@ interface
                     destructor destroy(); override;
                 //accessors
                     property MouseControlActive : boolean read mouseControlIsActive;
+                    function getMouseCoordinatesXY() : TGeomPoint;
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
@@ -47,6 +48,12 @@ interface
 implementation
 
     //private
+        //modifiers
+            procedure TDrawingAxisMouseControlConverter.setMousePositionLT(const newMousePositionIn : TPoint);
+                begin
+                    currentMousePosition := newMousePositionIn;
+                end;
+
         //activate mouse panning
             procedure TDrawingAxisMouseControlConverter.activateMousePanning();
                 begin
@@ -99,12 +106,6 @@ implementation
                         setDrawingRegionShift( newRegionCentreX, newRegionCentreY );
                 end;
 
-        //set current mouse position
-            procedure TDrawingAxisMouseControlConverter.setCurrentMousePosition(const newMousePositionIn : TPoint);
-                begin
-                    currentMousePosition := newMousePositionIn;
-                end;
-
         //zooming relative to mouse
             procedure TDrawingAxisMouseControlConverter.zoomInRelativeToMouse();
                 var
@@ -145,6 +146,12 @@ implementation
             destructor TDrawingAxisMouseControlConverter.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //accessors
+            function TDrawingAxisMouseControlConverter.getMouseCoordinatesXY() : TGeomPoint;
+                begin
+                    result := LT_to_XY( currentMousePosition );
                 end;
 
         //activate/deactivate mouse control
@@ -195,7 +202,7 @@ implementation
 
                         WM_MOUSEMOVE:
                             begin
-                                setCurrentMousePosition( newMousePositionIn );
+                                setMousePositionLT( newMousePositionIn );
 
                                 panRegionWithMouse();
 

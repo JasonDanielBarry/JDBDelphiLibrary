@@ -5,7 +5,7 @@ interface
     uses
         System.SysUtils, system.Math, system.Types, vcl.Controls,
         GeometryTypes,
-        DrawingAxisConversionBaseClass, DrawingAxisConversionMouseControlClass;
+        DrawingAxisConversionMouseControlClass;
 
     type
         TDrawingAxisConverter = class(TDrawingAxisMouseControlConverter)
@@ -18,8 +18,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //set the drawing region range/domain ratio
-                    procedure setDrawingSpaceRatio(const ratioIn : double); overload;
-                    procedure setDrawingSpaceRatioOneToOne();
+                    procedure setDrawingSpaceRatio(const ratioIn : double);
         end;
 
 implementation
@@ -35,16 +34,16 @@ implementation
                     drawRange := calculateRegionRange();
 
                     //calculate new domain: D = R(r)(w/h)
-                        newDomain := ratioIn * drawRange * ( canvasWidth() / canvasHeight() );
+                        newDomain := ratioIn * drawRange * ( canvasDimensions.Width / canvasDimensions.Height );
 
                     //calculate the domain middle
-                        domainMiddle := calculateRegionDomainCentre();
+                        domainMiddle := drawingRegion.calculateCentreX();
 
                     //calculate the new domain min and max
                         newDomainMin := domainMiddle - newDomain / 2;
                         newDomainMax := domainMiddle + newDomain / 2;
 
-                    setDomain( newDomainMin, newDomainMax );
+                    drawingRegion.setXBounds( newDomainMin, newDomainMax );
                 end;
 
     //public
@@ -60,7 +59,7 @@ implementation
                     inherited destroy();
                 end;
 
-
+        //set the drawing region range/domain ratio
             procedure TDrawingAxisConverter.setDrawingSpaceRatio(const ratioIn : double);
                 var
                     currentZoomPercentage : double;
@@ -73,11 +72,6 @@ implementation
 
                     //set the correct zoom percentage
                         setZoom( currentZoomPercentage );
-                end;
-
-            procedure TDrawingAxisConverter.setDrawingSpaceRatioOneToOne();
-                begin
-                    setDrawingSpaceRatio(1);
                 end;
 
 end.

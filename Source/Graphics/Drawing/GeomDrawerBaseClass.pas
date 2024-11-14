@@ -8,7 +8,7 @@ interface
         //custom
             DrawingAxisConversionClass,
             DrawingGeometryClass,
-            GeometryTypes,
+            GeometryTypes, GeomBox,
             GeometryBaseClass,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass
             ;

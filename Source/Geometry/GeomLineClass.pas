@@ -5,7 +5,8 @@ interface
     uses
         system.sysUtils, system.Math, system.Types,
         GeometryMathMethods,
-        GeometryTypes, GeometryBaseClass, GeomSpaceVectorClass;
+        GeometryTypes, GeomBox,
+        GeometryBaseClass, GeomSpaceVectorClass;
 
     type
         TGeomLine = class(TGeomBase)
