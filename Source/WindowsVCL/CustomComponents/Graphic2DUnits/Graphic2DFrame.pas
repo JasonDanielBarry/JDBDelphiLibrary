@@ -3,18 +3,17 @@ unit Graphic2DFrame;
 interface
 
     uses
-      Winapi.Windows, Winapi.Messages,
-      System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
-      system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
-      Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-      Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
-      GeneralComponentHelperMethods,
-      ColourMethods,
-      GeometryTypes, GeomBox,
-      DrawingAxisConversionClass,
-      SkiaDrawingClass,
-      Graphic2DTypes
-      ;
+        Winapi.Windows, Winapi.Messages,
+        System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
+        system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
+        Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
+        Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
+        GeneralComponentHelperMethods,
+        ColourMethods,
+        GeometryTypes, GeomBox,
+        SkiaDrawingClass,
+        Graphic2DTypes
+        ;
 
     type
         TCustomGraphic2D = class(TFrame)
@@ -99,7 +98,7 @@ interface
                     procedure updateAxisSettingsValues();
                     procedure writeAxisSettingsValuesToAxisConverter();
                 //background colour
-                    procedure setGraphicBackgroundColour(); inline;
+                    procedure setGraphicBackgroundColour();
                 //mouse location
                     procedure updateMouseCoordinates();
                 //zooming methods
@@ -197,22 +196,30 @@ implementation
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftRange( -10 );
+                skiaGeomDrawer.shiftRange( 10 );
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftDomain( -10 );
+                skiaGeomDrawer.shiftDomain( 10 );
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftDomain( 10 );
+                skiaGeomDrawer.shiftDomain( -10 );
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftRange( 10 );
+                skiaGeomDrawer.shiftRange( -10 );
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
@@ -347,7 +354,7 @@ implementation
                     //make sure canvas is the same colour as the parent
                         skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
 
-                    skiaGeomDrawer.setDrawingSpaceRatioOneToOne();
+//                    skiaGeomDrawer.setDrawingSpaceRatio(1);
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
@@ -373,8 +380,7 @@ implementation
                         preDrawGraphic();
 
                         surface := skiaGeomDrawer.drawAllGeometryToSurface( SkPaintBoxGraphic.Height,
-                                                                            SkPaintBoxGraphic.Width,
-                                                                            axisConverter           );
+                                                                            SkPaintBoxGraphic.Width );
 
                         postDrawGraphic( surface.Canvas );
 
@@ -426,7 +432,6 @@ implementation
                     inherited create(AOwner);
 
                     //create required classes
-                        axisConverter := TDrawingAxisConverter.create();
                         skiaGeomDrawer := TSkiaGeomDrawer.create();
 
                     //set up graphic controls
@@ -449,7 +454,6 @@ implementation
         //destructor
             destructor TCustomGraphic2D.destroy();
                 begin
-                    FreeAndNil( axisConverter );
                     FreeAndNil( skiaGeomDrawer );
 
                     inherited destroy();
@@ -487,12 +491,6 @@ implementation
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
                             onGraphicUpdateGeometryEvent( self, skiaGeomDrawer );
 
-                    //determine the geometry group boundary
-                        newGeometryBoundary := skiaGeomDrawer.determineGeomBoundingBox();
-
-                    //store the geometry group boundary in the axis converter for quick access
-                        axisConverter.setGeometryBoundary( newGeometryBoundary );
-
                     //send message to redraw
                         redrawGraphic();
 
@@ -504,7 +502,7 @@ implementation
             procedure TCustomGraphic2D.zoomAll();
                 begin
                     //make the drawing boundary the drawing region
-                        axisConverter.resetDrawingRegionToGeometryBoundary();
+                        skiaGeomDrawer.zoomAll();
 
                     redrawGraphic();
                 end;

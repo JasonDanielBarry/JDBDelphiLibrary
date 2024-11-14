@@ -18,31 +18,31 @@ interface
             //copy other
                 procedure copyOther(const otherBoxIn : TGeomBox);
             //centre point
-                function calculateCentreX() : double;
-                function calculateCentreY() : double;
-                function calculateCentreZ() : double;
+                function calculateCentreX() : double; inline;
+                function calculateCentreY() : double; inline;
+                function calculateCentreZ() : double; inline;
                 function getCentrePoint() : TGeomPoint;
             //set boundaries
-                procedure setXBounds(const xMinIn, xMaxIn : double);
-                procedure setYBounds(const yMinIn, yMaxIn : double);
-                procedure setZBounds(const zMinIn, zMaxIn : double);
+                procedure setXBounds(const xMinIn, xMaxIn : double); inline;
+                procedure setYBounds(const yMinIn, yMaxIn : double); inline;
+                procedure setZBounds(const zMinIn, zMaxIn : double); inline;
                 procedure setBounds(const   xMinIn, xMaxIn,
                                             yMinIn, yMaxIn,
-                                            zMinIn, zMaxIn  : double);
+                                            zMinIn, zMaxIn  : double); inline;
             //set points
                 procedure setPoints(const point1In, point2In : TGeomPoint);
             //shift box
-                procedure shiftX(const deltaXIn : double);
-                procedure shiftY(const deltaYIn : double);
-                procedure shiftZ(const deltaZIn : double);
+                procedure shiftX(const deltaXIn : double); inline;
+                procedure shiftY(const deltaYIn : double); inline;
+                procedure shiftZ(const deltaZIn : double); inline;
                 procedure shiftBox(const deltaXIn, deltaYIn : double); overload;
                 procedure shiftBox(const deltaXIn, deltaYIn, deltaZIn : double); overload;
             //comparison
                 function pointIsWithin(const pointIn : TGeomPoint) : boolean;
             //calculate dimensions
-                function calculateXDimension() : double;
-                function calculateYDimension() : double;
-                function calculateZDimension() : double;
+                function calculateXDimension() : double; inline;
+                function calculateYDimension() : double; inline;
+                function calculateZDimension() : double; inline;
             //min and max properties
                 property xMin : double read minPoint.x;
                 property yMin : double read minPoint.y;

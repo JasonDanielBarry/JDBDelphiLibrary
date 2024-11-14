@@ -4,7 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Types, vcl.Controls,
-        GeometryTypes,
+        GeometryTypes, GeomBox,
         DrawingAxisConversionMouseControlClass;
 
     type
@@ -31,7 +31,7 @@ implementation
                     newDomainMin, newDomainMax,
                     domainMiddle, newDomain     : double;
                 begin
-                    drawRange := calculateRegionRange();
+                    drawRange := drawingRegion.calculateYDimension();
 
                     //calculate new domain: D = R(r)(w/h)
                         newDomain := ratioIn * drawRange * ( canvasDimensions.Width / canvasDimensions.Height );

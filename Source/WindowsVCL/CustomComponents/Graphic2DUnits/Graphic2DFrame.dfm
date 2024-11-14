@@ -94,10 +94,7 @@ object CustomGraphic2D: TCustomGraphic2D
       Anchors = []
       Caption = '<'
       Flat = True
-      ExplicitLeft = -6
-      ExplicitTop = 19
-      ExplicitWidth = 25
-      ExplicitHeight = 25
+      ExplicitTop = 17
     end
     object SpeedButtonShiftRight: TSpeedButton
       Left = 47

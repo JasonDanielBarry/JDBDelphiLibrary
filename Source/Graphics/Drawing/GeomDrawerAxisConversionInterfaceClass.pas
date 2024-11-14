@@ -116,7 +116,7 @@ implementation
             //zooming
                 function TGeomDrawerAxisConversionInterface.getCurrentZoomPercentage() : double;
                     begin
-                        axisConverter.getCurrentZoomPercentage();
+                        result := axisConverter.getCurrentZoomPercentage();
                     end;
 
                 procedure TGeomDrawerAxisConversionInterface.setZoom(const percentageIn : double);
@@ -158,6 +158,12 @@ implementation
             function TGeomDrawerAxisConversionInterface.processWindowsMessages( const messageIn             : Tmessage;
                                                                                 const newMousePositionIn    : TPoint    ) : boolean;
                 begin
+                    if (self = nil) then
+                        begin
+                            result := false;
+                            exit();
+                        end;
+
                     result := axisConverter.processWindowsMessages( messageIn, newMousePositionIn );
                 end;
 

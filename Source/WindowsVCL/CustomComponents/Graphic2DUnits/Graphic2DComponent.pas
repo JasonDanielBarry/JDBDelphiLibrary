@@ -48,9 +48,6 @@ implementation
                 customGraphic.parent := self;
                 customGraphic.Align := TAlign.alClient;
                 customGraphic.Visible := True;
-
-                updateGeometry();
-                customGraphic.zoomAll();
             end;
 
         destructor TJDBGraphic2D.Destroy();

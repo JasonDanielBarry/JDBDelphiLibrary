@@ -91,7 +91,7 @@ implementation
                         skiaSurface.Canvas.Clear( drawingBackgroundColour );
 
                     //draw all geometry on skiaSurface canvas
-                        drawAllGeometry(canvasWidthIn, canvasHeightIn,
+                        drawAllGeometry(canvasHeightIn, canvasWidthIn,
                                         skiaSurface.Canvas              );
 
                     result := skiaSurface

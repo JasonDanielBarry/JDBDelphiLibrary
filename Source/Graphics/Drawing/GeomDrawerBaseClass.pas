@@ -109,6 +109,10 @@ implementation
                         //set axis converter canvas dimensions
                             axisConverter.setCanvasDimensions( canvasHeightIn, canvasWidthIn );
 
+                            axisConverter.setGeometryBoundary( self.determineGeomBoundingBox() );
+
+                            axisConverter.setDrawingSpaceRatio( 1 );
+
                         //loop through and draw geometry objects
                             for i := 0 to (getDrawingGeomCount() - 1) do
                                 drawGeometry( arrDrawingGeom[i] );
@@ -193,13 +197,12 @@ implementation
                 begin
                     arrGeom := getArrGeom();
 
-                    boundingBoxOut := determineBoundingBox( arrGeom );
+                    boundingBoxOut := TGeomBase.determineBoundingBox( arrGeom );
 
                     result := boundingBoxOut;
                 end;
 
-
-        //reset
+        //reset drawing geometry by freeing all drawing geometry objects
             procedure TGeomDrawerBase.resetDrawingGeometry();
                 var
                     i : integer;

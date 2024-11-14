@@ -125,7 +125,7 @@ implementation
                     regionDomainMinAndMax                           : TArray<double>;
                 begin
                     //get current info
-                        currentRegionDomain       := calculateRegionDomain();
+                        currentRegionDomain       := drawingRegion.calculateXDimension();
                         currentRegionDomainMin    := drawingRegion.xMin;
                         currentRegionDomainMax    := drawingRegion.xMax;
 
@@ -152,7 +152,7 @@ implementation
                     rangeRegionMinAndMax                            : TArray<double>;
                 begin
                     //get current info
-                        currentRegionRange       := calculateRegionRange();
+                        currentRegionRange       := drawingRegion.calculateYDimension();
                         currentRegionRangeMin    := drawingRegion.yMin;
                         currentRegionRangeMax    := drawingRegion.yMax;
 

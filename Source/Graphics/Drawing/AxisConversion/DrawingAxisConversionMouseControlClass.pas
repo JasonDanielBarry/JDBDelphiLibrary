@@ -6,7 +6,7 @@ interface
         system.SysUtils, system.math, system.Types,
         Winapi.Windows, winapi.Messages,
         DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
-        GeometryTypes
+        GeometryTypes, GeomBox
         ;
 
     type

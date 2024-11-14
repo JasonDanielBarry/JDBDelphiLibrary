@@ -19,9 +19,10 @@ interface
                 function getGeomType() : EGeomType; virtual; abstract;
                 function boundingBox() : TGeomBox; virtual; abstract;
                 function drawingPoints() : TArray<TGeomPoint>; virtual; abstract;
+                class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
         end;
 
-    function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;
+
 
 implementation
 
@@ -35,7 +36,7 @@ implementation
             inherited Destroy();
         end;
 
-    function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;
+    class function TGeomBase.determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;
         var
             i, geomCount    : integer;
             boxOut          : TGeomBox;

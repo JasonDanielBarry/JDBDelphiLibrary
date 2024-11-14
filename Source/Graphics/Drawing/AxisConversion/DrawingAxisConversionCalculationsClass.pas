@@ -5,7 +5,7 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeneralMathMethods,
-        GeometryTypes,
+        GeometryTypes, GeomBox,
         DrawingAxisConversionBaseClass
         ;
 
