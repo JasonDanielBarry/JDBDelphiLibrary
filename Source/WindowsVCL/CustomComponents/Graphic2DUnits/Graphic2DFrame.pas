@@ -94,7 +94,6 @@ interface
                     currentGraphicImage             : ISkImage;
                     graphicBackgroundColour         : TAlphaColor;
                     skiaGeomDrawer                  : TSkiaGeomDrawer;
-                    axisConverter                   : TDrawingAxisConverter;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
                     procedure updateAxisSettingsValues();
@@ -102,7 +101,7 @@ interface
                 //background colour
                     procedure setGraphicBackgroundColour(); inline;
                 //mouse location
-                    procedure updateMouseCoordinates();
+                    function updateMouseCoordinates() : TPoint;
                 //panning methods
                     procedure recentreAll();
                     procedure shiftDomain(const shiftXIn : double);
@@ -155,12 +154,12 @@ implementation
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
             begin
-                axisConverter.activateMouseControl();
+                skiaGeomDrawer.activateMouseControl();
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
             begin
-                axisConverter.deactivateMouseControl();
+                skiaGeomDrawer.deactivateMouseControl();
             end;
 
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
@@ -205,39 +204,23 @@ implementation
             end;
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
-            var
-                drawingRange : double;
             begin
-                drawingRange := axisConverter.calculateRegionRange();
-
-                shiftRange( drawingRange / 10 );
+                skiaGeomDrawer.shiftRange( -10 );
             end;
 
         procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
-            var
-                drawingDomain : double;
             begin
-                drawingDomain := axisConverter.calculateRegionDomain();
-
-                shiftDomain( drawingDomain / 10 );
+                skiaGeomDrawer.shiftDomain( -10 );
             end;
 
         procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
-            var
-                drawingDomain : double;
             begin
-                drawingDomain := axisConverter.calculateRegionDomain();
-
-                shiftDomain( -drawingDomain / 10 );
+                skiaGeomDrawer.shiftDomain( 10 );
             end;
 
         procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
-            var
-                drawingRange : double;
             begin
-                drawingRange := axisConverter.calculateRegionRange();
-
-                shiftRange( -drawingRange / 10 );
+                skiaGeomDrawer.shiftRange( 10 );
             end;
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
@@ -333,7 +316,7 @@ implementation
                 end;
 
         //mouse location
-            procedure TCustomGraphic2D.updateMouseCoordinates();
+            function TCustomGraphic2D.updateMouseCoordinates() : TPoint;
                 var
                     mouseCoordStr   : string;
                     currentMousePos : TPoint;
@@ -352,12 +335,14 @@ implementation
 
                     //write to label
                         labelCoords.Caption := mouseCoordStr;
+
+                    result := currentMousePos;
                 end;
 
         //panning methods
             procedure TCustomGraphic2D.recentreAll();
                 begin
-                    axisConverter.recentreDrawingRegion();
+                    skiaGeomDrawer.recentre();
 
                     redrawGraphic();
                 end;
@@ -467,15 +452,19 @@ implementation
                 var
                     mouseInputRequiresRedraw,
                     mustUpdateGraphicImage      : boolean;
+                    currentMousePosition        : TPoint;
                 begin
-                    case (messageInOut.Msg) of
-                        WM_MOUSEMOVE:
-                            updateMouseCoordinates();
-                    end;
+                    //update the mouse position
+                        case (messageInOut.Msg) of
+                            WM_MOUSEMOVE:
+                                currentMousePosition := updateMouseCoordinates();
+                        end;
 
-                    mouseInputRequiresRedraw := axisConverter.processWindowsMessages( messageInOut );
+                    //process windows message in axis converter
+                        mouseInputRequiresRedraw := axisConverter.processWindowsMessages( messageInOut, currentMousePosition );
 
-                    mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
+                    //determine if redrawing is required
+                        mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
 
                     if (mustUpdateGraphicImage) then
                         currentGraphicImage := updateGraphicImage();
@@ -493,7 +482,7 @@ implementation
                     inherited create(AOwner);
 
                     //create required classes
-                        axisConverter := TDrawingAxisConverter.create( SkPaintBoxGraphic );
+                        axisConverter := TDrawingAxisConverter.create();
                         skiaGeomDrawer := TSkiaGeomDrawer.create();
 
                     //set up graphic controls

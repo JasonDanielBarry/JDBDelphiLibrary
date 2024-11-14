@@ -14,7 +14,7 @@ interface
                     procedure adjustDrawingRegionAspectRatio(const ratioIn : double);
             public
                 //constructor
-                    constructor create(const graphicControlComponentIn : TGraphicControl); override;
+                    constructor create(); override;
                 //destructor
                     destructor destroy(); override;
                 //set the drawing region range/domain ratio
@@ -49,9 +49,9 @@ implementation
 
     //public
         //constructor
-            constructor TDrawingAxisConverter.create(const graphicControlComponentIn : TGraphicControl);
+            constructor TDrawingAxisConverter.create();
                 begin
-                    inherited create( graphicControlComponentIn );
+                    inherited create();
                 end;
 
         //destructor

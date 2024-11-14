@@ -9,12 +9,12 @@ interface
         //custom
             DrawingAxisConversionClass,
             DrawingGeometryClass,
-            GeomDrawerBaseClass,
+            GeomDrawerAxisConversionInterfaceClass,
             GeometryBaseClass,
             SkiaDrawingMethods;
 
     type
-        TSkiaGeomDrawer = class(TGeomDrawerBase)
+        TSkiaGeomDrawer = class(TGeomDrawerAxisConversionInterface)
             private
                 var
                     skiaDrawingCanvas : ISkCanvas;
@@ -23,18 +23,16 @@ interface
                         procedure setDrawingCanvas(const canvasIn : ISkCanvas);
                 //drawing procedures
                     //auto detect geom type
-                        procedure drawGeometry( const drawingGeometryIn : TDrawingGeometry;
-                                                const axisConverterIn   : TDrawingAxisConverter); override;
+                        procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
             public
                 //constructor
                     constructor create();
                 //destructor
                     destructor destroy(); override;
                 //draw all geometry
-                    procedure drawAllGeometry(  const canvasIn          : ISkCanvas;
-                                                const axisConverterIn   : TDrawingAxisConverter );
-                    function drawAllGeometryToSurface(  const heightIn, widthIn : integer;
-                                                        const axisConverterIn   : TDrawingAxisConverter ) : ISkSurface;
+                    procedure drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                const canvasIn                      : ISkCanvas );
+                    function drawAllGeometryToSurface(const canvasHeightIn, canvasWidthIn : integer) : ISkSurface;
         end;
 
 implementation
@@ -50,11 +48,10 @@ implementation
         //drawing procedures
 
             //auto detect geom type
-                procedure TSkiaGeomDrawer.drawGeometry( const drawingGeometryIn : TDrawingGeometry;
-                                                        const axisConverterIn   : TDrawingAxisConverter);
+                procedure TSkiaGeomDrawer.drawGeometry(const drawingGeometryIn : TDrawingGeometry);
                     begin
                         drawSkiaGeometry(   drawingGeometryIn,
-                                            axisConverterIn,
+                                            axisConverter,
                                             skiaDrawingCanvas,
                                             false               );
                     end;
@@ -73,32 +70,29 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TSkiaGeomDrawer.drawAllGeometry(  const canvasIn          : ISkCanvas;
-                                                        const axisConverterIn   : TDrawingAxisConverter );
+            procedure TSkiaGeomDrawer.drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                        const canvasIn                      : ISkCanvas );
                 begin
                     //set canvas
                         setDrawingCanvas( canvasIn );
 
                     //draw all geometry
-                        inherited drawAllGeometry( axisConverterIn );
+                        inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
                 end;
 
-            function TSkiaGeomDrawer.drawAllGeometryToSurface(  const heightIn, widthIn : integer;
-                                                                const axisConverterIn   : TDrawingAxisConverter ) : ISkSurface;
+            function TSkiaGeomDrawer.drawAllGeometryToSurface(const canvasHeightIn, canvasWidthIn : integer) : ISkSurface;
                 var
                     skiaSurface : ISkSurface;
                 begin
                     //create a skia skiaSurface
-                        skiaSurface := TSkSurface.MakeRaster( widthIn, heightIn );
+                        skiaSurface := TSkSurface.MakeRaster( canvasWidthIn, canvasHeightIn );
 
                     //clear the skiaSurface
                         skiaSurface.Canvas.Clear( drawingBackgroundColour );
 
-                    //give axis converter canvas dimensions
-                        axisConverterIn.setCanvasDimensions( heightIn, widthIn );
-
                     //draw all geometry on skiaSurface canvas
-                        drawAllGeometry( skiaSurface.Canvas, axisConverterIn );
+                        drawAllGeometry(canvasWidthIn, canvasHeightIn,
+                                        skiaSurface.Canvas              );
 
                     result := skiaSurface
                 end;

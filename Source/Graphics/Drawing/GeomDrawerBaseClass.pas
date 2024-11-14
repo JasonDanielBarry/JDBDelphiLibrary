@@ -28,15 +28,15 @@ interface
             strict protected
                 var
                     drawingBackgroundColour : TAlphaColor;
+                    axisConverter           : TDrawingAxisConverter;
                 //drawing procedures
                     //draw a drawing geometry object
-                        procedure drawGeometry( const drawingGeometryIn : TDrawingGeometry;
-                                                const axisConverterIn   : TDrawingAxisConverter); virtual; abstract;
+                        procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); virtual; abstract;
                     //draw all geometry
-                        procedure drawAllGeometry(const axisConverterIn : TDrawingAxisConverter);
+                        procedure drawAllGeometry(const canvasHeightIn, canvasWidthIn : integer);
             public
                 //constructor
-                    constructor create();
+                    constructor create(); virtual;
                 //destructor
                     destructor destroy(); override;
                 //add drawing geometry
@@ -102,13 +102,16 @@ implementation
 
         //drawing procedures
             //draw all geometry
-                procedure TGeomDrawerBase.drawAllGeometry(const axisConverterIn : TDrawingAxisConverter);
+                procedure TGeomDrawerBase.drawAllGeometry(const canvasHeightIn, canvasWidthIn : integer);
                     var
                         i : integer;
                     begin
+                        //set axis converter canvas dimensions
+                            axisConverter.setCanvasDimensions( canvasHeightIn, canvasWidthIn );
+
                         //loop through and draw geometry objects
                             for i := 0 to (getDrawingGeomCount() - 1) do
-                                drawGeometry( arrDrawingGeom[i], axisConverterIn );
+                                drawGeometry( arrDrawingGeom[i] );
                     end;
 
     //public
@@ -118,12 +121,16 @@ implementation
                     inherited create();
 
                     SetLength(arrDrawingGeom, 0);
+
+                    axisConverter := TDrawingAxisConverter.create();
                 end;
 
         //destructor
             destructor TGeomDrawerBase.destroy();
                 begin
                     resetDrawingGeometry();
+
+                    FreeAndNil( axisConverter );
 
                     inherited destroy();
                 end;

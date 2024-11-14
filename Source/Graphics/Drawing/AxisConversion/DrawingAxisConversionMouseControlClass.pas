@@ -4,7 +4,7 @@ interface
 
     uses
         system.SysUtils, system.math, system.Types,
-        vcl.Controls, Winapi.Windows, winapi.Messages,
+        Winapi.Windows, winapi.Messages,
         DrawingAxisConversionBaseClass, DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
         GeometryTypes
         ;
@@ -18,23 +18,20 @@ interface
                     currentMousePosition,
                     mousePanningOrigin      : TPoint;
                     regionPanningOrigin     : TGeomPoint;
-                    graphicControlComponent : TGraphicControl;
                 //activate/deactivate mouse panning
                     procedure activateMousePanning();
                     procedure deactivateMousePanning(); inline;
                 //panning with mouse
                     procedure panRegionWithMouse();
                 //set current mouse position
-                    procedure updateCurrentMousePosition();
-                //set the graphic control
-                    procedure setGraphicControlComponent(const componentIn : TGraphicControl);
+                    procedure setCurrentMousePosition(const newMousePositionIn : TPoint);
                 //zooming relative to mouse
                     procedure zoomInRelativeToMouse(); inline;
                     procedure zoomOutRelativeToMouse(); inline;
                     procedure zoomRelativeToMouse(const messageIn : TMessage);
             public
                 //constructor
-                    constructor create(const graphicControlComponentIn : TGraphicControl); virtual;
+                    constructor create(); override;
                 //destructor
                     destructor destroy(); override;
                 //accessors
@@ -42,10 +39,9 @@ interface
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
-                //match the graphic control dimensions with the axis converter canvas size
-                    procedure matchGraphicControlDimensionsToCanvas();
                 //process windows messages
-                    function processWindowsMessages(const messageIn : Tmessage) : boolean;
+                    function processWindowsMessages(const messageIn             : Tmessage;
+                                                    const newMousePositionIn    : TPoint) : boolean;
         end;
 
 implementation
@@ -103,6 +99,12 @@ implementation
                         setDrawingRegionShift( newRegionCentreX, newRegionCentreY );
                 end;
 
+        //set current mouse position
+            procedure TDrawingAxisMouseControlConverter.setCurrentMousePosition(const newMousePositionIn : TPoint);
+                begin
+                    currentMousePosition := newMousePositionIn;
+                end;
+
         //zooming relative to mouse
             procedure TDrawingAxisMouseControlConverter.zoomInRelativeToMouse();
                 var
@@ -132,11 +134,9 @@ implementation
 
     //public
         //constructor
-            constructor TDrawingAxisMouseControlConverter.create(const graphicControlComponentIn : TGraphicControl);
+            constructor TDrawingAxisMouseControlConverter.create();
                 begin
                     inherited create();
-
-                    setGraphicControlComponent( graphicControlComponentIn );
 
                     deactivateMouseControl();
                 end;
@@ -145,12 +145,6 @@ implementation
             destructor TDrawingAxisMouseControlConverter.destroy();
                 begin
                     inherited destroy();
-                end;
-
-        //set the graphic control
-            procedure TDrawingAxisMouseControlConverter.setGraphicControlComponent(const componentIn : TGraphicControl);
-                begin
-                    graphicControlComponent := componentIn;
                 end;
 
         //activate/deactivate mouse control
@@ -166,20 +160,9 @@ implementation
                     mouseControlIsActive := False;
                 end;
 
-        //match the graphic control dimensions with the axis converter canvas size
-            procedure TDrawingAxisMouseControlConverter.matchGraphicControlDimensionsToCanvas();
-                begin
-                    setCanvasDimensions( graphicControlComponent.Height, graphicControlComponent.Width );
-                end;
-
-        //set current mouse position
-            procedure TDrawingAxisMouseControlConverter.updateCurrentMousePosition();
-                begin
-                    currentMousePosition := graphicControlComponent.ScreenToClient( mouse.CursorPos );
-                end;
-
         //process windows messages
-            function TDrawingAxisMouseControlConverter.processWindowsMessages(const messageIn : Tmessage) : boolean;
+            function TDrawingAxisMouseControlConverter.processWindowsMessages(  const messageIn             : Tmessage;
+                                                                                const newMousePositionIn    : TPoint    ) : boolean;
                 begin
                     result := false;
 
@@ -212,7 +195,7 @@ implementation
 
                         WM_MOUSEMOVE:
                             begin
-                                updateCurrentMousePosition();
+                                setCurrentMousePosition( newMousePositionIn );
 
                                 panRegionWithMouse();
 
