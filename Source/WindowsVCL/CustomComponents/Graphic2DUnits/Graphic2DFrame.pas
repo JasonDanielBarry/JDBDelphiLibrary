@@ -99,8 +99,9 @@ interface
                     procedure writeAxisSettingsValuesToAxisConverter();
                 //background colour
                     procedure setGraphicBackgroundColour();
-                //mouse location
+                //mouse methods
                     procedure updateMouseCoordinates();
+                    procedure setMouseCursor(const messageIn : TMessage);
                 //zooming methods
                     procedure updateZoomPercentage();
             protected
@@ -320,7 +321,7 @@ implementation
                         graphicBackgroundColour := colourToAlphaColour( themeColour );
                 end;
 
-        //mouse location
+        //mouse methods
             procedure TCustomGraphic2D.updateMouseCoordinates();
                 var
                     mouseCoordStr   : string;
@@ -336,6 +337,26 @@ implementation
 
                     //write to label
                         labelCoords.Caption := mouseCoordStr;
+                end;
+
+            procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
+                begin
+                    try
+                        if NOT(skiaGeomDrawer.getMouseControlActive()) then
+                            begin
+                                SkPaintBoxGraphic.Cursor := crDefault;
+                                exit();
+                            end;
+
+                        case (messageIn.Msg) of
+                            WM_MBUTTONDOWN:
+                                SkPaintBoxGraphic.Cursor := crSizeAll;
+                            WM_MBUTTONUP:
+                                SkPaintBoxGraphic.Cursor := crDefault;
+                        end;
+                    except
+
+                    end;
                 end;
 
         //zooming methods
@@ -409,18 +430,23 @@ implementation
                     //process windows message in axis converter
                         mouseInputRequiresRedraw := skiaGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
 
-                    //update mouse XY coordinates
-                        if (messageInOut.Msg = WM_MOUSEMOVE) then
-                            updateMouseCoordinates();
-
                     //determine if redrawing is required
                         mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
 
-                    if (mustUpdateGraphicImage) then
-                        currentGraphicImage := updateGraphicImage();
+                    //render image off screen
+                        if (mustUpdateGraphicImage) then
+                            currentGraphicImage := updateGraphicImage();
 
-                    if (mustRedrawGraphic) then
-                        SkPaintBoxGraphic.Redraw();
+                    //paint rendered image to screen
+                        if (mustRedrawGraphic) then
+                            SkPaintBoxGraphic.Redraw();
+
+                    //set the cursor to drag or default
+                        setMouseCursor( messageInOut );
+
+                    //update mouse XY coordinates
+                        if (messageInOut.Msg = WM_MOUSEMOVE) then
+                            updateMouseCoordinates();
 
                     inherited wndProc(messageInOut);
                 end;

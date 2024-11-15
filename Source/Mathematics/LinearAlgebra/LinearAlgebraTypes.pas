@@ -10,6 +10,7 @@ interface
             rows, cols  : integer;
             function isSquare() : boolean;
             function isEqual(const sizeIn : TLAMatrixSize) : boolean;
+            function elementCount() : integer;
         end;
 
 implementation
@@ -27,6 +28,11 @@ implementation
             rowsEqual := (self.rows = sizeIn.rows);
 
             result := (colsEqual AND rowsEqual);
+        end;
+
+    function TLAMatrixSize.elementCount() : integer;
+        begin
+            result := rows * cols;
         end;
 
 end.

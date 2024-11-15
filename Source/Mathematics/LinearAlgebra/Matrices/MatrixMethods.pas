@@ -3,7 +3,7 @@ unit MatrixMethods;
 interface
 
     uses
-        System.SysUtils, system.Types, system.math,
+        System.SysUtils, system.Types, system.math, system.Threading, system.Classes,
         GeneralMathMethods,
         LinearAlgebraTypes,
         MatrixHelperMethods,
@@ -41,10 +41,10 @@ implementation
         //helper methods
             function cofactorMatrix(const matrixIn : TLAMatrix) : TLAMatrix;
                 var
-                    i, j        : integer;
-                    C_ij        : double;
-                    matrixSize  : TLAMatrixSize;
-                    coFacMatOut : TLAMatrix;
+                    i, j, t         : integer;
+                    matrixSize      : TLAMatrixSize;
+                    coFacMatOut     : TLAMatrix;
+                    arrCoFacTasks   : TArray<ITask>;
                 begin
                     if ( NOT(matrixIsSquare(matrixIn)) ) then
                         exit();
@@ -53,13 +53,33 @@ implementation
 
                     coFacMatOut := newMatrix(matrixSize);
 
+                    t := 0;
+                    SetLength(arrCoFacTasks, matrixSize.elementCount());
+
                     for i := 0 to (matrixSize.rows - 1) do
                         for j := 0 to (matrixSize.cols - 1) do
                             begin
-                                C_ij := matrixEntryCofactor(i, j, matrixIn);
+                                arrCoFacTasks[t] := TTask.Run
+                                                    (
+                                                        procedure
+                                                            var
+                                                                C_ij : double;
+                                                            begin
+                                                                C_ij := matrixEntryCofactor(i, j, matrixIn);
 
-                                coFacMatOut[i][j] := C_ij;
+                                                                TThread.Queue(nil,
+                                                                    procedure
+                                                                        begin
+                                                                            coFacMatOut[i][j] := C_ij;
+                                                                        end
+                                                                );
+                                                            end
+                                                    );
+
+                                inc( t );
                             end;
+
+                    TTask.WaitForAll( arrCoFacTasks );
 
                     result := coFacMatOut;
                 end;
