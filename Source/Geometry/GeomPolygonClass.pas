@@ -18,7 +18,7 @@ interface
                 //accessors
                     function getGeomType() : EGeomType; override;
                 //drawing points
-                    function drawingPoints() : TArray<TGeomPoint>; override;
+                    function getDrawingPoints() : TArray<TGeomPoint>; override;
         end;
 
 implementation
@@ -42,12 +42,12 @@ implementation
                 end;
 
         //drawing points
-            function TGeomPolygon.drawingPoints() : TArray<TGeomPoint>;
+            function TGeomPolygon.getDrawingPoints() : TArray<TGeomPoint>;
                 var
                     arrLen              : integer;
                     arrDrawingPointsOut : TArray<TGeomPoint>;
                 begin
-                    arrDrawingPointsOut := inherited drawingPoints();
+                    arrDrawingPointsOut := inherited getDrawingPoints();
 
                     arrLen := length(arrDrawingPointsOut);
 

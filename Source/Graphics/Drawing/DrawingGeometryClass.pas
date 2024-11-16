@@ -15,10 +15,11 @@ interface
         TDrawingGeometry = class
             strict private
                 var
-                    fLineThickness   : integer;
+                    fLineThickness  : integer;
                     fFillColour,
-                    fLineColour      : TAlphaColor;
-                    fGeometry        : TGeomBase;
+                    fLineColour     : TAlphaColor;
+                    fGeometry       : TGeomBase;
+                    fDrawingPoints  : TArray<TGeomPoint>;
                 //free geometry object
                     procedure freeGeometry();
             public
@@ -65,6 +66,8 @@ implementation
                     fFillColour     := fillColourIn;
                     fLineColour     := lineColourIn;
                     fGeometry       := geometryIn;
+
+                    fDrawingPoints  := geometryIn.getDrawingPoints();
                 end;
 
         //destructor

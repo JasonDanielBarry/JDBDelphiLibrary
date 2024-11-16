@@ -60,7 +60,7 @@ implementation
             begin
                 //convert geometry into canvas drawing points
                     drawingPoints := axisConverterIn.arrXY_to_arrLTF(
-                                                                        lineIn.drawingPoints()
+                                                                        lineIn.getDrawingPoints()
                                                                     );
 
                 //define the drawing path
@@ -102,7 +102,7 @@ implementation
                     begin
                         //convert geometry into canvas drawing points
                             drawingPoints := axisConverterIn.arrXY_to_arrLTF(
-                                                                                polylineIn.drawingPoints()
+                                                                                polylineIn.getDrawingPoints()
                                                                             );
 
                         //define the drawing path
@@ -147,7 +147,7 @@ implementation
                     begin
                         //convert geometry into canvas drawing points
                             drawingPoints := axisConverterIn.arrXY_to_arrLTF(
-                                                                                polygonIn.drawingPoints()
+                                                                                polygonIn.getDrawingPoints()
                                                                             );
 
                         //define the drawing path

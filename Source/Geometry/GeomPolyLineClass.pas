@@ -49,7 +49,7 @@ interface
                 //bounding box
                     function boundingBox() : TGeomBox; override;
                 //drawing points
-                    function drawingPoints() : TArray<TGeomPoint>; override;
+                    function getDrawingPoints() : TArray<TGeomPoint>; override;
         end;
 
 implementation
@@ -267,7 +267,7 @@ implementation
                 end;
 
         //drawing points
-            function TGeomPolyLine.drawingPoints() : TArray<TGeomPoint>;
+            function TGeomPolyLine.getDrawingPoints() : TArray<TGeomPoint>;
                 begin
                     result := arrVertices;
                 end;

@@ -54,7 +54,7 @@ interface
                 //bounding box
                     function boundingBox() : TGeomBox; override;
                 //drawing points
-                    function drawingPoints() : TArray<TGeomPoint>; override;
+                    function getDrawingPoints() : TArray<TGeomPoint>; override;
         end;
 //----------------------------------------------------------------------------------------------------
     //calculate intersection point
@@ -220,7 +220,7 @@ implementation
                 end;
 
         //drawing points
-            function TGeomLine.drawingPoints() : TArray<TGeomPoint>;
+            function TGeomLine.getDrawingPoints() : TArray<TGeomPoint>;
                 var
                     arrPointsOut : TArray<TGeomPoint>;
                 begin

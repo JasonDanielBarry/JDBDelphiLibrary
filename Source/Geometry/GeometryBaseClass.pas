@@ -18,7 +18,7 @@ interface
                 destructor destroy(); override;
                 function getGeomType() : EGeomType; virtual; abstract;
                 function boundingBox() : TGeomBox; virtual; abstract;
-                function drawingPoints() : TArray<TGeomPoint>; virtual; abstract;
+                function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
                 class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
         end;
 
