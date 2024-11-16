@@ -27,7 +27,7 @@ interface
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
+                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer); inline;
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double;

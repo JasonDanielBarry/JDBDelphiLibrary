@@ -192,10 +192,10 @@ implementation
                 fillColour, lineColour  : TAlphaColor;
                 geometry                : TGeomBase;
             begin
-                lineThickness   := drawingGeometryIn.getLineThickness();
-                fillColour      := drawingGeometryIn.getFillColour();
-                lineColour      := drawingGeometryIn.getLineColour();
-                geometry        := drawingGeometryIn.getGeometry();
+                lineThickness   := drawingGeometryIn.LineThickness;
+                fillColour      := drawingGeometryIn.FillColour;
+                lineColour      := drawingGeometryIn.LineColour;
+                geometry        := drawingGeometryIn.Geometry;
 
                 geometryType    := geometry.getGeomType();
 

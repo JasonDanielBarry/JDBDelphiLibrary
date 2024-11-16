@@ -15,10 +15,10 @@ interface
         TDrawingGeometry = class
             strict private
                 var
-                    lineThickness   : integer;
-                    fillColour,
-                    lineColour      : TAlphaColor;
-                    geometry        : TGeomBase;
+                    fLineThickness   : integer;
+                    fFillColour,
+                    fLineColour      : TAlphaColor;
+                    fGeometry        : TGeomBase;
                 //free geometry object
                     procedure freeGeometry();
             public
@@ -30,12 +30,12 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //line thickness
-                    function getLineThickness() : integer;
+                    property LineThickness : integer read fLineThickness;
                 //colours
-                    function getFillColour() : TAlphaColor;
-                    function getLineColour() : TAlphaColor;
+                    property FillColour : TAlphaColor read fFillColour;
+                    property LineColour : TAlphaColor read fLineColour;
                 //get the geometry object
-                    function getGeometry() : TGeomBase;
+                    property Geometry : TGeomBase read fGeometry;
         end;
 
 implementation
@@ -61,10 +61,10 @@ implementation
 
                     freeGeometry();
 
-                    lineThickness   := lineThicknessIn;
-                    fillColour      := fillColourIn;
-                    lineColour      := lineColourIn;
-                    geometry        := geometryIn;
+                    fLineThickness  := lineThicknessIn;
+                    fFillColour     := fillColourIn;
+                    fLineColour     := lineColourIn;
+                    fGeometry       := geometryIn;
                 end;
 
         //destructor
@@ -75,27 +75,27 @@ implementation
                     inherited destroy();
                 end;
 
-        //line thickness
-            function TDrawingGeometry.getLineThickness() : integer;
-                begin
-                    result := lineThickness;
-                end;
-
-        //colours
-            function TDrawingGeometry.getFillColour() : TAlphaColor;
-                begin
-                    result := fillColour;
-                end;
-
-            function TDrawingGeometry.getLineColour() : TAlphaColor;
-                begin
-                    result := lineColour;
-                end;
-
-        //get the geometry object
-            function TDrawingGeometry.getGeometry() : TGeomBase;
-                begin
-                    result := geometry;
-                end;
+//        //line thickness
+//            function TDrawingGeometry.getLineThickness() : integer;
+//                begin
+//                    result := lineThickness;
+//                end;
+//
+//        //colours
+//            function TDrawingGeometry.getFillColour() : TAlphaColor;
+//                begin
+//                    result := fillColour;
+//                end;
+//
+//            function TDrawingGeometry.getLineColour() : TAlphaColor;
+//                begin
+//                    result := lineColour;
+//                end;
+//
+//        //get the geometry object
+//            function TDrawingGeometry.getGeometry() : TGeomBase;
+//                begin
+//                    result := geometry;
+//                end;
 
 end.

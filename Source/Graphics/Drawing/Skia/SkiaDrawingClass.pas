@@ -46,7 +46,6 @@ implementation
                     end;
 
         //drawing procedures
-
             //auto detect geom type
                 procedure TSkiaGeomDrawer.drawGeometry(const drawingGeometryIn : TDrawingGeometry);
                     begin

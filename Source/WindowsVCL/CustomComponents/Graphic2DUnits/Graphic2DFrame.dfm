@@ -357,7 +357,6 @@ object CustomGraphic2D: TCustomGraphic2D
       Height = 24
       Align = alClient
       Color = clWhite
-      NumbersOnly = True
       TabOrder = 0
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -381,7 +380,6 @@ object CustomGraphic2D: TCustomGraphic2D
       Height = 24
       Align = alClient
       Color = clWhite
-      NumbersOnly = True
       TabOrder = 1
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -409,7 +407,6 @@ object CustomGraphic2D: TCustomGraphic2D
       Height = 24
       Align = alClient
       Color = clWhite
-      NumbersOnly = True
       TabOrder = 2
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23
@@ -433,7 +430,6 @@ object CustomGraphic2D: TCustomGraphic2D
       Height = 24
       Align = alClient
       Color = clWhite
-      NumbersOnly = True
       TabOrder = 3
       OnKeyPress = EditAxisValueKeyPress
       ExplicitHeight = 23

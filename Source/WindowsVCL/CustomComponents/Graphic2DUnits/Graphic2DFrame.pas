@@ -374,8 +374,6 @@ implementation
                 begin
                     //make sure canvas is the same colour as the parent
                         skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
-
-//                    skiaGeomDrawer.setDrawingSpaceRatio(1);
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);

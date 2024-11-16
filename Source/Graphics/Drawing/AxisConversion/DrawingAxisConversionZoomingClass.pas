@@ -39,8 +39,7 @@ interface
                 //accessors
                     function getCurrentZoomPercentage() : double;
                 //modifiers
-                    procedure setGeometryBoundary(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload;
-                    procedure setGeometryBoundary(const boundaryBoxIn : TGeomBox); overload;
+                    procedure setGeometryBoundary(const boundaryBoxIn : TGeomBox);
                     procedure resetDrawingRegionToGeometryBoundary();
                 //zooming methods
                     procedure zoomIn(   const zoomPercentageIn : double;
@@ -201,7 +200,7 @@ implementation
                     zoomScaleFactor : double;
                 begin
                     //check new zoom percentage
-                        if ( newZoomPercentageIn < 1e-3) then
+                        if ( newZoomPercentageIn < 1e-3 ) then
                             exit();
 
                     //zoom to the desired factor about the specified point
@@ -238,30 +237,14 @@ implementation
                 end;
 
         //modifiers
-            procedure TDrawingAxisZoomingConverter.setGeometryBoundary(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double);
-                begin
-                    geometryBoundary.minPoint.x := domainMinIn;
-                    geometryBoundary.minPoint.y := rangeMinIn;
-                    geometryBoundary.minPoint.z := 0;
-
-                    geometryBoundary.maxPoint.x := domainMaxIn;
-                    geometryBoundary.maxPoint.y := rangeMaxIn;
-                    geometryBoundary.maxPoint.z := 0;
-                end;
-
             procedure TDrawingAxisZoomingConverter.setGeometryBoundary(const boundaryBoxIn : TGeomBox);
                 begin
-                    setGeometryBoundary(
-                                            boundaryBoxIn.minPoint.x,
-                                            boundaryBoxIn.maxPoint.x,
-                                            boundaryBoxIn.minPoint.y,
-                                            boundaryBoxIn.maxPoint.y
-                                      );
+                    geometryBoundary.copyOther( boundaryBoxIn );
                 end;
 
             procedure TDrawingAxisZoomingConverter.resetDrawingRegionToGeometryBoundary();
                 begin
-                    setDrawingRegion(5, geometryBoundary);
+                    setDrawingRegion( 5, geometryBoundary );
                 end;
 
         //zooming methods
