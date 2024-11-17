@@ -11,7 +11,7 @@ interface
         GeneralComponentHelperMethods,
         ColourMethods,
         GeometryTypes, GeomBox,
-        SkiaDrawingClass,
+        GeomDrawerAxisConversionInterfaceClass, SkiaDrawingClass,
         Graphic2DTypes
         ;
 
