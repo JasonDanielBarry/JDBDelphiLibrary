@@ -15,11 +15,11 @@ interface
         TDrawingGeometry = class
             strict private
                 var
-                    fLineThickness  : integer;
-                    fFillColour,
-                    fLineColour     : TAlphaColor;
-                    fGeometry       : TGeomBase;
-                    fDrawingPoints  : TArray<TGeomPoint>;
+                    lineThickness  : integer;
+                    fillColour,
+                    lineColour     : TAlphaColor;
+                    geometry       : TGeomBase;
+                    drawingPoints  : TArray<TGeomPoint>;
                 //free geometry object
                     procedure freeGeometry();
             public
@@ -31,12 +31,12 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //line thickness
-                    property LineThickness : integer read fLineThickness;
+                    function getLineThickness() : integer; inline;
                 //colours
-                    property FillColour : TAlphaColor read fFillColour;
-                    property LineColour : TAlphaColor read fLineColour;
+                    function getFillColour() : TAlphaColor; inline;
+                    function getLineColour() : TAlphaColor; inline;
                 //get the geometry object
-                    property Geometry : TGeomBase read fGeometry;
+                    function getGeometry() : TGeomBase; inline;
         end;
 
 implementation
@@ -62,12 +62,12 @@ implementation
 
                     freeGeometry();
 
-                    fLineThickness  := lineThicknessIn;
-                    fFillColour     := fillColourIn;
-                    fLineColour     := lineColourIn;
-                    fGeometry       := geometryIn;
+                    lineThickness  := lineThicknessIn;
+                    fillColour     := fillColourIn;
+                    lineColour     := lineColourIn;
+                    geometry       := geometryIn;
 
-                    fDrawingPoints  := geometryIn.getDrawingPoints();
+                    drawingPoints  := geometryIn.getDrawingPoints();
                 end;
 
         //destructor
@@ -78,27 +78,27 @@ implementation
                     inherited destroy();
                 end;
 
-//        //line thickness
-//            function TDrawingGeometry.getLineThickness() : integer;
-//                begin
-//                    result := lineThickness;
-//                end;
-//
-//        //colours
-//            function TDrawingGeometry.getFillColour() : TAlphaColor;
-//                begin
-//                    result := fillColour;
-//                end;
-//
-//            function TDrawingGeometry.getLineColour() : TAlphaColor;
-//                begin
-//                    result := lineColour;
-//                end;
-//
-//        //get the geometry object
-//            function TDrawingGeometry.getGeometry() : TGeomBase;
-//                begin
-//                    result := geometry;
-//                end;
+        //line thickness
+            function TDrawingGeometry.getLineThickness() : integer;
+                begin
+                    result := lineThickness;
+                end;
+
+        //colours
+            function TDrawingGeometry.getFillColour() : TAlphaColor;
+                begin
+                    result := fillColour;
+                end;
+
+            function TDrawingGeometry.getLineColour() : TAlphaColor;
+                begin
+                    result := lineColour;
+                end;
+
+        //get the geometry object
+            function TDrawingGeometry.getGeometry() : TGeomBase;
+                begin
+                    result := geometry;
+                end;
 
 end.

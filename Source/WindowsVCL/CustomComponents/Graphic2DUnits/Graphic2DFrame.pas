@@ -421,23 +421,25 @@ implementation
                     mustUpdateGraphicImage      : boolean;
                     currentMousePosition        : TPoint;
                 begin
-                    //update the mouse position
-                        if (messageInOut.Msg = WM_MOUSEMOVE) then
-                            currentMousePosition := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
+                    //drawing graphic-----------------------------------------------------------------------------------------------
+                        //update the mouse position
+                            if (messageInOut.Msg = WM_MOUSEMOVE) then
+                                currentMousePosition := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
 
-                    //process windows message in axis converter
-                        mouseInputRequiresRedraw := skiaGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
+                        //process windows message in axis converter
+                            mouseInputRequiresRedraw := skiaGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
 
-                    //determine if redrawing is required
-                        mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
+                        //determine if redrawing is required
+                            mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
 
-                    //render image off screen
-                        if (mustUpdateGraphicImage) then
-                            currentGraphicImage := updateGraphicImage();
+                        //render image off screen
+                            if (mustUpdateGraphicImage) then
+                                currentGraphicImage := updateGraphicImage();
 
-                    //paint rendered image to screen
-                        if (mustRedrawGraphic) then
-                            SkPaintBoxGraphic.Redraw();
+                        //paint rendered image to screen
+                            if (mustRedrawGraphic) then
+                                SkPaintBoxGraphic.Redraw();
+                    //--------------------------------------------------------------------------------------------------------------
 
                     //set the cursor to drag or default
                         setMouseCursor( messageInOut );

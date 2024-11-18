@@ -33,7 +33,7 @@ implementation
             begin
                 //convert geometry to canvas drawing points
                     drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                        lineIn.drawingPoints()
+                                                                        lineIn.getDrawingPoints()
                                                                    );
 
                 //assign the canvas the colour and line thickness
@@ -65,7 +65,7 @@ implementation
                     begin
                         //convert geometry into canvas drawing points
                             drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                                polylineIn.drawingPoints()
+                                                                                polylineIn.getDrawingPoints()
                                                                            );
 
                         //assign the canvas the colour and line thickness
@@ -97,7 +97,7 @@ implementation
                     begin
                         //convert geometry into canvas drawing points
                             drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                                polygonIn.drawingPoints()
+                                                                                polygonIn.getDrawingPoints()
                                                                            );
 
                         //assign the canvas the colour and line thickness

@@ -22,17 +22,17 @@ interface
                     //drawing region
                         function getDrawingRegion() : TGeomBox;
                         procedure setDrawingRegion( const bufferIn : double;
-                                                    const regionIn : TGeomBox ); inline;
+                                                    const regionIn : TGeomBox );
                     //draw space ratio
-                        procedure setDrawingSpaceRatio(const ratioIn : double); inline;
+                        procedure setDrawingSpaceRatio(const ratioIn : double);
                     //mouse coordinates
-                        function getMouseCoordinatesXY() : TGeomPoint; inline;
+                        function getMouseCoordinatesXY() : TGeomPoint;
                     //panning
                         procedure recentre();
                         procedure shiftDomain(const percentageIn : double);
                         procedure shiftRange(const percentageIn : double);
                     //zooming
-                        function getCurrentZoomPercentage() : double; inline;
+                        function getCurrentZoomPercentage() : double;
                         procedure setZoom(const percentageIn : double);
                         procedure zoomIn(const percentageIn : double);
                         procedure zoomOut(const percentageIn : double);
@@ -40,9 +40,9 @@ interface
                 //process windows messages
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
-                    function getMouseControlActive() : boolean; inline;
+                    function getMouseControlActive() : boolean;
                     function processWindowsMessages(const messageIn             : Tmessage;
-                                                    const newMousePositionIn    : TPoint    ) : boolean; inline;
+                                                    const newMousePositionIn    : TPoint    ) : boolean;
         end;
 
 implementation

@@ -73,7 +73,7 @@ implementation
                         SetLength( arrGeomOut, arrLen );
 
                         for i := 0 to (arrLen - 1) do
-                            arrGeomOut[i] := arrDrawingGeom[i].Geometry;
+                            arrGeomOut[i] := arrDrawingGeom[i].getGeometry;
 
                         result := arrGeomOut;
                     end;
