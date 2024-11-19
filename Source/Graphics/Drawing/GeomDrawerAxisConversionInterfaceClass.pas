@@ -12,7 +12,7 @@ interface
         ;
 
     type
-        TGeomDrawerAxisConversionInterface = class(TGeomDrawerBase)
+        TGeomDrawerAxisConversionInterface = class(TGeomDrawer)
             public
                 //constructor
                     constructor create(); override;

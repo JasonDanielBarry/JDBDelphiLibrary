@@ -14,7 +14,7 @@ interface
             ;
 
     type
-        TGeomDrawerBase = class
+        TGeomDrawer = class
             strict private
                 var
                     arrDrawingGeom : TArray<TDrawingGeometry>;
@@ -63,7 +63,7 @@ implementation
     //private
         //helper methods
             //return geometry array for bounding box
-                function TGeomDrawerBase.getArrGeom() : TArray<TGeomBase>;
+                function TGeomDrawer.getArrGeom() : TArray<TGeomBase>;
                     var
                         i, arrLen   : integer;
                         arrGeomOut  : TArray<TGeomBase>;
@@ -79,13 +79,13 @@ implementation
                     end;
 
             //count geometry objects
-                function TGeomDrawerBase.getDrawingGeomCount() : integer;
+                function TGeomDrawer.getDrawingGeomCount() : integer;
                     begin
                         result := length( arrDrawingGeom );
                     end;
 
             //add geometry to the geometry array
-                procedure TGeomDrawerBase.addGeometry(const drawingGeometryIn : TDrawingGeometry);
+                procedure TGeomDrawer.addGeometry(const drawingGeometryIn : TDrawingGeometry);
                     var
                         geomCount : integer;
                     begin
@@ -99,7 +99,7 @@ implementation
     //protected
         //drawing procedures
             //draw all geometry
-                procedure TGeomDrawerBase.drawAllGeometry(const canvasHeightIn, canvasWidthIn : integer);
+                procedure TGeomDrawer.drawAllGeometry(const canvasHeightIn, canvasWidthIn : integer);
                     var
                         i : integer;
                     begin
@@ -117,7 +117,7 @@ implementation
 
     //public
         //constructor
-            constructor TGeomDrawerBase.create();
+            constructor TGeomDrawer.create();
                 begin
                     inherited create();
 
@@ -127,7 +127,7 @@ implementation
                 end;
 
         //destructor
-            destructor TGeomDrawerBase.destroy();
+            destructor TGeomDrawer.destroy();
                 begin
                     resetDrawingGeometry();
 
@@ -137,7 +137,7 @@ implementation
                 end;
 
         //add drawing geometry
-            procedure TGeomDrawerBase.addLine(  const lineIn            : TGeomLine;
+            procedure TGeomDrawer.addLine(  const lineIn            : TGeomLine;
                                                 const lineThicknessIn   : integer = 2;
                                                 const colourIn          : TAlphaColor = TAlphaColors.Black  );
                 var
@@ -151,7 +151,7 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TGeomDrawerBase.addPolyline(  const polylineIn        : TGeomPolyLine;
+            procedure TGeomDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
                                                     const lineThicknessIn   : integer = 2;
                                                     const colourIn          : TAlphaColor = TAlphaColors.Black  );
                 var
@@ -165,7 +165,7 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TGeomDrawerBase.addPolygon(   const polygonIn         : TGeomPolygon;
+            procedure TGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
                                                     const lineThicknessIn   : integer = 2;
                                                     const fillColourIn      : TAlphaColor = TAlphaColors.Null;
                                                     const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
@@ -181,13 +181,13 @@ implementation
                 end;
 
         //modifiers
-            procedure TGeomDrawerBase.setDrawingBackgroundColour(const colourIn : TAlphaColor);
+            procedure TGeomDrawer.setDrawingBackgroundColour(const colourIn : TAlphaColor);
                 begin
                     drawingBackgroundColour := colourIn;
                 end;
 
         //geometry net bounding box
-            function TGeomDrawerBase.determineGeomBoundingBox() : TGeomBox;
+            function TGeomDrawer.determineGeomBoundingBox() : TGeomBox;
                 var
                     boundingBoxOut  : TGeomBox;
                     arrGeom         : TArray<TGeomBase>;
@@ -200,7 +200,7 @@ implementation
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects
-            procedure TGeomDrawerBase.resetDrawingGeometry();
+            procedure TGeomDrawer.resetDrawingGeometry();
                 var
                     i : integer;
                 begin

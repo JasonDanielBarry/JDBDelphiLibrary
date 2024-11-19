@@ -11,7 +11,7 @@ interface
         GeneralComponentHelperMethods,
         ColourMethods,
         GeometryTypes, GeomBox,
-        GeomDrawerAxisConversionInterfaceClass, SkiaDrawingClass,
+        GeomDrawerBaseClass, GeomDrawerAxisConversionInterfaceClass, SkiaDrawingClass,
         Graphic2DTypes
         ;
 
@@ -515,7 +515,7 @@ implementation
 
                     //update the skiaGeomDrawer geometry
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
-                            onGraphicUpdateGeometryEvent( self, skiaGeomDrawer );
+                            onGraphicUpdateGeometryEvent( self, tGeomDrawer(skiaGeomDrawer) );
 
                     //send message to redraw
                         redrawGraphic();
