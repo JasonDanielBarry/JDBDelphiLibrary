@@ -12,7 +12,7 @@ interface
         ColourMethods,
         GeometryTypes, GeomBox,
         GeomDrawerBaseClass, GeomDrawerAxisConversionInterfaceClass, SkiaDrawingClass,
-        Graphic2DTypes
+        Graphic2DTypes, Vcl.CheckLst
         ;
 
     type
@@ -66,6 +66,10 @@ interface
             ActionEditAxes: TAction;
             N3: TMenuItem;
             EditAxes1: TMenuItem;
+            CheckListBoxLayerTable: TCheckListBox;
+            ActionEditLayerTable: TAction;
+            SpeedButtonLayerTable: TSpeedButton;
+            EditLayerTable1: TMenuItem;
             //events
                 procedure SkPaintBoxGraphicDraw(ASender         : TObject;
                                                 const ACanvas   : ISkCanvas;
@@ -86,9 +90,12 @@ interface
                 procedure ActionPanDownExecute(Sender: TObject);
                 procedure ActionEditAxesExecute(Sender: TObject);
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
+                procedure ActionEditLayerTableExecute(Sender: TObject);
+                procedure CheckListBoxLayerTableClick(Sender: TObject);
             private
                 var
                     axisSettingsVisible,
+                    layerTableVisible,
                     mustRedrawGraphic               : boolean;
                     currentGraphicImage             : ISkImage;
                     graphicBackgroundColour         : TAlphaColor;
@@ -99,6 +106,9 @@ interface
                     procedure writeAxisSettingsValuesToAxisConverter();
                 //background colour
                     procedure setGraphicBackgroundColour();
+                //layer table
+                    procedure getActiveLayers();
+                    procedure updateLayerTable();
                 //mouse methods
                     procedure updateMouseCoordinates();
                     procedure setMouseCursor(const messageIn : TMessage);
@@ -152,6 +162,13 @@ implementation
                 skiaGeomDrawer.deactivateMouseControl();
             end;
 
+        procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
+            begin
+                getActiveLayers();
+
+                redrawGraphic();
+            end;
+
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
             var
                 newZoomPercent : double;
@@ -174,25 +191,61 @@ implementation
 
         procedure TCustomGraphic2D.ActionEditAxesExecute(Sender: TObject);
             begin
-                axisSettingsVisible := NOT(axisSettingsVisible);
+                //hide layer table
+                    layerTableVisible               := False;
+                    EditLayerTable1.Checked         := layerTableVisible;
+                    SpeedButtonLayerTable.Down      := layerTableVisible;
+                    CheckListBoxLayerTable.Visible  := layerTableVisible;
 
-                EditAxes1.Checked := axisSettingsVisible;
+                //hide or show the axis settings
+                    axisSettingsVisible             := NOT(axisSettingsVisible);
+                    EditAxes1.Checked               := axisSettingsVisible;
+                    GridPanelAxisOptions.Visible    := axisSettingsVisible;
 
-                if (axisSettingsVisible) then
-                    setSpeedButtonDown(1, SpeedButtonAxisSettings)
-                else
-                    SpeedButtonAxisSettings.Down := False;
+                //early return
+                    if NOT(axisSettingsVisible) then
+                        begin
+                            SpeedButtonAxisSettings.Down := False;
+                            exit();
+                        end;
 
-                if (axisSettingsVisible) then
+                //adjust button
+                    setSpeedButtonDown(1, SpeedButtonAxisSettings);
+
+                //position the axis options panel
+                    GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
+                    GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
+
+                    GridPanelAxisOptions.BringToFront();
+            end;
+
+        procedure TCustomGraphic2D.ActionEditLayerTableExecute(Sender: TObject);
+            begin
+                //hide axis settings
+                    axisSettingsVisible             := False;
+                    EditAxes1.Checked               := axisSettingsVisible;
+                    SpeedButtonAxisSettings.Down    := axisSettingsVisible;
+                    GridPanelAxisOptions.Visible    := axisSettingsVisible;
+
+                //show or hide the layer table
+                    layerTableVisible               := NOT(layerTableVisible);
+                    EditLayerTable1.Checked         := layerTableVisible;
+                    CheckListBoxLayerTable.Visible  := layerTableVisible;
+
+                if (NOT(layerTableVisible)) then
                     begin
-                        GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
-                        GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
+                        SpeedButtonLayerTable.Down := False;
+                        exit();
+                    end;
 
-                        GridPanelAxisOptions.Visible := True;
-                        GridPanelAxisOptions.BringToFront;
-                    end
-                else
-                    GridPanelAxisOptions.Visible := False;
+                //adjust buttons
+                    setSpeedButtonDown(1, SpeedButtonLayerTable);
+
+                //position
+                    CheckListBoxLayerTable.Left := SpeedButtonLayerTable.left;
+                    CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
+
+                    CheckListBoxLayerTable.BringToFront();
             end;
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
@@ -319,6 +372,60 @@ implementation
                         themeColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
 
                         graphicBackgroundColour := colourToAlphaColour( themeColour );
+                end;
+
+        //layer table
+            procedure TCustomGraphic2D.getActiveLayers();
+                var
+                    i, activeLayerCount : integer;
+                    arrActiveLayers     : TArray<string>;
+                begin
+                    activeLayerCount := 0;
+
+                    SetLength( arrActiveLayers, activeLayerCount );
+
+                    for i := 0 to (CheckListBoxLayerTable.Count - 1) do
+                        begin
+                            if (CheckListBoxLayerTable.Checked[i]) then
+                                begin
+                                    inc( activeLayerCount );
+
+                                    SetLength( arrActiveLayers, activeLayerCount );
+
+                                    arrActiveLayers[ activeLayerCount - 1 ] := CheckListBoxLayerTable.Items[i];
+                                end;
+                        end;
+
+                    skiaGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
+
+                    skiaGeomDrawer.setGeomBoundingBox();
+                end;
+
+            procedure TCustomGraphic2D.updateLayerTable();
+                var
+                    itemIndex,
+                    tableHeight         : integer;
+                    layer               : string;
+                    arrDrawingLayers    : TArray<string>;
+                begin
+                    arrDrawingLayers := skiaGeomDrawer.getAllDrawingLayers();
+
+                    CheckListBoxLayerTable.Items.Clear();
+
+                    itemIndex := 0;
+                    tableHeight := 0;
+
+                    for layer in arrDrawingLayers do
+                        begin
+                            CheckListBoxLayerTable.Items.Add( layer );
+                            CheckListBoxLayerTable.Checked[ itemIndex ] := True;
+
+                            inc( itemIndex );
+                        end;
+
+                    CheckListBoxLayerTable.ItemHeight := 20;
+
+                    tableHeight := CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count;
                 end;
 
         //mouse methods
@@ -475,6 +582,17 @@ implementation
                             SpeedButtonAxisSettings.Down := axisSettingsVisible;
                             GridPanelAxisOptions.Visible := axisSettingsVisible;
                             GridPanelAxisOptions.Width := self.Width - SpeedButtonAxisSettings.Left - 2;
+
+                        //layer table
+                            layerTableVisible := False;
+                            SpeedButtonLayerTable.down := layerTableVisible;
+
+                            CheckListBoxLayerTable.Left := SpeedButtonLayerTable.Left;
+                            CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
+
+
+
+
                 end;
 
         //destructor
@@ -516,6 +634,10 @@ implementation
                     //update the skiaGeomDrawer geometry
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
                             onGraphicUpdateGeometryEvent( self, tGeomDrawer(skiaGeomDrawer) );
+
+                    //do layer table
+                        updateLayerTable();
+                        getActiveLayers();
 
                     //send message to redraw
                         redrawGraphic();

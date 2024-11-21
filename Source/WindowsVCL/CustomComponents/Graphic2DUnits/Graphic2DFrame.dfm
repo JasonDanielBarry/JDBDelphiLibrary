@@ -222,6 +222,19 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 1059
       ExplicitTop = -6
     end
+    object SpeedButtonLayerTable: TSpeedButton
+      Left = 1042
+      Top = 0
+      Width = 23
+      Height = 23
+      Action = ActionEditLayerTable
+      Align = alRight
+      AllowAllUp = True
+      Caption = 'L'
+      Flat = True
+      ExplicitLeft = 1059
+      ExplicitTop = -6
+    end
     object ComboBoxZoomPercent: TComboBox
       AlignWithMargins = True
       Left = 1180
@@ -435,6 +448,23 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitHeight = 23
     end
   end
+  object CheckListBoxLayerTable: TCheckListBox
+    Left = 850
+    Top = 32
+    Width = 125
+    Height = 63
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    Color = clWhite
+    ItemHeight = 17
+    Items.Strings = (
+      'Layer1'
+      'Layer2'
+      'Layer3')
+    TabOrder = 3
+    Visible = False
+    OnClick = CheckListBoxLayerTableClick
+  end
   object ActionListControls: TActionList
     Left = 728
     Top = 256
@@ -500,10 +530,16 @@ object CustomGraphic2D: TCustomGraphic2D
       Hint = 'Edit axis boundaries'
       OnExecute = ActionEditAxesExecute
     end
+    object ActionEditLayerTable: TAction
+      Category = 'Layers'
+      Caption = 'Edit Layer Table'
+      Hint = 'Toggle layers visible/hidden'
+      OnExecute = ActionEditLayerTableExecute
+    end
   end
   object PopupMenuGraphicControls: TPopupMenu
-    Left = 264
-    Top = 376
+    Left = 400
+    Top = 320
     object ZoomExtents1: TMenuItem
       Action = ActionZoomExtents
     end
@@ -542,6 +578,9 @@ object CustomGraphic2D: TCustomGraphic2D
     end
     object EditAxes1: TMenuItem
       Action = ActionEditAxes
+    end
+    object EditLayerTable1: TMenuItem
+      Action = ActionEditLayerTable
     end
   end
 end

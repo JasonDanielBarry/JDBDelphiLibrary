@@ -53,6 +53,8 @@ var
     polygon         : TGeomPolygon;
 begin
     //box
+        ASkiaDrawer.setCurrentDrawingLayer('Polygon Layer');
+
         polygon := TGeomPolygon.create();
 
         polygon.addVertex(10, 10);
@@ -63,6 +65,8 @@ begin
         ASkiaDrawer.addPolygon( polygon, 10, TAlphaColors.Aqua, TAlphaColors.Darkred );
 
     //line 1
+        ASkiaDrawer.setCurrentDrawingLayer('Line Layer');
+
          point1 := TGeomPoint.create(10, 10);
          point2 := TGeomPoint.create(100, 100);
 
@@ -71,6 +75,8 @@ begin
          ASkiaDrawer.addLine(line, 2, TAlphaColors.Black);
 
     //polyline
+        ASkiaDrawer.setCurrentDrawingLayer('Polyline Layer');
+
         polyline := TGeomPolyLine.create();
 
         const NUM_POINTS : integer = 1200;
