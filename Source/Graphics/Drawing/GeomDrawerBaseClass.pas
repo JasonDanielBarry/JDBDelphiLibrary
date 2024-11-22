@@ -314,6 +314,10 @@ implementation
 
                             layerGeometryMap.Remove( layer );
                         end;
+
+                    orderedLayerKeys.Clear();
+
+                    SetLength(arrActiveLayers, 0);
                 end;
 
 end.

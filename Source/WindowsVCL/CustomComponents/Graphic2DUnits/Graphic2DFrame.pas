@@ -396,6 +396,16 @@ implementation
                                 end;
                         end;
 
+                    //catch error of no layers being selected
+                        if (activeLayerCount < 1) then
+                            begin
+                                Application.MessageBox('Cannot disable all layers', 'Error');
+
+                                arrActiveLayers := [CheckListBoxLayerTable.Items[0]];
+
+                                CheckListBoxLayerTable.Checked[0] := True;
+                            end;
+
                     skiaGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
 
                     skiaGeomDrawer.setGeomBoundingBox();
@@ -423,7 +433,7 @@ implementation
                             inc( itemIndex );
                         end;
 
-                    CheckListBoxLayerTable.ItemHeight := 20;
+                    CheckListBoxLayerTable.ItemHeight := 25;
 
                     tableHeight := CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count;
                 end;

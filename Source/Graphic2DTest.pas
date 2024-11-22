@@ -67,8 +67,8 @@ begin
     //line 1
         ASkiaDrawer.setCurrentDrawingLayer('Line Layer');
 
-         point1 := TGeomPoint.create(10, 10);
-         point2 := TGeomPoint.create(100, 100);
+         point1 := TGeomPoint.create(-5, -5);
+         point2 := TGeomPoint.create(115, 115);
 
          line := TGeomLine.create(point1, point2);
 
@@ -83,7 +83,7 @@ begin
 
         for i := 0 to NUM_POINTS do
             begin
-                x := 10 + ((100 - 10) / NUM_POINTS) * i;
+                x := -50 + ((200 - 10) / NUM_POINTS) * i;
                 y := 5 * sin(x - 10) + x;
 
                 polyline.addVertex(x, y);
