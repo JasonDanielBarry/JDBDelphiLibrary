@@ -433,9 +433,9 @@ implementation
                             inc( itemIndex );
                         end;
 
-                    CheckListBoxLayerTable.ItemHeight := 25;
+//                    CheckListBoxLayerTable.ItemHeight := 25;
 
-                    tableHeight := CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count;
+                    CheckListBoxLayerTable.Height := CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count + round(5 * self.ScaleFactor);
                 end;
 
         //mouse methods

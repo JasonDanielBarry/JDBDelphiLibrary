@@ -79,7 +79,7 @@ begin
 
         polyline := TGeomPolyLine.create();
 
-        const NUM_POINTS : integer = 1200;
+        const NUM_POINTS : integer = 1500;
 
         for i := 0 to NUM_POINTS do
             begin
