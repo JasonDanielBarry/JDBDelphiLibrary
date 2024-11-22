@@ -31,7 +31,8 @@ requires
   rtl,
   vcl,
   Skia.Package.VCL,
-  Skia.Package.RTL;
+  Skia.Package.RTL,
+  vclx;
 
 contains
   CustomComponentRegistrationUnit in 'Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas';

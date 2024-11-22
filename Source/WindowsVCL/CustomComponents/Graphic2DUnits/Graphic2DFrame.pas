@@ -106,6 +106,8 @@ interface
                     procedure writeAxisSettingsValuesToAxisConverter();
                 //background colour
                     procedure setGraphicBackgroundColour();
+                //components positions
+                    procedure positionComponents();
                 //layer table
                     procedure getActiveLayers();
                     procedure updateLayerTable();
@@ -186,6 +188,8 @@ implementation
 
         procedure TCustomGraphic2D.FrameResize(Sender: TObject);
             begin
+                positionComponents();
+
                 redrawGraphic();
             end;
 
@@ -200,6 +204,7 @@ implementation
                 //hide or show the axis settings
                     axisSettingsVisible             := NOT(axisSettingsVisible);
                     EditAxes1.Checked               := axisSettingsVisible;
+                    positionComponents();
                     GridPanelAxisOptions.Visible    := axisSettingsVisible;
 
                 //early return
@@ -211,10 +216,6 @@ implementation
 
                 //adjust button
                     setSpeedButtonDown(1, SpeedButtonAxisSettings);
-
-                //position the axis options panel
-                    GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
-                    GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
 
                     GridPanelAxisOptions.BringToFront();
             end;
@@ -230,6 +231,7 @@ implementation
                 //show or hide the layer table
                     layerTableVisible               := NOT(layerTableVisible);
                     EditLayerTable1.Checked         := layerTableVisible;
+                    positionComponents();
                     CheckListBoxLayerTable.Visible  := layerTableVisible;
 
                 if (NOT(layerTableVisible)) then
@@ -240,10 +242,6 @@ implementation
 
                 //adjust buttons
                     setSpeedButtonDown(1, SpeedButtonLayerTable);
-
-                //position
-                    CheckListBoxLayerTable.Left := SpeedButtonLayerTable.left;
-                    CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
 
                     CheckListBoxLayerTable.BringToFront();
             end;
@@ -374,6 +372,24 @@ implementation
                         graphicBackgroundColour := colourToAlphaColour( themeColour );
                 end;
 
+        //components positions
+            procedure TCustomGraphic2D.positionComponents();
+                begin
+                    //axisSettings
+                        if (axisSettingsVisible) then
+                            begin
+                                GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
+                                GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
+                            end;
+
+                    //layer table
+                        if (layerTableVisible) then
+                            begin
+                                CheckListBoxLayerTable.Left := SpeedButtonLayerTable.left;
+                                CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
+                            end;
+                end;
+
         //layer table
             procedure TCustomGraphic2D.getActiveLayers();
                 var
@@ -433,9 +449,11 @@ implementation
                             inc( itemIndex );
                         end;
 
-//                    CheckListBoxLayerTable.ItemHeight := 25;
+                    tableHeight := max( GridPanelDirectionalPan.Height, CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count + round(5 * self.ScaleFactor) );
 
-                    CheckListBoxLayerTable.Height := CheckListBoxLayerTable.ItemHeight * CheckListBoxLayerTable.Count + round(5 * self.ScaleFactor);
+                    tableHeight := min( tableHeight, CheckListBoxLayerTable.ItemHeight * 10 + round(5 * self.ScaleFactor) );
+
+                    CheckListBoxLayerTable.Height := tableHeight;
                 end;
 
         //mouse methods
@@ -588,21 +606,16 @@ implementation
                             GridPanelDirectionalPan.BringToFront();
 
                         //axis settings
-                            axisSettingsVisible := False;
-                            SpeedButtonAxisSettings.Down := axisSettingsVisible;
-                            GridPanelAxisOptions.Visible := axisSettingsVisible;
-                            GridPanelAxisOptions.Width := self.Width - SpeedButtonAxisSettings.Left - 2;
+                            axisSettingsVisible             := False;
+                            SpeedButtonAxisSettings.Down    := axisSettingsVisible;
+                            GridPanelAxisOptions.Visible    := axisSettingsVisible;
+                            GridPanelAxisOptions.Width      := self.Width - SpeedButtonAxisSettings.Left - 2;
 
                         //layer table
-                            layerTableVisible := False;
-                            SpeedButtonLayerTable.down := layerTableVisible;
-
-                            CheckListBoxLayerTable.Left := SpeedButtonLayerTable.Left;
-                            CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
-
-
-
-
+                            layerTableVisible               := False;
+                            CheckListBoxLayerTable.Visible  := layerTableVisible;
+                            SpeedButtonLayerTable.down      := layerTableVisible;
+                            CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
                 end;
 
         //destructor
