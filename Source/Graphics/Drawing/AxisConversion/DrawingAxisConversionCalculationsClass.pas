@@ -5,6 +5,7 @@ interface
     uses
         System.SysUtils, system.Math, system.Types,
         GeneralMathMethods,
+        LinearInterpolationMethods,
         GeometryTypes, GeomBox,
         DrawingAxisConversionBaseClass
         ;
@@ -42,12 +43,8 @@ interface
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPointF>) : TArray<TGeomPoint>; overload;
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPoint>) : TArray<TGeomPoint>; overload;
                     //drawing-to-canvas
-                        //double versions
-                            function XY_to_LTF(const pointIn : TGeomPoint) : TPointF; overload; inline;
-                            function arrXY_to_arrLTF(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;
-                        //integer versions
-                            function XY_to_LT(const pointIn : TGeomPoint) : TPoint; overload; inline;
-                            function arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPoint>;
+                        function XY_to_LT(const pointIn : TGeomPoint) : TPointF; overload; inline;
+                        function arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;
         end;
 
 implementation
@@ -55,50 +52,41 @@ implementation
     //private
         //canvasSpace-to-drawing
             function TDrawingAxisConvertionCalculator.L_to_X(const L_In : double) : double;
-                var
-                    deltaX : double;
                 begin
-                    //x(l) = (D/w)l + xmin
-
-                    deltaX := dL_To_dX( L_In );
-
-                    result := drawingRegion.minPoint.x + deltaX;
+                    result := linearInterpolate(
+                                                    L_In,
+                                                    0,                      drawingRegion.xMin,
+                                                    canvasDimensions.Width, drawingRegion.xMax
+                                               );
                 end;
 
             function TDrawingAxisConvertionCalculator.T_to_Y(const T_In : double) : double;
-                var
-                    deltaY : double;
                 begin
-                    //y(t) = -(R/h)t + ymax
-
-                    deltaY := dT_To_dY( T_In );
-
-                    result := drawingRegion.maxPoint.y + deltaY;
+                    result := linearInterpolate(
+                                                    T_In,
+                                                    0,                          drawingRegion.yMax,
+                                                    canvasDimensions.Height,    drawingRegion.yMin
+                                               );
                 end;
 
         //drawing-to-canvas
-            //double verions
-                function TDrawingAxisConvertionCalculator.X_to_L(const X_In : double) : double;
-                    var
-                        deltaX : double;
-                    begin
-                        //l(x) = (w/D)(x - xmin)
+            function TDrawingAxisConvertionCalculator.X_to_L(const X_In : double) : double;
+                begin
+                    result := linearInterpolate(
+                                                    X_In,
+                                                    drawingRegion.xMin, 0,
+                                                    drawingRegion.xMax, canvasDimensions.Width
+                                               );
+                end;
 
-                        deltaX := X_In - drawingRegion.minPoint.x;
-
-                        result := dX_To_dL( deltaX );
-                    end;
-
-                function TDrawingAxisConvertionCalculator.Y_to_T(const Y_In : double) : double;
-                    var
-                        deltaY : double;
-                    begin
-                        //t(y) = -(h/R)(y - ymax)
-
-                        deltaY := Y_In - drawingRegion.maxPoint.y;
-
-                        result := dY_To_dT( deltaY );
-                    end;
+            function TDrawingAxisConvertionCalculator.Y_to_T(const Y_In : double) : double;
+                begin
+                    result := linearInterpolate(
+                                                    Y_In,
+                                                    drawingRegion.yMin, canvasDimensions.Height,
+                                                    drawingRegion.yMax, 0
+                                               );
+                end;
 
         //canvasSpace-to-drawing
             function TDrawingAxisConvertionCalculator.LT_to_XY(const L_In, T_In : double) : TGeomPoint;
@@ -222,52 +210,24 @@ implementation
                     end;
 
             //drawing-to-canvas
-                //double verions
-                    function TDrawingAxisConvertionCalculator.XY_to_LTF(const pointIn : TGeomPoint) : TPointF;
-                        begin
-                            result := XY_to_LTF(pointIn.x, pointIn.y);
-                        end;
+                function TDrawingAxisConvertionCalculator.XY_to_LT(const pointIn : TGeomPoint) : TPointF;
+                    begin
+                        result := XY_to_LTF(pointIn.x, pointIn.y);
+                    end;
 
-                    function TDrawingAxisConvertionCalculator.arrXY_to_arrLTF(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;
-                        var
-                            i, arrLen       : integer;
-                            arrPointsOut    : TArray<TPointF>;
-                        begin
-                            arrLen := length(arrXY_In);
+                function TDrawingAxisConvertionCalculator.arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;
+                    var
+                        i, arrLen       : integer;
+                        arrPointsOut    : TArray<TPointF>;
+                    begin
+                        arrLen := length(arrXY_In);
 
-                            SetLength(arrPointsOut, arrLen);
+                        SetLength(arrPointsOut, arrLen);
 
-                            for i := 0 to (arrLen - 1) do
-                                arrPointsOut[i] := XY_to_LTF(arrXY_In[i]);
+                        for i := 0 to (arrLen - 1) do
+                            arrPointsOut[i] := XY_to_LT(arrXY_In[i]);
 
-                            result := arrPointsOut;
-                        end;
-
-                //integer versions
-                    function TDrawingAxisConvertionCalculator.XY_to_LT(const pointIn : TGeomPoint) : TPoint;
-                        begin
-                            result := XY_to_LT( pointIn.x, pointIn.y );
-                        end;
-
-                    function TDrawingAxisConvertionCalculator.arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPoint>;
-                        var
-                            i, x_Int, y_Int : integer;
-                            arrPointF       : TArray<TPointF>;
-                            arrPointsOut    : TArray<TPoint>;
-                        begin
-                            arrPointF := arrXY_to_arrLTF(arrXY_In);
-
-                            SetLength(arrPointsOut, length(arrPointF));
-
-                            for i := 0 to (length(arrPointsOut) - 1) do
-                                begin
-                                    x_Int := round(arrPointF[i].X);
-                                    y_Int := round(arrPointF[i].Y);
-
-                                    arrPointsOut[i] := point(x_Int, y_Int);
-                                end;
-
-                            result := arrPointsOut;
-                        end;
+                        result := arrPointsOut;
+                    end;
 
 end.

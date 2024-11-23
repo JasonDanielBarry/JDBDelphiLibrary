@@ -59,9 +59,9 @@ implementation
                 paint           : ISkPaint;
             begin
                 //convert geometry into canvas drawing points
-                    drawingPoints := axisConverterIn.arrXY_to_arrLTF(
+                    drawingPoints := axisConverterIn.arrXY_to_arrLT(
                                                                         lineIn.getDrawingPoints()
-                                                                    );
+                                                                   );
 
                 //define the drawing path
                     pathbuilder := TSkPathBuilder.Create();
@@ -101,9 +101,9 @@ implementation
                 if (polylineIn.vertexCount() > 1) then //only draw if there is more than one vertix
                     begin
                         //convert geometry into canvas drawing points
-                            drawingPoints := axisConverterIn.arrXY_to_arrLTF(
+                            drawingPoints := axisConverterIn.arrXY_to_arrLT(
                                                                                 polylineIn.getDrawingPoints()
-                                                                            );
+                                                                           );
 
                         //define the drawing path
                             pathbuilder := TSkPathBuilder.Create();
@@ -146,9 +146,9 @@ implementation
                 if (polygonIn.vertexCount() > 1) then //only draw if there is more than one vertix
                     begin
                         //convert geometry into canvas drawing points
-                            drawingPoints := axisConverterIn.arrXY_to_arrLTF(
+                            drawingPoints := axisConverterIn.arrXY_to_arrLT(
                                                                                 polygonIn.getDrawingPoints()
-                                                                            );
+                                                                           );
 
                         //define the drawing path
                             pathbuilder := TSkPathBuilder.Create();

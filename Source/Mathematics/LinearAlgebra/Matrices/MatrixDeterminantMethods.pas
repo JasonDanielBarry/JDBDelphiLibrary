@@ -99,13 +99,13 @@ implementation
                         for i := 0 to (size.rows - 1) do
                             for j := 0 to (2 * size.cols - 1) do
                                 begin
-                                    if ( isAlmostZero(matrixInOut[i][j]) ) then
+                                    if ( IsZero(matrixInOut[i][j]) ) then
                                         matrixInOut[i][j] := 0;
                                 end;
                     end;
             begin
                 notSquare   := NOT(matrixIsSquare(matrixInOut));
-                zeroEntry   := isAlmostZero( matrixInOut[0][0] );
+                zeroEntry   := IsZero( matrixInOut[0][0] );
 
                 if ( notSquare OR zeroEntry ) then
                     begin
@@ -325,7 +325,7 @@ implementation
                     //check the value of M[0, 0]
                         diagonalZeroValue := matrixIn[0][0];
 
-                        diagonalZeroIsZero := isAlmostZero(diagonalZeroValue);
+                        diagonalZeroIsZero := IsZero(diagonalZeroValue);
 
                     //choose the algorithm based on the tests above
                         useLaplace := diagonalZeroIsZero OR smallerThan_4x4;

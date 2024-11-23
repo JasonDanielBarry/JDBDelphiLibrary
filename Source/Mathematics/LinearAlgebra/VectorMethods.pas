@@ -60,7 +60,7 @@ implementation
 
                 for i := 0 to (Length(vector1In) - 1) do
                     begin
-                        elementsAreEqual := isAlmostEqual(vector1In[i], vector2In[i]);
+                        elementsAreEqual := SameValue(vector1In[i], vector2In[i]);
 
                         if (NOT(elementsAreEqual)) then
                             begin

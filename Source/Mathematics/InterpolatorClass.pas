@@ -3,29 +3,27 @@ unit InterpolatorClass;
 interface
 
     uses
-        system.SysUtils, system.Math;
+        system.SysUtils, system.Math, system.Types,
+        LinearInterpolationMethods;
 
     type
         TInterpolator = class
             strict private
                 x0, y0,
                 x1, y1  : double;
-                function lineGradient() : double;
             public
                 constructor create(); overload;
-                constructor create(x0In, x1In, y0In, y1In : double); overload;
+                constructor create(const x0In, x1In, y0In, y1In : double); overload;
                 destructor destroy(); override;
-                procedure setPoints(x0In, x1In, y0In, y1In : double);
-                function interpolate(xIn : double) : double;
+                procedure setPoints(const x0In, x1In, y0In, y1In : double);
+                function interpolateX(const xIn : double) : double;
+                function interpolateY(const yIn : double) : double;
+                function interpolate(const tIn : double) : TPointF;
         end;
 
 implementation
 
     //private
-        function TInterpolator.lineGradient() : double;
-            begin
-                result := (y1 - y0) / (x1 - x0);
-            end;
 
     //public
         constructor TInterpolator.create();
@@ -33,9 +31,9 @@ implementation
                 inherited create();
             end;
 
-        constructor TInterpolator.create(x0In, x1In, y0In, y1In : double);
+        constructor TInterpolator.create(const x0In, x1In, y0In, y1In : double);
             begin
-                create();
+                inherited create();
 
                 setPoints(x0In, x1In, y0In, y1In);
             end;
@@ -45,7 +43,7 @@ implementation
                 inherited Destroy();
             end;
 
-        procedure TInterpolator.setPoints(x0In, x1In, y0In, y1In : double);
+        procedure TInterpolator.setPoints(const x0In, x1In, y0In, y1In : double);
             begin
                 x0 := x0In;
                 x1 := x1In;
@@ -53,9 +51,24 @@ implementation
                 y1 := y1In;
             end;
 
-        function TInterpolator.interpolate(xIn : double): Double;
+        function TInterpolator.interpolateX(const xIn : double): double;
             begin
-                result := lineGradient() * (xIn - x0) + y0;
+                result := linearInterpolate( xIn, x0, y0, x1, y1 );
+            end;
+
+        function TInterpolator.interpolateY(const yIn : double) : double;
+            begin
+                result := linearInterpolate( yIn, y0, x0, y1, x1 );
+            end;
+
+        function TInterpolator.interpolate(const tIn : double) : TPointF;
+            var
+                pointOut : TPointF;
+            begin
+                pointOut.X := lerp(tIn, x0, x1);
+                pointOut.Y := lerp(tIn, y0, y1);
+
+                result := pointOut;
             end;
 
 end.

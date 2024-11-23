@@ -136,9 +136,9 @@ implementation
 
         function TGeomPoint.isEqual(const pointIn : TGeomPoint) : boolean;
             begin
-                result :=       isAlmostEqual(pointIn.x, self.x)
-                            AND isAlmostEqual(pointIn.y, self.y)
-                            AND isAlmostEqual(pointIn.z, self.z)
+                result :=       SameValue(pointIn.x, self.x)
+                            AND SameValue(pointIn.y, self.y)
+                            AND SameValue(pointIn.z, self.z)
             end;
 
         function TGeomPoint.lessThan(const pointIn: TGeomPoint): boolean;

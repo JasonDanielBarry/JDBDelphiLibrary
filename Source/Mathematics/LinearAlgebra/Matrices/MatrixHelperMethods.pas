@@ -139,7 +139,7 @@ implementation
                         value1 := matrix1In[rowIn][colIn];
                         value2 := matrix2In[rowIn][colIn];
 
-                        result := isAlmostEqual(value1, value2);
+                        result := SameValue(value1, value2);
                     end;
             begin
                 //get sizes

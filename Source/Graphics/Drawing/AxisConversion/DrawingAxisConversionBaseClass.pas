@@ -11,7 +11,7 @@ interface
         TDrawingAxisConverterBase = class
             protected
                 var
-                    canvasDimensions    : TRect;
+                    canvasDimensions    : TSize;
                     drawingRegion       : TGeomBox;
                 //modifiers
                     //drawing space boundaries
@@ -53,9 +53,6 @@ implementation
             constructor TDrawingAxisConverterBase.create();
                 begin
                     inherited create();
-
-                    canvasDimensions.Left   := 0;
-                    canvasDimensions.Top    := 0;
 
                     setDrawingRegion( 0, 0, 0, 0 );
                 end;

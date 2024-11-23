@@ -63,7 +63,7 @@ implementation
 
                             detU := matrixDeterminant(U);
 
-                            result := isAlmostZero(detU);
+                            result := IsZero(detU);
                         end;
 
                 //dX vector
@@ -116,7 +116,7 @@ implementation
                     function
                         _IntersectionPointsAreEqual() : boolean;
                             begin
-                                result := ( isAlmostEqual(point0.X, point1.X) AND isAlmostEqual(point0.Y, point1.Y) );
+                                result := ( SameValue(point0.X, point1.X) AND SameValue(point0.Y, point1.Y) );
                             end;
                     begin
                         //test for parallel lines
