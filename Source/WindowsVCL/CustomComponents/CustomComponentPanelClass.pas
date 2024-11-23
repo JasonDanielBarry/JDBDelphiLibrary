@@ -20,6 +20,9 @@ implementation
             begin
                 inherited create(AOwner);
 
+                //disable accepting new controls
+                    self.ControlStyle := self.ControlStyle - [csAcceptsControls];
+
                 //border
                     self.BorderStyle    := bsNone;
                     self.BevelKind      := bkNone;

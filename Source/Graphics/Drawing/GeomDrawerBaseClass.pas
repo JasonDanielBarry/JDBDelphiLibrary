@@ -318,6 +318,8 @@ implementation
                     orderedLayerKeys.Clear();
 
                     SetLength(arrActiveLayers, 0);
+
+                    currentDrawingLayer := '';
                 end;
 
 end.
