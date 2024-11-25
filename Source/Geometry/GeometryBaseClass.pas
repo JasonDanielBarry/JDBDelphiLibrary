@@ -19,6 +19,8 @@ interface
                 function getGeomType() : EGeomType; virtual; abstract;
                 function boundingBox() : TGeomBox; virtual; abstract;
                 function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
+                procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;
+                procedure shift(const deltaXIn, deltaYIn : double); overload;
                 class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
         end;
 
@@ -34,6 +36,11 @@ implementation
     destructor TGeomBase.destroy();
         begin
             inherited Destroy();
+        end;
+
+    procedure TGeomBase.shift(const deltaXIn, deltaYIn : double);
+        begin
+            self.shift(deltaXIn, deltaYIn, 0);
         end;
 
     class function TGeomBase.determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;

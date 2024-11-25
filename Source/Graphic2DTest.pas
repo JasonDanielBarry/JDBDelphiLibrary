@@ -24,6 +24,7 @@ type
     //different graphics
         procedure BlueBoxGraphic(var GeomDrawerInOut : TGeomDrawer);
         procedure XYGraphs(var GeomDrawerInOut : TGeomDrawer);
+        procedure FinPlateGraphic(var GeomDrawerInOut : TGeomDrawer);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -148,6 +149,136 @@ implementation
                     GeomDrawerInOut.addPolyline(polyLine, 3, TAlphaColors.Green);
             end;
 
+    procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGeomDrawer);
+        var
+            i, j    : integer;
+            line    : TGeomLine;
+            polygon : TGeomPolygon;
+        function
+            _creatBoltPolygon(const centreX, centreY : double) : TGeomPolygon;
+                var
+                    polygonOut : TGeomPolygon;
+                begin
+                    polygonOut := TGeomPolygon.create();
+
+                    polygonOut.addVertex( 15, 0 );
+                    polygonOut.addVertex( 7.5, 10 );
+                    polygonOut.addVertex( -7.5, 10 );
+                    polygonOut.addVertex( -15, 0 );
+                    polygonOut.addVertex( -7.5, -10 );
+                    polygonOut.addVertex( 7.5, -10 );
+
+                    polygonOut.shift( centreX, centreY );
+
+                    result := polygonOut;
+                end;
+        begin
+            //members
+                //beam
+                    GeomDrawerInOut.setCurrentDrawingLayer('Beam');
+
+                    polygon := TGeomPolygon.create();
+
+                    polygon.addVertex(0, 0);
+                    polygon.addVertex(300, 0);
+                    polygon.addVertex(300, 500);
+                    polygon.addVertex(0, 500);
+
+                    polygon.shift(250 + 50, 300);
+
+                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Lightgreen, TAlphaColors.Black );
+
+                    //flanges
+                        //bottom
+                            line := TGeomLine.create();
+                            line.setStartPoint(0, 15);
+                            line.setEndPoint(300, 15);
+
+                            line.shift(250 + 50, 300);
+
+                            GeomDrawerInOut.addLine( line, 1 );
+
+                        //top
+                            line := TGeomLine.create();
+                            line.setStartPoint(0, 500 - 15);
+                            line.setEndPoint(300, 500 - 15);
+
+                            line.shift(250 + 50, 300);
+
+                            GeomDrawerInOut.addLine( line, 1 );
+
+                //column
+                    GeomDrawerInOut.setCurrentDrawingLayer('Column');
+
+                    polygon := TGeomPolygon.create();
+
+                    polygon.addVertex(0, 0);
+                    polygon.addVertex(250, 0);
+                    polygon.addVertex(250, 1000);
+                    polygon.addVertex(0, 1000);
+
+                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Cornflowerblue, TAlphaColors.Black );
+
+                    //flanges
+                        //left
+                            line := TGeomLine.create();
+                            line.setStartPoint(15, 0);
+                            line.setEndPoint(15, 1000);
+
+                            GeomDrawerInOut.addLine( line, 1 );
+
+                        //right
+                            line := TGeomLine.create();
+                            line.setStartPoint(250 - 15, 0);
+                            line.setEndPoint(250 - 15, 1000);
+
+                            GeomDrawerInOut.addLine( line, 1 );
+
+                //plate
+                    GeomDrawerInOut.setCurrentDrawingLayer('Plate');
+
+                    polygon := TGeomPolygon.create();
+
+                    polygon.addVertex(0, 0);
+                    polygon.addVertex(250, 0);
+                    polygon.addVertex(250, 350);
+                    polygon.addVertex(0, 350);
+
+                    polygon.shift(250, 400);
+
+                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Yellow, TAlphaColors.Black );
+
+            //weld
+                GeomDrawerInOut.setCurrentDrawingLayer('Weld');
+
+                polygon := TGeomPolygon.create();
+
+                polygon.addVertex(0, -8);
+                polygon.addVertex(8, 0);
+                polygon.addVertex(8, 350);
+                polygon.addVertex(0, 350 + 8);
+
+                polygon.shift(250, 400);
+
+                GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Blue, TAlphaColors.Black );
+
+            //bolts
+                GeomDrawerInOut.setCurrentDrawingLayer('Bolts');
+
+                for i := 0 to 5 do
+                    begin
+
+                        for j := 0 to 2 do
+                            begin
+                                polygon := _creatBoltPolygon(100 + 50 * j, 50 + i * 50);
+
+                                polygon.shift(250, 400);
+
+                                GeomDrawerInOut.addPolygon( polygon, 3, TAlphaColors.Lightslategrey, TAlphaColors.Black );
+                            end;
+                    end;
+        end;
+
     constructor TForm1.create(AOwner: TComponent);
         begin
             inherited create(nil);
@@ -177,6 +308,8 @@ implementation
                     BlueBoxGraphic( AGeomDrawer );
                 1:
                     XYGraphs( AGeomDrawer );
+                2:
+                    FinPlateGraphic( AGeomDrawer );
             end;
         end;
 

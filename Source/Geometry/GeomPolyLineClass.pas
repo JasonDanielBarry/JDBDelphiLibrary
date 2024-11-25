@@ -41,7 +41,7 @@ interface
                         procedure editVertex(   indexIn     : integer;
                                                 newPointIn  : TGeomPoint); overload;
                 //calculations
-                    function lineLength() : double;
+                    function polylineLength() : double;
                     function polygonPerimeter() : double;
                     function polygonArea() : double;
                 //helper methods
@@ -50,6 +50,8 @@ interface
                     function boundingBox() : TGeomBox; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
+                //shift geometry
+                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); override;
         end;
 
 implementation
@@ -181,9 +183,7 @@ implementation
                 procedure TGeomPolyLine.editVertex( indexIn         : integer;
                                                     xIn, yIn, zIn   : double    );
                     begin
-                        arrVertices[indexIn].x := xIn;
-                        arrVertices[indexIn].y := yIn;
-                        arrVertices[indexIn].z := zIn;
+                        arrVertices[indexIn].setPoint( xIn, yIn, zIn );
 
                         updatePolyLine();
                     end;
@@ -191,12 +191,13 @@ implementation
                 procedure TGeomPolyLine.editVertex( indexIn     : integer;
                                                     newPointIn  : TGeomPoint);
                     begin
-                        editVertex( indexIn,
-                                    newPointIn.x, newPointIn.y, newPointIn.z);
+                        arrVertices[indexIn].copyPoint( newPointIn );
+
+                        updatePolyLine();
                     end;
 
         //calculations
-            function TGeomPolyLine.lineLength() : double;
+            function TGeomPolyLine.polylineLength() : double;
                 var
                     i           : integer;
                     lengthSum   : double;
@@ -232,7 +233,7 @@ implementation
                             FreeAndNil(closingLine);
 
                     //get the self's length
-                        polyLineLength := self.lineLength();
+                        polyLineLength := self.polylineLength();
 
                     //the polygon perimeter = polyline (self) length + closing line length
                         result := closingLineLength + polyLineLength;
@@ -270,6 +271,17 @@ implementation
             function TGeomPolyLine.getDrawingPoints() : TArray<TGeomPoint>;
                 begin
                     result := arrVertices;
+                end;
+
+        //shift geometry
+            procedure TGeomPolyLine.shift(const deltaXIn, deltaYIn, deltaZIn : double);
+                var
+                    i : integer;
+                begin
+                    for i := 0 to ( vertexCount() - 1 ) do
+                        arrVertices[i].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+
+                    updatePolyLine();
                 end;
 
 end.

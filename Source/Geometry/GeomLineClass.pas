@@ -24,7 +24,6 @@ interface
                         procedure calculateAxisProjections();
                     //assign points
                         procedure assignPoints(startPointIn, endPointIn : TGeomPoint);
-                        procedure updatePoints();
             strict protected
                 //
             public
@@ -38,8 +37,12 @@ interface
                     function getStartPoint() : TGeomPoint;
                     function getEndPoint() : TGeomPoint;
                 //modifiers
-                    procedure setStartPoint(startPointIn : TGeomPoint);
-                    procedure setEndPoint(endPointIn : TGeomPoint);
+                    procedure setStartPoint(const xIn, yIn : double); overload;
+                    procedure setStartPoint(const xIn, yIn, zIn : double); overload;
+                    procedure setStartPoint(startPointIn : TGeomPoint); overload;
+                    procedure setEndPoint(const xIn, yIn : double); overload;
+                    procedure setEndPoint(const xIn, yIn, zIn : double); overload;
+                    procedure setEndPoint(endPointIn : TGeomPoint); overload;
                     procedure setPoints(startPointIn, endPointIn : TGeomPoint);
                 //calculattions
                     //line length
@@ -55,6 +58,8 @@ interface
                     function boundingBox() : TGeomBox; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
+                //shift geometry
+                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); override;
         end;
 //----------------------------------------------------------------------------------------------------
     //calculate intersection point
@@ -78,15 +83,10 @@ implementation
             //assign points
                 procedure TGeomLine.assignPoints(startPointIn, endPointIn : TGeomPoint);
                     begin
-                        startPoint  := startPointIn;
-                        endPoint    := endPointIn;
+                        startPoint.copyPoint( startPointIn );
+                        endPoint.copyPoint( endPointIn );
 
                         calculateAxisProjections();
-                    end;
-
-                procedure TGeomLine.updatePoints();
-                    begin
-                        assignPoints(startPoint, endPoint);
                     end;
 
     //protected
@@ -190,18 +190,42 @@ implementation
                 end;
 
         //modifiers
+            procedure TGeomLine.setStartPoint(const xIn, yIn : double);
+                begin
+                    setStartPoint( xIn, yIn, 0 );
+                end;
+
+            procedure TGeomLine.setStartPoint(const xIn, yIn, zIn : double);
+                var
+                    newStartPoint : TGeomPoint;
+                begin
+                    newStartPoint := TGeomPoint.create( xIn, yIn, zIn );
+
+                    setStartPoint( newStartPoint );
+                end;
+
             procedure TGeomLine.setStartPoint(startPointIn : TGeomPoint);
                 begin
-                    startPoint := startPointIn;
+                    assignPoints(startPointIn, endPoint);
+                end;
 
-                    updatePoints();
+            procedure TGeomLine.setEndPoint(const xIn, yIn : double);
+                begin
+                    setEndPoint( xIn, yIn, 0 );
+                end;
+
+            procedure TGeomLine.setEndPoint(const xIn, yIn, zIn : double);
+                var
+                    newEndPoint : TGeomPoint;
+                begin
+                    newEndPoint := TGeomPoint.create( xIn, yIn, zIn );
+
+                    setEndPoint( newEndPoint );
                 end;
 
             procedure TGeomLine.setEndPoint(endPointIn : TGeomPoint);
                 begin
-                    endPoint := endPointIn;
-
-                    updatePoints();
+                    assignPoints(startPoint, endPointIn);
                 end;
 
             procedure TGeomLine.setPoints(startPointIn, endPointIn : TGeomPoint);
@@ -230,6 +254,13 @@ implementation
                     arrPointsOut[1] := endPoint;
 
                     result := arrPointsOut;
+                end;
+
+        //shift geometry
+            procedure TGeomLine.shift(const deltaXIn, deltaYIn, deltaZIn : double);
+                begin
+                    startPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                    endPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                 end;
 //----------------------------------------------------------------------------------------------------
     //calculate intersection point

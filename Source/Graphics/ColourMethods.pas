@@ -26,24 +26,24 @@ implementation
     //get alpha value
         function getAlphaValue(const alphaColourIn : TAlphaColor) : byte;
             var
-                colourReferenceHex : COLORREF;
+                colourReferenceHexiDec : COLORREF;
             begin
-                colourReferenceHex := TAlphaColorRec.ColorToRGB( alphaColourIn );
+                colourReferenceHexiDec := TAlphaColorRec.ColorToRGB( alphaColourIn );
 
-                result := ( (colourReferenceHex shr 24) AND $FF );
+                result := ( (colourReferenceHexiDec shr 24) AND $FF );
             end;
 
     //extract a colour's RGBA values
         function extractColourRGB(const colourIn : Tcolor) : TRGBQuad;
             var
-                colourReferenceHex  : COLORREF;
+                colourReferenceHexiDec  : COLORREF;
                 redGreenBlueOut     : TRGBQuad;
             begin
-                colourReferenceHex := TColorRec.ColorToRGB( colourIn );
+                colourReferenceHexiDec := TColorRec.ColorToRGB( colourIn );
 
-                redGreenBlueOut.rgbRed      := GetRValue( colourReferenceHex );
-                redGreenBlueOut.rgbGreen    := GetGValue( colourReferenceHex );
-                redGreenBlueOut.rgbBlue     := GetBValue( colourReferenceHex );
+                redGreenBlueOut.rgbRed      := GetRValue( colourReferenceHexiDec );
+                redGreenBlueOut.rgbGreen    := GetGValue( colourReferenceHexiDec );
+                redGreenBlueOut.rgbBlue     := GetBValue( colourReferenceHexiDec );
                 redGreenBlueOut.rgbReserved := 255;
 
                 result := redGreenBlueOut;

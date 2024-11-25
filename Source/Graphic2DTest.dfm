@@ -58,15 +58,14 @@ object Form1: TForm1
       Width = 125
       Height = 23
       Align = alLeft
+      Style = csDropDownList
       Color = clWhite
       TabOrder = 0
-      Text = 'ComboBox1'
       OnChange = ComboBox1Change
       Items.Strings = (
         'Blue Box'
-        'XY Graphs')
-      ExplicitLeft = 87
-      ExplicitTop = -4
+        'XY Graphs'
+        'Fin Plate')
     end
   end
 end

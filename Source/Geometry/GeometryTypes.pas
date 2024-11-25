@@ -21,6 +21,7 @@ interface
                 constructor create(const PointFIn : TPointF); overload;
                 constructor create(const PointIn : TPoint); overload;
             //set point
+                procedure copyPoint(const otherGeomPointIn : TGeomPoint);
                 procedure setPoint(const xIn, yIn, zIn : double); overload; inline;
                 procedure setPoint(const xIn, yIn : double); overload;
                 procedure setPoint(const PointFIn : TPointF); overload;
@@ -69,6 +70,15 @@ implementation
             end;
 
     //set point
+        procedure TGeomPoint.copyPoint(const otherGeomPointIn : TGeomPoint);
+            begin
+                setPoint(
+                            otherGeomPointIn.x,
+                            otherGeomPointIn.y,
+                            otherGeomPointIn.z
+                        );
+            end;
+
         procedure TGeomPoint.setPoint(const xIn, yIn, zIn : double);
             begin
                 x := xIn;
