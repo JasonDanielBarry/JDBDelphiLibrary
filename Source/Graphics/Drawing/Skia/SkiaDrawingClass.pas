@@ -24,14 +24,15 @@ interface
                 //drawing procedures
                     //auto detect geom type
                         procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
+                    //draw all geometry
+                        procedure drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                    const canvasIn                      : ISkCanvas );
             public
                 //constructor
                     constructor create();
                 //destructor
                     destructor destroy(); override;
                 //draw all geometry
-                    procedure drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
-                                                const canvasIn                      : ISkCanvas );
                     function drawAllGeometryToSurface(const canvasHeightIn, canvasWidthIn : integer) : ISkSurface;
         end;
 
@@ -55,6 +56,17 @@ implementation
                                             false               );
                     end;
 
+            //draw all geometry
+                procedure TSkiaGeomDrawer.drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                            const canvasIn                      : ISkCanvas );
+                    begin
+                        //set canvas
+                            setDrawingCanvas( canvasIn );
+
+                        //draw all geometry
+                            inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
+                    end;
+
     //public
         //constructor
             constructor TSkiaGeomDrawer.create();
@@ -69,16 +81,6 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TSkiaGeomDrawer.drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
-                                                        const canvasIn                      : ISkCanvas );
-                begin
-                    //set canvas
-                        setDrawingCanvas( canvasIn );
-
-                    //draw all geometry
-                        inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
-                end;
-
             function TSkiaGeomDrawer.drawAllGeometryToSurface(const canvasHeightIn, canvasWidthIn : integer) : ISkSurface;
                 var
                     skiaSurface : ISkSurface;
@@ -87,7 +89,7 @@ implementation
                         skiaSurface := TSkSurface.MakeRaster( canvasWidthIn, canvasHeightIn );
 
                     //clear the skiaSurface
-                        skiaSurface.Canvas.Clear( drawingBackgroundColour );
+                        skiaSurface.Canvas.Clear( drawingBackgroundAlphaColour );
 
                     //draw all geometry on skiaSurface canvas
                         drawAllGeometry(canvasHeightIn, canvasWidthIn,

@@ -25,14 +25,17 @@ interface
                 //drawing procedures
                     //auto detect geom type
                         procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
+                    //draw all geometry
+                        procedure drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                    const canvasIn                      : TDirect2DCanvas );
             public
                 //constructor
                     constructor create();
                 //destructor
                     destructor destroy(); override;
                 //draw all geometry
-                    procedure drawAllGeometry(  const canvasIn          : TDirect2DCanvas;
-                                                const axisConverterIn   : TDrawingAxisConverter );
+                    function drawAllGeometryToBitmap(const canvasHeightIn, canvasWidthIn : integer) : TBitmap;
+
         end;
 
 implementation
@@ -46,14 +49,23 @@ implementation
                     end;
 
         //drawing procedures
-
             //auto detect geom type
                 procedure TDirect2DGeomDrawer.drawGeometry(const drawingGeometryIn : TDrawingGeometry);
                     begin
                         drawDirect2DGeometry(   drawingGeometryIn,
                                                 axisConverter,
-                                                Direct2DDrawingCanvas,
-                                                false                   );
+                                                Direct2DDrawingCanvas   );
+                    end;
+
+            //draw all geometry
+                procedure TDirect2DGeomDrawer.drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                                                                const canvasIn                      : TDirect2DCanvas );
+                    begin
+                        //set canvas
+                            setDrawingCanvas( canvasIn );
+
+                        //draw all geometry
+                            inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
                     end;
 
     //public
@@ -70,14 +82,33 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TDirect2DGeomDrawer.drawAllGeometry(  const canvasIn          : TDirect2DCanvas;
-                                                            const axisConverterIn   : TDrawingAxisConverter );
+            function TDirect2DGeomDrawer.drawAllGeometryToBitmap(const canvasHeightIn, canvasWidthIn : integer) : TBitmap;
+                var
+                    bitmapOut : TBitmap;
+                    D2DCanvas : TDirect2DCanvas;
                 begin
-                    //set canvas
-                        setDrawingCanvas( canvasIn );
+                    //creat bitmap
+                        BitmapOut := TBitmap.Create( canvasWidthIn, canvasHeightIn );
 
-                    //draw all geometry
-                        inherited drawAllGeometry();
+                    //create D2D canvas
+                        D2DCanvas := TDirect2DCanvas.Create( bitmapOut.Canvas, Rect(0, 0, canvasHeightIn, canvasWidthIn) );
+                        D2DCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
+
+                        D2DCanvas.BeginDraw();
+
+                        D2DCanvas.Brush.Color := drawingBackgroundColour;
+
+                        D2DCanvas.FillRect( Rect(0, 0, canvasHeightIn, canvasWidthIn) );
+
+                    //draw all geometry to the canvas (and indirectly the bitmap)
+                        drawAllGeometry( canvasHeightIn, canvasWidthIn, D2DCanvas );
+
+                        D2DCanvas.EndDraw();
+
+                    //free D2D canvas
+                        FreeAndNil( D2DCanvas );
+
+                    result := BitmapOut;
                 end;
 
 end.

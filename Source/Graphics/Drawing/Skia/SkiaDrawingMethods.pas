@@ -193,8 +193,8 @@ implementation
                 geometry                : TGeomBase;
             begin
                 lineThickness   := drawingGeometryIn.getLineThickness();
-                fillColour      := drawingGeometryIn.getFillColour();
-                lineColour      := drawingGeometryIn.getLineColour();
+                fillColour      := drawingGeometryIn.getFillAlphaColour();
+                lineColour      := drawingGeometryIn.getLineAlphaColour();
                 geometry        := drawingGeometryIn.getGeometry();
 
                 geometryType    := geometry.getGeomType();

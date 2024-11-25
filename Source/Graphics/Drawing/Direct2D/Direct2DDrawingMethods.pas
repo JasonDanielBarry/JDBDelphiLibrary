@@ -16,156 +16,180 @@ interface
     //draw geometry
         procedure drawDirect2DGeometry( const drawingGeometryIn : TDrawingGeometry;
                                         const axisConverterIn   : TDrawingAxisConverter;
-                                        var canvasInOut         : TDirect2DCanvas;
-                                        const freeGeometryIn    : boolean = True        );
+                                        var canvasInOut         : TDirect2DCanvas       );
 
 implementation
 
     //draw line
-        procedure drawDirect2DLine( const lineIn            : TGeomLine;
-                                    const colourIn          : TAlphaColor;
+        procedure drawDirect2DLine( const lineThicknessIn   : integer;
+                                    const linePointsIn      : TArray<TGeomPoint>;
+                                    const colourIn          : TColor;
                                     const axisConverterIn   : TDrawingAxisConverter;
-                                    var canvasInOut         : TDirect2DCanvas;
-                                    const freeLineIn        : boolean = True;
-                                    const lineThicknessIn   : integer = 2           );
+                                    var canvasInOut         : TDirect2DCanvas       );
             var
-                drawingPoints : TArray<TPoint>;
+                D2DPen          : TDirect2DPen;
+                drawingPoints   : TArray<TPointF>;
             begin
                 //convert geometry to canvas drawing points
                     drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                        lineIn.getDrawingPoints()
+                                                                        linePointsIn
                                                                    );
+
+                //assign the colour and line thickness using pen
+                    D2DPen := TDirect2DPen.Create( canvasInOut );
+                    D2DPen.Color := colourIn;
+                    D2DPen.Style := TPenStyle.psSolid;
+
+                //draw the line
+                    canvasInOut.RenderTarget.DrawLine(
+                                                            D2D1PointF(drawingPoints[0].X, drawingPoints[0].Y), //start point
+                                                            D2D1PointF(drawingPoints[1].X, drawingPoints[1].Y), //end points
+                                                            D2DPen.Brush.Handle, //brush
+                                                            lineThicknessIn, //line thickness
+                                                            D2DPen.StrokeStyle //stroke style
+                                                     );
+            end;
+
+    //draw polyline
+        procedure drawDirect2DPolyline( const lineThicknessIn   : integer;
+                                        const polylinePointsIn  : TArray<TGeomPoint>;
+                                        const colourIn          : TColor;
+                                        const axisConverterIn   : TDrawingAxisConverter;
+                                        var canvasInOut         : TDirect2DCanvas       );
+            var
+                i               : integer;
+                pathGeometry    : ID2D1PathGeometry;
+                geometrySink    : ID2D1GeometrySink;
+                drawingPoints   : TArray<TPointF>;
+            begin
+                //only draw if there is more than one vertix
+                    if ( length(polylinePointsIn) < 2) then
+                        exit();
+
+                //convert geometry into canvas drawing points
+                    drawingPoints := axisConverterIn.arrXY_to_arrLT(
+                                                                        polylinePointsIn
+                                                                   );
+
+                //create the geometry
+                    //factory
+                        D2DFactory( D2D1_FACTORY_TYPE.D2D1_FACTORY_TYPE_MULTI_THREADED ).CreatePathGeometry( pathGeometry );
+
+                    //path geometry
+                        pathGeometry.Open( geometrySink );
+
+                    //geometry sink
+                        geometrySink.BeginFigure( D2D1PointF( drawingPoints[0].x, drawingPoints[0].y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW );
+
+                        for i := 1 to ( length(drawingPoints) - 1 ) do
+                            geometrySink.AddLine( D2D1PointF( drawingPoints[i].x, drawingPoints[i].y ) );
+
+                        geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN );
 
                 //assign the canvas the colour and line thickness
                     canvasInOut.Pen.Color := AlphaColorToColor(colourIn);
                     canvasInOut.Pen.Style := TPenStyle.psSolid;
                     canvasInOut.Pen.Width := lineThicknessIn;
 
-                //draw the line
-                    canvasInOut.MoveTo( drawingPoints[0].X, drawingPoints[0].Y );
-                    canvasInOut.LineTo( drawingPoints[1].X, drawingPoints[1].Y );
-
-                if (freeLineIn) then
-                    begin
-                        FreeAndNil( lineIn );
-                    end;
-            end;
-
-    //draw polyline
-        procedure drawDirect2DPolyline( const polylineIn        : TGeomPolyLine;
-                                        const colourIn          : TAlphaColor;
-                                        const axisConverterIn   : TDrawingAxisConverter;
-                                        var canvasInOut         : TDirect2DCanvas;
-                                        const freePolyLineIn    : boolean = True;
-                                        const lineThicknessIn   : integer = 2           );
-            var
-                drawingPoints : TArray<TPoint>;
-            begin
-                if (polylineIn.vertexCount() > 1) then //only draw if there is more than one vertix
-                    begin
-                        //convert geometry into canvas drawing points
-                            drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                                polylineIn.getDrawingPoints()
-                                                                           );
-
-                        //assign the canvas the colour and line thickness
-                            canvasInOut.Pen.Color := AlphaColorToColor(colourIn);
-                            canvasInOut.Pen.Style := TPenStyle.psSolid;
-                            canvasInOut.Pen.Width := lineThicknessIn;
-
-                        //draw the polyline
-                            canvasInOut.MoveTo( drawingPoints[0].X, drawingPoints[0].Y );
-                            canvasInOut.Polyline( drawingPoints );
-                    end;
-
-                if (freePolyLineIn) then
-                    FreeAndNil(polylineIn);
+                //draw the polyline
+                    canvasInOut.DrawGeometry( pathGeometry );
             end;
 
     //draw polygon
-        procedure drawDirect2DPolygon(  const   polygonIn       : TGeomPolygon;
+        procedure drawDirect2DPolygon(  const   lineThicknessIn : integer;
+                                        const   polygonPointsIn : TArray<TGeomPoint>;
                                         const   fillColourIn,
-                                                lineColourIn    : TAlphaColor;
+                                                lineColourIn    : TColor;
                                         const   axisConverterIn : TDrawingAxisConverter;
-                                        var     canvasInOut     : TDirect2DCanvas;
-                                        const   freePolyLineIn  : boolean = True;
-                                        const   lineThicknessIn : integer = 2           );
+                                        var     canvasInOut     : TDirect2DCanvas      );
             var
-                drawingPoints : TArray<TPoint>;
+                i               : integer;
+                pathGeometry    : ID2D1PathGeometry;
+                geometrySink    : ID2D1GeometrySink;
+                drawingPoints   : TArray<TPointF>;
             begin
-                if (polygonIn.vertexCount() > 1) then //only draw if there is more than one vertix
-                    begin
-                        //convert geometry into canvas drawing points
-                            drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                                polygonIn.getDrawingPoints()
-                                                                           );
+                //only draw if there is more than one vertix
+                    if ( length(polygonPointsIn) < 2 ) then
+                        exit();
 
-                        //assign the canvas the colour and line thickness
-                            //fill
-                                canvasInOut.Brush.Color := AlphaColorToColor(fillColourIn);
-                                canvasInOut.Brush.Style := TBrushStyle.bsSolid;
+                //convert geometry into canvas drawing points
+                    drawingPoints := axisConverterIn.arrXY_to_arrLT(
+                                                                        polygonPointsIn
+                                                                   );
 
-                            //line
-                                canvasInOut.Pen.Color := AlphaColorToColor(lineColourIn);
-                                canvasInOut.Pen.Style := TPenStyle.psSolid;
-                                canvasInOut.Pen.Width := lineThicknessIn;
+                //create the geometry
+                    //factory
+                        D2DFactory( D2D1_FACTORY_TYPE.D2D1_FACTORY_TYPE_MULTI_THREADED ).CreatePathGeometry( pathGeometry );
 
-                        //draw the polygon
-                            canvasInOut.MoveTo( drawingPoints[0].X, drawingPoints[0].Y );
-                            canvasInOut.Polygon( drawingPoints );
-                    end;
+                    //path geometry
+                        pathGeometry.Open( geometrySink );
 
-                if (freePolyLineIn) then
-                    FreeAndNil(polygonIn);
+                    //geometry sink
+                        geometrySink.BeginFigure( D2D1PointF( drawingPoints[0].x, drawingPoints[0].y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED );
+
+                        for i := 1 to ( length(drawingPoints) - 1 ) do
+                            geometrySink.AddLine( D2D1PointF( drawingPoints[i].x, drawingPoints[i].y ) );
+
+                        geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED );
+
+                //assign the canvas the colour and line thickness
+                    //fill
+                        canvasInOut.Brush.Color := AlphaColorToColor(fillColourIn);
+                        canvasInOut.Brush.Style := TBrushStyle.bsSolid;
+
+                    //line
+                        canvasInOut.Pen.Color := AlphaColorToColor(lineColourIn);
+                        canvasInOut.Pen.Style := TPenStyle.psSolid;
+                        canvasInOut.Pen.Width := lineThicknessIn;
+
+                //draw the polyline
+                    canvasInOut.FillGeometry( pathGeometry );
             end;
 
     //draw geometry
         procedure drawDirect2DGeometry( const drawingGeometryIn : TDrawingGeometry;
                                         const axisConverterIn   : TDrawingAxisConverter;
-                                        var canvasInOut         : TDirect2DCanvas;
-                                        const freeGeometryIn    : boolean = True        );
+                                        var canvasInOut         : TDirect2DCanvas       );
             var
                 lineThickness           : integer;
                 geometryType            : EGeomType;
-                fillColour, lineColour  : TAlphaColor;
+                fillColour, lineColour  : TColor;
                 geometry                : TGeomBase;
             begin
                 lineThickness   := drawingGeometryIn.getLineThickness();
                 fillColour      := drawingGeometryIn.getFillColour();
                 lineColour      := drawingGeometryIn.getLineColour();
-                geometry        := drawingGeometryIn.getGeometry();
-
-                geometryType    := geometry.getGeomType();
+                geometryType    := drawingGeometryIn.getGeometry().getGeomType();
 
                 case (geometryType) of
                     EGeomType.gtLine:
-                        drawDirect2DLine(   TGeomLine(geometry),
+                        drawDirect2DLine(
+                                            lineThickness,
+                                            drawingGeometryIn.getDrawingPoints(),
                                             lineColour,
                                             axisConverterIn,
-                                            canvasInOut,
-                                            False,
-                                            lineThickness       );
+                                            canvasInOut
+                                        );
 
                     EGeomType.gtPolyline:
-                        drawDirect2DPolyline(   TGeomPolyLine(geometry),
+                        drawDirect2DPolyline(
+                                                lineThickness,
+                                                drawingGeometryIn.getDrawingPoints(),
                                                 lineColour,
                                                 axisConverterIn,
-                                                canvasInOut,
-                                                False,
-                                                lineThickness           );
+                                                canvasInOut
+                                            );
 
                     EGeomType.gtPolygon:
-                        drawDirect2DPolygon(    TGeomPolygon(geometry),
+                        drawDirect2DPolygon(
+                                                lineThickness,
+                                                drawingGeometryIn.getDrawingPoints(),
                                                 fillColour,
                                                 lineColour,
                                                 axisConverterIn,
-                                                canvasInOut,
-                                                False,
-                                                lineThickness           );
+                                                canvasInOut
+                                           );
                 end;
-
-                if (freeGeometryIn) then
-                    FreeAndNil(drawingGeometryIn);
             end;
 
 

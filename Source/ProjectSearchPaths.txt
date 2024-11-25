@@ -6,6 +6,7 @@
 ..\JDBDelphiLibrary\Source\Graphics;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\AxisConversion;
+..\JDBDelphiLibrary\Source\Graphics\Drawing\Direct2D;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\Skia;
 ..\JDBDelphiLibrary\Source\WindowsVCL;
 ..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;

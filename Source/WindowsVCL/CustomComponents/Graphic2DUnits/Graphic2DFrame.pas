@@ -4,20 +4,20 @@ interface
 
     uses
         Winapi.Windows, Winapi.Messages,
+        Vcl.Direct2D, Winapi.D2D1,
         System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
         system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
         Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-        Vcl.Buttons, Vcl.ExtCtrls, Vcl.Skia, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
+        Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
         GeneralComponentHelperMethods,
         ColourMethods,
         GeometryTypes, GeomBox,
-        GeomDrawerBaseClass, GeomDrawerAxisConversionInterfaceClass, SkiaDrawingClass,
+        GeomDrawerBaseClass, GeomDrawerAxisConversionInterfaceClass, Direct2DDrawingClass,
         Graphic2DTypes, Vcl.CheckLst
         ;
 
     type
         TCustomGraphic2D = class(TFrame)
-            SkPaintBoxGraphic: TSkPaintBox;
             SpeedButtonZoomIn: TSpeedButton;
             SpeedButtonZoomOut: TSpeedButton;
             SpeedButtonZoomExtents: TSpeedButton;
@@ -70,11 +70,9 @@ interface
             ActionEditLayerTable: TAction;
             SpeedButtonLayerTable: TSpeedButton;
             EditLayerTable1: TMenuItem;
+    PaintBoxGraphic: TPaintBox;
             //events
-                procedure SkPaintBoxGraphicDraw(ASender         : TObject;
-                                                const ACanvas   : ISkCanvas;
-                                                const ADest     : TRectF;
-                                                const AOpacity  : Single    );
+                procedure PaintBoxGraphicPaint(Sender: TObject);
                 procedure ComboBoxZoomPercentChange(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseEnter(Sender: TObject);
                 procedure SkPaintBoxGraphicMouseLeave(Sender: TObject);
@@ -92,14 +90,15 @@ interface
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
                 procedure ActionEditLayerTableExecute(Sender: TObject);
                 procedure CheckListBoxLayerTableClick(Sender: TObject);
+
             private
                 var
                     axisSettingsVisible,
                     layerTableVisible,
                     mustRedrawGraphic               : boolean;
-                    currentGraphicImage             : ISkImage;
+                    currentGraphicBuffer            : TBitmap;
                     graphicBackgroundColour         : TAlphaColor;
-                    skiaGeomDrawer                  : TSkiaGeomDrawer;
+                    D2DGeomDrawer                   : TDirect2DGeomDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
                     procedure updateAxisSettingsValues();
@@ -119,8 +118,8 @@ interface
             protected
                 //drawing procedures
                     procedure preDrawGraphic(); virtual;
-                    procedure postDrawGraphic(const canvasIn : ISkCanvas); virtual;
-                    function updateGraphicImage() : ISkImage;
+                    procedure postDrawGraphic(const canvasIn : TCanvas); virtual;
+                    function updateGraphicBuffer() : TBitmap;
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -144,24 +143,22 @@ implementation
 {$R *.dfm}
 
     //events
-        procedure TCustomGraphic2D.SkPaintBoxGraphicDraw(   ASender         : TObject;
-                                                            const ACanvas   : ISkCanvas;
-                                                            const ADest     : TRectF;
-                                                            const AOpacity  : Single    );
+        procedure TCustomGraphic2D.PaintBoxGraphicPaint(Sender: TObject);
             begin
-                ACanvas.DrawImage( currentGraphicImage, 0, 0 );
+                //draw buffer to screen
+                    PaintBoxGraphic.Canvas.Draw( 0, 0, currentGraphicBuffer );
 
                 mustRedrawGraphic := False;
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
             begin
-                skiaGeomDrawer.activateMouseControl();
+                D2DGeomDrawer.activateMouseControl();
             end;
 
         procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
             begin
-                skiaGeomDrawer.deactivateMouseControl();
+                D2DGeomDrawer.deactivateMouseControl();
             end;
 
         procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
@@ -181,7 +178,7 @@ implementation
                     newZoomPercent := 1;
                 end;
 
-                skiaGeomDrawer.setZoom( newZoomPercent );
+                D2DGeomDrawer.setZoom( newZoomPercent );
 
                 redrawGraphic();
             end;
@@ -248,35 +245,35 @@ implementation
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftRange( 10 );
+                D2DGeomDrawer.shiftRange( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftDomain( 10 );
+                D2DGeomDrawer.shiftDomain( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftDomain( -10 );
+                D2DGeomDrawer.shiftDomain( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.shiftRange( -10 );
+                D2DGeomDrawer.shiftRange( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.recentre();
+                D2DGeomDrawer.recentre();
 
                 redrawGraphic();
             end;
@@ -293,14 +290,14 @@ implementation
 
         procedure TCustomGraphic2D.ActionZoomInExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.zoomIn(10);
+                D2DGeomDrawer.zoomIn(10);
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionZoomOutExecute(Sender: TObject);
             begin
-                skiaGeomDrawer.zoomOut(10);
+                D2DGeomDrawer.zoomOut(10);
 
                 redrawGraphic();
             end;
@@ -320,7 +317,7 @@ implementation
                     yMin, yMax      : double;
                     drawingRegion   : TGeomBox;
                 begin
-                    drawingRegion := skiaGeomDrawer.getDrawingRegion();
+                    drawingRegion := D2DGeomDrawer.getDrawingRegion();
 
                     xMin := drawingRegion.minPoint.x;
                     xMax := drawingRegion.maxPoint.x;
@@ -356,7 +353,7 @@ implementation
                         newDrawingRegion.minPoint.z := 0;
                         newDrawingRegion.maxPoint.z := 0;
 
-                        skiaGeomDrawer.setDrawingRegion(0, newDrawingRegion);
+                        D2DGeomDrawer.setDrawingRegion(0, newDrawingRegion);
 
                     redrawGraphic();
                 end;
@@ -379,7 +376,7 @@ implementation
                         if (axisSettingsVisible) then
                             begin
                                 GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
-                                GridPanelAxisOptions.Top    := SkPaintBoxGraphic.top + 1;
+                                GridPanelAxisOptions.Top    := PaintBoxGraphic.top + 1;
                             end;
 
                     //layer table
@@ -422,9 +419,9 @@ implementation
                                 CheckListBoxLayerTable.Checked[0] := True;
                             end;
 
-                    skiaGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
+                    D2DGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
 
-                    skiaGeomDrawer.setGeomBoundingBox();
+                    D2DGeomDrawer.setGeomBoundingBox();
                 end;
 
             procedure TCustomGraphic2D.updateLayerTable();
@@ -434,7 +431,7 @@ implementation
                     layer               : string;
                     arrDrawingLayers    : TArray<string>;
                 begin
-                    arrDrawingLayers := skiaGeomDrawer.getAllDrawingLayers();
+                    arrDrawingLayers := D2DGeomDrawer.getAllDrawingLayers();
 
                     CheckListBoxLayerTable.Items.Clear();
 
@@ -462,11 +459,11 @@ implementation
                     mouseCoordStr   : string;
                     mousePointXY    : TGeomPoint;
                 begin
-                    if (NOT( skiaGeomDrawer.getMouseControlActive() )) then
+                    if (NOT( D2DGeomDrawer.getMouseControlActive() )) then
                         exit();
 
                     //convert mouse position to XY coordinate
-                        mousePointXY := skiaGeomDrawer.getMouseCoordinatesXY();
+                        mousePointXY := D2DGeomDrawer.getMouseCoordinatesXY();
 
                         mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ')';
 
@@ -477,17 +474,17 @@ implementation
             procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
                 begin
                     try
-                        if NOT(skiaGeomDrawer.getMouseControlActive()) then
+                        if NOT(D2DGeomDrawer.getMouseControlActive()) then
                             begin
-                                SkPaintBoxGraphic.Cursor := crDefault;
+                                PaintBoxGraphic.Cursor := crDefault;
                                 exit();
                             end;
 
                         case (messageIn.Msg) of
                             WM_MBUTTONDOWN:
-                                SkPaintBoxGraphic.Cursor := crSizeAll;
+                                PaintBoxGraphic.Cursor := crSizeAll;
                             WM_MBUTTONUP:
-                                SkPaintBoxGraphic.Cursor := crDefault;
+                                PaintBoxGraphic.Cursor := crDefault;
                         end;
                     except
 
@@ -499,7 +496,7 @@ implementation
                 var
                     currentZoomPercentage : double;
                 begin
-                    currentZoomPercentage := skiaGeomDrawer.getCurrentZoomPercentage();
+                    currentZoomPercentage := D2DGeomDrawer.getCurrentZoomPercentage();
                     ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
                 end;
 
@@ -508,35 +505,30 @@ implementation
             procedure TCustomGraphic2D.preDrawGraphic();
                 begin
                     //make sure canvas is the same colour as the parent
-                        skiaGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
+                        D2DGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
                 end;
 
-            procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : ISkCanvas);
-                var
-                    paint : ISkPaint;
+            procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TCanvas);
                 begin
                     //draw a border around the paintbox edge
-                        paint               := TSkPaint.Create( TSkPaintStyle.Stroke );
-                        paint.StrokeWidth   := 1;
-                        paint.Color         := TAlphaColors.Silver;
+                        canvasIn.pen.Width  := 1;
+                        canvasIn.pen.Color  := TColors.Silver;
 
-                        canvasIn.DrawRect(
-                                            RectF(0, 0, SkPaintBoxGraphic.Width - 1, SkPaintBoxGraphic.Height - 1),
-                                            paint
-                                         );
+                        canvasIn.Rectangle(
+                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
+                                          );
                 end;
 
-            function TCustomGraphic2D.updateGraphicImage() : ISkImage;
+            function TCustomGraphic2D.updateGraphicBuffer() : TBitmap;
                 var
-                    surface : ISkSurface;
+                    newBuffer : TBitmap;
                 begin
                     //draw to the surface
                         preDrawGraphic();
 
-                        surface := skiaGeomDrawer.drawAllGeometryToSurface( SkPaintBoxGraphic.Height,
-                                                                            SkPaintBoxGraphic.Width );
+                        newBuffer := D2DGeomDrawer.drawAllGeometryToBitmap( PaintBoxGraphic.Height, PaintBoxGraphic.Width );
 
-                        postDrawGraphic( surface.Canvas );
+                        postDrawGraphic( newBuffer.Canvas );
 
                     //update relevate properties
                         updateZoomPercentage();
@@ -545,8 +537,9 @@ implementation
 
                         mustRedrawGraphic := True;
 
-                    //export to image
-                        result := surface.MakeImageSnapshot();
+                    //free current buffer
+
+                    result := newBuffer;
                 end;
 
         //process windows messages
@@ -559,21 +552,25 @@ implementation
                     //drawing graphic-----------------------------------------------------------------------------------------------
                         //update the mouse position
                             if (messageInOut.Msg = WM_MOUSEMOVE) then
-                                currentMousePosition := SkPaintBoxGraphic.ScreenToClient( mouse.CursorPos );
+                                currentMousePosition := PaintBoxGraphic.ScreenToClient( mouse.CursorPos );
 
                         //process windows message in axis converter
-                            mouseInputRequiresRedraw := skiaGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
+                            mouseInputRequiresRedraw := D2DGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
 
                         //determine if redrawing is required
                             mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
 
                         //render image off screen
                             if (mustUpdateGraphicImage) then
-                                currentGraphicImage := updateGraphicImage();
+                                begin
+                                    FreeAndNil( currentGraphicBuffer );
+
+                                    currentGraphicBuffer := updateGraphicBuffer();
+                                end;
 
                         //paint rendered image to screen
                             if (mustRedrawGraphic) then
-                                SkPaintBoxGraphic.Redraw();
+                                PaintBoxGraphic.Repaint();
                     //--------------------------------------------------------------------------------------------------------------
 
                     //set the cursor to drag or default
@@ -593,12 +590,12 @@ implementation
                     inherited create(AOwner);
 
                     //create required classes
-                        skiaGeomDrawer := TSkiaGeomDrawer.create();
+                        D2DGeomDrawer := TDirect2DGeomDrawer.create();
 
                     //set up graphic controls
                         //coordinates label
                             labelCoords.Left := labelCoords.Height div 2;
-                            labelCoords.top := PanelGraphicControls.Height + SkPaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
+                            labelCoords.top := PanelGraphicControls.Height + PaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
 
                         //direction pan
                             GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
@@ -621,7 +618,7 @@ implementation
         //destructor
             destructor TCustomGraphic2D.destroy();
                 begin
-                    FreeAndNil( skiaGeomDrawer );
+                    FreeAndNil( D2DGeomDrawer );
 
                     inherited destroy();
                 end;
@@ -631,6 +628,8 @@ implementation
                 begin
                     result := onGraphicUpdateGeometryEvent;
                 end;
+
+
 
         //modifiers
             procedure TCustomGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
@@ -652,11 +651,11 @@ implementation
                     setGraphicBackgroundColour();
 
                     //reset the stored geometry
-                        skiaGeomDrawer.resetDrawingGeometry();
+                        D2DGeomDrawer.resetDrawingGeometry();
 
-                    //update the skiaGeomDrawer geometry
+                    //update the D2DGeomDrawer geometry
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
-                            onGraphicUpdateGeometryEvent( self, tGeomDrawer(skiaGeomDrawer) );
+                            onGraphicUpdateGeometryEvent( self, tGeomDrawer(D2DGeomDrawer) );
 
                     //do layer table
                         updateLayerTable();
@@ -673,7 +672,7 @@ implementation
             procedure TCustomGraphic2D.zoomAll();
                 begin
                     //make the drawing boundary the drawing region
-                        skiaGeomDrawer.zoomAll();
+                        D2DGeomDrawer.zoomAll();
 
                     redrawGraphic();
                 end;

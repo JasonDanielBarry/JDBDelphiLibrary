@@ -4,8 +4,9 @@ interface
 
     uses
         //Delphi
-            system.SysUtils, system.types, system.UITypes, system.Generics.Collections,
+            system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
         //custom
+            ColourMethods,
             DrawingAxisConversionClass,
             DrawingGeometryClass,
             GeometryTypes, GeomBox,
@@ -33,8 +34,9 @@ interface
                         procedure addGeometry(const drawingGeometryIn : TDrawingGeometry);
             strict protected
                 var
-                    drawingBackgroundColour : TAlphaColor;
-                    axisConverter           : TDrawingAxisConverter;
+                    drawingBackgroundAlphaColour    : TAlphaColor;
+                    drawingBackgroundColour         : TColor;
+                    axisConverter                   : TDrawingAxisConverter;
                 //drawing procedures
                     //draw a drawing geometry object
                         procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); virtual; abstract;
@@ -193,8 +195,8 @@ implementation
                 end;
 
             procedure TGeomDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
-                                                    const lineThicknessIn   : integer = 2;
-                                                    const colourIn          : TAlphaColor = TAlphaColors.Black  );
+                                                const lineThicknessIn   : integer = 2;
+                                                const colourIn          : TAlphaColor = TAlphaColors.Black  );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
@@ -207,9 +209,9 @@ implementation
                 end;
 
             procedure TGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
-                                                    const lineThicknessIn   : integer = 2;
-                                                    const fillColourIn      : TAlphaColor = TAlphaColors.Null;
-                                                    const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
+                                                const lineThicknessIn   : integer = 2;
+                                                const fillColourIn      : TAlphaColor = TAlphaColors.Null;
+                                                const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
@@ -230,7 +232,9 @@ implementation
         //modifiers
             procedure TGeomDrawer.setDrawingBackgroundColour(const colourIn : TAlphaColor);
                 begin
-                    drawingBackgroundColour := colourIn;
+                    drawingBackgroundAlphaColour := colourIn;
+
+                    drawingBackgroundColour := AlphaColorToColor( colourIn );
                 end;
 
             procedure TGeomDrawer.setCurrentDrawingLayer(const layerKeyIn : string);
