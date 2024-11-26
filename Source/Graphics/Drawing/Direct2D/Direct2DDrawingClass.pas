@@ -32,7 +32,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //draw all geometry
-                    procedure drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+                    procedure drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
                                                 const canvasIn                      : TDirect2DCanvas );
         end;
 
@@ -69,7 +69,7 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TDirect2DGeomDrawer.drawAllGeometry(  const canvasHeightIn, canvasWidthIn : integer;
+            procedure TDirect2DGeomDrawer.drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
                                                             const canvasIn                      : TDirect2DCanvas );
                 begin
                     //set canvas
@@ -81,7 +81,7 @@ implementation
                         Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
 
                     //draw all geometry
-                        inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
+                        inherited drawAllGeometry( canvasWidthIn, canvasHeightIn );
                 end;
 
 end.

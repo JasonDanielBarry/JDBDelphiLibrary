@@ -285,13 +285,17 @@ implementation
 
             ComboBox1.ItemIndex := 0;
 
-    //        TStyleManager.SetStyle('Windows11 Modern Dark');
+//            TStyleManager.SetStyle('Windows11 Modern Dark');
         end;
 
     procedure TForm1.ComboBox1Change(Sender: TObject);
         begin
+            self.LockDrawing();
+
             JDBGraphic2D1.updateGeometry();
             JDBGraphic2D1.zoomAll();
+
+            self.UnlockDrawing();
         end;
 
     procedure TForm1.FormShow(Sender: TObject);

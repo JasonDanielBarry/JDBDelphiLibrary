@@ -16,8 +16,6 @@ interface
                     customGraphic : TCustomGraphic2D;
                 procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 function getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
-//            protected
-//                function canAcceptPanelChild(AComponent : TComponent) : boolean; override;
             public
                 constructor Create(AOwner: TComponent); override;
                 destructor Destroy; override;
@@ -40,12 +38,6 @@ implementation
             begin
                 result := customGraphic.getOnGraphicUpdateGeometryEvent();
             end;
-
-//    //protected
-//        function TJDBGraphic2D.canAcceptPanelChild(AComponent : TComponent) : boolean;
-//            begin
-//                result := False;
-//            end;
 
     //public
         constructor TJDBGraphic2D.Create(AOwner: TComponent);

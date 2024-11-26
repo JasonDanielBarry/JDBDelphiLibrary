@@ -544,7 +544,7 @@ implementation
 
                             preDrawGraphic( D2DBufferCanvas );
 
-                            D2DGeomDrawer.drawAllGeometry( PaintBoxGraphic.Height, PaintBoxGraphic.Width, D2DBufferCanvas );
+                            D2DGeomDrawer.drawAllGeometry( PaintBoxGraphic.Width, PaintBoxGraphic.Height, D2DBufferCanvas );
 
                             postDrawGraphic( D2DBufferCanvas );
 
@@ -602,9 +602,8 @@ implementation
                     inherited create(AOwner);
 
                     //create required classes
-                        currentGraphicBuffer := TBitmap.create();
-
-                        D2DGeomDrawer := TDirect2DGeomDrawer.create();
+                        currentGraphicBuffer    := TBitmap.create();
+                        D2DGeomDrawer           := TDirect2DGeomDrawer.create();
 
                     //set up graphic controls
                         //coordinates label

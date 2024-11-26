@@ -8,11 +8,11 @@ interface
         vcl.Controls,
         GeometryTypes, GeomBox,
         DrawingAxisConversionClass,
-        GeomDrawerBaseClass
+        GeomDrawerLayersClass
         ;
 
     type
-        TGeomDrawerAxisConversionInterface = class(TGeomDrawer)
+        TGeomDrawerAxisConversionInterface = class(TGeomDrawerLayers)
             public
                 //constructor
                     constructor create(); override;
