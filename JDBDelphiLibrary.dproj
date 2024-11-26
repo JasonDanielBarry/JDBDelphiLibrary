@@ -132,7 +132,7 @@
         <DCCReference Include="Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GeomDrawerLayersClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\DrawingGeometryClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas"/>
@@ -141,6 +141,7 @@
         <DCCReference Include="Source\Graphics\Drawing\GeomDrawerAxisConversionInterfaceClass.pas"/>
         <DCCReference Include="Source\Geometry\GeomBox.pas"/>
         <DCCReference Include="Source\Mathematics\LinearInterpolationMethods.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

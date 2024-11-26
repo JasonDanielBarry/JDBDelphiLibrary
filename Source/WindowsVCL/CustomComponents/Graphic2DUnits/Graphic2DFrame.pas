@@ -530,7 +530,7 @@ implementation
                         canvasIn.brush.Color  := TColors.Silver;
 
                         canvasIn.FrameRect(
-                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
+                                                Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height)
                                           );
                 end;
 

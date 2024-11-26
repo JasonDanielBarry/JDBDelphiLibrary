@@ -47,7 +47,7 @@ uses
   Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
-  GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas',
+  GeomDrawerLayersClass in 'Source\Graphics\Drawing\GeomDrawerLayersClass.pas',
   DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas',
   Direct2DDrawingMethods in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingMethods.pas',
   Direct2DDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DDrawingClass.pas',
@@ -55,7 +55,8 @@ uses
   DrawingAxisConversionMouseControlClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas',
   GeomDrawerAxisConversionInterfaceClass in 'Source\Graphics\Drawing\GeomDrawerAxisConversionInterfaceClass.pas',
   GeomBox in 'Source\Geometry\GeomBox.pas',
-  LinearInterpolationMethods in 'Source\Mathematics\LinearInterpolationMethods.pas';
+  LinearInterpolationMethods in 'Source\Mathematics\LinearInterpolationMethods.pas',
+  GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
