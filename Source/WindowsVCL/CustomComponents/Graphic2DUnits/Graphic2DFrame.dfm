@@ -22,6 +22,7 @@ object CustomGraphic2D: TCustomGraphic2D
     Width = 1231
     Height = 713
     Align = alClient
+    PopupMenu = PopupMenuGraphicControls
     OnMouseEnter = SkPaintBoxGraphicMouseEnter
     OnMouseLeave = SkPaintBoxGraphicMouseLeave
     OnPaint = PaintBoxGraphicPaint

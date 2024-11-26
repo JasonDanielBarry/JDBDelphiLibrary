@@ -540,7 +540,8 @@ implementation
 
             procedure TCustomGraphic2D.updateGraphicBuffer();
                 begin
-                    recreateD2DCanvas();
+                    //create new D2D canvas for new drawing
+                        recreateD2DCanvas();
 
                     //draw to the surface
                         D2DBufferCanvas.BeginDraw();
