@@ -89,7 +89,7 @@ implementation
                         geometrySink.Close();
 
                 //assign the canvas the colour and line thickness
-                    canvasInOut.Pen.Color := AlphaColorToColor(colourIn);
+                    canvasInOut.Pen.Color := (colourIn);
                     canvasInOut.Pen.Style := TPenStyle.psSolid;
                     canvasInOut.Pen.Width := lineThicknessIn;
 
@@ -138,11 +138,11 @@ implementation
 
                 //assign the canvas the colour and line thickness
                     //fill
-                        canvasInOut.Brush.Color := AlphaColorToColor(fillColourIn);
+                        canvasInOut.Brush.Color := fillColourIn;
                         canvasInOut.Brush.Style := TBrushStyle.bsSolid;
 
                     //line
-                        canvasInOut.Pen.Color := AlphaColorToColor(lineColourIn);
+                        canvasInOut.Pen.Color := lineColourIn;
                         canvasInOut.Pen.Style := TPenStyle.psSolid;
                         canvasInOut.Pen.Width := lineThicknessIn;
 
