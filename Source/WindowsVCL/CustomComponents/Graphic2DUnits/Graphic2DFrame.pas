@@ -70,7 +70,7 @@ interface
             ActionEditLayerTable: TAction;
             SpeedButtonLayerTable: TSpeedButton;
             EditLayerTable1: TMenuItem;
-    PaintBoxGraphic: TPaintBox;
+            PaintBoxGraphic: TPaintBox;
             //events
                 procedure PaintBoxGraphicPaint(Sender: TObject);
                 procedure ComboBoxZoomPercentChange(Sender: TObject);
@@ -90,7 +90,6 @@ interface
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
                 procedure ActionEditLayerTableExecute(Sender: TObject);
                 procedure CheckListBoxLayerTableClick(Sender: TObject);
-
             private
                 var
                     axisSettingsVisible,
@@ -511,12 +510,12 @@ implementation
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TCanvas);
                 begin
                     //draw a border around the paintbox edge
-                        canvasIn.pen.Width  := 1;
-                        canvasIn.pen.Color  := TColors.Silver;
+                        canvasIn.pen.Width  := 5;
+                        canvasIn.pen.Color  := TColors.Darkgrey;
 
-                        canvasIn.Rectangle(
-                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
-                                          );
+//                        canvasIn.FrameRect(
+//                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
+//                                          );
                 end;
 
             function TCustomGraphic2D.updateGraphicBuffer() : TBitmap;
@@ -536,8 +535,6 @@ implementation
                         updateAxisSettingsValues();
 
                         mustRedrawGraphic := True;
-
-                    //free current buffer
 
                     result := newBuffer;
                 end;

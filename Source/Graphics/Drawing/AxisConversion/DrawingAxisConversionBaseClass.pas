@@ -73,8 +73,8 @@ implementation
             //canvasSpace boundaries
                 procedure TDrawingAxisConverterBase.setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
                     begin
-                        canvasDimensions.Height := canvasHeightIn;
                         canvasDimensions.Width := canvasWidthIn;
+                        canvasDimensions.Height := canvasHeightIn;
                     end;
 
             //drawingRegion space boundaries

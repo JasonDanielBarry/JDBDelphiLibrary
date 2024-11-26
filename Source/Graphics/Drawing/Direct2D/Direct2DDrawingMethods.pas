@@ -86,6 +86,8 @@ implementation
 
                         geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN );
 
+                        geometrySink.Close();
+
                 //assign the canvas the colour and line thickness
                     canvasInOut.Pen.Color := AlphaColorToColor(colourIn);
                     canvasInOut.Pen.Style := TPenStyle.psSolid;
@@ -132,6 +134,8 @@ implementation
 
                         geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED );
 
+                        geometrySink.Close();
+
                 //assign the canvas the colour and line thickness
                     //fill
                         canvasInOut.Brush.Color := AlphaColorToColor(fillColourIn);
@@ -144,6 +148,7 @@ implementation
 
                 //draw the polyline
                     canvasInOut.FillGeometry( pathGeometry );
+                    canvasInOut.DrawGeometry( pathGeometry );
             end;
 
     //draw geometry

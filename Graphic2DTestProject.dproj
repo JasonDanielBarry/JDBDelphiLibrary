@@ -4,7 +4,7 @@
         <ProjectVersion>20.2</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <ProjectName Condition="'$(ProjectName)'==''">Graphic2DTestProject</ProjectName>
         <TargetedPlatforms>3</TargetedPlatforms>
@@ -72,7 +72,7 @@
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>Graphic2DTestProject</SanitizedProjectName>
         <DCC_BplOutput>..\BuildOutput\</DCC_BplOutput>
-        <DCC_UnitSearchPath>..\JDBDelphiLibrary\Source\Engineering;..\JDBDelphiLibrary\Source\Mathematics;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra\Matrices;..\JDBDelphiLibrary\Source\Geometry;..\JDBDelphiLibrary\Source\Graphics;..\JDBDelphiLibrary\Source\Graphics\Drawing;..\JDBDelphiLibrary\Source\Graphics\Drawing\AxisConversion;..\JDBDelphiLibrary\Source\Graphics\Drawing\Direct2D;..\JDBDelphiLibrary\Source\Graphics\Drawing\Skia;..\JDBDelphiLibrary\Source\WindowsVCL;..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Graphic2DUnits;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\JDBDelphiLibrary\Source;..\JDBDelphiLibrary\Source\Engineering;..\JDBDelphiLibrary\Source\Mathematics;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra;..\JDBDelphiLibrary\Source\Mathematics\LinearAlgebra\Matrices;..\JDBDelphiLibrary\Source\Geometry;..\JDBDelphiLibrary\Source\Graphics;..\JDBDelphiLibrary\Source\Graphics\Drawing;..\JDBDelphiLibrary\Source\Graphics\Drawing\AxisConversion;..\JDBDelphiLibrary\Source\Graphics\Drawing\Direct2D;..\JDBDelphiLibrary\Source\Graphics\Drawing\Skia;..\JDBDelphiLibrary\Source\WindowsVCL;..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Graphic2DUnits;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>7177</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Define>SKIA;$(DCC_Define)</DCC_Define>
@@ -135,7 +135,6 @@
         </DelphiCompile>
         <DCCReference Include="Source\Graphic2DTest.pas">
             <Form>Form1</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -157,9 +156,7 @@
                 <Source>
                     <Source Name="MainSource">Graphic2DTestProject.dpr</Source>
                 </Source>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl">File C:\Users\jasonbarry\Documents\Embarcadero\Studio\Projects\DelphiLibrary\DelphiLibrary\JDBDelphiLibraryPackage.bpl not found</Excluded_Packages>
-                </Excluded_Packages>
+                <Excluded_Packages/>
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile Condition="'$(SKIADIR)'==''" Required="true" LocalName="$(BDS)\bin64\sk4d.dll" Configuration="Debug" Class="Skia">
@@ -226,7 +223,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\Graphic2DTestProject.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\BuildOutput\Graphic2DTestProject.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Graphic2DTestProject.exe</RemoteName>
                         <Overwrite>true</Overwrite>

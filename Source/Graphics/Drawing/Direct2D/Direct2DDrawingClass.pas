@@ -35,7 +35,6 @@ interface
                     destructor destroy(); override;
                 //draw all geometry
                     function drawAllGeometryToBitmap(const canvasHeightIn, canvasWidthIn : integer) : TBitmap;
-
         end;
 
 implementation
@@ -64,8 +63,18 @@ implementation
                         //set canvas
                             setDrawingCanvas( canvasIn );
 
+                            Direct2DDrawingCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
+
+                            Direct2DDrawingCanvas.BeginDraw();
+
+                            Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColour;
+
+                            Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
+
                         //draw all geometry
                             inherited drawAllGeometry( canvasHeightIn, canvasWidthIn );
+
+                            Direct2DDrawingCanvas.EndDraw();
                     end;
 
     //public
@@ -91,24 +100,16 @@ implementation
                         BitmapOut := TBitmap.Create( canvasWidthIn, canvasHeightIn );
 
                     //create D2D canvas
-                        D2DCanvas := TDirect2DCanvas.Create( bitmapOut.Canvas, Rect(0, 0, canvasHeightIn, canvasWidthIn) );
-                        D2DCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
-
-                        D2DCanvas.BeginDraw();
-
-                        D2DCanvas.Brush.Color := drawingBackgroundColour;
-
-                        D2DCanvas.FillRect( Rect(0, 0, canvasHeightIn, canvasWidthIn) );
+                        D2DCanvas := TDirect2DCanvas.Create( bitmapOut.Canvas, Rect(0, 0, canvasWidthIn, canvasHeightIn) );
 
                     //draw all geometry to the canvas (and indirectly the bitmap)
                         drawAllGeometry( canvasHeightIn, canvasWidthIn, D2DCanvas );
 
-                        D2DCanvas.EndDraw();
-
                     //free D2D canvas
                         FreeAndNil( D2DCanvas );
-
+//
                     result := BitmapOut;
+//                    result := drawToBitMap( canvasWidthIn, canvasHeightIn, clBtnFace );
                 end;
 
 end.
