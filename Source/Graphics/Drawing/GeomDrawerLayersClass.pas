@@ -231,7 +231,11 @@ implementation
                             i : integer;
                         begin
                             for i := 0 to ( length(arrDrawingGeometryInOut) - 1 ) do
-                                FreeAndNil( arrDrawingGeometryInOut[i] );
+                                try
+                                    FreeAndNil( arrDrawingGeometryInOut[i] );
+                                except
+
+                                end;
 
                             SetLength( arrDrawingGeometryInOut, 0 );
                         end;

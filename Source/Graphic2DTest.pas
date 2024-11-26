@@ -25,6 +25,7 @@ type
         procedure BlueBoxGraphic(var GeomDrawerInOut : TGeomDrawer);
         procedure XYGraphs(var GeomDrawerInOut : TGeomDrawer);
         procedure FinPlateGraphic(var GeomDrawerInOut : TGeomDrawer);
+        procedure SoilNailWallGraphic(var GeomDrawerInOut : TGeomDrawer);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -279,6 +280,74 @@ implementation
                     end;
         end;
 
+    procedure TForm1.SoilNailWallGraphic(var GeomDrawerInOut: TGeomDrawer);
+        var
+            line    : TGeomLine;
+            polygon : TGeomPolygon;
+        begin
+            GeomDrawerInOut.setCurrentDrawingLayer('Soil');
+
+            polygon := TGeomPolygon.create();
+
+            polygon.addVertex(-2, -3);
+            polygon.addVertex(30, -3);
+            polygon.addVertex(30, 15);
+            polygon.addVertex(0, 15);
+            polygon.addVertex(0, 0);
+            polygon.addVertex(-2, 0);
+
+            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Lightgreen );
+
+            GeomDrawerInOut.setCurrentDrawingLayer('Failure Wedge');
+
+            polygon := TGeomPolygon.create();
+
+            polygon.addVertex(0, 0);
+            polygon.addVertex(20, 15);
+            polygon.addVertex(0, 15);
+
+            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Orangered );
+
+
+
+            GeomDrawerInOut.setCurrentDrawingLayer('Soil Nails');
+
+            begin
+                var y : double;
+
+                y := 15 - 1.0;
+
+                while (y > 1.0) do
+                    begin
+                        line := TGeomLine.create();
+
+                        line.setStartPoint(0, 0);
+                        line.setEndPoint(20, -4);
+
+                        line.shift(0, y);
+
+                        GeomDrawerInOut.addLine( line, 16, TColors.Grey);
+                        GeomDrawerInOut.addLine( line, 4, TColors.Darkblue );
+
+
+                        y := y - 1.5;
+                    end;
+            end;
+
+
+
+            GeomDrawerInOut.setCurrentDrawingLayer('Wall');
+
+            polygon := TGeomPolygon.create();
+
+            polygon.addVertex(0, 0);
+            polygon.addVertex(0, 15);
+            polygon.addVertex(-0.35, 15);
+            polygon.addVertex(-0.35, 0);
+
+            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Yellow );
+        end;
+
     constructor TForm1.create(AOwner: TComponent);
         begin
             inherited create(nil);
@@ -294,6 +363,8 @@ implementation
 
             JDBGraphic2D1.updateGeometry();
             JDBGraphic2D1.zoomAll();
+
+            self.Refresh();
 
             self.UnlockDrawing();
         end;
@@ -314,6 +385,8 @@ implementation
                     XYGraphs( AGeomDrawer );
                 2:
                     FinPlateGraphic( AGeomDrawer );
+                3:
+                    SoilNailWallGraphic( AGeomDrawer );
             end;
         end;
 

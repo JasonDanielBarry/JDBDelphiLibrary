@@ -65,7 +65,8 @@ object Form1: TForm1
       Items.Strings = (
         'Blue Box'
         'XY Graphs'
-        'Fin Plate')
+        'Fin Plate'
+        'Soil Nail Wall')
     end
   end
 end
