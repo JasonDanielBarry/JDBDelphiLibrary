@@ -307,8 +307,6 @@ implementation
     procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender : TObject;
                                                     var AGeomDrawer : TGeomDrawer);
         begin
-
-
             case (ComboBox1.ItemIndex) of
                 0:
                     BlueBoxGraphic( AGeomDrawer );
