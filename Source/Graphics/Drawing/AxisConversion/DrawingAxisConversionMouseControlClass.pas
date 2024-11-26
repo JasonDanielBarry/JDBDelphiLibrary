@@ -113,7 +113,7 @@ implementation
                 begin
                     regionPoint := LT_to_XY( currentMousePosition );
 
-                    zoomIn( 10, regionPoint );
+                    zoomIn( 20, regionPoint );
                 end;
 
             procedure TDrawingAxisMouseControlConverter.zoomOutRelativeToMouse();
@@ -122,7 +122,7 @@ implementation
                 begin
                     regionPoint := LT_to_XY( currentMousePosition );
 
-                    zoomOut( 10, regionPoint );
+                    zoomOut( 20, regionPoint );
                 end;
 
             procedure TDrawingAxisMouseControlConverter.zoomRelativeToMouse(const messageIn : TMessage);

@@ -95,8 +95,9 @@ interface
                     axisSettingsVisible,
                     layerTableVisible,
                     mustRedrawGraphic               : boolean;
-                    currentGraphicBuffer            : TBitmap;
                     graphicBackgroundColour         : TAlphaColor;
+                    currentGraphicBuffer            : TBitmap;
+                    D2DBufferCanvas                 : TDirect2DCanvas;
                     D2DGeomDrawer                   : TDirect2DGeomDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
@@ -106,6 +107,8 @@ interface
                     procedure setGraphicBackgroundColour();
                 //components positions
                     procedure positionComponents();
+                //destroy and create Direct2D canvas using the size of the paintbox
+                    procedure recreateD2DCanvas();
                 //layer table
                     procedure getActiveLayers();
                     procedure updateLayerTable();
@@ -116,9 +119,9 @@ interface
                     procedure updateZoomPercentage();
             protected
                 //drawing procedures
-                    procedure preDrawGraphic(); virtual;
-                    procedure postDrawGraphic(const canvasIn : TCanvas); virtual;
-                    function updateGraphicBuffer() : TBitmap;
+                    procedure preDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
+                    procedure postDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
+                    procedure updateGraphicBuffer();
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -376,6 +379,7 @@ implementation
                             begin
                                 GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
                                 GridPanelAxisOptions.Top    := PaintBoxGraphic.top + 1;
+                                GridPanelAxisOptions.Refresh();
                             end;
 
                     //layer table
@@ -383,7 +387,24 @@ implementation
                             begin
                                 CheckListBoxLayerTable.Left := SpeedButtonLayerTable.left;
                                 CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
+                                CheckListBoxLayerTable.Refresh();
                             end;
+                end;
+
+        //destroy and create Direct2D canvas using the size of the paintbox
+            procedure TCustomGraphic2D.recreateD2DCanvas();
+                begin
+                    try
+                        FreeAndNil( D2DBufferCanvas );
+                    except
+
+                    end;
+
+                    currentGraphicBuffer.SetSize( PaintBoxGraphic.Width, PaintBoxGraphic.Height );
+
+                    D2DBufferCanvas := TDirect2DCanvas.Create( currentGraphicBuffer.Canvas, Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height) );
+
+                    D2DBufferCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
                 end;
 
         //layer table
@@ -501,33 +522,36 @@ implementation
 
     //protected
         //drawing procedures
-            procedure TCustomGraphic2D.preDrawGraphic();
+            procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
                     //make sure canvas is the same colour as the parent
                         D2DGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
                 end;
 
-            procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TCanvas);
+            procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
                     //draw a border around the paintbox edge
-                        canvasIn.pen.Width  := 5;
-                        canvasIn.pen.Color  := TColors.Darkgrey;
+                        canvasIn.brush.Color  := TColors.Silver;
 
-//                        canvasIn.FrameRect(
-//                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
-//                                          );
+                        canvasIn.FrameRect(
+                                                Rect(0, 0, PaintBoxGraphic.Width - 1, PaintBoxGraphic.Height - 1)
+                                          );
                 end;
 
-            function TCustomGraphic2D.updateGraphicBuffer() : TBitmap;
-                var
-                    newBuffer : TBitmap;
+            procedure TCustomGraphic2D.updateGraphicBuffer();
                 begin
+                    recreateD2DCanvas();
+
                     //draw to the surface
-                        preDrawGraphic();
+                        D2DBufferCanvas.BeginDraw();
 
-                        newBuffer := D2DGeomDrawer.drawAllGeometryToBitmap( PaintBoxGraphic.Height, PaintBoxGraphic.Width );
+                            preDrawGraphic( D2DBufferCanvas );
 
-                        postDrawGraphic( newBuffer.Canvas );
+                            D2DGeomDrawer.drawAllGeometry( PaintBoxGraphic.Height, PaintBoxGraphic.Width, D2DBufferCanvas );
+
+                            postDrawGraphic( D2DBufferCanvas );
+
+                        D2DBufferCanvas.EndDraw();
 
                     //update relevate properties
                         updateZoomPercentage();
@@ -535,8 +559,6 @@ implementation
                         updateAxisSettingsValues();
 
                         mustRedrawGraphic := True;
-
-                    result := newBuffer;
                 end;
 
         //process windows messages
@@ -559,11 +581,7 @@ implementation
 
                         //render image off screen
                             if (mustUpdateGraphicImage) then
-                                begin
-                                    FreeAndNil( currentGraphicBuffer );
-
-                                    currentGraphicBuffer := updateGraphicBuffer();
-                                end;
+                                updateGraphicBuffer();
 
                         //paint rendered image to screen
                             if (mustRedrawGraphic) then
@@ -587,6 +605,8 @@ implementation
                     inherited create(AOwner);
 
                     //create required classes
+                        currentGraphicBuffer := TBitmap.create();
+
                         D2DGeomDrawer := TDirect2DGeomDrawer.create();
 
                     //set up graphic controls
@@ -615,6 +635,8 @@ implementation
         //destructor
             destructor TCustomGraphic2D.destroy();
                 begin
+                    FreeAndNil( currentGraphicBuffer );
+                    FreeAndNil( D2DBufferCanvas );
                     FreeAndNil( D2DGeomDrawer );
 
                     inherited destroy();
@@ -625,8 +647,6 @@ implementation
                 begin
                     result := onGraphicUpdateGeometryEvent;
                 end;
-
-
 
         //modifiers
             procedure TCustomGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
