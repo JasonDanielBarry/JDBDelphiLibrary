@@ -17,8 +17,6 @@ interface
             strict private
                 var
                     lineThickness   : integer;
-                    fillAlphaColour,
-                    lineAlphaColour : TAlphaColor;
                     fillColour,
                     lineColour      : TColor;
                     geometry        : TGeomBase;
@@ -32,19 +30,13 @@ interface
                 //constructor
                     constructor create( const   lineThicknessIn : integer;
                                         const   fillColourIn,
-                                                lineColourIn    : TAlphaColor;
-                                        const   geometryIn      : TGeomBase     ); overload;
-//                    constructor create( const   lineThicknessIn : integer;
-//                                        const   fillColourIn,
-//                                                lineColourIn    : TColor;
-//                                        const   geometryIn      : TGeomBase ); overload;
+                                                lineColourIn    : TColor;
+                                        const   geometryIn      : TGeomBase );
                 //destructor
                     destructor destroy(); override;
                 //line thickness
                     function getLineThickness() : integer; inline;
                 //colours
-                    function getFillAlphaColour() : TAlphaColor; inline;
-                    function getLineAlphaColour() : TAlphaColor; inline;
                     function getFillColour() : TColor; inline;
                     function getLineColour() : TColor; inline;
                 //get the geometry object
@@ -81,31 +73,18 @@ implementation
         //constructor
             constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
                                                 const   fillColourIn,
-                                                        lineColourIn    : TAlphaColor;
+                                                        lineColourIn    : TColor;
                                                 const   geometryIn      : TGeomBase );
                 begin
                     inherited create();
 
                     setValues( lineThicknessIn, geometryIn );
 
-                    fillAlphaColour := fillColourIn;
-                    lineAlphaColour := lineColourIn;
+                    fillColour := fillColourIn;
+                    lineColour := lineColourIn;
 
-                    drawingPoints   := geometryIn.getDrawingPoints();
+                    drawingPoints := geometryIn.getDrawingPoints();
                 end;
-
-//            constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
-//                                                const   fillColourIn,
-//                                                        lineColourIn    : TColor;
-//                                                const   geometryIn      : TGeomBase );
-//                begin
-//                    inherited create();
-//
-//                    setValues( lineThickness, geometryIn );
-//
-//                    fillColour := fillColourIn;
-//                    lineColour := lineColourIn;
-//                end;
 
         //destructor
             destructor TDrawingGeometry.destroy();
@@ -122,28 +101,14 @@ implementation
                 end;
 
         //colours
-            function TDrawingGeometry.getFillAlphaColour() : TAlphaColor;
-                begin
-                    result := fillAlphaColour;
-                end;
-
-            function TDrawingGeometry.getLineAlphaColour() : TAlphaColor;
-                begin
-                    result := lineAlphaColour;
-                end;
-
             function TDrawingGeometry.getFillColour() : TColor;
                 begin
-//                    result := fillColour;
-
-                    result := AlphaColorToColor( fillAlphaColour );
+                    result := fillColour;
                 end;
 
             function TDrawingGeometry.getLineColour() : TColor;
                 begin
-//                    result := lineColour;
-
-                    result := AlphaColorToColor( lineAlphaColour );
+                    result := lineColour;
                 end;
 
         //get the geometry object

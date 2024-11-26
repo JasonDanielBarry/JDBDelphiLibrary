@@ -95,7 +95,7 @@ interface
                     axisSettingsVisible,
                     layerTableVisible,
                     mustRedrawGraphic               : boolean;
-                    graphicBackgroundColour         : TAlphaColor;
+                    graphicBackgroundColour         : TColor;
                     currentGraphicBuffer            : TBitmap;
                     D2DBufferCanvas                 : TDirect2DCanvas;
                     D2DGeomDrawer                   : TDirect2DGeomDrawer;
@@ -366,9 +366,7 @@ implementation
                     themeColour : TColor;
                 begin
                     //get the colour of the parent and convert it to an alpha colour
-                        themeColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
-
-                        graphicBackgroundColour := colourToAlphaColour( themeColour );
+                        graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
                 end;
 
         //components positions
@@ -440,8 +438,6 @@ implementation
                             end;
 
                     D2DGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
-
-                    D2DGeomDrawer.setGeomBoundingBox();
                 end;
 
             procedure TCustomGraphic2D.updateLayerTable();

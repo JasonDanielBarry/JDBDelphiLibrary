@@ -57,7 +57,7 @@ implementation
                     polygon.addVertex(100, 100);
                     polygon.addVertex(10, 100);
 
-                    GeomDrawerInOut.addPolygon( polygon, 10, TAlphaColors.Aqua, TAlphaColors.Darkred );
+                    GeomDrawerInOut.addPolygon( polygon, 10, TColors.Aqua, TColors.Darkred );
 
                 //line 1
                     GeomDrawerInOut.setCurrentDrawingLayer('Line Layer');
@@ -67,7 +67,7 @@ implementation
 
                      line := TGeomLine.create(point1, point2);
 
-                     GeomDrawerInOut.addLine(line, 2, TAlphaColors.Black);
+                     GeomDrawerInOut.addLine(line, 4, TColors.Black);
 
                 //polyline
                     GeomDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
@@ -84,7 +84,7 @@ implementation
                             polyline.addVertex(x, y);
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyline, 3, TAlphaColors.Blue);
+                    GeomDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
             end;
 
         procedure TForm1.XYGraphs(var GeomDrawerInOut : TGeomDrawer);
@@ -128,7 +128,7 @@ implementation
                             x := x + 0.5;
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyLine, 3, TAlphaColors.Blueviolet);
+                    GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
 
                 //Trig curve
                     GeomDrawerInOut.setCurrentDrawingLayer('Trig curve');
@@ -146,7 +146,7 @@ implementation
                             x := x + 0.25;
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyLine, 3, TAlphaColors.Green);
+                    GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
             end;
 
     procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGeomDrawer);
@@ -186,7 +186,7 @@ implementation
 
                     polygon.shift(250 + 50, 300);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Lightgreen, TAlphaColors.Black );
+                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Lightgreen, TColors.Black );
 
                     //flanges
                         //bottom
@@ -217,7 +217,7 @@ implementation
                     polygon.addVertex(250, 1000);
                     polygon.addVertex(0, 1000);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Cornflowerblue, TAlphaColors.Black );
+                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Cornflowerblue, TColors.Black );
 
                     //flanges
                         //left
@@ -246,7 +246,7 @@ implementation
 
                     polygon.shift(250, 400);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Yellow, TAlphaColors.Black );
+                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Yellow, TColors.Black );
 
             //weld
                 GeomDrawerInOut.setCurrentDrawingLayer('Weld');
@@ -260,7 +260,7 @@ implementation
 
                 polygon.shift(250, 400);
 
-                GeomDrawerInOut.addPolygon( polygon, 1, TAlphaColors.Blue, TAlphaColors.Black );
+                GeomDrawerInOut.addPolygon( polygon, 1, TColors.Blue, TColors.Black );
 
             //bolts
                 GeomDrawerInOut.setCurrentDrawingLayer('Bolts');
@@ -274,7 +274,7 @@ implementation
 
                                 polygon.shift(250, 400);
 
-                                GeomDrawerInOut.addPolygon( polygon, 3, TAlphaColors.Lightslategrey, TAlphaColors.Black );
+                                GeomDrawerInOut.addPolygon( polygon, 3, TColors.Lightslategrey, TColors.Black );
                             end;
                     end;
         end;

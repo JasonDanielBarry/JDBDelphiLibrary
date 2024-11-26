@@ -32,11 +32,12 @@ interface
                         function getArrGeom(const layerKeyIn : string) : TArray<TGeomBase>;
                     //add geometry to the geometry array
                         procedure addGeometry(const drawingGeometryIn : TDrawingGeometry);
+                //calculate the geometry net bounding box for active geometry
+                    procedure calculateGeomBoundingBox();
             strict protected
                 var
-                    drawingBackgroundAlphaColour    : TAlphaColor;
-                    drawingBackgroundColour         : TColor;
-                    axisConverter                   : TDrawingAxisConverter;
+                    drawingBackgroundColour : TColor;
+                    axisConverter           : TDrawingAxisConverter;
                 //drawing procedures
                     //draw a drawing geometry object
                         procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); virtual; abstract;
@@ -50,22 +51,21 @@ interface
                 //add drawing geometry
                     procedure addLine(  const lineIn            : TGeomLine;
                                         const lineThicknessIn   : integer = 2;
-                                        const colourIn          : TAlphaColor = TAlphaColors.Black  );
+                                        const colourIn          : TColor = TColors.Black );
                     procedure addPolyline(  const polylineIn        : TGeomPolyLine;
                                             const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TAlphaColor = TAlphaColors.Black  );
+                                            const colourIn          : TColor = TColors.Black );
                     procedure addPolygon(   const polygonIn         : TGeomPolygon;
                                             const lineThicknessIn   : integer = 2;
-                                            const fillColourIn      : TAlphaColor = TAlphaColors.Null;
-                                            const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
+                                            const fillColourIn      : TColor = TColors.Null;
+                                            const lineColourIn      : TColor = TColors.Black );
                 //accessors
                     function getAllDrawingLayers() : TArray<string>;
                 //modifiers
-                    procedure setDrawingBackgroundColour(const colourIn : TAlphaColor);
+                    procedure setDrawingBackgroundColour(const colourIn : TColor);
                     procedure setCurrentDrawingLayer(const layerKeyIn : string);
                     procedure setActiveDrawingLayers(const arrActiveLayersIn : TArray<string>);
-                //geometry net bounding box
-                    procedure setGeomBoundingBox();
+
                 //reset
                     procedure resetDrawingGeometry();
         end;
@@ -126,6 +126,35 @@ implementation
                             layerGeometryMap[ currentDrawingLayer ] := arrDrawingGeom;
                     end;
 
+        //calculate the geometry net bounding box for active geometry
+            procedure TGeomDrawer.calculateGeomBoundingBox();
+                var
+                    i, layerCount       : integer;
+                    layer               : string;
+                    geomBoundingBox     : TGeomBox;
+                    arrBoundingBoxes    : TArray<TGeomBox>;
+                    arrGeom             : TArray<TGeomBase>;
+                begin
+                    layerCount := length(arrActiveLayers);
+
+                    SetLength( arrBoundingBoxes, layerCount );
+
+                    i := 0;
+
+                    for layer in arrActiveLayers do
+                        begin
+                            arrGeom := getArrGeom( layer );
+
+                            arrBoundingBoxes[i] := TGeomBase.determineBoundingBox( arrGeom );
+
+                            inc( i );
+                        end;
+
+                    geomBoundingBox := TGeomBox.determineBoundingBox( arrBoundingBoxes );
+
+                    axisConverter.setGeometryBoundary( geomBoundingBox );
+                end;
+
     //protected
         //drawing procedures
             //draw all geometry
@@ -182,36 +211,36 @@ implementation
         //add drawing geometry
             procedure TGeomDrawer.addLine(  const lineIn            : TGeomLine;
                                             const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TAlphaColor = TAlphaColors.Black  );
+                                            const colourIn          : TColor = TColors.Black  );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
                     newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
-                                                                    TAlphaColors.Null,
+                                                                    TColors.Null,
                                                                     colourIn,
-                                                                    lineIn              );
+                                                                    lineIn          );
 
                     addGeometry( newDrawingGeometry );
                 end;
 
             procedure TGeomDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
                                                 const lineThicknessIn   : integer = 2;
-                                                const colourIn          : TAlphaColor = TAlphaColors.Black  );
+                                                const colourIn          : TColor = TColors.Black  );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
                     newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
-                                                                    TAlphaColors.Null,
+                                                                    TColors.Null,
                                                                     colourIn,
-                                                                    polylineIn          );
+                                                                    polylineIn      );
 
                     addGeometry( newDrawingGeometry );
                 end;
 
             procedure TGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
                                                 const lineThicknessIn   : integer = 2;
-                                                const fillColourIn      : TAlphaColor = TAlphaColors.Null;
-                                                const lineColourIn      : TAlphaColor = TAlphaColors.Black  );
+                                                const fillColourIn      : TColor = TColors.Null;
+                                                const lineColourIn      : TColor = TColors.Black    );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
@@ -230,11 +259,9 @@ implementation
                 end;
 
         //modifiers
-            procedure TGeomDrawer.setDrawingBackgroundColour(const colourIn : TAlphaColor);
+            procedure TGeomDrawer.setDrawingBackgroundColour(const colourIn : TColor);
                 begin
-                    drawingBackgroundAlphaColour := colourIn;
-
-                    drawingBackgroundColour := AlphaColorToColor( colourIn );
+                    drawingBackgroundColour := colourIn;
                 end;
 
             procedure TGeomDrawer.setCurrentDrawingLayer(const layerKeyIn : string);
@@ -262,35 +289,8 @@ implementation
             procedure TGeomDrawer.setActiveDrawingLayers(const arrActiveLayersIn : TArray<string>);
                 begin
                     arrActiveLayers := arrActiveLayersIn;
-                end;
 
-        //geometry net bounding box
-            procedure TGeomDrawer.setGeomBoundingBox();
-                var
-                    i, layerCount       : integer;
-                    layer               : string;
-                    geomBoundingBox     : TGeomBox;
-                    arrBoundingBoxes    : TArray<TGeomBox>;
-                    arrGeom             : TArray<TGeomBase>;
-                begin
-                    layerCount := length(arrActiveLayers);
-
-                    SetLength( arrBoundingBoxes, layerCount );
-
-                    i := 0;
-
-                    for layer in arrActiveLayers do
-                        begin
-                            arrGeom := getArrGeom( layer );
-
-                            arrBoundingBoxes[i] := TGeomBase.determineBoundingBox( arrGeom );
-
-                            inc( i );
-                        end;
-
-                    geomBoundingBox := TGeomBox.determineBoundingBox( arrBoundingBoxes );
-
-                    axisConverter.setGeometryBoundary( geomBoundingBox );
+                    calculateGeomBoundingBox();
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects
