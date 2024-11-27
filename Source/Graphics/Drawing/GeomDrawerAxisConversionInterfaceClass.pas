@@ -40,7 +40,7 @@ interface
                 //process windows messages
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
-                    function getMouseControlActive() : boolean;
+                    function getMouseControlActive() : boolean; inline;
                     function processWindowsMessages(const messageIn             : Tmessage;
                                                     const newMousePositionIn    : TPoint    ) : boolean;
         end;
