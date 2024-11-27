@@ -97,7 +97,6 @@ interface
                     mustRedrawGraphic               : boolean;
                     graphicBackgroundColour         : TColor;
                     currentGraphicBuffer            : TBitmap;
-                    D2DBufferCanvas                 : TDirect2DCanvas;
                     D2DGeomDrawer                   : TDirect2DGeomDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
@@ -107,8 +106,6 @@ interface
                     procedure setGraphicBackgroundColour();
                 //components positions
                     procedure positionComponents();
-                //destroy and create Direct2D canvas using the size of the paintbox
-                    procedure recreateD2DCanvas();
                 //layer table
                     procedure getActiveLayers();
                     procedure updateLayerTable();
@@ -315,21 +312,14 @@ implementation
         //axis Settings
             procedure TCustomGraphic2D.updateAxisSettingsValues();
                 var
-                    xMin, xMax,
-                    yMin, yMax      : double;
-                    drawingRegion   : TGeomBox;
+                    drawingRegion : TGeomBox;
                 begin
                     drawingRegion := D2DGeomDrawer.getDrawingRegion();
 
-                    xMin := drawingRegion.minPoint.x;
-                    xMax := drawingRegion.maxPoint.x;
-                    yMin := drawingRegion.minPoint.y;
-                    yMax := drawingRegion.maxPoint.y;
-
-                    EditXMin.Text := FloatToStrF(xMin, ffFixed, 5, 2);
-                    EditXMax.Text := FloatToStrF(xMax, ffFixed, 5, 2);
-                    EditYMin.Text := FloatToStrF(yMin, ffFixed, 5, 2);
-                    EditYMax.Text := FloatToStrF(yMax, ffFixed, 5, 2);
+                    EditXMin.Text := FloatToStrF( drawingRegion.xMin, ffFixed, 5, 2 );
+                    EditXMax.Text := FloatToStrF( drawingRegion.xMax, ffFixed, 5, 2 );
+                    EditYMin.Text := FloatToStrF( drawingRegion.yMin, ffFixed, 5, 2 );
+                    EditYMax.Text := FloatToStrF( drawingRegion.yMax, ffFixed, 5, 2 );
                 end;
 
             procedure TCustomGraphic2D.writeAxisSettingsValuesToAxisConverter();
@@ -362,11 +352,12 @@ implementation
 
         //background colour
             procedure TCustomGraphic2D.setGraphicBackgroundColour();
-                var
-                    themeColour : TColor;
                 begin
-                    //get the colour of the parent and convert it to an alpha colour
+                    //get the colour of the parent according to theme
                         graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
+
+                    //send theme colour to geom drawer
+                        D2DGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
                 end;
 
         //components positions
@@ -387,22 +378,6 @@ implementation
                                 CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
                                 CheckListBoxLayerTable.Refresh();
                             end;
-                end;
-
-        //destroy and create Direct2D canvas using the size of the paintbox
-            procedure TCustomGraphic2D.recreateD2DCanvas();
-                begin
-                    try
-                        FreeAndNil( D2DBufferCanvas );
-                    except
-
-                    end;
-
-                    currentGraphicBuffer.SetSize( PaintBoxGraphic.Width, PaintBoxGraphic.Height );
-
-                    D2DBufferCanvas := TDirect2DCanvas.Create( currentGraphicBuffer.Canvas, Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height) );
-
-                    D2DBufferCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
                 end;
 
         //layer table
@@ -467,6 +442,8 @@ implementation
                     tableHeight := min( tableHeight, CheckListBoxLayerTable.ItemHeight * 10 + round(5 * self.ScaleFactor) );
 
                     CheckListBoxLayerTable.Height := tableHeight;
+
+                    CheckListBoxLayerTable.Refresh();
                 end;
 
         //mouse methods
@@ -520,8 +497,7 @@ implementation
         //drawing procedures
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
-                    //make sure canvas is the same colour as the parent
-                        D2DGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
+                    // nothing here
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TDirect2DCanvas);
@@ -535,14 +511,20 @@ implementation
                 end;
 
             procedure TCustomGraphic2D.updateGraphicBuffer();
+                var
+                    D2DBufferCanvas : TDirect2DCanvas;
                 begin
                     //create new D2D canvas for new drawing
-                        recreateD2DCanvas();
+                        currentGraphicBuffer.SetSize( PaintBoxGraphic.Width, PaintBoxGraphic.Height );
+
+                        D2DBufferCanvas := TDirect2DCanvas.Create( currentGraphicBuffer.Canvas, Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height) );
+
+                        D2DBufferCanvas.RenderTarget.SetAntialiasMode( D2D1_ANTIALIAS_MODE.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
 
                     //draw to the surface
                         D2DBufferCanvas.BeginDraw();
 
-                            preDrawGraphic( D2DBufferCanvas );
+                            //preDrawGraphic( D2DBufferCanvas );
 
                             D2DGeomDrawer.drawAllGeometry( PaintBoxGraphic.Width, PaintBoxGraphic.Height, D2DBufferCanvas );
 
@@ -556,13 +538,15 @@ implementation
                         updateAxisSettingsValues();
 
                         mustRedrawGraphic := True;
+
+                    //free the D2D canvas
+                        FreeAndNil( D2DBufferCanvas );
                 end;
 
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
-                    mouseInputRequiresRedraw,
-                    mustUpdateGraphicImage      : boolean;
+                    mouseInputRequiresRedraw    : boolean;
                     currentMousePosition        : TPoint;
                 begin
                     //drawing graphic-----------------------------------------------------------------------------------------------
@@ -573,11 +557,8 @@ implementation
                         //process windows message in axis converter
                             mouseInputRequiresRedraw := D2DGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
 
-                        //determine if redrawing is required
-                            mustUpdateGraphicImage := ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) );
-
                         //render image off screen
-                            if (mustUpdateGraphicImage) then
+                            if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then
                                 updateGraphicBuffer();
 
                         //paint rendered image to screen
@@ -632,7 +613,6 @@ implementation
             destructor TCustomGraphic2D.destroy();
                 begin
                     FreeAndNil( currentGraphicBuffer );
-                    FreeAndNil( D2DBufferCanvas );
                     FreeAndNil( D2DGeomDrawer );
 
                     inherited destroy();

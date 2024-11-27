@@ -21,7 +21,7 @@ interface
                     Direct2DDrawingCanvas : TDirect2DCanvas;
                 //modifiers
                     //drawing canvas
-                        procedure setDrawingCanvas(const canvasIn : TDirect2DCanvas);
+                        procedure setDrawingCanvas(const canvasIn : TDirect2DCanvas); inline;
                 //drawing procedures
                     //auto detect geom type
                         procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
