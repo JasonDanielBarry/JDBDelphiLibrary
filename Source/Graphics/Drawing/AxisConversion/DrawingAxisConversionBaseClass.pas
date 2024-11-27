@@ -82,10 +82,7 @@ implementation
                                                                         const regionIn : TGeomBox );
                     var
                         buffer,
-                        regionInDomain, domainBuffer,
-                        newDomainMin,   newDomainMax,
-                        regionInRange,  rangeBuffer,
-                        newRangeMin,    newRangeMax     : double;
+                        newDomain, newRange : double;
                     begin
                         //set valid buffer
                             buffer := min(5, bufferIn);
@@ -95,22 +92,11 @@ implementation
                             if (bufferIn < 0) then
                                 exit();
 
-                        //calculate the domain and range of regionIn
-                            regionInDomain   := regionIn.maxPoint.x - regionIn.minPoint.x;
-                            regionInRange    := regionIn.maxPoint.y - regionIn.minPoint.y;
+                        newDomain   := (1 + (buffer / 100)) * regionIn.calculateXDimension();
+                        newRange    := (1 + (buffer / 100)) * regionIn.calculateYDimension();
 
-                        //calculate the region buffers
-                            domainBuffer := (buffer / 100) * regionInDomain;
-                            rangeBuffer  := (buffer / 100) * regionInRange;
-
-                        //calculate new mins and maxes
-                            newDomainMin := regionIn.minPoint.x - domainBuffer / 2;
-                            newDomainMax := regionIn.maxPoint.x + domainBuffer / 2;
-
-                            newRangeMin := regionIn.minPoint.y - rangeBuffer  / 2;
-                            newRangeMax := regionIn.maxPoint.y + rangeBuffer  / 2;
-
-                        setDrawingRegion( newDomainMin, newDomainMax, newRangeMin, newRangeMax );
+                        drawingRegion.copyBox(regionIn);
+                        drawingRegion.setDimensions(newDomain, newRange);
                     end;
 
         //helper methods

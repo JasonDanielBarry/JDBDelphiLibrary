@@ -28,9 +28,10 @@ interface
                     procedure zoom(const newZoomPercentageIn : double); overload;
             protected
                 var
-                    geometryBoundary : TGeomBox; //the geometry boundary stores the geometry group's boundary
+                    geometryBoundaryCentre  : TGeomPoint;
+                    geometryBoundary        : TGeomBox; //the geometry boundary stores the geometry group's boundary
                 //zooming by percent
-                    procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); overload; virtual;
+                    procedure zoom(const zoomAboutXIn, zoomAboutYIn, newZoomPercentageIn : double); overload;
             public
                 //constructor
                     constructor create(); override;
@@ -239,7 +240,9 @@ implementation
         //modifiers
             procedure TDrawingAxisZoomingConverter.setGeometryBoundary(const boundaryBoxIn : TGeomBox);
                 begin
-                    geometryBoundary.copyOther( boundaryBoxIn );
+                    geometryBoundary.copyBox( boundaryBoxIn );
+
+                    geometryBoundaryCentre.copyPoint( geometryBoundary.getCentrePoint() );
                 end;
 
             procedure TDrawingAxisZoomingConverter.resetDrawingRegionToGeometryBoundary();

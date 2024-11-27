@@ -72,7 +72,7 @@ implementation
 
                     //origin points for panning region
                         mousePanningOrigin  := currentMousePosition;
-                        regionPanningOrigin := getCurrentRegionCentreShift();
+                        regionPanningOrigin := drawingRegion.getCentrePoint();
                 end;
 
             procedure TDrawingAxisMouseControlConverter.deactivateMousePanning();
@@ -84,26 +84,27 @@ implementation
             procedure TDrawingAxisMouseControlConverter.panRegionWithMouse();
                 var
                     mouse_dL,           mouse_dT            : integer;
-                    regionShiftX,       regionShiftY,
+                    mouseRegionShiftX,  mouseRegionShiftY,
                     newRegionCentreX,   newRegionCentreY    : double;
                 begin
                     if (NOT(mousePanningIsActive)) then
                         exit();
 
                     //calculate how much the mouse moves from the point where the middle mouse button is pressed down
-                        mouse_dL := mousePanningOrigin.X - currentMousePosition.X;
-                        mouse_dT := mousePanningOrigin.Y - currentMousePosition.Y;
+                        mouse_dL :=  currentMousePosition.X - mousePanningOrigin.X;
+                        mouse_dT :=  currentMousePosition.Y - mousePanningOrigin.Y;
 
                     //convert mouse shift to drawing region shift
-                        regionShiftX := dL_To_dX( mouse_dL );
-                        regionShiftY := dT_To_dY( mouse_dT );
+                        mouseRegionShiftX := dL_To_dX( mouse_dL );
+                        mouseRegionShiftY := dT_To_dY( mouse_dT );
 
-                    //calculate new region centre point
-                        newRegionCentreX := regionPanningOrigin.x + regionShiftX;
-                        newRegionCentreY := regionPanningOrigin.y + regionShiftY;
+                    //calculate new region centre point -
+                    //the shift is subtracted because the region centre must move in the opposite direction to the mouse
+                        newRegionCentreX := regionPanningOrigin.x - mouseRegionShiftX;
+                        newRegionCentreY := regionPanningOrigin.y - mouseRegionShiftY;
 
                     //move region to new position
-                        setDrawingRegionShift( newRegionCentreX, newRegionCentreY );
+                        drawingRegion.setCentrePoint( newRegionCentreX, newRegionCentreY );
                 end;
 
         //zooming relative to mouse
