@@ -16,8 +16,6 @@ interface
                 //modifiers
                     //drawing space boundaries
                         procedure setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload;
-                        procedure setDrawingRegion( const bufferIn : double;
-                                                    const regionIn : TGeomBox ); overload; virtual;
             public
                 //constructor
                     constructor create(); virtual;
@@ -28,6 +26,9 @@ interface
                 //modifiers
                     //canvas boundaries
                         procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer); inline;
+                    //drawing space boundaries
+                        procedure setDrawingRegion( const bufferIn : double;
+                                                    const regionIn : TGeomBox ); overload;
                 //helper methods
                     //domain
                         function calculateRegionDomain() : double;
@@ -95,8 +96,8 @@ implementation
                         newDomain   := (1 + (buffer / 100)) * regionIn.calculateXDimension();
                         newRange    := (1 + (buffer / 100)) * regionIn.calculateYDimension();
 
-                        drawingRegion.copyBox(regionIn);
-                        drawingRegion.setDimensions(newDomain, newRange);
+                        drawingRegion.copyBox( regionIn );
+                        drawingRegion.setDimensions( newDomain, newRange );
                     end;
 
         //helper methods

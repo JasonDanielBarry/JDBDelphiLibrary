@@ -47,9 +47,9 @@ interface
                 function calculateYDimension() : double; inline;
                 function calculateZDimension() : double; inline;
             //set dimensions
-                procedure setXDimension(const newXLengthIn : double); inline;
-                procedure setYDimension(const newYLengthIn : double); inline;
-                procedure setZDimension(const newZLengthIn : double); inline;
+                procedure setXDimension(const newXLengthIn : double);
+                procedure setYDimension(const newYLengthIn : double);
+                procedure setZDimension(const newZLengthIn : double);
                 procedure setDimensions(const newXLengthIn, newYLengthIn : double); overload;
                 procedure setDimensions(const newXLengthIn, newYLengthIn, newZLengthIn : double); overload;
             //min and max properties
@@ -234,21 +234,33 @@ implementation
 
     //set dimensions
         procedure TGeomBox.setXDimension(const newXLengthIn : double);
+            var
+                requiredXDimensionChange : double;
             begin
-                minPoint.shiftX( -(newXLengthIn - calculateXDimension()) / 2 );
-                maxPoint.shiftX(  (newXLengthIn - calculateXDimension()) / 2 );
+                requiredXDimensionChange := newXLengthIn - calculateXDimension();
+
+                minPoint.shiftX( -requiredXDimensionChange / 2 );
+                maxPoint.shiftX(  requiredXDimensionChange / 2 );
             end;
 
         procedure TGeomBox.setYDimension(const newYLengthIn : double);
+            var
+                requiredYDimensionChange : double;
             begin
-                minPoint.shiftY( -(newYLengthIn - calculateYDimension()) / 2 );
-                maxPoint.shiftY(  (newYLengthIn - calculateYDimension()) / 2 );
+                requiredYDimensionChange := newYLengthIn - calculateYDimension();
+
+                minPoint.shiftY( -requiredYDimensionChange / 2 );
+                maxPoint.shiftY(  requiredYDimensionChange / 2 );
             end;
 
         procedure TGeomBox.setZDimension(const newZLengthIn : double);
+            var
+                requiredZDimensionChange : double;
             begin
-                minPoint.shiftZ( -(newZLengthIn - calculateZDimension()) / 2 );
-                maxPoint.shiftZ(  (newZLengthIn - calculateZDimension()) / 2 );
+                requiredZDimensionChange := newZLengthIn - calculateZDimension();
+
+                minPoint.shiftZ( -requiredZDimensionChange / 2 );
+                maxPoint.shiftZ(  requiredZDimensionChange / 2 );
             end;
 
         procedure TGeomBox.setDimensions(const newXLengthIn, newYLengthIn : double);

@@ -20,9 +20,6 @@ interface
                     procedure shiftDrawingDomain(const deltaXIn : double);
                     procedure shiftDrawingRange(const deltaYIn : double);
                     procedure shiftDrawingRegion(const deltaXIn, deltaYIn : double);
-                //drawing space boundaries
-                    procedure setDrawingRegion( const bufferIn : double;
-                                                const regionIn : TGeomBox ); override;
                 //recentre drawing region
                     procedure recentreDrawingRegion();
         end;
@@ -56,13 +53,6 @@ implementation
             procedure TDrawingAxisPanningConverter.shiftDrawingRegion(const deltaXIn, deltaYIn : double);
                 begin
                     drawingRegion.shiftBox(deltaXIn, deltaYIn);
-                end;
-
-        //drawing space boundaries
-            procedure TDrawingAxisPanningConverter.setDrawingRegion(const bufferIn : double;
-                                                                    const regionIn : TGeomBox);
-                begin
-                    inherited setDrawingRegion( bufferIn, regionIn );
                 end;
 
         //recentre drawing region
