@@ -458,7 +458,7 @@ implementation
                     //convert mouse position to XY coordinate
                         mousePointXY := D2DGeomDrawer.getMouseCoordinatesXY();
 
-                        mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ')';
+                        mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.y, ffFixed, 5, 2) + ')';
 
                     //write to label
                         labelCoords.Caption := mouseCoordStr;
