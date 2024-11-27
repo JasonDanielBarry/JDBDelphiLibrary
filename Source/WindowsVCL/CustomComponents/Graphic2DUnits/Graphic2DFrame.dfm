@@ -8,14 +8,6 @@ object CustomGraphic2D: TCustomGraphic2D
   DesignSize = (
     1231
     736)
-  object labelCoords: TLabel
-    Left = 80
-    Top = 576
-    Width = 20
-    Height = 15
-    Anchors = [akLeft, akBottom]
-    Caption = 'X, Y'
-  end
   object PaintBoxGraphic: TPaintBox
     Left = 0
     Top = 23
@@ -23,13 +15,21 @@ object CustomGraphic2D: TCustomGraphic2D
     Height = 713
     Align = alClient
     PopupMenu = PopupMenuGraphicControls
-    OnMouseEnter = SkPaintBoxGraphicMouseEnter
-    OnMouseLeave = SkPaintBoxGraphicMouseLeave
+    OnMouseEnter = PaintBoxGraphicMouseEnter
+    OnMouseLeave = PaintBoxGraphicMouseLeave
     OnPaint = PaintBoxGraphicPaint
     ExplicitLeft = 464
     ExplicitTop = 576
     ExplicitWidth = 105
     ExplicitHeight = 105
+  end
+  object labelCoords: TLabel
+    Left = 80
+    Top = 576
+    Width = 20
+    Height = 15
+    Anchors = [akLeft, akBottom]
+    Caption = 'X, Y'
   end
   object GridPanelDirectionalPan: TGridPanel
     Left = 1153

@@ -74,8 +74,8 @@ interface
             //events
                 procedure PaintBoxGraphicPaint(Sender: TObject);
                 procedure ComboBoxZoomPercentChange(Sender: TObject);
-                procedure SkPaintBoxGraphicMouseEnter(Sender: TObject);
-                procedure SkPaintBoxGraphicMouseLeave(Sender: TObject);
+                procedure PaintBoxGraphicMouseEnter(Sender: TObject);
+                procedure PaintBoxGraphicMouseLeave(Sender: TObject);
                 procedure FrameResize(Sender: TObject);
                 procedure ActionRecentreExecute(Sender: TObject);
                 procedure ActionZoomExtentsExecute(Sender: TObject);
@@ -150,12 +150,12 @@ implementation
                 mustRedrawGraphic := False;
             end;
 
-        procedure TCustomGraphic2D.SkPaintBoxGraphicMouseEnter(Sender: TObject);
+        procedure TCustomGraphic2D.PaintBoxGraphicMouseEnter(Sender: TObject);
             begin
                 D2DGeomDrawer.activateMouseControl();
             end;
 
-        procedure TCustomGraphic2D.SkPaintBoxGraphicMouseLeave(Sender: TObject);
+        procedure TCustomGraphic2D.PaintBoxGraphicMouseLeave(Sender: TObject);
             begin
                 D2DGeomDrawer.deactivateMouseControl();
             end;
@@ -607,6 +607,12 @@ implementation
                             CheckListBoxLayerTable.Visible  := layerTableVisible;
                             SpeedButtonLayerTable.down      := layerTableVisible;
                             CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
+
+                        //paint box
+                            PaintBoxGraphic.SendToBack();
+
+                        //mouse coodinates label
+                            labelCoords.BringToFront();
                 end;
 
         //destructor
