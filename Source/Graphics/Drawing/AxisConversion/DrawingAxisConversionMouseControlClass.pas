@@ -36,7 +36,7 @@ interface
                     destructor destroy(); override;
                 //accessors
                     property MouseControlActive : boolean read mouseControlIsActive;
-                    function getMouseCoordinatesXY() : TGeomPoint;
+                    function getMouseCoordinatesXY() : TGeomPoint; inline;
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();

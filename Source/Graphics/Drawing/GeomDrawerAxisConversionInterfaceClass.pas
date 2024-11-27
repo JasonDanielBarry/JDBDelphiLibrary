@@ -26,7 +26,7 @@ interface
                     //draw space ratio
                         procedure setDrawingSpaceRatio(const ratioIn : double);
                     //mouse coordinates
-                        function getMouseCoordinatesXY() : TGeomPoint;
+                        function getMouseCoordinatesXY() : TGeomPoint; inline;
                     //panning
                         procedure recentre();
                         procedure shiftDomain(const percentageIn : double);
