@@ -252,19 +252,8 @@ implementation
 
         //bounding box
             function TGeomPolyLine.boundingBox() : TGeomBox;
-                var
-                    i           : integer;
-                    boxOut      : TGeomBox;
-                    arrGeomBase : TArray<TGeomBase>;
                 begin
-                    SetLength(arrGeomBase, length(arrLines));
-
-                    for i := 0 to (length(arrLines) - 1) do
-                        arrGeomBase[i] := arrLines[i];
-
-                    boxOut := determineBoundingBox( arrGeomBase );
-
-                    result := boxOut;
+                    result := TGeomBox.determineBoundingBox( arrVertices );
                 end;
 
         //drawing points

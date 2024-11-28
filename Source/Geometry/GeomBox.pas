@@ -52,6 +52,9 @@ interface
                 procedure setZDimension(const newZLengthIn : double);
                 procedure setDimensions(const newXLengthIn, newYLengthIn : double); overload;
                 procedure setDimensions(const newXLengthIn, newYLengthIn, newZLengthIn : double); overload;
+            //scale box
+                procedure scaleBox( const scaleFactorIn     : double;
+                                    const scaleAboutPointIn : TGeomPoint );
             //min and max properties
                 property xMin : double read minPoint.x;
                 property yMin : double read minPoint.y;
@@ -59,8 +62,10 @@ interface
                 property xMax : double read maxPoint.x;
                 property yMax : double read maxPoint.y;
                 property zMax : double read maxPoint.z;
-            //determine the bounding box from an array of bounding boxes
-                class function determineBoundingBox(arrGeomBoxesIn : TArray<TGeomBox>) : TGeomBox; static;
+            //determine bounding box from an array of points
+                class function determineBoundingBox(const arrGeomPointsIn : TArray<TGeomPoint>) : TGeomBox; overload; static;
+            //determine bounding box from an array of boxes
+                class function determineBoundingBox(const arrGeomBoxesIn : TArray<TGeomBox>) : TGeomBox; overload; static;
         end;
 
 implementation
@@ -85,28 +90,26 @@ implementation
     //centre point
         function TGeomBox.calculateCentreX() : double;
             begin
-                result := mean([minPoint.x, maxPoint.x]);
+                result := (minPoint.x + maxPoint.x) / 2;
             end;
 
         function TGeomBox.calculateCentreY() : double;
             begin
-                result := mean([minPoint.y, maxPoint.y]);
+                result := (minPoint.y + maxPoint.y) / 2;
             end;
 
         function TGeomBox.calculateCentreZ() : double;
             begin
-                result := mean([minPoint.z, maxPoint.z]);
+                result := (minPoint.z + maxPoint.z) / 2;
             end;
 
         function TGeomBox.getCentrePoint() : TGeomPoint;
-            var
-                centreX, centreY, centreZ : double;
             begin
-                centreX := calculateCentreX();
-                centreY := calculateCentreY();
-                centreZ := calculateCentreZ();
-
-                result := TGeomPoint.create(centreX, centreY, centreZ);
+                result := TGeomPoint.create(
+                                                calculateCentreX(),
+                                                calculateCentreY(),
+                                                calculateCentreZ()
+                                           );
             end;
 
         procedure TGeomBox.setCentrePoint(const xIn, yIn, zIn : double);
@@ -156,8 +159,8 @@ implementation
                                             yMinIn, yMaxIn,
                                             zMinIn, zMaxIn  : double);
             begin
-                minPoint.setPoint(xMinIn, yMinIn, zMinIn);
-                maxPoint.setPoint(xMaxIn, yMaxIn, zMaxIn);
+                minPoint.setPoint( xMinIn, yMinIn, zMinIn );
+                maxPoint.setPoint( xMaxIn, yMaxIn, zMaxIn );
             end;
 
     //set points
@@ -194,14 +197,14 @@ implementation
 
         procedure TGeomBox.shiftBox(const deltaXIn, deltaYIn : double);
             begin
-                shiftX( deltaXIn );
-                shiftY( deltaYIn );
+                minPoint.shiftPoint( deltaXIn, deltaYIn );
+                maxPoint.shiftPoint( deltaXIn, deltaYIn );
             end;
 
         procedure TGeomBox.shiftBox(const deltaXIn, deltaYIn, deltaZIn : double);
             begin
-                shiftBox( deltaXIn, deltaYIn );
-                shiftZ( deltaZIn );
+                minPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                maxPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
             end;
 
     //comparison
@@ -276,8 +279,62 @@ implementation
                 setZDimension( newZLengthIn );
             end;
 
-    //bounding box function
-        class function TGeomBox.determineBoundingBox(arrGeomBoxesIn : TArray<TGeomBox>) : TGeomBox;
+    //scale box
+        procedure TGeomBox.scaleBox(const scaleFactorIn     : double;
+                                    const scaleAboutPointIn : TGeomPoint);
+            begin
+                //scale x dimensions
+                    scaleLinear(
+                                    self.xMin,              self.xMax,
+                                    scaleAboutPointIn.x,    scaleFactorIn,
+                                    self.minPoint.x,        self.maxPoint.x
+                               );
+
+                //scale y dimensions
+                    scaleLinear(
+                                    self.yMin,              self.yMax,
+                                    scaleAboutPointIn.y,    scaleFactorIn,
+                                    self.minPoint.y,        self.maxPoint.y
+                               );
+
+                //scale z dimensions
+                    scaleLinear(
+                                    self.zMin,              self.zMax,
+                                    scaleAboutPointIn.z,    scaleFactorIn,
+                                    self.minPoint.z,        self.maxPoint.z
+                               );
+            end;
+
+    //determine bounding box from an array of points
+        class function TGeomBox.determineBoundingBox(const arrGeomPointsIn : TArray<TGeomPoint>) : TGeomBox;
+            var
+                i                               : integer;
+                localMinPoint, localMaxPoint    : TGeomPoint;
+                boundingBoxOut                  : TGeomBox;
+            begin
+                localMinPoint.copyPoint( arrGeomPointsIn[0] );
+                localMaxPoint.copyPoint( arrGeomPointsIn[0] );
+
+                for i := 1 to (length(arrGeomPointsIn) - 1) do
+                    begin
+                        //look for min x, y, z
+                            localMinPoint.x := min( localMinPoint.x, arrGeomPointsIn[i].x );
+                            localMinPoint.y := min( localMinPoint.y, arrGeomPointsIn[i].y );
+                            localMinPoint.z := min( localMinPoint.z, arrGeomPointsIn[i].z );
+
+                        //look for max x, y, z
+                            localMaxPoint.x := max( localMaxPoint.x, arrGeomPointsIn[i].x );
+                            localMaxPoint.y := max( localMaxPoint.y, arrGeomPointsIn[i].y );
+                            localMaxPoint.z := max( localMaxPoint.z, arrGeomPointsIn[i].z );
+                    end;
+
+                boundingBoxOut := TGeomBox.create(localMinPoint, localMaxPoint);
+
+                result := boundingBoxOut;
+            end;
+
+    //determine bounding box from an array of boxes
+        class function TGeomBox.determineBoundingBox(const arrGeomBoxesIn : TArray<TGeomBox>) : TGeomBox;
             var
                 i                               : integer;
                 localMinPoint, localMaxPoint    : TGeomPoint;

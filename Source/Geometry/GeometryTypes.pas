@@ -56,17 +56,17 @@ implementation
 
         constructor TGeomPoint.create(const xIn, yIn : double);
             begin
-                create(xIn, yIn, 0);
+                setPoint( xIn, yIn );
             end;
 
         constructor TGeomPoint.create(const PointFIn : TPointF);
             begin
-                create(PointFIn.X, PointFIn.Y);
+                setPoint( PointFIn );
             end;
 
         constructor TGeomPoint.create(const PointIn : TPoint);
             begin
-                create(PointIn.X, PointIn.Y)
+                setPoint( PointIn )
             end;
 
     //set point
@@ -125,7 +125,8 @@ implementation
 
         procedure TGeomPoint.shiftPoint(const deltaXIn, deltaYIn, deltaZIn : double);
             begin
-                shiftPoint( deltaXIn, deltaYIn );
+                shiftX( deltaXIn );
+                shiftY( deltaYIn );
                 shiftZ( deltaZIn );
             end;
 
