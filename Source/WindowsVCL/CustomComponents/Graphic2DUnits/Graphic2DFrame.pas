@@ -613,6 +613,9 @@ implementation
 
                         //mouse coodinates label
                             labelCoords.BringToFront();
+
+                    //for design time to ensure the colour is not black on the form builder
+                        setGraphicBackgroundColour();
                 end;
 
         //destructor
