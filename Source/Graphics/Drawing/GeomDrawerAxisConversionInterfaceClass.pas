@@ -116,7 +116,7 @@ implementation
             //zooming
                 function TGeomDrawerAxisConversionInterface.getCurrentZoomPercentage() : double;
                     begin
-                        result := axisConverter.getCurrentZoomPercentage();
+                        result := axisConverter.calculateCurrentZoomPercentage();
                     end;
 
                 procedure TGeomDrawerAxisConversionInterface.setZoom(const percentageIn : double);

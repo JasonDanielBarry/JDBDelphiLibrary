@@ -65,7 +65,7 @@ implementation
                     currentZoomPercentage : double;
                 begin
                     //catch current zoom percentage
-                        currentZoomPercentage := getCurrentZoomPercentage();
+                        currentZoomPercentage := calculateCurrentZoomPercentage();
 
                     //set the aspect ratio as desired
                         adjustDrawingRegionAspectRatio( ratioIn );

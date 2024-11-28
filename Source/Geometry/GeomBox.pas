@@ -54,7 +54,8 @@ interface
                 procedure setDimensions(const newXLengthIn, newYLengthIn, newZLengthIn : double); overload;
             //scale box
                 procedure scaleBox( const scaleFactorIn     : double;
-                                    const scaleAboutPointIn : TGeomPoint );
+                                    const scaleAboutPointIn : TGeomPoint ); overload;
+                procedure scaleBox(const scaleFactorIn : double); overload;
             //min and max properties
                 property xMin : double read minPoint.x;
                 property yMin : double read minPoint.y;
@@ -303,6 +304,11 @@ implementation
                                     scaleAboutPointIn.z,    scaleFactorIn,
                                     self.minPoint.z,        self.maxPoint.z
                                );
+            end;
+
+        procedure TGeomBox.scaleBox(const scaleFactorIn : double);
+            begin
+                self.scaleBox( scaleFactorIn, self.getCentrePoint() );
             end;
 
     //determine bounding box from an array of points
