@@ -158,16 +158,20 @@ implementation
         function
             _creatBoltPolygon(const centreX, centreY : double) : TGeomPolygon;
                 var
-                    polygonOut : TGeomPolygon;
+                    r, h        : double;
+                    polygonOut  : TGeomPolygon;
                 begin
+                    r := 10;
+                    h := (2/sqrt(3)) * r;
+
                     polygonOut := TGeomPolygon.create();
 
-                    polygonOut.addVertex( 15, 0 );
-                    polygonOut.addVertex( 7.5, 10 );
-                    polygonOut.addVertex( -7.5, 10 );
-                    polygonOut.addVertex( -15, 0 );
-                    polygonOut.addVertex( -7.5, -10 );
-                    polygonOut.addVertex( 7.5, -10 );
+                    polygonOut.addVertex( h, 0 );
+                    polygonOut.addVertex( h/2, r );
+                    polygonOut.addVertex( -h/2, r );
+                    polygonOut.addVertex( -h, 0 );
+                    polygonOut.addVertex( -h/2, -r );
+                    polygonOut.addVertex( h/2, -r );
 
                     polygonOut.shift( centreX, centreY );
 
