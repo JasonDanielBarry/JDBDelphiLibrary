@@ -19,7 +19,7 @@ interface
                     mousePanningOrigin      : TPoint;
                     regionPanningOrigin     : TGeomPoint;
                 //modifiers
-                    procedure setMousePositionLT(const newMousePositionIn : TPoint);
+                    procedure setMousePositionLT(const newMousePositionIn : TPoint); inline;
                 //activate/deactivate mouse panning
                     procedure activateMousePanning();
                     procedure deactivateMousePanning(); inline;
@@ -87,21 +87,17 @@ implementation
                     mouseRegionShiftX,  mouseRegionShiftY,
                     newRegionCentreX,   newRegionCentreY    : double;
                 begin
-                    if (NOT(mousePanningIsActive)) then
+                    if ( NOT(mousePanningIsActive) ) then
                         exit();
 
                     //calculate how much the mouse moves from the point where the middle mouse button is pressed down
                         mouse_dL :=  currentMousePosition.X - mousePanningOrigin.X;
                         mouse_dT :=  currentMousePosition.Y - mousePanningOrigin.Y;
 
-                    //convert mouse shift to drawing region shift
-                        mouseRegionShiftX := dL_To_dX( mouse_dL );
-                        mouseRegionShiftY := dT_To_dY( mouse_dT );
-
-                    //calculate new region centre point -
+                    //calculate new region centre point
                     //the shift is subtracted because the region centre must move in the opposite direction to the mouse
-                        newRegionCentreX := regionPanningOrigin.x - mouseRegionShiftX;
-                        newRegionCentreY := regionPanningOrigin.y - mouseRegionShiftY;
+                        newRegionCentreX := regionPanningOrigin.x - dL_To_dX( mouse_dL ); //mouseRegionShiftX = dL_To_dX( mouse_dL );
+                        newRegionCentreY := regionPanningOrigin.y - dT_To_dY( mouse_dT ); //mouseRegionShiftY = dT_To_dY( mouse_dT );
 
                     //move region to new position
                         drawingRegion.setCentrePoint( newRegionCentreX, newRegionCentreY );
