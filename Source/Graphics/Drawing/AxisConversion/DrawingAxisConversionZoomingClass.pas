@@ -13,7 +13,7 @@ interface
         TDrawingAxisZoomingConverter = class(TDrawingAxisConvertionCalculator)
             private
                 //helper methods
-                    function calculateZoomScaleFactor(const newZoomPercentage : double) : double;
+                    function calculateZoomScaleFactor(const newZoomPercentage : double) : double; inline;
                 //zooming by percent
                     procedure zoom( const newZoomPercentageIn   : double;
                                     const zoomAboutPointIn      : TGeomPoint ); overload;
@@ -46,16 +46,12 @@ implementation
     //private
         //helper methods
             function TDrawingAxisZoomingConverter.calculateZoomScaleFactor(const newZoomPercentage : double) : double;
-                var
-                    currentZoomPercentage : double;
                 begin
                     //the scale factor is used to size the domain and range
                     // < 1 the region shrinks which zooms the drawing in
                     // > 1 the region grows which zooms the drawing out
 
-                    currentZoomPercentage := calculateCurrentZoomPercentage();
-
-                    result := currentZoomPercentage / newZoomPercentage;
+                    result := calculateCurrentZoomPercentage() / newZoomPercentage;
                 end;
 
         //zooming by percent

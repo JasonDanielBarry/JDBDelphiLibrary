@@ -19,15 +19,15 @@ interface
                     mousePanningOrigin      : TPoint;
                     regionPanningOrigin     : TGeomPoint;
                 //modifiers
-                    procedure setMousePositionLT(const newMousePositionIn : TPoint);
+                    procedure setMousePositionLT(const newMousePositionIn : TPoint); inline;
                 //activate/deactivate mouse panning
                     procedure activateMousePanning();
-                    procedure deactivateMousePanning();
+                    procedure deactivateMousePanning(); inline;
                 //panning with mouse
                     procedure panRegionWithMouse();
                 //zooming relative to mouse
-                    procedure zoomInRelativeToMouse();
-                    procedure zoomOutRelativeToMouse();
+                    procedure zoomInRelativeToMouse(); inline;
+                    procedure zoomOutRelativeToMouse(); inline;
                     procedure zoomRelativeToMouse(const messageIn : TMessage);
             public
                 //constructor
