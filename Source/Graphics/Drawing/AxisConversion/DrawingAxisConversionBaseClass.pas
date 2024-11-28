@@ -13,9 +13,6 @@ interface
                 var
                     canvasDimensions    : TSize;
                     drawingRegion       : TGeomBox;
-                //modifiers
-                    //drawing space boundaries
-                        procedure setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double); overload;
             public
                 //constructor
                     constructor create(); virtual;
@@ -39,23 +36,13 @@ interface
 
 implementation
 
-    //protected
-        //modifiers
-            //drawingRegion space boundaries
-                procedure TDrawingAxisConverterBase.setDrawingRegion(const domainMinIn, domainMaxIn, rangeMinIn, rangeMaxIn : double);
-                    begin
-                        drawingRegion.setBounds(domainMinIn,    domainMaxIn,
-                                                rangeMinIn,     rangeMaxIn,
-                                                0,              0           );
-                    end;
-        
     //public
         //constructor
             constructor TDrawingAxisConverterBase.create();
                 begin
                     inherited create();
 
-                    setDrawingRegion( 0, 0, 0, 0 );
+                    drawingRegion.setBounds( 0, 0, 0, 0, 0, 0 );
                 end;
 
         //destructor
@@ -82,22 +69,15 @@ implementation
                 procedure TDrawingAxisConverterBase.setDrawingRegion(   const bufferIn : double;
                                                                         const regionIn : TGeomBox );
                     var
-                        buffer,
-                        newDomain, newRange : double;
+                        buffer : double;
                     begin
                         //set valid buffer
                             buffer := min(5, bufferIn);
                             buffer := max(buffer, 0);
 
-                        //test buffer is valid
-                            if (bufferIn < 0) then
-                                exit();
-
-                        newDomain   := (1 + (buffer / 100)) * regionIn.calculateXDimension();
-                        newRange    := (1 + (buffer / 100)) * regionIn.calculateYDimension();
-
-                        drawingRegion.copyBox( regionIn );
-                        drawingRegion.setDimensions( newDomain, newRange );
+                        //copy in the new region and apply buffer
+                            drawingRegion.copyBox( regionIn );
+                            drawingRegion.scaleBox( 1 + (buffer / 100) );
                     end;
 
         //helper methods
