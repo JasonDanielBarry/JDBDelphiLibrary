@@ -22,14 +22,14 @@ interface
                 constructor create(const PointIn : TPoint); overload;
             //set point
                 procedure copyPoint(const otherGeomPointIn : TGeomPoint);
-                procedure setPoint(const xIn, yIn, zIn : double); overload; inline;
+                procedure setPoint(const xIn, yIn, zIn : double); overload;
                 procedure setPoint(const xIn, yIn : double); overload;
                 procedure setPoint(const PointFIn : TPointF); overload;
                 procedure setPoint(const PointIn : TPoint); overload;
             //shift point
-                procedure shiftX(const deltaXIn : double); inline;
-                procedure shiftY(const deltaYIn : double); inline;
-                procedure shiftZ(const deltaZIn : double); inline;
+                procedure shiftX(const deltaXIn : double);
+                procedure shiftY(const deltaYIn : double);
+                procedure shiftZ(const deltaZIn : double);
                 procedure shiftPoint(const deltaXIn, deltaYIn : double); overload;
                 procedure shiftPoint(const deltaXIn, deltaYIn, deltaZIn : double); overload;
             //comparison

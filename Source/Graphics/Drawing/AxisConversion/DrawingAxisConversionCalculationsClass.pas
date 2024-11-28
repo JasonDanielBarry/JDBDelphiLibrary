@@ -14,16 +14,16 @@ interface
         TDrawingAxisConvertionCalculator = class(TDrawingAxisConverterBase)
             private
                 //canvas-to-drawing
-                    function L_to_X(const L_In : double) : double; inline;
-                    function T_to_Y(const T_In : double) : double; inline;
+                    function L_to_X(const L_In : double) : double;
+                    function T_to_Y(const T_In : double) : double;
                 //drawing-to-canvas
-                    function X_to_L(const X_In : double) : double; inline;
-                    function Y_to_T(const Y_In : double) : double; inline;
+                    function X_to_L(const X_In : double) : double;
+                    function Y_to_T(const Y_In : double) : double;
                 //canvas-to-drawing
-                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload; inline;
+                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload;
                 //drawing-to-canvas
-                    function XY_to_LTF(const X_In, Y_In : double) : TPointF; overload; inline;
-                    function XY_to_LT(const X_In, Y_In : double) : TPoint; overload; inline;
+                    function XY_to_LTF(const X_In, Y_In : double) : TPointF; overload;
+                    function XY_to_LT(const X_In, Y_In : double) : TPoint; overload;
             public
                 //constructor
                     constructor create(); override;
@@ -31,19 +31,19 @@ interface
                     destructor destroy(); override;
                 //space conversions
                     //canvas to region
-                        function dL_To_dX(const dL_In : double) : double; inline;
-                        function dT_To_dY(const dT_In : double) : double; inline;
+                        function dL_To_dX(const dL_In : double) : double;
+                        function dT_To_dY(const dT_In : double) : double;
                     //region to canvas
-                        function dX_To_dL(const dX_In : double) : double; inline;
-                        function dY_To_dT(const dY_In : double) : double; inline;
+                        function dX_To_dL(const dX_In : double) : double;
+                        function dY_To_dT(const dY_In : double) : double;
                 //convertion calculations
                     //canvas-to-drawing
-                        function LT_to_XY(const pointIn : TPointF) : TGeomPoint; overload; inline;
-                        function LT_to_XY(const pointIn : TPoint) : TGeomPoint; overload; inline;
+                        function LT_to_XY(const pointIn : TPointF) : TGeomPoint; overload;
+                        function LT_to_XY(const pointIn : TPoint) : TGeomPoint; overload;
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPointF>) : TArray<TGeomPoint>; overload;
                         function arrLT_to_arrXY(const arrLT_In : TArray<TPoint>) : TArray<TGeomPoint>; overload;
                     //drawing-to-canvas
-                        function XY_to_LT(const pointIn : TGeomPoint) : TPointF; overload; inline;
+                        function XY_to_LT(const pointIn : TGeomPoint) : TPointF; overload;
                         function arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;
         end;
 

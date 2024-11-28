@@ -26,7 +26,7 @@ interface
                     //draw space ratio
                         procedure setDrawingSpaceRatio(const ratioIn : double);
                     //mouse coordinates
-                        function getMouseCoordinatesXY() : TGeomPoint; inline;
+                        function getMouseCoordinatesXY() : TGeomPoint;
                     //panning
                         procedure recentre();
                         procedure shiftDomain(const percentageIn : double);
@@ -40,7 +40,7 @@ interface
                 //process windows messages
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
-                    function getMouseControlActive() : boolean; inline;
+                    function getMouseControlActive() : boolean;
                     function processWindowsMessages(const messageIn             : Tmessage;
                                                     const newMousePositionIn    : TPoint    ) : boolean;
         end;

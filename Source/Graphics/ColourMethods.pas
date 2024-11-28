@@ -8,7 +8,7 @@ interface
     //make colours from RGBA combinations
         //TAlphaColor
             function makeAlphaColour(   const redIn, greenIn, blueIn    : byte;
-                                        const opacityIn                 : byte = 255) : TAlphaColor; overload; inline;
+                                        const opacityIn                 : byte = 255) : TAlphaColor; overload;
 
             function makeAlphaColour(const RGBQuadIn : TRGBQuad) : TAlphaColor; overload;
 

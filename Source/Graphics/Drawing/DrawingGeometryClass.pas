@@ -35,14 +35,14 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //line thickness
-                    function getLineThickness() : integer; inline;
+                    function getLineThickness() : integer;
                 //colours
-                    function getFillColour() : TColor; inline;
-                    function getLineColour() : TColor; inline;
+                    function getFillColour() : TColor;
+                    function getLineColour() : TColor;
                 //get the geometry object
-                    function getGeometry() : TGeomBase; inline;
+                    function getGeometry() : TGeomBase;
                 //get drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; inline;
+                    function getDrawingPoints() : TArray<TGeomPoint>;
         end;
 
 implementation

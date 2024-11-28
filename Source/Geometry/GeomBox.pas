@@ -18,34 +18,34 @@ interface
             //copy other
                 procedure copyBox(const otherBoxIn : TGeomBox);
             //centre point
-                function calculateCentreX() : double; inline;
-                function calculateCentreY() : double; inline;
-                function calculateCentreZ() : double; inline;
+                function calculateCentreX() : double;
+                function calculateCentreY() : double;
+                function calculateCentreZ() : double;
                 function getCentrePoint() : TGeomPoint;
                 procedure setCentrePoint(const xIn, yIn, zIn : double); overload;
                 procedure setCentrePoint(const xIn, yIn : double); overload;
                 procedure setCentrePoint(const newCentrePointIn : TGeomPoint); overload;
             //set boundaries
-                procedure setXBounds(const xMinIn, xMaxIn : double); inline;
-                procedure setYBounds(const yMinIn, yMaxIn : double); inline;
-                procedure setZBounds(const zMinIn, zMaxIn : double); inline;
+                procedure setXBounds(const xMinIn, xMaxIn : double);
+                procedure setYBounds(const yMinIn, yMaxIn : double);
+                procedure setZBounds(const zMinIn, zMaxIn : double);
                 procedure setBounds(const   xMinIn, xMaxIn,
                                             yMinIn, yMaxIn,
-                                            zMinIn, zMaxIn  : double); inline;
+                                            zMinIn, zMaxIn  : double);
             //set points
                 procedure setPoints(const point1In, point2In : TGeomPoint);
             //shift box
-                procedure shiftX(const deltaXIn : double); inline;
-                procedure shiftY(const deltaYIn : double); inline;
-                procedure shiftZ(const deltaZIn : double); inline;
+                procedure shiftX(const deltaXIn : double);
+                procedure shiftY(const deltaYIn : double);
+                procedure shiftZ(const deltaZIn : double);
                 procedure shiftBox(const deltaXIn, deltaYIn : double); overload;
                 procedure shiftBox(const deltaXIn, deltaYIn, deltaZIn : double); overload;
             //comparison
                 function pointIsWithin(const pointIn : TGeomPoint) : boolean;
             //calculate dimensions
-                function calculateXDimension() : double; inline;
-                function calculateYDimension() : double; inline;
-                function calculateZDimension() : double; inline;
+                function calculateXDimension() : double;
+                function calculateYDimension() : double;
+                function calculateZDimension() : double;
             //set dimensions
                 procedure setXDimension(const newXLengthIn : double);
                 procedure setYDimension(const newYLengthIn : double);

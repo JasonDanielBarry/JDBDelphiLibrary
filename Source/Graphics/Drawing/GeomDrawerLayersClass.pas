@@ -28,7 +28,7 @@ interface
                     layerGeometryMap    : TLayerGeometryMap;
                 //helper methods
                     //return a specified layer's drawing geometry array
-                        function getArrDrawingGeom(const layerKeyIn : string) : TArray<TDrawingGeometry>; inline;
+                        function getArrDrawingGeom(const layerKeyIn : string) : TArray<TDrawingGeometry>;
                     //return a layer's geometry array for bounding box
                         function getArrGeom(const layerKeyIn : string) : TArray<TGeomBase>;
                     //add drawing geometry to the layer-geometry map

@@ -25,7 +25,7 @@ interface
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer); inline;
+                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
                     //drawing space boundaries
                         procedure setDrawingRegion( const bufferIn : double;
                                                     const regionIn : TGeomBox ); overload;

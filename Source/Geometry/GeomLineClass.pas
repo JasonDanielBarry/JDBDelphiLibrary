@@ -291,7 +291,7 @@ implementation
             procedure
                 _determineIntersectionRegion();
                     var
-                        isWithinLine1, isWithinLine2   : boolean;
+                        isWithinLine1, isWithinLine2    : boolean;
                         line1Bound, line2Bound          : TGeomBox;
                     begin
                         //get line bounding boxes
