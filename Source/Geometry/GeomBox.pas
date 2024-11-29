@@ -238,33 +238,24 @@ implementation
 
     //set dimensions
         procedure TGeomBox.setXDimension(const newXLengthIn : double);
-            var
-                requiredXDimensionChange : double;
             begin
-                requiredXDimensionChange := newXLengthIn - calculateXDimension();
-
-                minPoint.shiftX( -requiredXDimensionChange / 2 );
-                maxPoint.shiftX(  requiredXDimensionChange / 2 );
+                resizeLine( self.xMin,          self.xMax,
+                            calculateCentreX(), newXLengthIn,
+                            self.minPoint.x,    self.maxPoint.x );
             end;
 
         procedure TGeomBox.setYDimension(const newYLengthIn : double);
-            var
-                requiredYDimensionChange : double;
             begin
-                requiredYDimensionChange := newYLengthIn - calculateYDimension();
-
-                minPoint.shiftY( -requiredYDimensionChange / 2 );
-                maxPoint.shiftY(  requiredYDimensionChange / 2 );
+                resizeLine( self.yMin,          self.yMax,
+                            calculateCentreY(), newYLengthIn,
+                            self.minPoint.y,    self.maxPoint.y );
             end;
 
         procedure TGeomBox.setZDimension(const newZLengthIn : double);
-            var
-                requiredZDimensionChange : double;
             begin
-                requiredZDimensionChange := newZLengthIn - calculateZDimension();
-
-                minPoint.shiftZ( -requiredZDimensionChange / 2 );
-                maxPoint.shiftZ(  requiredZDimensionChange / 2 );
+                resizeLine( self.zMin,          self.zMax,
+                            calculateCentreZ(), newZLengthIn,
+                            self.minPoint.z,    self.maxPoint.z );
             end;
 
         procedure TGeomBox.setDimensions(const newXLengthIn, newYLengthIn : double);

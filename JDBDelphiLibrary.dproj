@@ -142,6 +142,7 @@
         <DCCReference Include="Source\Geometry\GeomBox.pas"/>
         <DCCReference Include="Source\Mathematics\LinearInterpolationMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GeomDrawerBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

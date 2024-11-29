@@ -5,12 +5,12 @@ interface
     uses
         system.SysUtils, system.math, system.Types,
         Winapi.Windows, winapi.Messages,
-        DrawingAxisConversionCalculationsClass, DrawingAxisConversionPanningClass,
+        DrawingAxisConversionAspectRatioClass,
         GeometryTypes, GeomBox
         ;
 
     type
-        TDrawingAxisMouseControlConverter = class(TDrawingAxisPanningConverter)
+        TDrawingAxisMouseControlConverter = class(TDrawingAxisAspectRatioConverter)
             private
                 var
                     mouseControlIsActive,
@@ -26,8 +26,8 @@ interface
                 //panning with mouse
                     procedure panRegionWithMouse();
                 //zooming relative to mouse
-                    procedure zoomInRelativeToMouse(); inline;
-                    procedure zoomOutRelativeToMouse(); inline;
+                    procedure zoomInRelativeToMouse();
+                    procedure zoomOutRelativeToMouse();
                     procedure zoomRelativeToMouse(const messageIn : TMessage);
             public
                 //constructor
@@ -84,7 +84,6 @@ implementation
             procedure TDrawingAxisMouseControlConverter.panRegionWithMouse();
                 var
                     mouse_dL,           mouse_dT            : integer;
-                    mouseRegionShiftX,  mouseRegionShiftY,
                     newRegionCentreX,   newRegionCentreY    : double;
                 begin
                     if ( NOT(mousePanningIsActive) ) then

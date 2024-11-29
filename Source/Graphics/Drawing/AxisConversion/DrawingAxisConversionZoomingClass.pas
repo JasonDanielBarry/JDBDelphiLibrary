@@ -12,7 +12,7 @@ interface
     type
         TDrawingAxisZoomingConverter = class(TDrawingAxisConvertionCalculator)
             private
-                //helper methods
+                //calculate the zoom scale factor
                     function calculateZoomScaleFactor(const newZoomPercentage : double) : double; inline;
                 //zooming by percent
                     procedure zoom( const newZoomPercentageIn   : double;
@@ -44,7 +44,7 @@ interface
 implementation
 
     //private
-        //helper methods
+        //calculate the zoom scale factor
             function TDrawingAxisZoomingConverter.calculateZoomScaleFactor(const newZoomPercentage : double) : double;
                 begin
                     //the scale factor is used to size the domain and range

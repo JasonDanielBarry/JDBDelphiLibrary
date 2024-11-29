@@ -22,8 +22,7 @@ interface
                 //canvas-to-drawing
                     function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload;
                 //drawing-to-canvas
-                    function XY_to_LTF(const X_In, Y_In : double) : TPointF; overload;
-                    function XY_to_LT(const X_In, Y_In : double) : TPoint; overload;
+                    function XY_to_LT(const X_In, Y_In : double) : TPointF; overload;
             public
                 //constructor
                     constructor create(); override;
@@ -100,7 +99,7 @@ implementation
                 end;
 
         //drawing-to-canvas
-            function TDrawingAxisConvertionCalculator.XY_to_LTF(const X_In, Y_In : double) : TPointF;
+            function TDrawingAxisConvertionCalculator.XY_to_LT(const X_In, Y_In : double) : TPointF;
                 var
                     pointOut : TPointF;
                 begin
@@ -108,15 +107,6 @@ implementation
                     pointOut.y := Y_to_T(Y_In);
 
                     result := pointOut;
-                end;
-
-            function TDrawingAxisConvertionCalculator.XY_to_LT(const X_In, Y_In : double) : TPoint;
-                var
-                    pointF : TPointF;
-                begin
-                    pointF := XY_to_LTF(X_In, Y_In);
-
-                    result := point( round(pointF.X), round(pointF.Y) )
                 end;
 
     //public
@@ -212,7 +202,7 @@ implementation
             //drawing-to-canvas
                 function TDrawingAxisConvertionCalculator.XY_to_LT(const pointIn : TGeomPoint) : TPointF;
                     begin
-                        result := XY_to_LTF(pointIn.x, pointIn.y);
+                        result := XY_to_LT(pointIn.x, pointIn.y);
                     end;
 
                 function TDrawingAxisConvertionCalculator.arrXY_to_arrLT(const arrXY_In : TArray<TGeomPoint>) : TArray<TPointF>;

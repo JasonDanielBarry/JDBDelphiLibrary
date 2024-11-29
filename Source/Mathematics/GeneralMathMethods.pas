@@ -17,6 +17,10 @@ interface
                                         scaleAboutValueIn,  scaleFactorIn   : double;
                                 out     newStartValueOut,   newEndValueOut  : double );
 
+        procedure resizeLine(   const   startValueIn,       endValueIn,
+                                        scaleAboutValueIn,  newLengthIn     : double;
+                                out     newStartValueOut,   newEndValueOut  : double    );
+
 implementation
 
     //max betweem three values
@@ -78,6 +82,20 @@ implementation
 
                 //calculate new end value
                     newEndValueOut := endValueIn + changeFactor * lengthHigh;
+            end;
+
+        procedure resizeLine(   const   startValueIn,       endValueIn,
+                                        scaleAboutValueIn,  newLengthIn     : double;
+                                out     newStartValueOut,   newEndValueOut  : double    );
+            var
+                scaleFactor : double;
+            begin
+                //the scale factor is the ratio of the new line length to the old line length
+                    scaleFactor := newLengthIn / (endValueIn - startValueIn);
+
+                scaleLinear(startValueIn,       endValueIn,
+                            scaleAboutValueIn,  scaleFactor,
+                            newStartValueOut,   newEndValueOut);
             end;
 
 
