@@ -239,7 +239,6 @@ implementation
                                             FreeAndNil(line2In);
                                         end;
                             end;
-
                     begin
                         _getIntersectionPoint();
 
