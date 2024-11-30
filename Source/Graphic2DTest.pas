@@ -58,7 +58,7 @@ implementation
                     polygon.addVertex(100, 100);
                     polygon.addVertex(10, 100);
 
-                    GeomDrawerInOut.addPolygon( polygon, 10, TColors.Aqua, TColors.Darkred );
+                    GeomDrawerInOut.addPolygon( polygon, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                 //line 1
                     GeomDrawerInOut.setCurrentDrawingLayer('Line Layer');

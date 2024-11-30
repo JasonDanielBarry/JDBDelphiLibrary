@@ -5,6 +5,7 @@ interface
     uses
         //Delphi
             system.SysUtils, system.types, system.UITypes, System.UIConsts,
+            vcl.Graphics,
         //custom
             ColourMethods,
             DrawingTypes,
@@ -18,26 +19,25 @@ interface
         TDrawingGeometry = class(TDrawingObject)
             strict private
                 var
-                    lineThickness   : integer;
-                    fillColour,
-                    lineColour      : TColor;
                     geometry        : TGeomBase;
                     drawingPoints   : TArray<TGeomPoint>;
                 //free geometry object
                     procedure freeGeometry();
+                //set the geometry object
+                    procedure setGeometry(const geometryIn : TGeomBase);
             public
                 //constructor
                     constructor create( const   lineThicknessIn : integer;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
-                                        const   geometryIn      : TGeomBase );
+                                        const   lineStyleIn     : TPenStyle;
+                                        const   geometryIn      : TGeomBase ); overload;
+                    constructor create( const   lineThicknessIn : integer;
+                                        const   lineColourIn    : TColor;
+                                        const   lineStyleIn     : TPenStyle;
+                                        const   geometryIn      : TGeomBase ); overload;
                 //destructor
                     destructor destroy(); override;
-                //line thickness
-                    function getLineThickness() : integer; inline;
-                //colours
-                    function getFillColour() : TColor; inline;
-                    function getLineColour() : TColor; inline;
                 //get the geometry object
                     function getGeometry() : TGeomBase; inline;
                 //get drawing points
@@ -47,34 +47,60 @@ interface
 implementation
 
     //private
-        procedure TDrawingGeometry.freeGeometry();
-            begin
-                try
-                    FreeAndNil( geometry );
-                except
+        //free geometry object
+            procedure TDrawingGeometry.freeGeometry();
+                begin
+                    try
+                        FreeAndNil( geometry );
+                    except
 
+                    end;
                 end;
-            end;
+
+        //set the geometry object
+            procedure TDrawingGeometry.setGeometry(const geometryIn : TGeomBase);
+                begin
+                    //free current geometry
+                        freeGeometry();
+
+                    //assign new
+                        geometry := geometryIn;
+
+                    //get the drawing points
+                        drawingPoints := geometryIn.getDrawingPoints();
+                end;
 
     //public
         //constructor
             constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
+                                                const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
                 begin
                     inherited create();
 
                     freeGeometry();
 
-                    lineThickness   := lineThicknessIn;
-                    geometry        := geometryIn;
-                    fillColour      := fillColourIn;
-                    lineColour      := lineColourIn;
+                    setValues(  lineThicknessIn,
+                                geometryIn.getDrawingType(),
+                                fillColourIn,
+                                lineColourIn,
+                                lineStyleIn                 );
 
-                    drawingPoints := geometryIn.getDrawingPoints();
+                    setGeometry( geometryIn );
+                end;
 
-                    setDrawingType( geometry.getDrawingType );
+            constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
+                                                const   lineColourIn    : TColor;
+                                                const   lineStyleIn     : TPenStyle;
+                                                const   geometryIn      : TGeomBase );
+                begin
+                    create( lineThicknessIn,
+                            TColors.Null,
+                            lineColourIn,
+                            lineStyleIn,
+                            geometryIn          );
                 end;
 
         //destructor
@@ -85,22 +111,7 @@ implementation
                     inherited destroy();
                 end;
 
-        //line thickness
-            function TDrawingGeometry.getLineThickness() : integer;
-                begin
-                    result := lineThickness;
-                end;
-
-        //colours
-            function TDrawingGeometry.getFillColour() : TColor;
-                begin
-                    result := fillColour;
-                end;
-
-            function TDrawingGeometry.getLineColour() : TColor;
-                begin
-                    result := lineColour;
-                end;
+        
 
         //get the geometry object
             function TDrawingGeometry.getGeometry() : TGeomBase;

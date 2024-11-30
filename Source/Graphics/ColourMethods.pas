@@ -3,7 +3,8 @@ unit ColourMethods;
 interface
 
     uses
-        Winapi.Windows, system.UIConsts, system.UITypes;
+         Winapi.Windows, system.UIConsts, system.UITypes, Vcl.GraphUtil
+         ;
 
     //make colours from RGBA combinations
         //TAlphaColor
@@ -36,14 +37,9 @@ implementation
     //extract a colour's RGBA values
         function extractColourRGB(const colourIn : Tcolor) : TRGBQuad;
             var
-                colourReferenceHexiDec  : COLORREF;
-                redGreenBlueOut     : TRGBQuad;
+                redGreenBlueOut : TRGBQuad;
             begin
-                colourReferenceHexiDec := TColorRec.ColorToRGB( colourIn );
-
-                redGreenBlueOut.rgbRed      := GetRValue( colourReferenceHexiDec );
-                redGreenBlueOut.rgbGreen    := GetGValue( colourReferenceHexiDec );
-                redGreenBlueOut.rgbBlue     := GetBValue( colourReferenceHexiDec );
+                GetRGB( colourIn, redGreenBlueOut.rgbRed, redGreenBlueOut.rgbGreen, redGreenBlueOut.rgbBlue );
                 redGreenBlueOut.rgbReserved := 255;
 
                 result := redGreenBlueOut;

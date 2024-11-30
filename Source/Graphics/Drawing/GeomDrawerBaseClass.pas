@@ -5,6 +5,7 @@ interface
     uses
         //Delphi
             system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
+            vcl.Graphics,
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
@@ -35,14 +36,17 @@ interface
                 //add different drawing geometry
                     procedure addLine(  const lineIn            : TGeomLine;
                                         const lineThicknessIn   : integer = 2;
-                                        const colourIn          : TColor = TColors.Black );
+                                        const colourIn          : TColor = TColors.Black;
+                                        const styleIn           : TPenStyle = TPenStyle.psSolid );
                     procedure addPolyline(  const polylineIn        : TGeomPolyLine;
                                             const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TColor = TColors.Black );
+                                            const colourIn          : TColor = TColors.Black;
+                                            const styleIn           : TPenStyle = TPenStyle.psSolid );
                     procedure addPolygon(   const polygonIn         : TGeomPolygon;
                                             const lineThicknessIn   : integer = 2;
                                             const fillColourIn      : TColor = TColors.Null;
-                                            const lineColourIn      : TColor = TColors.Black );
+                                            const lineColourIn      : TColor = TColors.Black;
+                                            const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
                 //modifiers
                     procedure setDrawingBackgroundColour(const colourIn : TColor);
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); virtual; abstract;
@@ -82,13 +86,14 @@ implementation
         //add drawing geometry
             procedure TGeomDrawer.addLine(  const lineIn            : TGeomLine;
                                             const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TColor = TColors.Black  );
+                                            const colourIn          : TColor = TColors.Black;
+                                            const styleIn           : TPenStyle = TPenStyle.psSolid );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
                     newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
-                                                                    TColors.Null,
                                                                     colourIn,
+                                                                    styleIn,
                                                                     lineIn          );
 
                     addGeometry( newDrawingGeometry );
@@ -96,13 +101,14 @@ implementation
 
             procedure TGeomDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
                                                 const lineThicknessIn   : integer = 2;
-                                                const colourIn          : TColor = TColors.Black  );
+                                                const colourIn          : TColor = TColors.Black;
+                                                const styleIn           : TPenStyle = TPenStyle.psSolid );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
                     newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
-                                                                    TColors.Null,
                                                                     colourIn,
+                                                                    styleIn,
                                                                     polylineIn      );
 
                     addGeometry( newDrawingGeometry );
@@ -111,13 +117,15 @@ implementation
             procedure TGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
                                                 const lineThicknessIn   : integer = 2;
                                                 const fillColourIn      : TColor = TColors.Null;
-                                                const lineColourIn      : TColor = TColors.Black    );
+                                                const lineColourIn      : TColor = TColors.Black;
+                                                const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
                 var
                     newDrawingGeometry : TDrawingGeometry;
                 begin
                     newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
                                                                     fillColourIn,
                                                                     lineColourIn,
+                                                                    lineStyleIn,
                                                                     polygonIn       );
 
                     addGeometry( newDrawingGeometry );

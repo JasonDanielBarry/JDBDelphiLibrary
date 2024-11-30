@@ -26,7 +26,8 @@ implementation
                                     const axisConverterIn   : TDrawingAxisConverter;
                                     var canvasInOut         : TDirect2DCanvas       );
             var
-                D2DPen          : TDirect2DPen;
+                pathGeometry    : ID2D1PathGeometry;
+                geometrySink    : ID2D1GeometrySink;
                 drawingPoints   : TArray<TPointF>;
             begin
                 //convert geometry to canvas drawing points
@@ -34,18 +35,29 @@ implementation
                                                                         drawingGeometryIn.getDrawingPoints()
                                                                    );
 
+                //create the geometry
+                    //factory
+                        D2DFactory( D2D1_FACTORY_TYPE.D2D1_FACTORY_TYPE_MULTI_THREADED ).CreatePathGeometry( pathGeometry );
+
+                    //path geometry
+                        pathGeometry.Open( geometrySink );
+
+                    //geometry sink
+                        geometrySink.BeginFigure( D2D1PointF( drawingPoints[0].x, drawingPoints[0].y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW );
+
+                        geometrySink.AddLine( D2D1PointF( drawingPoints[1].x, drawingPoints[1].y ) );
+
+                        geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN );
+
+                        geometrySink.Close();
+
                 //assign the colour and line thickness using pen
                     canvasInOut.pen.Color := drawingGeometryIn.getLineColour();
-                    canvasInOut.pen.Style := TPenStyle.psSolid;
+                    canvasInOut.pen.Style := drawingGeometryIn.getLineStyle();
+                    canvasInOut.pen.Width := drawingGeometryIn.getLineThickness();
 
                 //draw the line
-                    canvasInOut.RenderTarget.DrawLine(
-                                                        D2D1PointF(drawingPoints[0].X, drawingPoints[0].Y), //start point
-                                                        D2D1PointF(drawingPoints[1].X, drawingPoints[1].Y), //end points
-                                                        canvasInOut.pen.Brush.Handle, //brush handle
-                                                        drawingGeometryIn.getLineThickness(), //line thickness
-                                                        canvasInOut.pen.StrokeStyle //stroke style
-                                                     );
+                    canvasInOut.DrawGeometry( pathGeometry );
             end;
 
     //draw polyline
@@ -89,16 +101,11 @@ implementation
 
                 //assign the canvas the colour and line thickness
                     canvasInOut.Pen.Color := drawingGeometryIn.getLineColour;
-                    canvasInOut.Pen.Style := TPenStyle.psSolid;
+                    canvasInOut.Pen.Style := drawingGeometryIn.getLineStyle();
                     canvasInOut.Pen.Width := drawingGeometryIn.getLineThickness();
 
                 //draw the polyline
-                    canvasInOut.RenderTarget.DrawGeometry(
-                                                            pathGeometry, //polyline
-                                                            canvasInOut.Pen.Brush.Handle, //brush handle
-                                                            canvasInOut.Pen.Width, //pen width
-                                                            canvasInOut.Pen.StrokeStyle //pen style
-                                                         );
+                    canvasInOut.DrawGeometry( pathGeometry );
             end;
 
     //draw polygon
@@ -147,20 +154,15 @@ implementation
                                 canvasInOut.Brush.Color := drawingGeometryIn.getFillColour();
                                 canvasInOut.Brush.Style := TBrushStyle.bsSolid;
 
-                                canvasInOut.RenderTarget.FillGeometry( pathGeometry, canvasInOut.Brush.Handle );
+                                canvasInOut.FillGeometry( pathGeometry );
                             end;
 
                     //polyline
                         canvasInOut.Pen.Color := drawingGeometryIn.getLineColour();
-                        canvasInOut.Pen.Style := TPenStyle.psSolid;
+                        canvasInOut.Pen.Style := drawingGeometryIn.getLineStyle();
                         canvasInOut.Pen.Width := drawingGeometryIn.getLineThickness();
 
-                        canvasInOut.RenderTarget.DrawGeometry(
-                                                                pathGeometry, //polyline
-                                                                canvasInOut.Pen.Brush.Handle, //brush handle
-                                                                canvasInOut.Pen.Width, //pen width
-                                                                canvasInOut.Pen.StrokeStyle //pen style );
-                                                             );
+                        canvasInOut.DrawGeometry( pathGeometry );
             end;
 
     //draw geometry
