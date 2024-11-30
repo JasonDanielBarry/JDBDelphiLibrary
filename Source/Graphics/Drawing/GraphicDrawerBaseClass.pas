@@ -1,4 +1,4 @@
-unit GeomDrawerBaseClass;
+unit GraphicDrawerBaseClass;
 
 interface
 
@@ -16,7 +16,7 @@ interface
             ;
 
     type
-        TGeomDrawer = class
+        TGraphicDrawer = class
             strict protected
                 var
                     drawingBackgroundColour : TColor;
@@ -57,7 +57,7 @@ implementation
     //protected
         //drawing procedures
             //draw all geometry
-                procedure TGeomDrawer.drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer);
+                procedure TGraphicDrawer.drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer);
                     begin
                         //set axis converter canvas dimensions
                             axisConverter.setCanvasDimensions( canvasHeightIn, canvasWidthIn );
@@ -68,7 +68,7 @@ implementation
 
     //public
         //constructor
-            constructor TGeomDrawer.create();
+            constructor TGraphicDrawer.create();
                 begin
                     inherited create();
 
@@ -76,7 +76,7 @@ implementation
                 end;
 
         //destructor
-            destructor TGeomDrawer.destroy();
+            destructor TGraphicDrawer.destroy();
                 begin
                     FreeAndNil( axisConverter );
 
@@ -84,7 +84,7 @@ implementation
                 end;
 
         //add drawing geometry
-            procedure TGeomDrawer.addLine(  const lineIn            : TGeomLine;
+            procedure TGraphicDrawer.addLine(  const lineIn            : TGeomLine;
                                             const lineThicknessIn   : integer = 2;
                                             const colourIn          : TColor = TColors.Black;
                                             const styleIn           : TPenStyle = TPenStyle.psSolid );
@@ -99,7 +99,7 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TGeomDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
+            procedure TGraphicDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
                                                 const lineThicknessIn   : integer = 2;
                                                 const colourIn          : TColor = TColors.Black;
                                                 const styleIn           : TPenStyle = TPenStyle.psSolid );
@@ -114,7 +114,7 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TGeomDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
+            procedure TGraphicDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
                                                 const lineThicknessIn   : integer = 2;
                                                 const fillColourIn      : TColor = TColors.Null;
                                                 const lineColourIn      : TColor = TColors.Black;
@@ -132,7 +132,7 @@ implementation
                 end;
 
         //modifiers
-            procedure TGeomDrawer.setDrawingBackgroundColour(const colourIn : TColor);
+            procedure TGraphicDrawer.setDrawingBackgroundColour(const colourIn : TColor);
                 begin
                     drawingBackgroundColour := colourIn;
                 end;

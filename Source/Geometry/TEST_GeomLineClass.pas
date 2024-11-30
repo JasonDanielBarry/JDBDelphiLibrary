@@ -45,7 +45,7 @@ implementation
                     line1 := TGeomLine.create(TGeomPoint.create(0, 0), TGeomPoint.create(1, 1));
                     line2 := TGeomLine.create(TGeomPoint.create(0, 1), TGeomPoint.create(1, 0));
 
-                    lineIntersectionData := line1.intersection(line2);
+                    lineIntersectionData := line1.calculateLineIntersection(line2);
                     FreeAndNil(line1);
 
                     assert.IsTrue(lineIntersectionData.point.isEqual( TGeomPoint.create(0.5, 0.5, 0) ));
@@ -57,7 +57,7 @@ implementation
                     line1 := TGeomLine.create(TGeomPoint.create(-1, 0), TGeomPoint.create(1, 0));
                     line2 := TGeomLine.create(TGeomPoint.create(0, -1), TGeomPoint.create(0, 1));
 
-                    lineIntersectionData := line1.intersection(line2);
+                    lineIntersectionData := line1.calculateLineIntersection(line2);
                     FreeAndNil(line1);
 
                     assert.IsTrue(lineIntersectionData.point.isEqual( TGeomPoint.create(0, 0) ));
@@ -69,7 +69,7 @@ implementation
                     line1 := TGeomLine.create(TGeomPoint.create(0, 0), TGeomPoint.create(1, 0));
                     line2 := TGeomLine.create(TGeomPoint.create(0, 1), TGeomPoint.create(1, 1));
 
-                    lineIntersectionData := line1.intersection(line2);
+                    lineIntersectionData := line1.calculateLineIntersection(line2);
                     FreeAndNil(line1);
 
                     assert.IsTrue(lineIntersectionData.intersectionExists = False);
@@ -81,7 +81,7 @@ implementation
                     line1 := TGeomLine.create(TGeomPoint.create(0, 0), TGeomPoint.create(1, 0));
                     line2 := TGeomLine.create(TGeomPoint.create(0, 1), TGeomPoint.create(1, 1));
 
-                    lineIntersectionData := line1.intersection(line2);
+                    lineIntersectionData := line1.calculateLineIntersection(line2);
                     FreeAndNil(line1);
 
                     assert.IsTrue(lineIntersectionData.intersectionExists = False);
@@ -93,10 +93,10 @@ implementation
                     line1 := TGeomLine.create(TGeomPoint.create(0, 10), TGeomPoint.create(5 , 7.5));
                     line2 := TGeomLine.create(TGeomPoint.create(6, 0 ), TGeomPoint.create(11, 6  ));
 
-                    lineIntersectionData := line1.intersection(line2);
+                    lineIntersectionData := line1.calculateLineIntersection(line2);
                     FreeAndNil(line1);
 
-                    assert.IsTrue(lineIntersectionData.point.isEqual( TGeomPoint.create(10.11764706, 4.941176471) ));
+                    assert.IsTrue(lineIntersectionData.point.isEqual( TGeomPoint.create(10.117647, 4.941176) ));
         end;
 
 end.

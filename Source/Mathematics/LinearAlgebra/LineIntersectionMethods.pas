@@ -17,6 +17,7 @@ implementation
         system.Math,
         GeneralMathMethods,
         LinearAlgebraTypes,
+        VectorMethods,
         MatrixMethods
         ;
 
@@ -149,41 +150,36 @@ implementation
                                             const   l1x0, l1y0, l1x1, l1y1,
                                                     l2x0, l2y0, l2x1, l2y1  : double) : TPointF;
                 var
-                    u0, v0,
-                    u1, v1  : double;
-                procedure
-                    _extractUnitVector( const   x0, y0, x1, y1  : double;
-                                        out     u, v            : double);
-                        var
-                            dx, dy,
-                            linLen : double;
-                        begin
-                            dx := x1 - x0;
-                            dy := y1 - y0;
-
-                            linLen := lineLength(x0, y0, 0,
-                                                 x1, y1, 0);
-
-                            u := dx / linLen;
-                            v := dy / linLen;
-                        end;
+                    dx, dy                      : double;
+                    unitVector1, unitVector2    : TLAVector;
                 begin
                     //line 1 parameters
-                        _extractUnitVector( l1x0, l1y0, l1x1, l1y1,
-                                            u0, v0                  );
+                        dx := l1x1 - l1x0;
+                        dy := l1y1 - l1y0;
+
+                        unitVector1 := vectorUnitVector( [dx, dy] );
 
                     //line 2 parameters
-                        _extractUnitVector( l2x0, l2y0, l2x1, l2y1,
-                                            u1, v1                  );
+                        dx := l2x1 - l2x0;
+                        dy := l2y1 - l2y0;
+
+                        unitVector2 := vectorUnitVector( [dx, dy] );
 
                     begin
                         var
-                            x0, y0, x1, y1  : double;
+                            x0, y0, u0, v0,
+                            x1, y1, u1, v1   : double;
 
                             x0 := l1x0;
                             y0 := l1y0;
+                            u0 := unitVector1[0];
+                            v0 := unitVector1[1];
+
+
                             x1 := l2x0;
                             y1 := l2y0;
+                            u1 := unitVector2[0];
+                            v1 := unitVector2[1];
 
                         result := lineIntersectionPointUV(  LinesIntersectOut,
                                                             x0, y0, u0, v0,

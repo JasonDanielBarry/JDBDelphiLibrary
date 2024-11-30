@@ -7,6 +7,7 @@ interface
         DrawingTypes,
         GeometryTypes,
         GeometryMathMethods,
+        GeomLineClass,
         GeomPolyLineClass;
 
     type
@@ -20,6 +21,10 @@ interface
                     function getDrawingType() : EDrawingType; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
+                //calculations
+                    function calculatePerimeter() : double;
+                    function calculatePolygonArea() : double; overload;
+                    class function calculatePolygoneArea(const arrPointsIn : TArray<TGeomPoint>) : double; overload; static;
         end;
 
 implementation
@@ -52,14 +57,62 @@ implementation
 
                     arrLen := length(arrDrawingPointsOut);
 
-                    SetLength(arrDrawingPointsOut, arrLen + 1);
-
-                    arrLen := arrLen + 1;
-
                     //close polygon
-                        arrDrawingPointsOut[arrLen - 1] := arrDrawingPointsOut[0];
+                        SetLength(arrDrawingPointsOut, arrLen + 1);
+
+                        arrDrawingPointsOut[arrLen] := arrDrawingPointsOut[0];
 
                     result := arrDrawingPointsOut;
+                end;
+
+        //calculations
+            function TGeomPolygon.calculatePerimeter() : double;
+                var
+                    closingLineLength,
+                    polylineLength          : double;
+                    closingLineStartPoint,
+                    closingLineEndPoint    : TGeomPoint;
+                begin
+                    //calculate the closing line length
+                        //start point is the polyline last vertex
+                            closingLineStartPoint := arrVertices[vertexCount() - 1];
+
+                        //end point is polyline first vertex
+                            closingLineEndPoint := arrVertices[0];
+
+                        //get the length
+                            closingLineLength := TGeomLine.calculateLength( closingLineStartPoint, closingLineEndPoint );
+
+                    //get the polyline length
+                        polylineLength := calculatePolylineLength();
+
+                    //the polygon perimeter = polyline length + closing line length
+                        result := closingLineLength + polylineLength;
+                end;
+
+            function TGeomPolygon.calculatePolygonArea() : double;
+                begin
+                    result := calculatePolygoneArea( arrVertices );
+                end;
+
+            class function TGeomPolygon.calculatePolygoneArea(const arrPointsIn : TArray<TGeomPoint>) : double;
+                var
+                    i, arrLen   : integer;
+                    areaSum     : double;
+                begin
+                    //shoelace formula calculation
+
+                    areaSum := 0;
+
+                    arrLen := Length(arrPointsIn);
+
+                    //shoelace calculation
+                        for i := 0 to (arrLen - 2) do
+                            areaSum := areaSum + geomTriangleArea(arrPointsIn[i], arrPointsIn[i + 1]);
+
+                        areaSum := areaSum + geomTriangleArea(arrPointsIn[arrLen - 1], arrPointsIn[0]);
+
+                    result := areaSum;
                 end;
 
 

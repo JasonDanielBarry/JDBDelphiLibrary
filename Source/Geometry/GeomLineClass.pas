@@ -5,6 +5,7 @@ interface
     uses
         system.sysUtils, system.Math, system.Types,
         DrawingTypes,
+        VectorMethods,
         GeometryMathMethods,
         GeometryTypes, GeomBox,
         GeometryBaseClass, GeomSpaceVectorClass;
@@ -47,25 +48,25 @@ interface
                     procedure setPoints(startPointIn, endPointIn : TGeomPoint);
                 //calculattions
                     //line length
-                        function lineLength() : double;
+                        function calculateLength() : double; overload;
+                        class function calculateLength(const startPointIn, endPointIn : TGeomPoint) : double; overload; static;
                     //unit vector
                         function unitVector() : TGeomSpaceVector;
                     //parametric line equation point
                         function parametricEquationPoint(tIn : double) : TGeomPoint;
                     //line intersection
-                        function intersection(  const lineIn        : TGeomLine;
-                                                const freeLineIn    : boolean = True) : TGeomLineIntersectionData;
+                        function calculateLineIntersection( const lineIn        : TGeomLine;
+                                                            const freeLineIn    : boolean = True) : TGeomLineIntersectionData; overload;
+                        class function calculateLineIntersection(   const line1In, line2In  : TGeomLine;
+                                                                    const freeLinesIn       : boolean = True    ) : TGeomLineIntersectionData; overload; static;
                 //bounding box
                     function boundingBox() : TGeomBox; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
                 //shift geometry
                     procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); override;
+
         end;
-//----------------------------------------------------------------------------------------------------
-    //calculate intersection point
-        function geomLineIntersection(  const line1In, line2In  : TGeomLine;
-                                        const freeLinesIn       : boolean = True) : TGeomLineIntersectionData;
 
 implementation
 
@@ -120,9 +121,20 @@ implementation
 
         //calculations
             //line length
-                function TGeomLine.lineLength() : double;
+                function TGeomLine.calculateLength() : double;
                     begin
-                        result := lineVector.normalise();
+                        result := calculateLength( startPoint, endPoint );
+                    end;
+
+                class function TGeomLine.calculateLength(const startPointIn, endPointIn : TGeomPoint) : double;
+                    var
+                        dx, dy, dz : double;
+                    begin
+                        dx := endPointIn.x - startPointIn.x; 
+                        dy := endPointIn.y - startPointIn.y; 
+                        dz := endPointIn.z - startPointIn.z; 
+                    
+                        result := vectorNormalise([dx, dy, dx]);                                           
                     end;
 
             //unit vector
@@ -150,13 +162,13 @@ implementation
                     end;
 
             //line intersection
-                function TGeomLine.intersection(const lineIn        : TGeomLine;
-                                                const freeLineIn    : boolean = True) : TGeomLineIntersectionData;
+                function TGeomLine.calculateLineIntersection(   const lineIn        : TGeomLine;
+                                                                const freeLineIn    : boolean = True) : TGeomLineIntersectionData;
                     var
                         lineIntersectionDataOut : TGeomLineIntersectionData;
                     begin
                         //get intersection data
-                            lineIntersectionDataOut := geomLineIntersection(self, lineIn, false);
+                            lineIntersectionDataOut := calculateLineIntersection(self, lineIn, false);
 
                         //determine intersection point region
                             if (lineIntersectionDataOut.intersectionExists) then
@@ -170,6 +182,71 @@ implementation
                         //free line if necessary
                             if (freeLineIn) then
                                 FreeAndNil(lineIn);
+
+                        result := lineIntersectionDataOut;
+                    end;
+
+                class function TGeomLine.calculateLineIntersection( const line1In, line2In  : TGeomLine;
+                                                                    const freeLinesIn       : boolean = True    ) : TGeomLineIntersectionData;
+                    var
+                        lineIntersectionDataOut     : TGeomLineIntersectionData;
+                    procedure
+                        _getIntersectionPoint();
+                            var
+                                line1Point0, line1Point1,
+                                line2Point0, line2Point1 : TGeomPoint;
+                            begin
+                                //get points from lines
+                                    //line 1
+                                        line1Point0 := line1In.getStartPoint();
+                                        line1Point1 := line1In.getEndPoint();
+
+                                    //line 2
+                                        line2Point0 := line2In.getStartPoint();
+                                        line2Point1 := line2In.getEndPoint();
+
+                                //calculate intersection point
+                                    lineIntersectionDataOut.point := geomLineIntersectionPoint( lineIntersectionDataOut.intersectionExists,
+                                                                                                line1Point0, line1Point1,
+                                                                                                line2Point0, line2Point1                    );
+                            end;
+                    procedure
+                        _determineIntersectionRegion();
+                            var
+                                isWithinLine1, isWithinLine2    : boolean;
+                                line1Bound, line2Bound          : TGeomBox;
+                            begin
+                                //get line bounding boxes
+                                    line1Bound := line1In.boundingBox();
+                                    line2Bound := line2In.boundingBox();
+
+                                //test if point is on either line
+                                    isWithinLine1 := line1Bound.pointIsWithin(lineIntersectionDataOut.point);
+                                    isWithinLine2 := line2Bound.pointIsWithin(lineIntersectionDataOut.point);
+
+                                if (isWithinLine1 OR isWithinLine2) then
+                                    lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brInside
+                                else
+                                    lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brOutside;
+                            end;
+                    procedure
+                        _freeLines();
+                            begin
+                                //free lines if necessary
+                                    if (freeLinesIn) then
+                                        begin
+                                            FreeAndNil(line1In);
+                                            FreeAndNil(line2In);
+                                        end;
+                            end;
+
+                    begin
+                        _getIntersectionPoint();
+
+                        if (lineIntersectionDataOut.intersectionExists) then
+                            _determineIntersectionRegion();
+
+                        _freeLines();
 
                         result := lineIntersectionDataOut;
                     end;
@@ -263,71 +340,5 @@ implementation
                     startPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                     endPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                 end;
-//----------------------------------------------------------------------------------------------------
-    //calculate intersection point
-        function geomLineIntersection(  const line1In, line2In  : TGeomLine;
-                                        const freeLinesIn       : boolean = True) : TGeomLineIntersectionData;
-            var
-                lineIntersectionDataOut     : TGeomLineIntersectionData;
-            procedure
-                _getIntersectionPoint();
-                    var
-                        line1Point0, line1Point1,
-                        line2Point0, line2Point1 : TGeomPoint;
-                    begin
-                        //get points from lines
-                            //line 1
-                                line1Point0 := line1In.getStartPoint();
-                                line1Point1 := line1In.getEndPoint();
-
-                            //line 2
-                                line2Point0 := line2In.getStartPoint();
-                                line2Point1 := line2In.getEndPoint();
-
-                        //calculate intersection point
-                            lineIntersectionDataOut.point := geomLineIntersectionPoint( lineIntersectionDataOut.intersectionExists,
-                                                                                        line1Point0, line1Point1,
-                                                                                        line2Point0, line2Point1                    );
-                    end;
-            procedure
-                _determineIntersectionRegion();
-                    var
-                        isWithinLine1, isWithinLine2    : boolean;
-                        line1Bound, line2Bound          : TGeomBox;
-                    begin
-                        //get line bounding boxes
-                            line1Bound := line1In.boundingBox();
-                            line2Bound := line2In.boundingBox();
-
-                        //test if point is on either line
-                            isWithinLine1 := line1Bound.pointIsWithin(lineIntersectionDataOut.point);
-                            isWithinLine2 := line2Bound.pointIsWithin(lineIntersectionDataOut.point);
-
-                        if (isWithinLine1 OR isWithinLine2) then
-                            lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brInside
-                        else
-                            lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brOutside;
-                    end;
-            procedure
-                _freeLines();
-                    begin
-                        //free lines if necessary
-                            if (freeLinesIn) then
-                                begin
-                                    FreeAndNil(line1In);
-                                    FreeAndNil(line2In);
-                                end;
-                    end;
-
-            begin
-                _getIntersectionPoint();
-
-                if (lineIntersectionDataOut.intersectionExists) then
-                    _determineIntersectionRegion();
-
-                _freeLines();
-
-                result := lineIntersectionDataOut;
-            end;
 
 end.

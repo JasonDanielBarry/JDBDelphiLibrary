@@ -12,7 +12,7 @@ interface
         GeneralComponentHelperMethods,
         ColourMethods,
         GeometryTypes, GeomBox,
-        GeomDrawerBaseClass, GeomDrawerAxisConversionInterfaceClass, Direct2DDrawingClass,
+        GraphicDrawerBaseClass, Direct2DGraphicDrawingClass,
         Graphic2DTypes, Vcl.CheckLst
         ;
 
@@ -97,7 +97,7 @@ interface
                     mustRedrawGraphic               : boolean;
                     graphicBackgroundColour         : TColor;
                     currentGraphicBuffer            : TBitmap;
-                    D2DGeomDrawer                   : TDirect2DGeomDrawer;
+                    D2DGraphicDrawer                : TDirect2DGraphicDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
                 //axis Settings
                     procedure updateAxisSettingsValues();
@@ -152,12 +152,12 @@ implementation
 
         procedure TCustomGraphic2D.PaintBoxGraphicMouseEnter(Sender: TObject);
             begin
-                D2DGeomDrawer.activateMouseControl();
+                D2DGraphicDrawer.activateMouseControl();
             end;
 
         procedure TCustomGraphic2D.PaintBoxGraphicMouseLeave(Sender: TObject);
             begin
-                D2DGeomDrawer.deactivateMouseControl();
+                D2DGraphicDrawer.deactivateMouseControl();
             end;
 
         procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
@@ -177,7 +177,7 @@ implementation
                     newZoomPercent := 1;
                 end;
 
-                D2DGeomDrawer.setZoom( newZoomPercent );
+                D2DGraphicDrawer.setZoom( newZoomPercent );
 
                 redrawGraphic();
             end;
@@ -244,35 +244,35 @@ implementation
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.shiftRange( 10 );
+                D2DGraphicDrawer.shiftRange( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.shiftDomain( 10 );
+                D2DGraphicDrawer.shiftDomain( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.shiftDomain( -10 );
+                D2DGraphicDrawer.shiftDomain( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.shiftRange( -10 );
+                D2DGraphicDrawer.shiftRange( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.recentre();
+                D2DGraphicDrawer.recentre();
 
                 redrawGraphic();
             end;
@@ -289,14 +289,14 @@ implementation
 
         procedure TCustomGraphic2D.ActionZoomInExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.zoomIn(10);
+                D2DGraphicDrawer.zoomIn(10);
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionZoomOutExecute(Sender: TObject);
             begin
-                D2DGeomDrawer.zoomOut(10);
+                D2DGraphicDrawer.zoomOut(10);
 
                 redrawGraphic();
             end;
@@ -314,7 +314,7 @@ implementation
                 var
                     drawingRegion : TGeomBox;
                 begin
-                    drawingRegion := D2DGeomDrawer.getDrawingRegion();
+                    drawingRegion := D2DGraphicDrawer.getDrawingRegion();
 
                     EditXMin.Text := FloatToStrF( drawingRegion.xMin, ffFixed, 5, 2 );
                     EditXMax.Text := FloatToStrF( drawingRegion.xMax, ffFixed, 5, 2 );
@@ -345,7 +345,7 @@ implementation
                         newDrawingRegion.minPoint.z := 0;
                         newDrawingRegion.maxPoint.z := 0;
 
-                        D2DGeomDrawer.setDrawingRegion(0, newDrawingRegion);
+                        D2DGraphicDrawer.setDrawingRegion(0, newDrawingRegion);
 
                     redrawGraphic();
                 end;
@@ -357,7 +357,7 @@ implementation
                         graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
 
                     //send theme colour to geom drawer
-                        D2DGeomDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
+                        D2DGraphicDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
                 end;
 
         //components positions
@@ -412,7 +412,7 @@ implementation
                                 CheckListBoxLayerTable.Checked[0] := True;
                             end;
 
-                    D2DGeomDrawer.setActiveDrawingLayers( arrActiveLayers );
+                    D2DGraphicDrawer.setActiveDrawingLayers( arrActiveLayers );
                 end;
 
             procedure TCustomGraphic2D.updateLayerTable();
@@ -422,7 +422,7 @@ implementation
                     layer               : string;
                     arrDrawingLayers    : TArray<string>;
                 begin
-                    arrDrawingLayers := D2DGeomDrawer.getAllDrawingLayers();
+                    arrDrawingLayers := D2DGraphicDrawer.getAllDrawingLayers();
 
                     CheckListBoxLayerTable.Items.Clear();
 
@@ -452,11 +452,11 @@ implementation
                     mouseCoordStr   : string;
                     mousePointXY    : TGeomPoint;
                 begin
-                    if (NOT( D2DGeomDrawer.getMouseControlActive() )) then
+                    if (NOT( D2DGraphicDrawer.getMouseControlActive() )) then
                         exit();
 
                     //convert mouse position to XY coordinate
-                        mousePointXY := D2DGeomDrawer.getMouseCoordinatesXY();
+                        mousePointXY := D2DGraphicDrawer.getMouseCoordinatesXY();
 
                         mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.y, ffFixed, 5, 2) + ')';
 
@@ -467,7 +467,7 @@ implementation
             procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
                 begin
                     try
-                        if NOT(D2DGeomDrawer.getMouseControlActive()) then
+                        if NOT(D2DGraphicDrawer.getMouseControlActive()) then
                             begin
                                 PaintBoxGraphic.Cursor := crDefault;
                                 exit();
@@ -489,7 +489,7 @@ implementation
                 var
                     currentZoomPercentage : double;
                 begin
-                    currentZoomPercentage := D2DGeomDrawer.getCurrentZoomPercentage();
+                    currentZoomPercentage := D2DGraphicDrawer.getCurrentZoomPercentage();
                     ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
                 end;
 
@@ -526,7 +526,7 @@ implementation
 
                             //preDrawGraphic( D2DBufferCanvas );
 
-                            D2DGeomDrawer.drawAllGeometry( PaintBoxGraphic.Width, PaintBoxGraphic.Height, D2DBufferCanvas );
+                            D2DGraphicDrawer.drawAllGeometry( PaintBoxGraphic.Width, PaintBoxGraphic.Height, D2DBufferCanvas );
 
                             postDrawGraphic( D2DBufferCanvas );
 
@@ -555,7 +555,7 @@ implementation
                                 currentMousePosition := PaintBoxGraphic.ScreenToClient( mouse.CursorPos );
 
                         //process windows message in axis converter
-                            mouseInputRequiresRedraw := D2DGeomDrawer.processWindowsMessages( messageInOut, currentMousePosition );
+                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePosition );
 
                         //render image off screen
                             if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then
@@ -584,7 +584,7 @@ implementation
 
                     //create required classes
                         currentGraphicBuffer    := TBitmap.create();
-                        D2DGeomDrawer           := TDirect2DGeomDrawer.create();
+                        D2DGraphicDrawer        := TDirect2DGraphicDrawer.create();
 
                     //set up graphic controls
                         //coordinates label
@@ -622,7 +622,7 @@ implementation
             destructor TCustomGraphic2D.destroy();
                 begin
                     FreeAndNil( currentGraphicBuffer );
-                    FreeAndNil( D2DGeomDrawer );
+                    FreeAndNil( D2DGraphicDrawer );
 
                     inherited destroy();
                 end;
@@ -653,11 +653,11 @@ implementation
                     setGraphicBackgroundColour();
 
                     //reset the stored geometry
-                        D2DGeomDrawer.resetDrawingGeometry();
+                        D2DGraphicDrawer.resetDrawingGeometry();
 
-                    //update the D2DGeomDrawer geometry
+                    //update the D2DGraphicDrawer geometry
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
-                            onGraphicUpdateGeometryEvent( self, tGeomDrawer(D2DGeomDrawer) );
+                            onGraphicUpdateGeometryEvent( self, TGraphicDrawer(D2DGraphicDrawer) );
 
                     //do layer table
                         updateLayerTable();
@@ -674,7 +674,7 @@ implementation
             procedure TCustomGraphic2D.zoomAll();
                 begin
                     //make the drawing boundary the drawing region
-                        D2DGeomDrawer.zoomAll();
+                        D2DGraphicDrawer.zoomAll();
 
                     redrawGraphic();
                 end;

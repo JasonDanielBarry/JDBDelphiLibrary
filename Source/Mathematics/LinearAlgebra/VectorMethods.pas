@@ -11,6 +11,10 @@ interface
     //test is vectors are the same size
         function vectorsAreSameSize(const vector1In, vector2In : TLAVector) : boolean;
 
+    //copy vector
+        procedure copyVector(   const readVectorIn  : TLAVector;
+                                var writeVectorIn   : TLAVector     );
+
     //equality test
         function vectorsEqual(const vector1In, vector2In : TLAVector) : boolean;
 
@@ -33,6 +37,9 @@ interface
     //vector entries product
         function vectorEntriesProduct(const vectorIn : TLAVector) : double;
 
+    //unit vector
+        function vectorUnitVector(const vectorIn : TLAVector) : TLAVector;
+
 implementation
 
     //test is vectors are the same size
@@ -44,6 +51,20 @@ implementation
                 size2 := length(vector2In);
 
                 result := (size1 = size2);
+            end;
+
+    //copy vector
+        procedure copyVector(   const readVectorIn  : TLAVector;
+                                var writeVectorIn   : TLAVector     );
+            var
+                i, arrLen : integer;
+            begin
+                arrLen := length( readVectorIn );
+
+                SetLength( writeVectorIn, arrLen );
+
+                for i := 0 to (arrLen - 1) do
+                    writeVectorIn[i] := readVectorIn[i];
             end;
 
     //equality test
@@ -179,6 +200,25 @@ implementation
                     productOut := productOut * vectorIn[i];
 
                 result := productOut;
+            end;
+
+    //unit vector
+        function vectorUnitVector(const vectorIn : TLAVector) : TLAVector;
+            var
+                i, arrLen       : integer;
+                vectorLength    : double;
+                unitVectorOut   : TLAVector;
+            begin
+                vectorLength := vectorNormalise( vectorIn );
+
+                arrLen := length(vectorIn);
+
+                SetLength( unitVectorOut, arrLen );
+
+                for i := 0 to (arrLen - 1) do
+                    unitVectorOut[i] := vectorIn[i] / vectorLength;
+
+                result := unitVectorOut;
             end;
 
 end.

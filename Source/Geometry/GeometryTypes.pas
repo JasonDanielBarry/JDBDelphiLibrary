@@ -39,6 +39,8 @@ interface
                 function isEqual(const pointIn : TGeomPoint) : boolean;
                 function lessThan(const pointIn : TGeomPoint) : boolean;
                 function lessThanOrEqual(const pointIn : TGeomPoint) : boolean;
+            //calculate centre point
+                class function calculateCentrePoint(const arrPointsIn : TArray<TGeomPoint>) : TGeomPoint; static;
         end;
 
         TGeomLineIntersectionData = record
@@ -132,6 +134,8 @@ implementation
             end;
 
     //comparison
+
+
         function TGeomPoint.greaterThan(const pointIn : TGeomPoint) : boolean;
             begin
                 result :=       (pointIn.x < self.x)
@@ -147,10 +151,12 @@ implementation
             end;
 
         function TGeomPoint.isEqual(const pointIn : TGeomPoint) : boolean;
+            const
+                EQUALITY_TOLERANCE : double = 1e-6;
             begin
-                result :=       SameValue(pointIn.x, self.x)
-                            AND SameValue(pointIn.y, self.y)
-                            AND SameValue(pointIn.z, self.z)
+                result :=       SameValue(pointIn.x, self.x, EQUALITY_TOLERANCE)
+                            AND SameValue(pointIn.y, self.y, EQUALITY_TOLERANCE)
+                            AND SameValue(pointIn.z, self.z, EQUALITY_TOLERANCE)
             end;
 
         function TGeomPoint.lessThan(const pointIn: TGeomPoint): boolean;
@@ -165,6 +171,33 @@ implementation
                 result :=       (self.x <= pointIn.x)
                             AND (self.y <= pointIn.y)
                             AND (self.z <= pointIn.z)
+            end;
+
+    //calculate centre point
+        class function TGeomPoint.calculateCentrePoint(const arrPointsIn : TArray<TGeomPoint>) : TGeomPoint;
+            var
+                i, pointCount                                           : integer;
+                centroidX,          centroidY,          centroidZ,
+                sumPointMomentX,    sumPointMomentY,    sumPointMomentZ : double;
+            begin
+                pointCount := length( arrPointsIn );
+
+                sumPointMomentX := 0;
+                sumPointMomentY := 0;
+                sumPointMomentZ := 0;
+
+                for i := 0 to (pointCount - 1) do
+                    begin
+                        sumPointMomentX := sumPointMomentX + arrPointsIn[i].x;
+                        sumPointMomentY := sumPointMomentY + arrPointsIn[i].y;
+                        sumPointMomentZ := sumPointMomentZ + arrPointsIn[i].z;
+                    end;
+
+                centroidX := sumPointMomentX / pointCount;
+                centroidY := sumPointMomentY / pointCount;
+                centroidZ := sumPointMomentZ / pointCount;
+
+                result := TGeomPoint.create( centroidX, centroidY, centroidZ );
             end;
 
 end.

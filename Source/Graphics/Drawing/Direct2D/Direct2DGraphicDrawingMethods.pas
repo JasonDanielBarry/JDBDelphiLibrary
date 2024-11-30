@@ -1,4 +1,4 @@
-unit Direct2DDrawingMethods;
+unit Direct2DGraphicDrawingMethods;
 
 interface
 

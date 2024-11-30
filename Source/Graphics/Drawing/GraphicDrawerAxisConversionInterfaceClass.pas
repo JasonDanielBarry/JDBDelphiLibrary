@@ -1,4 +1,4 @@
-unit GeomDrawerAxisConversionInterfaceClass;
+unit GraphicDrawerAxisConversionInterfaceClass;
 
 interface
 
@@ -8,11 +8,11 @@ interface
         vcl.Controls,
         GeometryTypes, GeomBox,
         DrawingAxisConversionClass,
-        GeomDrawerLayersClass
+        GraphicDrawerLayersClass
         ;
 
     type
-        TGeomDrawerAxisConversionInterface = class(TGeomDrawerLayers)
+        TGraphicDrawerAxisConversionInterface = class(TGraphicDrawerLayers)
             public
                 //constructor
                     constructor create(); override;
@@ -49,49 +49,49 @@ implementation
 
     //public
         //constructor
-            constructor TGeomDrawerAxisConversionInterface.create();
+            constructor TGraphicDrawerAxisConversionInterface.create();
                 begin
                     inherited create();
                 end;
 
         //destructor
-            destructor TGeomDrawerAxisConversionInterface.destroy();
+            destructor TGraphicDrawerAxisConversionInterface.destroy();
                 begin
                     inherited destroy();
                 end;
 
         //axis conversion methods
             //drawing region
-                function TGeomDrawerAxisConversionInterface.getDrawingRegion() : TGeomBox;
+                function TGraphicDrawerAxisConversionInterface.getDrawingRegion() : TGeomBox;
                     begin
                         result := axisConverter.getDrawingRegion();
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.setDrawingRegion(  const bufferIn : double;
+                procedure TGraphicDrawerAxisConversionInterface.setDrawingRegion(  const bufferIn : double;
                                                                                 const regionIn : TGeomBox   );
                     begin
                         axisConverter.setDrawingRegion(bufferIn, regionIn);
                     end;
 
             //draw space ratio
-                procedure TGeomDrawerAxisConversionInterface.setDrawingSpaceRatio(const ratioIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.setDrawingSpaceRatio(const ratioIn : double);
                     begin
                         axisConverter.setDrawingSpaceRatio( ratioIn );
                     end;
 
             //mouse coordinates
-                function TGeomDrawerAxisConversionInterface.getMouseCoordinatesXY() : TGeomPoint;
+                function TGraphicDrawerAxisConversionInterface.getMouseCoordinatesXY() : TGeomPoint;
                     begin
                         result := axisConverter.getMouseCoordinatesXY();
                     end;
 
             //panning
-                procedure TGeomDrawerAxisConversionInterface.recentre();
+                procedure TGraphicDrawerAxisConversionInterface.recentre();
                     begin
                         axisConverter.recentreDrawingRegion();
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.shiftDomain(const percentageIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.shiftDomain(const percentageIn : double);
                     var
                         domainShift, regionDomain : double;
                     begin
@@ -102,7 +102,7 @@ implementation
                         axisConverter.shiftDrawingDomain( domainShift );
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.shiftRange(const percentageIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.shiftRange(const percentageIn : double);
                     var
                         rangeShift, regionRange : double;
                     begin
@@ -114,48 +114,48 @@ implementation
                     end;
 
             //zooming
-                function TGeomDrawerAxisConversionInterface.getCurrentZoomPercentage() : double;
+                function TGraphicDrawerAxisConversionInterface.getCurrentZoomPercentage() : double;
                     begin
                         result := axisConverter.calculateCurrentZoomPercentage();
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.setZoom(const percentageIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.setZoom(const percentageIn : double);
                     begin
                         axisConverter.setZoom( percentageIn );
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.zoomIn(const percentageIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.zoomIn(const percentageIn : double);
                     begin
                         axisConverter.zoomIn( percentageIn );
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.zoomOut(const percentageIn : double);
+                procedure TGraphicDrawerAxisConversionInterface.zoomOut(const percentageIn : double);
                     begin
                         axisConverter.zoomOut( percentageIn );
                     end;
 
-                procedure TGeomDrawerAxisConversionInterface.zoomAll();
+                procedure TGraphicDrawerAxisConversionInterface.zoomAll();
                     begin
                         axisConverter.resetDrawingRegionToGeometryBoundary();
                     end;
 
         //process windows messages
-            procedure TGeomDrawerAxisConversionInterface.activateMouseControl();
+            procedure TGraphicDrawerAxisConversionInterface.activateMouseControl();
                 begin
                     axisConverter.activateMouseControl();
                 end;
 
-            procedure TGeomDrawerAxisConversionInterface.deactivateMouseControl();
+            procedure TGraphicDrawerAxisConversionInterface.deactivateMouseControl();
                 begin
                     axisConverter.deactivateMouseControl();
                 end;
 
-            function TGeomDrawerAxisConversionInterface.getMouseControlActive() : boolean;
+            function TGraphicDrawerAxisConversionInterface.getMouseControlActive() : boolean;
                 begin
                     result := axisConverter.MouseControlActive;
                 end;
 
-            function TGeomDrawerAxisConversionInterface.processWindowsMessages( const messageIn             : Tmessage;
+            function TGraphicDrawerAxisConversionInterface.processWindowsMessages( const messageIn             : Tmessage;
                                                                                 const newMousePositionIn    : TPoint    ) : boolean;
                 begin
                     if (self = nil) then

@@ -8,10 +8,6 @@ interface
     //max betweem three values
         function max(const value1In, value2In, value3In : double) : double; overload;
 
-    //line length
-        function lineLength(const   x0, y0, z0,
-                                    x1, y1, z1 : double) : double;
-
     //scale line
         procedure scaleLinear(  const   startValueIn,       endValueIn,
                                         scaleAboutValueIn,  scaleFactorIn   : double;
@@ -29,22 +25,6 @@ implementation
                 result := system.math.max(value1In, value2In);
 
                 result := system.math.max(result, value3In);
-            end;
-
-    //line length
-        function lineLength(const   x0, y0, z0,
-                                    x1, y1, z1 : double) : double;
-            var
-                dx, dy, dz,
-                lengthOut   : double;
-            begin
-                dx := x1 - x0;
-                dy := y1 - y0;
-                dz := z1 - z0;
-
-                lengthOut := sqrt( Power(dx, 2) + power(dy, 2) + power(dz, 2) );
-
-                result := lengthOut;
             end;
 
     //scale line

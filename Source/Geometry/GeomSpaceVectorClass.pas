@@ -90,9 +90,7 @@ implementation
                     newVector := TGeomSpaceVector.create();
 
                     for i := 0 to (dimensions() - 1) do
-                        begin
-                            newVector.addComponent(self[i]);
-                        end;
+                        newVector.addComponent(self[i]);
 
                     result := newVector;
                 end;
@@ -169,14 +167,11 @@ implementation
             //convert self into a unit vector
                 procedure TGeomSpaceVector.unitVector();
                     var
-                        i           : integer;
-                        vecLength   : double;
+                        newUnitVector : TLAVector;
                     begin
-                        vecLength := normalise();
+                        newUnitVector := vectorUnitVector( components );
 
-                        if (vecLength > 0) then
-                            for i := 0 to (dimensions() - 1) do
-                                self[i] := self[i] / vecLength;
+                        copyVector( newUnitVector, components );
                     end;
 
             //return a unit vector
