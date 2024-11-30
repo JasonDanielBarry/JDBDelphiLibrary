@@ -45,19 +45,19 @@ uses
   Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
-  GraphicDrawerLayersClass in 'Source\Graphics\Drawing\GraphicDrawerLayersClass.pas',
-  DrawingGeometryClass in 'Source\Graphics\Drawing\DrawingGeometryClass.pas',
-  Direct2DGraphicDrawingMethods in 'Source\Graphics\Drawing\Direct2D\Direct2DGraphicDrawingMethods.pas',
-  Direct2DGraphicDrawingClass in 'Source\Graphics\Drawing\Direct2D\Direct2DGraphicDrawingClass.pas',
   ColourMethods in 'Source\Graphics\ColourMethods.pas',
   DrawingAxisConversionMouseControlClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas',
-  GraphicDrawerAxisConversionInterfaceClass in 'Source\Graphics\Drawing\GraphicDrawerAxisConversionInterfaceClass.pas',
   GeomBox in 'Source\Geometry\GeomBox.pas',
   LinearInterpolationMethods in 'Source\Mathematics\LinearInterpolationMethods.pas',
-  GraphicDrawerBaseClass in 'Source\Graphics\Drawing\GraphicDrawerBaseClass.pas',
   DrawingAxisConversionAspectRatioClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas',
-  DrawingObjectBaseClass in 'Source\Graphics\Drawing\DrawingObjectBaseClass.pas',
-  DrawingTypes in 'Source\Graphics\Drawing\DrawingTypes.pas';
+  DrawingTypes in 'Source\Graphics\Drawing\DrawingTypes.pas',
+  DrawingGeometryClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\DrawingGeometryClass.pas',
+  DrawingObjectBaseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\DrawingObjectBaseClass.pas',
+  GraphicDrawerAxisConversionInterfaceClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerAxisConversionInterfaceClass.pas',
+  GraphicDrawerBaseClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas',
+  GraphicDrawerLayersClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas',
+  Direct2DGraphicDrawingClass in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas',
+  Direct2DGraphicDrawingMethods in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingMethods.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

@@ -130,19 +130,19 @@
         <DCCReference Include="Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawerLayersClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\DrawingGeometryClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DGraphicDrawingMethods.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\Direct2D\Direct2DGraphicDrawingClass.pas"/>
         <DCCReference Include="Source\Graphics\ColourMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawerAxisConversionInterfaceClass.pas"/>
         <DCCReference Include="Source\Geometry\GeomBox.pas"/>
         <DCCReference Include="Source\Mathematics\LinearInterpolationMethods.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawerBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\DrawingObjectBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\DrawingTypes.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\DrawingGeometryClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\DrawingObjectBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerAxisConversionInterfaceClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingMethods.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
