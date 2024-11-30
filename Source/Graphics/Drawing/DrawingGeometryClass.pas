@@ -7,13 +7,15 @@ interface
             system.SysUtils, system.types, system.UITypes, System.UIConsts,
         //custom
             ColourMethods,
+            DrawingTypes,
+            DrawingObjectBaseClass,
             DrawingAxisConversionClass,
             GeometryTypes,
             GeometryBaseClass
             ;
 
     type
-        TDrawingGeometry = class
+        TDrawingGeometry = class(TDrawingObject)
             strict private
                 var
                     lineThickness   : integer;
@@ -23,9 +25,6 @@ interface
                     drawingPoints   : TArray<TGeomPoint>;
                 //free geometry object
                     procedure freeGeometry();
-                //set values
-                    procedure setValues(const   lineThicknessIn : integer;
-                                        const   geometryIn      : TGeomBase);
             public
                 //constructor
                     constructor create( const   lineThicknessIn : integer;
@@ -57,18 +56,6 @@ implementation
                 end;
             end;
 
-        //set values
-            procedure TDrawingGeometry.setValues(   const   lineThicknessIn : integer;
-                                                    const   geometryIn      : TGeomBase );
-                begin
-                    freeGeometry();
-
-                    lineThickness   := lineThicknessIn;
-                    geometry        := geometryIn;
-
-                    drawingPoints   := geometryIn.getDrawingPoints();
-                end;
-
     //public
         //constructor
             constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
@@ -78,12 +65,16 @@ implementation
                 begin
                     inherited create();
 
-                    setValues( lineThicknessIn, geometryIn );
+                    freeGeometry();
 
-                    fillColour := fillColourIn;
-                    lineColour := lineColourIn;
+                    lineThickness   := lineThicknessIn;
+                    geometry        := geometryIn;
+                    fillColour      := fillColourIn;
+                    lineColour      := lineColourIn;
 
                     drawingPoints := geometryIn.getDrawingPoints();
+
+                    setDrawingType( geometry.getDrawingType );
                 end;
 
         //destructor

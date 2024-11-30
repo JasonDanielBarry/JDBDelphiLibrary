@@ -8,9 +8,10 @@ interface
         ;
 
      type
-        EAxis = (eaX = 0, eaY = 1, eaZ = 2);
-        EBoundaryRelation = (brInside = 0, brOn = 1, brOutside = 2);
-        EGeomType = (gtLine = 0, gtPolyline = 1, gtPolygon = 2, gtSpaceVector = 3);
+        {$SCOPEDENUMS ON}
+            EAxis = (eaX = 0, eaY = 1, eaZ = 2);
+            EBoundaryRelation = (brInside = 0, brOn = 1, brOutside = 2);
+        {$SCOPEDENUMS OFF}
 
         TGeomPoint = record
             var

@@ -8,6 +8,7 @@ interface
         system.sysutils, system.Math,
         LinearAlgebraTypes,
         VectorMethods,
+        DrawingTypes,
         GeometryTypes,
         GeometryBaseClass;
 
@@ -32,7 +33,7 @@ interface
             //destructor
                 destructor destroy(); override;
             //accessors
-                function getGeomType() : EGeomType; override;
+                function getDrawingType() : EDrawingType; override;
             //dimension manipulation
                 //set dimensions
                     procedure setDimensions(dimensionCountIn : integer);
@@ -114,9 +115,9 @@ implementation
                 end;
 
         //accessors
-            function TGeomSpaceVector.getGeomType() : EGeomType;
+            function TGeomSpaceVector.getDrawingType() : EDrawingType;
                 begin
-                    result := EGeomType.gtSpaceVector;
+                    result := EDrawingType.dtSpaceVector;
                 end;
 
         //length manipulation

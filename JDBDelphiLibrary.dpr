@@ -57,7 +57,9 @@ uses
   GeomBox in 'Source\Geometry\GeomBox.pas',
   LinearInterpolationMethods in 'Source\Mathematics\LinearInterpolationMethods.pas',
   GeomDrawerBaseClass in 'Source\Graphics\Drawing\GeomDrawerBaseClass.pas',
-  DrawingAxisConversionAspectRatioClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas';
+  DrawingAxisConversionAspectRatioClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas',
+  DrawingObjectBaseClass in 'Source\Graphics\Drawing\DrawingObjectBaseClass.pas',
+  DrawingTypes in 'Source\Graphics\Drawing\DrawingTypes.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

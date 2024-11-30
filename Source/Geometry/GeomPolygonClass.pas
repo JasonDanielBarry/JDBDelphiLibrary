@@ -4,6 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math,
+        DrawingTypes,
         GeometryTypes,
         GeometryMathMethods,
         GeomPolyLineClass;
@@ -16,7 +17,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getGeomType() : EGeomType; override;
+                    function getDrawingType() : EDrawingType; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
         end;
@@ -36,9 +37,9 @@ implementation
                     inherited destroy();
                 end;
         //accessors
-            function TGeomPolygon.getGeomType() : EGeomType;
+            function TGeomPolygon.getDrawingType() : EDrawingType;
                 begin
-                    result := EGeomType.gtPolygon;
+                    result := EDrawingType.dtPolygon;
                 end;
 
         //drawing points
