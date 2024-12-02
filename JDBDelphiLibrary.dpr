@@ -57,7 +57,10 @@ uses
   GraphicDrawerBaseClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas',
   GraphicDrawerLayersClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas',
   Direct2DGraphicDrawingClass in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas',
-  Direct2DGraphicDrawingMethods in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingMethods.pas';
+  Direct2DGraphicDrawingMethods in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingMethods.pas',
+  GraphicLineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicLineClass.pas',
+  GraphicPolylineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolylineClass.pas',
+  GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

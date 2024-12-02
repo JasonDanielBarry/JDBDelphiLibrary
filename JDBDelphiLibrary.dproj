@@ -143,6 +143,9 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingMethods.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicLineClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolylineClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

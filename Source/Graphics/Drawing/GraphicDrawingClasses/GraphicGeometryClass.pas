@@ -5,10 +5,9 @@ interface
     uses
         //Delphi
             system.SysUtils, system.types, system.UITypes, System.UIConsts,
+            Winapi.D2D1, Vcl.Direct2D,
             vcl.Graphics,
         //custom
-            ColourMethods,
-            GraphicDrawingTypes,
             GraphicObjectBaseClass,
             DrawingAxisConversionClass,
             GeometryTypes,
@@ -18,13 +17,15 @@ interface
     type
         TGraphicGeometry = class(TGraphicObject)
             strict private
-                var
-                    geometry        : TGeomBase;
-                    drawingPoints   : TArray<TGeomPoint>;
-                //free geometry object
-                    procedure freeGeometry();
                 //set the geometry object
                     procedure setGeometry(const geometryIn : TGeomBase);
+            protected
+                var
+                    geometryPoints : TArray<TGeomPoint>;
+                //drawing helper methods
+                    function createPathGeometry(const figureBeginIn     : D2D1_FIGURE_BEGIN;
+                                                const figureEndIn       : D2D1_FIGURE_END;
+                                                const axisConverterIn   : TDrawingAxisConverter) : ID2D1PathGeometry;
             public
                 //constructor
                     constructor create( const   lineThicknessIn : integer;
@@ -38,36 +39,63 @@ interface
                                         const   geometryIn      : TGeomBase ); overload;
                 //destructor
                     destructor destroy(); override;
-                //get the geometry object
-                    function getGeometry() : TGeomBase; inline;
-                //get drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; inline;
         end;
 
 implementation
 
     //private
-        //free geometry object
-            procedure TGraphicGeometry.freeGeometry();
-                begin
-                    try
-                        FreeAndNil( geometry );
-                    except
-
-                    end;
-                end;
-
         //set the geometry object
             procedure TGraphicGeometry.setGeometry(const geometryIn : TGeomBase);
                 begin
-                    //free current geometry
-                        freeGeometry();
-
-                    //assign new
-                        geometry := geometryIn;
-
                     //get the drawing points
-                        drawingPoints := geometryIn.getDrawingPoints();
+                        geometryPoints := geometryIn.getDrawingPoints();
+
+                    //free the incoming object
+                        FreeAndNil( geometryIn );
+                end;
+
+    //protected
+        //drawing helper methods
+            function TGraphicGeometry.createPathGeometry(   const figureBeginIn     : D2D1_FIGURE_BEGIN;
+                                                            const figureEndIn       : D2D1_FIGURE_END;
+                                                            const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
+                var
+                    geometrySink    : ID2D1GeometrySink;
+                    pathGeometryOut : ID2D1PathGeometry;
+                    drawingPoints   : TArray<TPointF>;
+                begin
+                    //convert geometry into canvas drawing points
+                        drawingPoints := axisConverterIn.arrXY_to_arrLT(
+                                                                            geometryPoints
+                                                                       );
+
+                    //create path geometry
+                        D2DFactory( D2D1_FACTORY_TYPE.D2D1_FACTORY_TYPE_MULTI_THREADED ).CreatePathGeometry( pathGeometryOut );
+
+                    //open path geometry
+                        pathGeometryOut.Open( geometrySink );
+
+                    //create geometry sink
+                        geometrySink.BeginFigure( D2D1PointF( drawingPoints[0].x, drawingPoints[0].y ), figureBeginIn );
+
+                        //add lines
+                            //single line
+                                if ( length(drawingPoints) < 3 ) then
+                                    geometrySink.AddLine( D2D1PointF( drawingPoints[1].x, drawingPoints[1].y ) )
+                            //polyline
+                                else
+                                    begin
+                                        var i : integer;
+
+                                        for i := 1 to ( length(drawingPoints) - 1 ) do
+                                            geometrySink.AddLine( D2D1PointF( drawingPoints[i].x, drawingPoints[i].y ) );
+                                    end;
+
+                        geometrySink.EndFigure( figureEndIn );
+
+                        geometrySink.Close();
+
+                    result := pathGeometryOut;
                 end;
 
     //public
@@ -83,8 +111,6 @@ implementation
                                         fillColourIn,
                                         lineColourIn,
                                         lineStyleIn                 );
-
-                    freeGeometry();
 
                     setGeometry( geometryIn );
                 end;
@@ -104,23 +130,8 @@ implementation
         //destructor
             destructor TGraphicGeometry.destroy();
                 begin
-                    freeGeometry();
-
                     inherited destroy();
                 end;
 
-        
-
-        //get the geometry object
-            function TGraphicGeometry.getGeometry() : TGeomBase;
-                begin
-                    result := geometry;
-                end;
-
-        //get drawing points
-            function TGraphicGeometry.getDrawingPoints() : TArray<TGeomPoint>;
-                begin
-                    result := drawingPoints;
-                end;
 
 end.

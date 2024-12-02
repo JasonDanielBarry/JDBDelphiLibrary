@@ -69,8 +69,8 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TDirect2DGraphicDrawer.drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
-                                                            const canvasIn                      : TDirect2DCanvas );
+            procedure TDirect2DGraphicDrawer.drawAllGeometry(   const canvasWidthIn, canvasHeightIn : integer;
+                                                                const canvasIn                      : TDirect2DCanvas   );
                 begin
                     //set canvas
                         setDrawingCanvas( canvasIn );
