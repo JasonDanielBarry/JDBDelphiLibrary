@@ -8,10 +8,9 @@ interface
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
+            GraphicObjectBaseClass,
             GraphicGeometryClass,
             GeometryTypes, GeomBox,
-            GeometryBaseClass,
-            GeomLineClass, GeomPolyLineClass, GeomPolygonClass,
             GraphicDrawerBaseClass
             ;
 
@@ -19,25 +18,26 @@ interface
         TGraphicDrawerLayers = class(TGraphicDrawer)
             strict private
                 type
-                    TLayerGeometryPair  = TPair<string, TArray<TGraphicGeometry>>;
-                    TLayerGeometryMap   = TDictionary<string, TArray<TGraphicGeometry>>;
+                    TLayerGeometryPair  = TPair<string, TArray<TGraphicObject>>;
+                    TLayerGeometryMap   = TDictionary<string, TArray<TGraphicObject>>;
                 var
                     currentDrawingLayer : string;
                     orderedLayerKeys    : TList<string>;
                     arrActiveLayers     : TArray<string>;
                     layerGeometryMap    : TLayerGeometryMap;
+                //add graphic drawing object to the drawing object container
+                    procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); override;
                 //helper methods
                     //return a specified layer's drawing geometry array
-                        function getArrDrawingGeom(const layerKeyIn : string) : TArray<TGraphicGeometry>;
-                    //return a layer's geometry array for bounding box
-                        function getArrGeom(const layerKeyIn : string) : TArray<TGeomBase>;
-                    //add drawing geometry to the layer-geometry map
-                        procedure addGeometry(const drawingGeometryIn : TGraphicGeometry); override;
-                    //calculate the geometry net bounding box for active geometry
-                        procedure calculateGeomBoundingBox();
+                        function getArrGraphicGeom(const layerKeyIn : string) : TArray<TGraphicObject>;
+                    //calculate the bounding box for a specific layer
+                        function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
+                    //calculate the net bounding box for active layers
+                        procedure calculateNetBoundingBox();
             strict protected
                 //draw all geometry
-                    procedure drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer); override;
+                    procedure drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
+                                                const drawingBackgroundColourIn     : TColor    ); override;
             public
                 //constructor
                     constructor create(); virtual;
@@ -57,77 +57,75 @@ implementation
     //private
         //helper methods
             //return a drawing geometry array for a specified layer
-                function TGraphicDrawerLayers.getArrDrawingGeom(const layerKeyIn : string) : TArray<TGraphicGeometry>;
+                function TGraphicDrawerLayers.getArrGraphicGeom(const layerKeyIn : string) : TArray<TGraphicObject>;
                     var
-                        arrDrawingGeomOut : TArray<TGraphicGeometry>;
+                        arrDrawingGeomOut : TArray<TGraphicObject>;
                     begin
                         layerGeometryMap.TryGetValue( layerKeyIn, arrDrawingGeomOut );
 
                         result := arrDrawingGeomOut;
                     end;
 
-            //return geometry array for bounding box
-                function TGraphicDrawerLayers.getArrGeom(const layerKeyIn : string) : TArray<TGeomBase>;
-                    var
-                        i, arrLen       : integer;
-                        arrGeomOut      : TArray<TGeomBase>;
-                        arrDrawingGeom  : TArray<TGraphicGeometry>;
-                    begin
-                        arrDrawingGeom := getArrDrawingGeom( layerKeyIn );
-
-                        arrLen := length( arrDrawingGeom );
-
-                        SetLength( arrGeomOut, arrLen );
-
-                        for i := 0 to (arrLen - 1) do
-                            arrGeomOut[i] := arrDrawingGeom[i].getGeometry;
-
-                        result := arrGeomOut;
-                    end;
-
             //add geometry to the layer-geometry map
-                procedure TGraphicDrawerLayers.addGeometry(const drawingGeometryIn : TGraphicGeometry);
+                procedure TGraphicDrawerLayers.addGraphicObject(const drawingGeometryIn : TGraphicObject);
                     var
-                        geomCount       : integer;
-                        arrDrawingGeom  : TArray<TGraphicGeometry>;
+                        graphicObjectCount  : integer;
+                        arrGraphicObjects   : TArray<TGraphicObject>;
                     begin
                         //if the current layer is not set then set to default
                             if (currentDrawingLayer = '') then
                                 setCurrentDrawingLayer( 'Default Layer' );
 
                         //get the drawing geometry array and add the new drawing geometry to it
-                            layerGeometryMap.TryGetValue( currentDrawingLayer, arrDrawingGeom );
+                            layerGeometryMap.TryGetValue( currentDrawingLayer, arrGraphicObjects );
 
-                            geomCount := length(arrDrawingGeom);
+                            graphicObjectCount := length( arrGraphicObjects );
 
-                            SetLength(arrDrawingGeom, geomCount + 1);
+                            SetLength(arrGraphicObjects, graphicObjectCount + 1);
 
-                            arrDrawingGeom[geomCount] := drawingGeometryIn;
+                            arrGraphicObjects[ graphicObjectCount ] := drawingGeometryIn;
 
                         //add the array back to the map
-                            layerGeometryMap[ currentDrawingLayer ] := arrDrawingGeom;
+                            layerGeometryMap.AddOrSetValue( currentDrawingLayer, arrGraphicObjects );
+                    end;
+
+            //calculate the bounding box for a specific layer
+                function TGraphicDrawerLayers.calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
+                    var
+                        i, graphicObjectCount   : integer;
+                        arrBoundingBoxes        : TArray<TGeomBox>;
+                        arrGraphicObjects       : TArray<TGraphicObject>;
+                    begin
+                        arrGraphicObjects := getArrGraphicGeom( layerKeyIn );
+
+                        graphicObjectCount := length( arrGraphicObjects );
+
+                        SetLength( arrBoundingBoxes, graphicObjectCount );
+
+                        for i := 0 to (graphicObjectCount - 1) do
+                            arrBoundingBoxes[i] := arrGraphicObjects[i].determineBoundingBox();
+
+                        result := TGeomBox.determineBoundingBox( arrBoundingBoxes );
                     end;
 
             //calculate the geometry net bounding box for active geometry
-                procedure TGraphicDrawerLayers.calculateGeomBoundingBox();
+                procedure TGraphicDrawerLayers.calculateNetBoundingBox();
                     var
-                        i, layerCount       : integer;
-                        layer               : string;
+                        i, activeLayerCount : integer;
+                        layerKey            : string;
                         geomBoundingBox     : TGeomBox;
                         arrBoundingBoxes    : TArray<TGeomBox>;
-                        arrGeom             : TArray<TGeomBase>;
+                        arrGraphicGeom      : TArray<TGraphicObject>;
                     begin
-                        layerCount := length(arrActiveLayers);
+                        activeLayerCount := length(arrActiveLayers);
 
-                        SetLength( arrBoundingBoxes, layerCount );
+                        SetLength( arrBoundingBoxes, activeLayerCount );
 
                         i := 0;
 
-                        for layer in arrActiveLayers do
+                        for layerKey in arrActiveLayers do
                             begin
-                                arrGeom := getArrGeom( layer );
-
-                                arrBoundingBoxes[i] := TGeomBase.determineBoundingBox( arrGeom );
+                                arrBoundingBoxes[i] := calculateLayerBoundingBox( layerKey );
 
                                 inc( i );
                             end;
@@ -140,21 +138,23 @@ implementation
     //protected
         //drawing procedures
             //draw all geometry
-                procedure TGraphicDrawerLayers.drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer);
+                procedure TGraphicDrawerLayers.drawAllGeometry( const canvasWidthIn, canvasHeightIn : integer;
+                                                                const drawingBackgroundColourIn     : TColor    );
                     var
                         i                   : integer;
                         layer               : string;
-                        arrDrawingGeometry  : TArray<TGraphicGeometry>;
+                        arrDrawingGeometry  : TArray<TGraphicObject>;
                     begin
-                        inherited drawAllGeometry( canvasWidthIn, canvasHeightIn );
+                        inherited drawAllGeometry(  canvasWidthIn, canvasHeightIn,
+                                                    drawingBackgroundColourIn       );
 
                         //loop through active layers of the layer-geometry map
                             for layer in arrActiveLayers do
                                 begin
-                                    arrDrawingGeometry := getArrDrawingGeom( layer );
+                                    arrDrawingGeometry := getArrGraphicGeom( layer );
 
                                     for i := 0 to ( length(arrDrawingGeometry) - 1 ) do
-                                        drawGeometry( arrDrawingGeometry[i] );
+                                        arrDrawingGeometry[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                                 end;
                     end;
 
@@ -193,7 +193,7 @@ implementation
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);
                 var
                     layerExists         : boolean;
-                    drawingGeomArray    : TArray<TGraphicGeometry>;
+                    drawingGeomArray    : TArray<TGraphicObject>;
                 begin
                     currentDrawingLayer := layerKeyIn;
 
@@ -216,7 +216,7 @@ implementation
                 begin
                     arrActiveLayers := arrActiveLayersIn;
 
-                    calculateGeomBoundingBox();
+                    calculateNetBoundingBox();
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects
@@ -224,9 +224,9 @@ implementation
                 var
                     layer               : string;
                     arrDrawingLayers    : TArray<string>;
-                    arrDrawingGeom      : TArray<TGraphicGeometry>;
+                    arrDrawingGeom      : TArray<TGraphicObject>;
                 procedure
-                    _freeDrawingGeometry( var arrDrawingGeometryInOut : TArray<TGraphicGeometry> );
+                    _freeDrawingGeometry( var arrDrawingGeometryInOut : TArray<TGraphicObject> );
                         var
                             i : integer;
                         begin
@@ -244,7 +244,7 @@ implementation
 
                     for layer in arrDrawingLayers do
                         begin
-                            arrDrawingGeom := getArrDrawingGeom( layer );
+                            arrDrawingGeom := getArrGraphicGeom( layer );
 
                             _freeDrawingGeometry( arrDrawingGeom );
 

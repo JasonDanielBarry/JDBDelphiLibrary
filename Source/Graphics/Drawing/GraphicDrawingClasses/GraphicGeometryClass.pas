@@ -11,14 +11,12 @@ interface
             GraphicObjectBaseClass,
             DrawingAxisConversionClass,
             GeometryTypes,
+            GeomBox,
             GeometryBaseClass
             ;
 
     type
         TGraphicGeometry = class(TGraphicObject)
-            strict private
-                //set the geometry object
-                    procedure setGeometry(const geometryIn : TGeomBase);
             protected
                 var
                     geometryPoints : TArray<TGeomPoint>;
@@ -39,20 +37,11 @@ interface
                                         const   geometryIn      : TGeomBase ); overload;
                 //destructor
                     destructor destroy(); override;
+                //bounding box
+                    function determineBoundingBox() : TGeomBox; override;
         end;
 
 implementation
-
-    //private
-        //set the geometry object
-            procedure TGraphicGeometry.setGeometry(const geometryIn : TGeomBase);
-                begin
-                    //get the drawing points
-                        geometryPoints := geometryIn.getDrawingPoints();
-
-                    //free the incoming object
-                        FreeAndNil( geometryIn );
-                end;
 
     //protected
         //drawing helper methods
@@ -112,7 +101,8 @@ implementation
                                         lineColourIn,
                                         lineStyleIn                 );
 
-                    setGeometry( geometryIn );
+                    //get the drawing points
+                        geometryPoints := geometryIn.getDrawingPoints();
                 end;
 
             constructor TGraphicGeometry.create(const   lineThicknessIn : integer;
@@ -131,6 +121,12 @@ implementation
             destructor TGraphicGeometry.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //bounding box
+            function TGraphicGeometry.determineBoundingBox() : TGeomBox;
+                begin
+                    result := TGeomBox.determineBoundingBox( geometryPoints );
                 end;
 
 

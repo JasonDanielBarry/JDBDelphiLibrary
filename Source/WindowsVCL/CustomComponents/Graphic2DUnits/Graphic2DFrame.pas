@@ -355,9 +355,6 @@ implementation
                 begin
                     //get the colour of the parent according to theme
                         graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
-
-                    //send theme colour to geom drawer
-                        D2DGraphicDrawer.setDrawingBackgroundColour( graphicBackgroundColour );
                 end;
 
         //components positions
@@ -526,7 +523,12 @@ implementation
 
                             //preDrawGraphic( D2DBufferCanvas );
 
-                            D2DGraphicDrawer.drawAllGeometry( PaintBoxGraphic.Width, PaintBoxGraphic.Height, D2DBufferCanvas );
+                            D2DGraphicDrawer.drawAllGeometry(
+                                                                PaintBoxGraphic.Width,
+                                                                PaintBoxGraphic.Height,
+                                                                graphicBackgroundColour,
+                                                                D2DBufferCanvas
+                                                            );
 
                             postDrawGraphic( D2DBufferCanvas );
 

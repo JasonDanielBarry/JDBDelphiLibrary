@@ -5,6 +5,7 @@ interface
     uses
         Winapi.D2D1, Vcl.Direct2D,
         vcl.Graphics,
+        GeomBox,
         GraphicDrawingTypes,
         DrawingAxisConversionClass
         ;
@@ -38,6 +39,8 @@ interface
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); virtual; abstract;
+                //bounding box
+                    function determineBoundingBox() : TGeomBox; virtual; abstract;
         end;
 
 implementation

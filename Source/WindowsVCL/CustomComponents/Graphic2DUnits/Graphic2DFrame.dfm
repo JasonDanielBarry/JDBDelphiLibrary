@@ -353,7 +353,7 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 0
-      Width = 37
+      Width = 36
       Height = 15
       Margins.Left = 5
       Margins.Top = 0
@@ -377,7 +377,7 @@ object CustomGraphic2D: TCustomGraphic2D
     object LabelXBounds: TLabel
       Left = 56
       Top = 24
-      Width = 28
+      Width = 27
       Height = 15
       Align = alClient
       Alignment = taCenter
@@ -399,7 +399,7 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 48
-      Width = 37
+      Width = 36
       Height = 15
       Margins.Left = 5
       Margins.Top = 0

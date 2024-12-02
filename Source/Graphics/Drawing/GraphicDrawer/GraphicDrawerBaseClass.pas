@@ -6,10 +6,12 @@ interface
         //Delphi
             system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
             vcl.Graphics,
+            vcl.Direct2D, Winapi.D2D1,
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
-            GraphicGeometryClass,
+            GraphicObjectBaseClass,
+            GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass, GraphicPolygonClass,
             GeometryTypes, GeomBox,
             GeometryBaseClass,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass
@@ -19,15 +21,14 @@ interface
         TGraphicDrawer = class
             strict protected
                 var
-                    drawingBackgroundColour : TColor;
                     axisConverter           : TDrawingAxisConverter;
-                //add drawing geometry to the drawing object container
-                    procedure addGeometry(const drawingGeometryIn : TGraphicGeometry); virtual; abstract;
+                    Direct2DDrawingCanvas   : TDirect2DCanvas;
+                //add graphic drawing object to the drawing object container
+                    procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); virtual; abstract;
                 //drawing procedures
-                    //draw a drawing geometry object
-                        procedure drawGeometry(const drawingGeometryIn : TGraphicGeometry); virtual; abstract;
                     //draw all geometry
-                        procedure drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer); virtual;
+                        procedure drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
+                                                    const drawingBackgroundColourIn     : TColor    ); virtual;
             public
                 //constructor
                     constructor create(); virtual;
@@ -48,7 +49,6 @@ interface
                                             const lineColourIn      : TColor = TColors.Black;
                                             const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
                 //modifiers
-                    procedure setDrawingBackgroundColour(const colourIn : TColor);
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); virtual; abstract;
         end;
 
@@ -57,13 +57,19 @@ implementation
     //protected
         //drawing procedures
             //draw all geometry
-                procedure TGraphicDrawer.drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer);
+                procedure TGraphicDrawer.drawAllGeometry(   const canvasWidthIn, canvasHeightIn : integer;
+                                                            const drawingBackgroundColourIn     : TColor    );
                     begin
                         //set axis converter canvas dimensions
                             axisConverter.setCanvasDimensions( canvasHeightIn, canvasWidthIn );
 
                         //set the drawing space ratio
                             axisConverter.setDrawingSpaceRatio( 1 );
+
+                        //clear the canvas
+                            Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColourIn;
+
+                            Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
                     end;
 
     //public
@@ -84,19 +90,19 @@ implementation
                 end;
 
         //add drawing geometry
-            procedure TGraphicDrawer.addLine(  const lineIn            : TGeomLine;
-                                            const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TColor = TColors.Black;
-                                            const styleIn           : TPenStyle = TPenStyle.psSolid );
+            procedure TGraphicDrawer.addLine(   const lineIn            : TGeomLine;
+                                                const lineThicknessIn   : integer = 2;
+                                                const colourIn          : TColor = TColors.Black;
+                                                const styleIn           : TPenStyle = TPenStyle.psSolid );
                 var
                     newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
-                                                                    colourIn,
-                                                                    styleIn,
-                                                                    lineIn          );
+                    newDrawingGeometry := TGraphicLine.create(  lineThicknessIn,
+                                                                colourIn,
+                                                                styleIn,
+                                                                lineIn          );
 
-                    addGeometry( newDrawingGeometry );
+                    addGraphicObject( newDrawingGeometry );
                 end;
 
             procedure TGraphicDrawer.addPolyline(   const polylineIn        : TGeomPolyLine;
@@ -106,15 +112,15 @@ implementation
                 var
                     newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
+                    newDrawingGeometry := TGraphicPolyline.create(  lineThicknessIn,
                                                                     colourIn,
                                                                     styleIn,
                                                                     polylineIn      );
 
-                    addGeometry( newDrawingGeometry );
+                    addGraphicObject( newDrawingGeometry );
                 end;
 
-            procedure TGraphicDrawer.addPolygon(   const polygonIn         : TGeomPolygon;
+            procedure TGraphicDrawer.addPolygon(const polygonIn         : TGeomPolygon;
                                                 const lineThicknessIn   : integer = 2;
                                                 const fillColourIn      : TColor = TColors.Null;
                                                 const lineColourIn      : TColor = TColors.Black;
@@ -122,19 +128,14 @@ implementation
                 var
                     newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
+                    newDrawingGeometry := TGraphicPolygon.create(   lineThicknessIn,
                                                                     fillColourIn,
                                                                     lineColourIn,
                                                                     lineStyleIn,
                                                                     polygonIn       );
 
-                    addGeometry( newDrawingGeometry );
+                    addGraphicObject( newDrawingGeometry );
                 end;
 
-        //modifiers
-            procedure TGraphicDrawer.setDrawingBackgroundColour(const colourIn : TColor);
-                begin
-                    drawingBackgroundColour := colourIn;
-                end;
 
 end.

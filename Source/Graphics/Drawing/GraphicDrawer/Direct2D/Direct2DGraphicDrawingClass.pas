@@ -11,21 +11,10 @@ interface
             DrawingAxisConversionClass,
             GraphicGeometryClass,
             GraphicDrawerAxisConversionInterfaceClass,
-            GeometryBaseClass,
-            Direct2DGraphicDrawingMethods;
+            GeometryBaseClass;
 
     type
         TDirect2DGraphicDrawer = class(TGraphicDrawerAxisConversionInterface)
-            private
-                var
-                    Direct2DDrawingCanvas : TDirect2DCanvas;
-                //modifiers
-                    //drawing canvas
-                        procedure setDrawingCanvas(const canvasIn : TDirect2DCanvas);
-                //drawing procedures
-                    //auto detect geom type
-                        procedure drawGeometry(const drawingGeometryIn : TGraphicGeometry); override;
-
             public
                 //constructor
                     constructor create();
@@ -33,27 +22,14 @@ interface
                     destructor destroy(); override;
                 //draw all geometry
                     procedure drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
+                                                const drawingBackgroundColourIn     : TColor;
                                                 const canvasIn                      : TDirect2DCanvas );
         end;
 
 implementation
 
     //private
-        //modifiers
-            //set the drawing canvas
-                procedure TDirect2DGraphicDrawer.setDrawingCanvas(const canvasIn : TDirect2DCanvas);
-                    begin
-                        Direct2DDrawingCanvas := canvasIn;
-                    end;
 
-        //drawing procedures
-            //auto detect geom type
-                procedure TDirect2DGraphicDrawer.drawGeometry(const drawingGeometryIn : TGraphicGeometry);
-                    begin
-                        drawDirect2DGeometry(   drawingGeometryIn,
-                                                axisConverter,
-                                                Direct2DDrawingCanvas   );
-                    end;
 
     //public
         //constructor
@@ -70,18 +46,13 @@ implementation
 
         //draw all geometry
             procedure TDirect2DGraphicDrawer.drawAllGeometry(   const canvasWidthIn, canvasHeightIn : integer;
+                                                                const drawingBackgroundColourIn     : TColor;
                                                                 const canvasIn                      : TDirect2DCanvas   );
                 begin
-                    //set canvas
-                        setDrawingCanvas( canvasIn );
-
-                    //clear the canvas
-                        Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColour;
-
-                        Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
+                    Direct2DDrawingCanvas := canvasIn;
 
                     //draw all geometry
-                        inherited drawAllGeometry( canvasWidthIn, canvasHeightIn );
+                        inherited drawAllGeometry( canvasWidthIn, canvasHeightIn, drawingBackgroundColourIn );
                 end;
 
 end.

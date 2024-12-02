@@ -60,6 +60,8 @@ implementation
 
                     GeomDrawerInOut.addPolygon( polygon, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
+                    FreeAndNil( polygon );
+
                 //line 1
                     GeomDrawerInOut.setCurrentDrawingLayer('Line Layer');
 
@@ -69,6 +71,8 @@ implementation
                      line := TGeomLine.create(point1, point2);
 
                      GeomDrawerInOut.addLine(line, 4, TColors.Black);
+
+                     FreeAndNil( line );
 
                 //polyline
                     GeomDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
@@ -86,6 +90,8 @@ implementation
                         end;
 
                     GeomDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
+
+                    FreeAndNil( polyline );
             end;
 
         procedure TForm1.XYGraphs(var GeomDrawerInOut : TGraphicDrawer);
@@ -106,12 +112,16 @@ implementation
 
                     GeomDrawerInOut.addLine(line);
 
+                    FreeAndNil( line );
+
                 //y-axis
                     line := TGeomLine.create(
                                                 TGeomPoint.create(0, 0), TGeomPoint.create(0, Y_MAX)
                                             );
 
                     GeomDrawerInOut.addLine(line);
+
+                    FreeAndNil( line );
 
                 //quadratic curve
                     GeomDrawerInOut.setCurrentDrawingLayer('Quadratic curve');
@@ -131,6 +141,8 @@ implementation
 
                     GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
 
+                    FreeAndNil( polyLine );
+
                 //Trig curve
                     GeomDrawerInOut.setCurrentDrawingLayer('Trig curve');
 
@@ -148,6 +160,8 @@ implementation
                         end;
 
                     GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
+
+                    FreeAndNil( polyLine );
             end;
 
     procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawer);
@@ -193,6 +207,8 @@ implementation
 
                     GeomDrawerInOut.addPolygon( polygon, 1, TColors.Lightgreen, TColors.Black );
 
+                    FreeAndNil( polygon );
+
                     //flanges
                         //bottom
                             line := TGeomLine.create();
@@ -212,6 +228,8 @@ implementation
 
                             GeomDrawerInOut.addLine( line, 1 );
 
+                            FreeAndNil( line );
+
                 //column
                     GeomDrawerInOut.setCurrentDrawingLayer('Column');
 
@@ -224,6 +242,8 @@ implementation
 
                     GeomDrawerInOut.addPolygon( polygon, 1, TColors.Cornflowerblue, TColors.Black );
 
+                    FreeAndNil( polygon );
+
                     //flanges
                         //left
                             line := TGeomLine.create();
@@ -232,12 +252,16 @@ implementation
 
                             GeomDrawerInOut.addLine( line, 1 );
 
+                            FreeAndNil( line );
+
                         //right
                             line := TGeomLine.create();
                             line.setStartPoint(250 - 15, 0);
                             line.setEndPoint(250 - 15, 1000);
 
                             GeomDrawerInOut.addLine( line, 1 );
+
+                            FreeAndNil( line );
 
                 //plate
                     GeomDrawerInOut.setCurrentDrawingLayer('Plate');
@@ -253,6 +277,8 @@ implementation
 
                     GeomDrawerInOut.addPolygon( polygon, 1, TColors.Yellow, TColors.Black );
 
+                    FreeAndNil( polygon );
+
             //weld
                 GeomDrawerInOut.setCurrentDrawingLayer('Weld');
 
@@ -267,12 +293,13 @@ implementation
 
                 GeomDrawerInOut.addPolygon( polygon, 1, TColors.Blue, TColors.Black );
 
+                FreeAndNil( polygon );
+
             //bolts
                 GeomDrawerInOut.setCurrentDrawingLayer('Bolts');
 
                 for i := 0 to 5 do
                     begin
-
                         for j := 0 to 2 do
                             begin
                                 polygon := _creatBoltPolygon(100 + 50 * j, 50 + i * 50);
@@ -280,6 +307,8 @@ implementation
                                 polygon.shift(250, 400);
 
                                 GeomDrawerInOut.addPolygon( polygon, 3, TColors.Lightslategrey, TColors.Black );
+
+                                FreeAndNil( polygon );
                             end;
                     end;
         end;
@@ -302,6 +331,8 @@ implementation
 
             GeomDrawerInOut.addPolygon( polygon, 2, TColors.Lightgreen );
 
+            FreeAndNil( polygon );
+
             GeomDrawerInOut.setCurrentDrawingLayer('Failure Wedge');
 
             polygon := TGeomPolygon.create();
@@ -311,6 +342,8 @@ implementation
             polygon.addVertex(0, 15);
 
             GeomDrawerInOut.addPolygon( polygon, 2, TColors.Orangered );
+
+            FreeAndNil( polygon );
 
 
 
@@ -333,6 +366,8 @@ implementation
                         GeomDrawerInOut.addLine( line, 16, TColors.Grey);
                         GeomDrawerInOut.addLine( line, 4, TColors.Darkblue );
 
+                        FreeAndNil( line );
+
 
                         y := y - 1.5;
                     end;
@@ -350,6 +385,8 @@ implementation
             polygon.addVertex(-0.35, 0);
 
             GeomDrawerInOut.addPolygon( polygon, 2, TColors.Yellow );
+
+            FreeAndNil( polygon );
         end;
 
     constructor TForm1.create(AOwner: TComponent);
