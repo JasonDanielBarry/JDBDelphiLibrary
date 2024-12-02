@@ -9,7 +9,7 @@ interface
             vcl.Direct2D, Winapi.D2D1,
         //custom
             DrawingAxisConversionClass,
-            DrawingGeometryClass,
+            GraphicGeometryClass,
             GraphicDrawerAxisConversionInterfaceClass,
             GeometryBaseClass,
             Direct2DGraphicDrawingMethods;
@@ -24,7 +24,7 @@ interface
                         procedure setDrawingCanvas(const canvasIn : TDirect2DCanvas);
                 //drawing procedures
                     //auto detect geom type
-                        procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); override;
+                        procedure drawGeometry(const drawingGeometryIn : TGraphicGeometry); override;
 
             public
                 //constructor
@@ -48,7 +48,7 @@ implementation
 
         //drawing procedures
             //auto detect geom type
-                procedure TDirect2DGraphicDrawer.drawGeometry(const drawingGeometryIn : TDrawingGeometry);
+                procedure TDirect2DGraphicDrawer.drawGeometry(const drawingGeometryIn : TGraphicGeometry);
                     begin
                         drawDirect2DGeometry(   drawingGeometryIn,
                                                 axisConverter,

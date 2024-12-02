@@ -1,18 +1,18 @@
-unit DrawingObjectBaseClass;
+unit GraphicObjectBaseClass;
 
 interface
 
     uses
         vcl.Graphics,
-        DrawingTypes
+        GraphicDrawingTypes
         ;
 
     type
-        TDrawingObject = class
+        TGraphicObject = class
             private
                 var
                     lineThickness       : integer;
-                    objectDrawingType   : EDrawingType;
+                    objectDrawingType   : EGraphicDrawing;
                     fillColour,
                     lineColour          : TColor;
                     lineStyle           : TPenStyle;
@@ -20,7 +20,7 @@ interface
                     //line thickness
                         procedure setLineThickness(const lineThicknessIn : integer); inline;
                     //drawing type
-                        procedure setDrawingType(const drawingTypeIn : EDrawingType); inline;
+                        procedure setGraphicDrawingType(const drawingTypeIn : EGraphicDrawing); inline;
                     //colours
                         procedure setFillColour(const fillColourIn : TColor); inline;
                         procedure setLineColour(const lineColourIn : TColor); inline;
@@ -28,18 +28,22 @@ interface
                         procedure setLineStyle(const lineStyleIn : TPenStyle); inline;
             protected
                 procedure setValues(const   lineThicknessIn : integer;
-                                    const   drawingTypeIn   : EDrawingType;
+                                    const   drawingTypeIn   : EGraphicDrawing;
                                     const   fillColourIn,
                                             lineColourIn    : TColor;
                                     const   lineStyleIn     : TPenStyle     );
             public
                 //constructor
-                    constructor create(); virtual;
+                    constructor create( const   lineThicknessIn : integer;
+                                        const   drawingTypeIn   : EGraphicDrawing;
+                                        const   fillColourIn,
+                                                lineColourIn    : TColor;
+                                        const   lineStyleIn     : TPenStyle     );
                 //destructor
                     destructor destroy(); override;
                 //accessors
                     //drawing type
-                        function getDrawingType() : EDrawingType; inline;
+                        function getGraphicDrawingType() : EGraphicDrawing; inline;
                     //line thickness
                         function getLineThickness() : integer; inline;
                     //colours
@@ -54,87 +58,97 @@ implementation
     //private
         //modifiers
             //line thickness
-                procedure TDrawingObject.setLineThickness(const lineThicknessIn : integer);
+                procedure TGraphicObject.setLineThickness(const lineThicknessIn : integer);
                     begin
                         lineThickness := lineThicknessIn;
                     end;
 
             //drawing type
-                procedure TDrawingObject.setDrawingType(const drawingTypeIn : EDrawingType);
+                procedure TGraphicObject.setGraphicDrawingType(const drawingTypeIn : EGraphicDrawing);
                     begin
                         objectDrawingType := drawingTypeIn;
                     end;
 
             //colours
-                procedure TDrawingObject.setFillColour(const fillColourIn : TColor);
+                procedure TGraphicObject.setFillColour(const fillColourIn : TColor);
                     begin
                         fillColour := fillColourIn;
                     end;
 
-                procedure TDrawingObject.setLineColour(const lineColourIn : TColor);
+                procedure TGraphicObject.setLineColour(const lineColourIn : TColor);
                     begin
                         lineColour := lineColourIn;
                     end;
 
             //line style
-                procedure TDrawingObject.setLineStyle(const lineStyleIn : TPenStyle);
+                procedure TGraphicObject.setLineStyle(const lineStyleIn : TPenStyle);
                     begin
                         lineStyle := lineStyleIn;
                     end;
 
     //protected
-        procedure TDrawingObject.setValues( const   lineThicknessIn : integer;
-                                            const   drawingTypeIn   : EDrawingType;
+        procedure TGraphicObject.setValues( const   lineThicknessIn : integer;
+                                            const   drawingTypeIn   : EGraphicDrawing;
                                             const   fillColourIn,
                                                     lineColourIn    : TColor;
                                             const   lineStyleIn     : TPenStyle     );
             begin
-                setLineThickness(   lineThicknessIn     );
-                setDrawingType(     drawingTypeIn       );
-                setFillColour(      fillColourIn        );
-                setLineColour(      lineColourIn        );
-                setLineStyle(       lineStyleIn         );
+                setLineThickness(       lineThicknessIn     );
+                setGraphicDrawingType(  drawingTypeIn       );
+                setFillColour(          fillColourIn        );
+                setLineColour(          lineColourIn        );
+                setLineStyle(           lineStyleIn         );
             end;
 
     //public
         //constructor
-            constructor TDrawingObject.create();
+            constructor TGraphicObject.create(  const   lineThicknessIn : integer;
+                                                const   drawingTypeIn   : EGraphicDrawing;
+                                                const   fillColourIn,
+                                                        lineColourIn    : TColor;
+                                                const   lineStyleIn     : TPenStyle     );
                 begin
                     inherited create();
+
+                    setValues(  lineThicknessIn,
+                                drawingTypeIn,
+                                fillColourIn,
+                                lineColourIn,
+                                lineStyleIn     );
                 end;
 
         //destructor
-            destructor TDrawingObject.destroy();
+            destructor TGraphicObject.destroy();
                 begin
                     inherited destroy();
                 end;
 
         //accessors
             //drawing type
-                function TDrawingObject.getDrawingType() : EDrawingType;
+                function TGraphicObject.getGraphicDrawingType() : EGraphicDrawing;
                     begin
                         result := objectDrawingType;
                     end;
 
             //line thickness
-                function TDrawingObject.getLineThickness() : integer;
+                function TGraphicObject.getLineThickness() : integer;
                     begin
                         result := lineThickness;
                     end;
 
             //colours
-                function TDrawingObject.getFillColour() : TColor;
+                function TGraphicObject.getFillColour() : TColor;
                     begin
                         result := fillColour;
                     end;
 
-                function TDrawingObject.getLineColour() : TColor;
+                function TGraphicObject.getLineColour() : TColor;
                     begin
                         result := lineColour;
                     end;
 
             //line style
-                function TDrawingObject.getLineStyle() : TPenStyle;
+                function TGraphicObject.getLineStyle() : TPenStyle;
                     begin
                         result := lineStyle;
                     end;

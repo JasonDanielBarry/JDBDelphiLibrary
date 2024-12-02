@@ -1,4 +1,4 @@
-unit DrawingGeometryClass;
+unit GraphicGeometryClass;
 
 interface
 
@@ -8,15 +8,15 @@ interface
             vcl.Graphics,
         //custom
             ColourMethods,
-            DrawingTypes,
-            DrawingObjectBaseClass,
+            GraphicDrawingTypes,
+            GraphicObjectBaseClass,
             DrawingAxisConversionClass,
             GeometryTypes,
             GeometryBaseClass
             ;
 
     type
-        TDrawingGeometry = class(TDrawingObject)
+        TGraphicGeometry = class(TGraphicObject)
             strict private
                 var
                     geometry        : TGeomBase;
@@ -48,7 +48,7 @@ implementation
 
     //private
         //free geometry object
-            procedure TDrawingGeometry.freeGeometry();
+            procedure TGraphicGeometry.freeGeometry();
                 begin
                     try
                         FreeAndNil( geometry );
@@ -58,7 +58,7 @@ implementation
                 end;
 
         //set the geometry object
-            procedure TDrawingGeometry.setGeometry(const geometryIn : TGeomBase);
+            procedure TGraphicGeometry.setGeometry(const geometryIn : TGeomBase);
                 begin
                     //free current geometry
                         freeGeometry();
@@ -72,26 +72,24 @@ implementation
 
     //public
         //constructor
-            constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
+            constructor TGraphicGeometry.create(const   lineThicknessIn : integer;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
                 begin
-                    inherited create();
+                    inherited create(   lineThicknessIn,
+                                        geometryIn.getDrawingType(),
+                                        fillColourIn,
+                                        lineColourIn,
+                                        lineStyleIn                 );
 
                     freeGeometry();
-
-                    setValues(  lineThicknessIn,
-                                geometryIn.getDrawingType(),
-                                fillColourIn,
-                                lineColourIn,
-                                lineStyleIn                 );
 
                     setGeometry( geometryIn );
                 end;
 
-            constructor TDrawingGeometry.create(const   lineThicknessIn : integer;
+            constructor TGraphicGeometry.create(const   lineThicknessIn : integer;
                                                 const   lineColourIn    : TColor;
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
@@ -104,7 +102,7 @@ implementation
                 end;
 
         //destructor
-            destructor TDrawingGeometry.destroy();
+            destructor TGraphicGeometry.destroy();
                 begin
                     freeGeometry();
 
@@ -114,13 +112,13 @@ implementation
         
 
         //get the geometry object
-            function TDrawingGeometry.getGeometry() : TGeomBase;
+            function TGraphicGeometry.getGeometry() : TGeomBase;
                 begin
                     result := geometry;
                 end;
 
         //get drawing points
-            function TDrawingGeometry.getDrawingPoints() : TArray<TGeomPoint>;
+            function TGraphicGeometry.getDrawingPoints() : TArray<TGeomPoint>;
                 begin
                     result := drawingPoints;
                 end;

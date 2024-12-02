@@ -4,7 +4,7 @@ interface
 
     uses
         system.sysUtils, system.Math, system.Types,
-        DrawingTypes,
+        GraphicDrawingTypes,
         VectorMethods,
         GeometryMathMethods,
         GeometryTypes, GeomBox,
@@ -35,7 +35,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingType() : EDrawingType; override;
+                    function getDrawingType() : EGraphicDrawing; override;
                     function getStartPoint() : TGeomPoint;
                     function getEndPoint() : TGeomPoint;
                 //modifiers
@@ -251,9 +251,9 @@ implementation
                     end;
 
         //accessors
-            function TGeomLine.getDrawingType() : EDrawingType;
+            function TGeomLine.getDrawingType() : EGraphicDrawing;
                 begin
-                    result := EDrawingType.dtLine;
+                    result := EGraphicDrawing.gdLine;
                 end;
 
             function TGeomLine.getStartPoint() : TGeomPoint;

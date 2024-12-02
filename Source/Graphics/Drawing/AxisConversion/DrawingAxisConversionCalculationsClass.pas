@@ -20,9 +20,9 @@ interface
                     function X_to_L(const X_In : double) : double; inline;
                     function Y_to_T(const Y_In : double) : double; inline;
                 //canvas-to-drawing
-                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload;
+                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload; inline;
                 //drawing-to-canvas
-                    function XY_to_LT(const X_In, Y_In : double) : TPointF; overload;
+                    function XY_to_LT(const X_In, Y_In : double) : TPointF; overload; inline;
             public
                 //constructor
                     constructor create(); override;
@@ -89,24 +89,20 @@ implementation
 
         //canvasSpace-to-drawing
             function TDrawingAxisConvertionCalculator.LT_to_XY(const L_In, T_In : double) : TGeomPoint;
-                var
-                    pointOut : TGeomPoint;
                 begin
-                    pointOut.x := L_to_X(L_In);
-                    pointOut.y := T_to_Y(T_In);
-
-                    result := pointOut;
+                    result.setPoint(
+                                        L_to_X(L_In),
+                                        T_to_Y(T_In)
+                                   );
                 end;
 
         //drawing-to-canvas
             function TDrawingAxisConvertionCalculator.XY_to_LT(const X_In, Y_In : double) : TPointF;
-                var
-                    pointOut : TPointF;
                 begin
-                    pointOut.x := X_to_L(X_In);
-                    pointOut.y := Y_to_T(Y_In);
-
-                    result := pointOut;
+                    result.SetLocation(
+                                            X_to_L(X_In),
+                                            Y_to_T(Y_In)
+                                      );
                 end;
 
     //public

@@ -8,7 +8,7 @@ interface
         system.sysutils, system.Math,
         LinearAlgebraTypes,
         VectorMethods,
-        DrawingTypes,
+        GraphicDrawingTypes,
         GeometryTypes,
         GeometryBaseClass;
 
@@ -33,7 +33,7 @@ interface
             //destructor
                 destructor destroy(); override;
             //accessors
-                function getDrawingType() : EDrawingType; override;
+                function getDrawingType() : EGraphicDrawing; override;
             //dimension manipulation
                 //set dimensions
                     procedure setDimensions(dimensionCountIn : integer);
@@ -113,9 +113,9 @@ implementation
                 end;
 
         //accessors
-            function TGeomSpaceVector.getDrawingType() : EDrawingType;
+            function TGeomSpaceVector.getDrawingType() : EGraphicDrawing;
                 begin
-                    result := EDrawingType.dtSpaceVector;
+                    result := EGraphicDrawing.gdSpaceVector;
                 end;
 
         //length manipulation

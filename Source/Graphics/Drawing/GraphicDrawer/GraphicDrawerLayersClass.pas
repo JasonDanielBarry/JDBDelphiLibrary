@@ -8,7 +8,7 @@ interface
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
-            DrawingGeometryClass,
+            GraphicGeometryClass,
             GeometryTypes, GeomBox,
             GeometryBaseClass,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass,
@@ -19,8 +19,8 @@ interface
         TGraphicDrawerLayers = class(TGraphicDrawer)
             strict private
                 type
-                    TLayerGeometryPair  = TPair<string, TArray<TDrawingGeometry>>;
-                    TLayerGeometryMap   = TDictionary<string, TArray<TDrawingGeometry>>;
+                    TLayerGeometryPair  = TPair<string, TArray<TGraphicGeometry>>;
+                    TLayerGeometryMap   = TDictionary<string, TArray<TGraphicGeometry>>;
                 var
                     currentDrawingLayer : string;
                     orderedLayerKeys    : TList<string>;
@@ -28,11 +28,11 @@ interface
                     layerGeometryMap    : TLayerGeometryMap;
                 //helper methods
                     //return a specified layer's drawing geometry array
-                        function getArrDrawingGeom(const layerKeyIn : string) : TArray<TDrawingGeometry>;
+                        function getArrDrawingGeom(const layerKeyIn : string) : TArray<TGraphicGeometry>;
                     //return a layer's geometry array for bounding box
                         function getArrGeom(const layerKeyIn : string) : TArray<TGeomBase>;
                     //add drawing geometry to the layer-geometry map
-                        procedure addGeometry(const drawingGeometryIn : TDrawingGeometry); override;
+                        procedure addGeometry(const drawingGeometryIn : TGraphicGeometry); override;
                     //calculate the geometry net bounding box for active geometry
                         procedure calculateGeomBoundingBox();
             strict protected
@@ -57,9 +57,9 @@ implementation
     //private
         //helper methods
             //return a drawing geometry array for a specified layer
-                function TGraphicDrawerLayers.getArrDrawingGeom(const layerKeyIn : string) : TArray<TDrawingGeometry>;
+                function TGraphicDrawerLayers.getArrDrawingGeom(const layerKeyIn : string) : TArray<TGraphicGeometry>;
                     var
-                        arrDrawingGeomOut : TArray<TDrawingGeometry>;
+                        arrDrawingGeomOut : TArray<TGraphicGeometry>;
                     begin
                         layerGeometryMap.TryGetValue( layerKeyIn, arrDrawingGeomOut );
 
@@ -71,7 +71,7 @@ implementation
                     var
                         i, arrLen       : integer;
                         arrGeomOut      : TArray<TGeomBase>;
-                        arrDrawingGeom  : TArray<TDrawingGeometry>;
+                        arrDrawingGeom  : TArray<TGraphicGeometry>;
                     begin
                         arrDrawingGeom := getArrDrawingGeom( layerKeyIn );
 
@@ -86,10 +86,10 @@ implementation
                     end;
 
             //add geometry to the layer-geometry map
-                procedure TGraphicDrawerLayers.addGeometry(const drawingGeometryIn : TDrawingGeometry);
+                procedure TGraphicDrawerLayers.addGeometry(const drawingGeometryIn : TGraphicGeometry);
                     var
                         geomCount       : integer;
-                        arrDrawingGeom  : TArray<TDrawingGeometry>;
+                        arrDrawingGeom  : TArray<TGraphicGeometry>;
                     begin
                         //if the current layer is not set then set to default
                             if (currentDrawingLayer = '') then
@@ -144,7 +144,7 @@ implementation
                     var
                         i                   : integer;
                         layer               : string;
-                        arrDrawingGeometry  : TArray<TDrawingGeometry>;
+                        arrDrawingGeometry  : TArray<TGraphicGeometry>;
                     begin
                         inherited drawAllGeometry( canvasWidthIn, canvasHeightIn );
 
@@ -193,7 +193,7 @@ implementation
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);
                 var
                     layerExists         : boolean;
-                    drawingGeomArray    : TArray<TDrawingGeometry>;
+                    drawingGeomArray    : TArray<TGraphicGeometry>;
                 begin
                     currentDrawingLayer := layerKeyIn;
 
@@ -224,9 +224,9 @@ implementation
                 var
                     layer               : string;
                     arrDrawingLayers    : TArray<string>;
-                    arrDrawingGeom      : TArray<TDrawingGeometry>;
+                    arrDrawingGeom      : TArray<TGraphicGeometry>;
                 procedure
-                    _freeDrawingGeometry( var arrDrawingGeometryInOut : TArray<TDrawingGeometry> );
+                    _freeDrawingGeometry( var arrDrawingGeometryInOut : TArray<TGraphicGeometry> );
                         var
                             i : integer;
                         begin

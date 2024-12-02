@@ -9,7 +9,7 @@ interface
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
-            DrawingGeometryClass,
+            GraphicGeometryClass,
             GeometryTypes, GeomBox,
             GeometryBaseClass,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass
@@ -22,10 +22,10 @@ interface
                     drawingBackgroundColour : TColor;
                     axisConverter           : TDrawingAxisConverter;
                 //add drawing geometry to the drawing object container
-                    procedure addGeometry(const drawingGeometryIn : TDrawingGeometry); virtual; abstract;
+                    procedure addGeometry(const drawingGeometryIn : TGraphicGeometry); virtual; abstract;
                 //drawing procedures
                     //draw a drawing geometry object
-                        procedure drawGeometry(const drawingGeometryIn : TDrawingGeometry); virtual; abstract;
+                        procedure drawGeometry(const drawingGeometryIn : TGraphicGeometry); virtual; abstract;
                     //draw all geometry
                         procedure drawAllGeometry(const canvasWidthIn, canvasHeightIn : integer); virtual;
             public
@@ -89,9 +89,9 @@ implementation
                                             const colourIn          : TColor = TColors.Black;
                                             const styleIn           : TPenStyle = TPenStyle.psSolid );
                 var
-                    newDrawingGeometry : TDrawingGeometry;
+                    newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
+                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
                                                                     colourIn,
                                                                     styleIn,
                                                                     lineIn          );
@@ -99,14 +99,14 @@ implementation
                     addGeometry( newDrawingGeometry );
                 end;
 
-            procedure TGraphicDrawer.addPolyline(  const polylineIn        : TGeomPolyLine;
-                                                const lineThicknessIn   : integer = 2;
-                                                const colourIn          : TColor = TColors.Black;
-                                                const styleIn           : TPenStyle = TPenStyle.psSolid );
+            procedure TGraphicDrawer.addPolyline(   const polylineIn        : TGeomPolyLine;
+                                                    const lineThicknessIn   : integer = 2;
+                                                    const colourIn          : TColor = TColors.Black;
+                                                    const styleIn           : TPenStyle = TPenStyle.psSolid );
                 var
-                    newDrawingGeometry : TDrawingGeometry;
+                    newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
+                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
                                                                     colourIn,
                                                                     styleIn,
                                                                     polylineIn      );
@@ -120,9 +120,9 @@ implementation
                                                 const lineColourIn      : TColor = TColors.Black;
                                                 const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
                 var
-                    newDrawingGeometry : TDrawingGeometry;
+                    newDrawingGeometry : TGraphicGeometry;
                 begin
-                    newDrawingGeometry := TDrawingGeometry.create(  lineThicknessIn,
+                    newDrawingGeometry := TGraphicGeometry.create(  lineThicknessIn,
                                                                     fillColourIn,
                                                                     lineColourIn,
                                                                     lineStyleIn,

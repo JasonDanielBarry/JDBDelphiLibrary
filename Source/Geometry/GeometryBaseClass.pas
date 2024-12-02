@@ -4,7 +4,7 @@ interface
 
     uses
         system.SysUtils, system.Math,
-        DrawingTypes,
+        GraphicDrawingTypes,
         GeometryTypes, GeomBox,
         DrawingAxisConversionClass;
 
@@ -17,7 +17,7 @@ interface
             public
                 constructor create();
                 destructor destroy(); override;
-                function getDrawingType() : EDrawingType; virtual; abstract;
+                function getDrawingType() : EGraphicDrawing; virtual; abstract;
                 function boundingBox() : TGeomBox; virtual; abstract;
                 function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
                 procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;

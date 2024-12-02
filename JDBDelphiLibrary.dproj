@@ -135,9 +135,9 @@
         <DCCReference Include="Source\Geometry\GeomBox.pas"/>
         <DCCReference Include="Source\Mathematics\LinearInterpolationMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\DrawingTypes.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\DrawingGeometryClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\DrawingObjectBaseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingTypes.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicGeometryClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerAxisConversionInterfaceClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas"/>

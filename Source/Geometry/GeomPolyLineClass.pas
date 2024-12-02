@@ -4,7 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math,
-        DrawingTypes,
+        GraphicDrawingTypes,
         GeometryTypes, GeomBox,
         GeometryMathMethods,
         GeometryBaseClass,
@@ -23,7 +23,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingType() : EDrawingType; override;
+                    function getDrawingType() : EGraphicDrawing; override;
                     function getVertex(indexIn : integer) : TGeomPoint;
                 //modifiers
                     //add a new vertex and line
@@ -71,9 +71,9 @@ implementation
                 end;
 
         //accessors
-            function TGeomPolyLine.getDrawingType() : EDrawingType;
+            function TGeomPolyLine.getDrawingType() : EGraphicDrawing;
                 begin
-                    result := EDrawingType.dtPolyline;
+                    result := EGraphicDrawing.gdPolyline;
                 end;
 
             function TGeomPolyLine.getVertex(indexIn : integer) : TGeomPoint;
