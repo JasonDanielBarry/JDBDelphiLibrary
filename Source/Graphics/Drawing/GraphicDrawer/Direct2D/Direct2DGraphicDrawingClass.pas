@@ -17,13 +17,13 @@ interface
         TDirect2DGraphicDrawer = class(TGraphicDrawerAxisConversionInterface)
             public
                 //constructor
-                    constructor create();
+                    constructor create(); override;
                 //destructor
                     destructor destroy(); override;
                 //draw all geometry
-                    procedure drawAllGeometry(  const canvasWidthIn, canvasHeightIn : integer;
-                                                const drawingBackgroundColourIn     : TColor;
-                                                const canvasIn                      : TDirect2DCanvas );
+                    procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
+                                        const drawingBackgroundColourIn     : TColor;
+                                        const canvasIn                      : TDirect2DCanvas );
         end;
 
 implementation
@@ -45,14 +45,14 @@ implementation
                 end;
 
         //draw all geometry
-            procedure TDirect2DGraphicDrawer.drawAllGeometry(   const canvasWidthIn, canvasHeightIn : integer;
-                                                                const drawingBackgroundColourIn     : TColor;
-                                                                const canvasIn                      : TDirect2DCanvas   );
+            procedure TDirect2DGraphicDrawer.drawAll(   const canvasWidthIn, canvasHeightIn : integer;
+                                                        const drawingBackgroundColourIn     : TColor;
+                                                        const canvasIn                      : TDirect2DCanvas   );
                 begin
                     Direct2DDrawingCanvas := canvasIn;
 
                     //draw all geometry
-                        inherited drawAllGeometry( canvasWidthIn, canvasHeightIn, drawingBackgroundColourIn );
+                        inherited drawAll( canvasWidthIn, canvasHeightIn, drawingBackgroundColourIn );
                 end;
 
 end.

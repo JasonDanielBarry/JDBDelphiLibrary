@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, system.UITypes, system.Math,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, vcl.Styles, vcl.Themes,
-  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawerBaseClass,
+  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawerObjectAdderClass,
   GeometryTypes,
   GeomLineClass, GeomPolyLineClass, GeomPolygonClass, Vcl.StdCtrls;
 
@@ -17,15 +17,15 @@ type
     ComboBox1: TComboBox;
     LabelSelectGraphic: TLabel;
     procedure JDBGraphic2D1UpdateGeometry(  ASender         : TObject;
-                                            var AGeomDrawer : TGraphicDrawer   );
+                                            var AGeomDrawer : TGraphicDrawerObjectAdder );
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
   private
     //different graphics
-        procedure BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawer);
-        procedure XYGraphs(var GeomDrawerInOut : TGraphicDrawer);
-        procedure FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawer);
-        procedure SoilNailWallGraphic(var GeomDrawerInOut : TGraphicDrawer);
+        procedure BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure XYGraphs(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure SoilNailWallGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -39,7 +39,7 @@ implementation
 {$R *.dfm}
 
     //different graphics
-        procedure TForm1.BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawer);
+        procedure TForm1.BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
             var
                 i               : integer;
                 x, y            : double;
@@ -94,7 +94,7 @@ implementation
                     FreeAndNil( polyline );
             end;
 
-        procedure TForm1.XYGraphs(var GeomDrawerInOut : TGraphicDrawer);
+        procedure TForm1.XYGraphs(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
             const
                 X_MAX = 500;
                 Y_MAX = 250;
@@ -164,7 +164,7 @@ implementation
                     FreeAndNil( polyLine );
             end;
 
-    procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawer);
+    procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
         var
             i, j    : integer;
             line    : TGeomLine;
@@ -313,7 +313,7 @@ implementation
                     end;
         end;
 
-    procedure TForm1.SoilNailWallGraphic(var GeomDrawerInOut: TGraphicDrawer);
+    procedure TForm1.SoilNailWallGraphic(var GeomDrawerInOut: TGraphicDrawerObjectAdder);
         var
             line    : TGeomLine;
             polygon : TGeomPolygon;
@@ -416,8 +416,8 @@ implementation
             JDBGraphic2D1.zoomAll();
         end;
 
-    procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender : TObject;
-                                                    var AGeomDrawer : TGraphicDrawer);
+    procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender         : TObject;
+                                                    var AGeomDrawer : TGraphicDrawerObjectAdder );
         begin
             case (ComboBox1.ItemIndex) of
                 0:

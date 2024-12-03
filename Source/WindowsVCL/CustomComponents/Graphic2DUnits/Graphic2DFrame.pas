@@ -12,7 +12,7 @@ interface
         GeneralComponentHelperMethods,
         ColourMethods,
         GeometryTypes, GeomBox,
-        GraphicDrawerBaseClass, Direct2DGraphicDrawingClass,
+        GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
         Graphic2DTypes, Vcl.CheckLst
         ;
 
@@ -523,12 +523,12 @@ implementation
 
                             //preDrawGraphic( D2DBufferCanvas );
 
-                            D2DGraphicDrawer.drawAllGeometry(
-                                                                PaintBoxGraphic.Width,
-                                                                PaintBoxGraphic.Height,
-                                                                graphicBackgroundColour,
-                                                                D2DBufferCanvas
-                                                            );
+                            D2DGraphicDrawer.drawAll(
+                                                        PaintBoxGraphic.Width,
+                                                        PaintBoxGraphic.Height,
+                                                        graphicBackgroundColour,
+                                                        D2DBufferCanvas
+                                                    );
 
                             postDrawGraphic( D2DBufferCanvas );
 
@@ -659,7 +659,7 @@ implementation
 
                     //update the D2DGraphicDrawer geometry
                         if ( Assigned(onGraphicUpdateGeometryEvent) ) then
-                            onGraphicUpdateGeometryEvent( self, TGraphicDrawer(D2DGraphicDrawer) );
+                            onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
 
                     //do layer table
                         updateLayerTable();
