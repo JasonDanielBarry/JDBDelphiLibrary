@@ -9,13 +9,21 @@ interface
         function max(const value1In, value2In, value3In : double) : double; overload;
 
     //scale line
+        procedure scaleLinear(  const   startValueIn, endValueIn,
+                                        scaleFactorIn           : double;
+                                out     newEndValueOut          : double ); overload;
+
         procedure scaleLinear(  const   startValueIn,       endValueIn,
                                         scaleAboutValueIn,  scaleFactorIn   : double;
-                                out     newStartValueOut,   newEndValueOut  : double );
+                                out     newStartValueOut,   newEndValueOut  : double ); overload;
+
+        procedure resizeLine(   const   startValueIn, endValueIn,
+                                        newLengthIn             : double;
+                                out     newEndValueOut          : double    ); overload;
 
         procedure resizeLine(   const   startValueIn,       endValueIn,
                                         scaleAboutValueIn,  newLengthIn     : double;
-                                out     newStartValueOut,   newEndValueOut  : double    );
+                                out     newStartValueOut,   newEndValueOut  : double    ); overload;
 
 implementation
 
@@ -28,9 +36,9 @@ implementation
             end;
 
     //scale line
-        procedure scaleLinear(  const   startValueIn,       endValueIn,
-                                        scaleAboutValueIn,  scaleFactorIn   : double;
-                                out     newStartValueOut,   newEndValueOut  : double );
+        procedure scaleLinear(  const   startValueIn, endValueIn,
+                                        scaleFactorIn           : double;
+                                out     newEndValueOut          : double );
             var
                 changeFactor,
                 lengthChange, lengthLow, lengthHigh, lengthOld : double;
@@ -38,7 +46,6 @@ implementation
                 //check if the start value and end value are identical - cannot divide by zero
                     if ( SameValue(startValueIn, endValueIn) ) then
                         begin
-                            newStartValueOut := startValueIn;
                             newEndValueOut := endValueIn;
 
                             exit();
@@ -47,21 +54,36 @@ implementation
                 //calculate old length
                     lengthOld := endValueIn - startValueIn;
 
-                //calculate length low and high
-                    lengthLow   := scaleAboutValueIn - startValueIn;
-                    lengthHigh  := endValueIn - scaleAboutValueIn;
-
                 //calculate change in length
                     lengthChange := (scaleFactorIn - 1) * lengthOld;
 
-                //calculate change factor
-                    changeFactor := lengthChange / lengthOld;
-
-                //calculate new start value
-                    newStartValueOut := startValueIn - changeFactor * lengthLow;
-
                 //calculate new end value
-                    newEndValueOut := endValueIn + changeFactor * lengthHigh;
+                    newEndValueOut := endValueIn + lengthChange;
+            end;
+
+        procedure scaleLinear(  const   startValueIn,       endValueIn,
+                                        scaleAboutValueIn,  scaleFactorIn   : double;
+                                out     newStartValueOut,   newEndValueOut  : double );
+            begin
+                //scale from start value to scale-about-value
+                    scaleLinear( scaleAboutValueIn, startValueIn, scaleFactorIn, newStartValueOut );
+
+                //scale from scale-about-value to end value
+                    scaleLinear( scaleAboutValueIn, endValueIn, scaleFactorIn, newEndValueOut );
+            end;
+
+        procedure resizeLine(   const   startValueIn, endValueIn,
+                                        newLengthIn             : double;
+                                out     newEndValueOut          : double    );
+            var
+                scaleFactor : double;
+            begin
+                //the scale factor is the ratio of the new line length to the old line length
+                    scaleFactor := abs( newLengthIn / (endValueIn - startValueIn) );
+
+                scaleLinear(startValueIn, endValueIn,
+                            scaleFactor,
+                            newEndValueOut          );
             end;
 
         procedure resizeLine(   const   startValueIn,       endValueIn,
@@ -71,11 +93,11 @@ implementation
                 scaleFactor : double;
             begin
                 //the scale factor is the ratio of the new line length to the old line length
-                    scaleFactor := newLengthIn / (endValueIn - startValueIn);
+                    scaleFactor := abs( newLengthIn / (endValueIn - startValueIn) );
 
                 scaleLinear(startValueIn,       endValueIn,
                             scaleAboutValueIn,  scaleFactor,
-                            newStartValueOut,   newEndValueOut);
+                            newStartValueOut,   newEndValueOut );
             end;
 
 
