@@ -60,7 +60,8 @@ uses
   GraphicLineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicLineClass.pas',
   GraphicPolylineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolylineClass.pas',
   GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas',
-  GraphicDrawerObjectAdderClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas';
+  GraphicDrawerObjectAdderClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas',
+  GraphicTextClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

@@ -53,8 +53,8 @@ implementation
                 end;
 
         //draw to canvas
-            procedure TGraphicPolygon.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
-                                                var canvasInOut         : TDirect2DCanvas       );
+            procedure TGraphicPolygon.drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
+                                                    var canvasInOut         : TDirect2DCanvas       );
                 var
                     pathGeometry : ID2D1PathGeometry;
                 begin

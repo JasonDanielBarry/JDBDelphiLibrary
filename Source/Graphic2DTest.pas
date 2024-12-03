@@ -22,10 +22,10 @@ type
     procedure ComboBox1Change(Sender: TObject);
   private
     //different graphics
-        procedure BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure XYGraphs(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure SoilNailWallGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure BlueBoxGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure FinPlateGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure SoilNailWallGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -39,7 +39,7 @@ implementation
 {$R *.dfm}
 
     //different graphics
-        procedure TForm1.BlueBoxGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure TForm1.BlueBoxGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
             var
                 i               : integer;
                 x, y            : double;
@@ -49,7 +49,7 @@ implementation
                 polygon         : TGeomPolygon;
             begin
                 //box
-                    GeomDrawerInOut.setCurrentDrawingLayer('Polygon Layer');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Polygon Layer');
 
                     polygon := TGeomPolygon.create();
 
@@ -58,24 +58,28 @@ implementation
                     polygon.addVertex(100, 100);
                     polygon.addVertex(10, 100);
 
-                    GeomDrawerInOut.addPolygon( polygon, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
+                    GraphicDrawerInOut.addPolygon( polygon, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                     FreeAndNil( polygon );
 
+                    GraphicDrawerInOut.addText('This is a box', 50, 50);
+
                 //line 1
-                    GeomDrawerInOut.setCurrentDrawingLayer('Line Layer');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');
 
                      point1 := TGeomPoint.create(-5, -5);
                      point2 := TGeomPoint.create(115, 115);
 
                      line := TGeomLine.create(point1, point2);
 
-                     GeomDrawerInOut.addLine(line, 4, TColors.Black);
+                     GraphicDrawerInOut.addLine(line, 4, TColors.Black);
 
                      FreeAndNil( line );
 
+                    GraphicDrawerInOut.addText('This is a line', 115, 115);
+
                 //polyline
-                    GeomDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
 
                     polyline := TGeomPolyLine.create();
 
@@ -89,12 +93,21 @@ implementation
                             polyline.addVertex(x, y);
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
+                    GraphicDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
 
                     FreeAndNil( polyline );
+
+                    GraphicDrawerInOut.addText('This is a polyline', 140, 140);
+
+                //text
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer');
+
+                    GraphicDrawerInOut.addText('This is a short'#13'sentence of'#13'4 lines'#13'at (0, 0)', 0, 0);
+
+                    GraphicDrawerInOut.addText('This is a short'#13'sentence of'#13'4 lines'#13'at (200, 10)', 200, 10);
             end;
 
-        procedure TForm1.XYGraphs(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
             const
                 X_MAX = 500;
                 Y_MAX = 250;
@@ -103,14 +116,14 @@ implementation
                 line        : TGeomLine;
                 polyLine    : TGeomPolyLine;
             begin
-                GeomDrawerInOut.setCurrentDrawingLayer('XY - Axes');
+                GraphicDrawerInOut.setCurrentDrawingLayer('XY - Axes');
 
                 //x-axis
                     line := TGeomLine.create(
                                                 TGeomPoint.create(0, 0), TGeomPoint.create(X_MAX, 0)
                                             );
 
-                    GeomDrawerInOut.addLine(line);
+                    GraphicDrawerInOut.addLine(line);
 
                     FreeAndNil( line );
 
@@ -119,12 +132,12 @@ implementation
                                                 TGeomPoint.create(0, 0), TGeomPoint.create(0, Y_MAX)
                                             );
 
-                    GeomDrawerInOut.addLine(line);
+                    GraphicDrawerInOut.addLine(line);
 
                     FreeAndNil( line );
 
                 //quadratic curve
-                    GeomDrawerInOut.setCurrentDrawingLayer('Quadratic curve');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Quadratic curve');
 
                     polyLine := TGeomPolyLine.create();
 
@@ -139,12 +152,12 @@ implementation
                             x := x + 0.5;
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
+                    GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
 
                     FreeAndNil( polyLine );
 
                 //Trig curve
-                    GeomDrawerInOut.setCurrentDrawingLayer('Trig curve');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Trig curve');
 
                     polyLine := TGeomPolyLine.create();
 
@@ -159,12 +172,12 @@ implementation
                             x := x + 0.25;
                         end;
 
-                    GeomDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
+                    GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
 
                     FreeAndNil( polyLine );
             end;
 
-    procedure TForm1.FinPlateGraphic(var GeomDrawerInOut : TGraphicDrawerObjectAdder);
+    procedure TForm1.FinPlateGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
         var
             i, j    : integer;
             line    : TGeomLine;
@@ -194,7 +207,7 @@ implementation
         begin
             //members
                 //beam
-                    GeomDrawerInOut.setCurrentDrawingLayer('Beam');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Beam');
 
                     polygon := TGeomPolygon.create();
 
@@ -205,7 +218,7 @@ implementation
 
                     polygon.shift(250 + 50, 300);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Lightgreen, TColors.Black );
+                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Lightgreen, TColors.Black );
 
                     FreeAndNil( polygon );
 
@@ -217,7 +230,7 @@ implementation
 
                             line.shift(250 + 50, 300);
 
-                            GeomDrawerInOut.addLine( line, 1 );
+                            GraphicDrawerInOut.addLine( line, 1 );
 
                         //top
                             line := TGeomLine.create();
@@ -226,12 +239,12 @@ implementation
 
                             line.shift(250 + 50, 300);
 
-                            GeomDrawerInOut.addLine( line, 1 );
+                            GraphicDrawerInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
                 //column
-                    GeomDrawerInOut.setCurrentDrawingLayer('Column');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Column');
 
                     polygon := TGeomPolygon.create();
 
@@ -240,7 +253,7 @@ implementation
                     polygon.addVertex(250, 1000);
                     polygon.addVertex(0, 1000);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Cornflowerblue, TColors.Black );
+                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Cornflowerblue, TColors.Black );
 
                     FreeAndNil( polygon );
 
@@ -250,7 +263,7 @@ implementation
                             line.setStartPoint(15, 0);
                             line.setEndPoint(15, 1000);
 
-                            GeomDrawerInOut.addLine( line, 1 );
+                            GraphicDrawerInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
@@ -259,12 +272,12 @@ implementation
                             line.setStartPoint(250 - 15, 0);
                             line.setEndPoint(250 - 15, 1000);
 
-                            GeomDrawerInOut.addLine( line, 1 );
+                            GraphicDrawerInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
                 //plate
-                    GeomDrawerInOut.setCurrentDrawingLayer('Plate');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Plate');
 
                     polygon := TGeomPolygon.create();
 
@@ -275,12 +288,12 @@ implementation
 
                     polygon.shift(250, 400);
 
-                    GeomDrawerInOut.addPolygon( polygon, 1, TColors.Yellow, TColors.Black );
+                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Yellow, TColors.Black );
 
                     FreeAndNil( polygon );
 
             //weld
-                GeomDrawerInOut.setCurrentDrawingLayer('Weld');
+                GraphicDrawerInOut.setCurrentDrawingLayer('Weld');
 
                 polygon := TGeomPolygon.create();
 
@@ -291,12 +304,12 @@ implementation
 
                 polygon.shift(250, 400);
 
-                GeomDrawerInOut.addPolygon( polygon, 1, TColors.Blue, TColors.Black );
+                GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Blue, TColors.Black );
 
                 FreeAndNil( polygon );
 
             //bolts
-                GeomDrawerInOut.setCurrentDrawingLayer('Bolts');
+                GraphicDrawerInOut.setCurrentDrawingLayer('Bolts');
 
                 for i := 0 to 5 do
                     begin
@@ -306,19 +319,19 @@ implementation
 
                                 polygon.shift(250, 400);
 
-                                GeomDrawerInOut.addPolygon( polygon, 3, TColors.Lightslategrey, TColors.Black );
+                                GraphicDrawerInOut.addPolygon( polygon, 3, TColors.Lightslategrey, TColors.Black );
 
                                 FreeAndNil( polygon );
                             end;
                     end;
         end;
 
-    procedure TForm1.SoilNailWallGraphic(var GeomDrawerInOut: TGraphicDrawerObjectAdder);
+    procedure TForm1.SoilNailWallGraphic(var GraphicDrawerInOut: TGraphicDrawerObjectAdder);
         var
             line    : TGeomLine;
             polygon : TGeomPolygon;
         begin
-            GeomDrawerInOut.setCurrentDrawingLayer('Soil');
+            GraphicDrawerInOut.setCurrentDrawingLayer('Soil');
 
             polygon := TGeomPolygon.create();
 
@@ -329,11 +342,11 @@ implementation
             polygon.addVertex(0, 0);
             polygon.addVertex(-2, 0);
 
-            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Lightgreen );
+            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Lightgreen );
 
             FreeAndNil( polygon );
 
-            GeomDrawerInOut.setCurrentDrawingLayer('Failure Wedge');
+            GraphicDrawerInOut.setCurrentDrawingLayer('Failure Wedge');
 
             polygon := TGeomPolygon.create();
 
@@ -341,13 +354,13 @@ implementation
             polygon.addVertex(20, 15);
             polygon.addVertex(0, 15);
 
-            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Orangered );
+            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Orangered );
 
             FreeAndNil( polygon );
 
 
 
-            GeomDrawerInOut.setCurrentDrawingLayer('Soil Nails');
+            GraphicDrawerInOut.setCurrentDrawingLayer('Soil Nails');
 
             begin
                 var y : double;
@@ -363,8 +376,8 @@ implementation
 
                         line.shift(0, y);
 
-                        GeomDrawerInOut.addLine( line, 16, TColors.Grey);
-                        GeomDrawerInOut.addLine( line, 4, TColors.Darkblue );
+                        GraphicDrawerInOut.addLine( line, 16, TColors.Grey);
+                        GraphicDrawerInOut.addLine( line, 4, TColors.Darkblue );
 
                         FreeAndNil( line );
 
@@ -375,7 +388,7 @@ implementation
 
 
 
-            GeomDrawerInOut.setCurrentDrawingLayer('Wall');
+            GraphicDrawerInOut.setCurrentDrawingLayer('Wall');
 
             polygon := TGeomPolygon.create();
 
@@ -384,7 +397,7 @@ implementation
             polygon.addVertex(-0.35, 15);
             polygon.addVertex(-0.35, 0);
 
-            GeomDrawerInOut.addPolygon( polygon, 2, TColors.Yellow );
+            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Yellow );
 
             FreeAndNil( polygon );
         end;

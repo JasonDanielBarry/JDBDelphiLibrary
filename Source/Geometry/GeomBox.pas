@@ -275,26 +275,8 @@ implementation
         procedure TGeomBox.scaleBox(const scaleFactorIn     : double;
                                     const scaleAboutPointIn : TGeomPoint);
             begin
-                //scale x dimensions
-                    scaleLinear(
-                                    self.xMin,              self.xMax,
-                                    scaleAboutPointIn.x,    scaleFactorIn,
-                                    self.minPoint.x,        self.maxPoint.x
-                               );
-
-                //scale y dimensions
-                    scaleLinear(
-                                    self.yMin,              self.yMax,
-                                    scaleAboutPointIn.y,    scaleFactorIn,
-                                    self.minPoint.y,        self.maxPoint.y
-                               );
-
-                //scale z dimensions
-                    scaleLinear(
-                                    self.zMin,              self.zMax,
-                                    scaleAboutPointIn.z,    scaleFactorIn,
-                                    self.minPoint.z,        self.maxPoint.z
-                               );
+                minPoint.scalePoint( scaleFactorIn, scaleAboutPointIn );
+                maxPoint.scalePoint( scaleFactorIn, scaleAboutPointIn );
             end;
 
         procedure TGeomBox.scaleBox(const scaleFactorIn : double);

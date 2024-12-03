@@ -43,7 +43,7 @@ implementation
                                                         const drawingBackgroundColourIn     : TColor    );
                     begin
                         //set axis converter canvas dimensions
-                            axisConverter.setCanvasDimensions( canvasHeightIn, canvasWidthIn );
+                            axisConverter.setCanvasDimensions( canvasWidthIn, canvasHeightIn );
 
                         //set the drawing space ratio
                             axisConverter.setDrawingSpaceRatio( 1 );

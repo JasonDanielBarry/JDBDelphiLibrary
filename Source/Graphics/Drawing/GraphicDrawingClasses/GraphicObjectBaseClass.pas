@@ -29,11 +29,12 @@ interface
 
             public
                 //constructor
+                    constructor create(); overload;
                     constructor create( const   lineThicknessIn : integer;
                                         const   drawingTypeIn   : EGraphicDrawing;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle     );
+                                        const   lineStyleIn     : TPenStyle     ); overload;
                 //destructor
                     destructor destroy(); override;
                 //draw to canvas
@@ -67,6 +68,11 @@ implementation
 
     //public
         //constructor
+            constructor TGraphicObject.create();
+                begin
+                    inherited create();
+                end;
+
             constructor TGraphicObject.create(  const   lineThicknessIn : integer;
                                                 const   drawingTypeIn   : EGraphicDrawing;
                                                 const   fillColourIn,

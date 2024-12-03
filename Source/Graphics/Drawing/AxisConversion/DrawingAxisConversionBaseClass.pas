@@ -22,7 +22,7 @@ interface
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
-                        procedure setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
+                        procedure setCanvasDimensions(const canvasWidthIn, canvasHeightIn : integer);
                     //drawing space boundaries
                         procedure setDrawingRegion( const bufferIn : double;
                                                     const regionIn : TGeomBox ); overload;
@@ -59,7 +59,7 @@ implementation
 
         //modifiers
             //canvasSpace boundaries
-                procedure TDrawingAxisConverterBase.setCanvasDimensions(const canvasHeightIn, canvasWidthIn : integer);
+                procedure TDrawingAxisConverterBase.setCanvasDimensions(const canvasWidthIn, canvasHeightIn : integer);
                     begin
                         canvasDimensions.Width  := canvasWidthIn;
                         canvasDimensions.Height := canvasHeightIn;

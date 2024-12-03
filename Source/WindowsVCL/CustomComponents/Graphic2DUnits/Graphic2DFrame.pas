@@ -107,7 +107,7 @@ interface
                 //components positions
                     procedure positionComponents();
                 //layer table
-                    procedure getActiveLayers();
+                    procedure sendActiveLayersToGraphicDrawer();
                     procedure updateLayerTable();
                 //mouse methods
                     procedure updateMouseCoordinates();
@@ -162,7 +162,7 @@ implementation
 
         procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
             begin
-                getActiveLayers();
+                sendActiveLayersToGraphicDrawer();
 
                 redrawGraphic();
             end;
@@ -378,7 +378,7 @@ implementation
                 end;
 
         //layer table
-            procedure TCustomGraphic2D.getActiveLayers();
+            procedure TCustomGraphic2D.sendActiveLayersToGraphicDrawer();
                 var
                     i, activeLayerCount : integer;
                     arrActiveLayers     : TArray<string>;
@@ -663,7 +663,7 @@ implementation
 
                     //do layer table
                         updateLayerTable();
-                        getActiveLayers();
+                        sendActiveLayersToGraphicDrawer();
 
                     //send message to redraw
                         redrawGraphic();

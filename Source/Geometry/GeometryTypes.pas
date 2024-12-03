@@ -33,14 +33,20 @@ interface
                 procedure shiftZ(const deltaZIn : double);
                 procedure shiftPoint(const deltaXIn, deltaYIn : double); overload;
                 procedure shiftPoint(const deltaXIn, deltaYIn, deltaZIn : double); overload;
+            //scale point distance from other point
+                procedure scalePoint(   const scaleFactorIn     : double;
+                                        const referencePointIn  : TGeomPoint    );
             //comparison
                 function greaterThan(const pointIn : TGeomPoint) : boolean;
                 function greaterThanOrEqual(const pointIn : TGeomPoint) : boolean;
                 function isEqual(const pointIn : TGeomPoint) : boolean;
                 function lessThan(const pointIn : TGeomPoint) : boolean;
                 function lessThanOrEqual(const pointIn : TGeomPoint) : boolean;
+
             //calculate centre point
                 class function calculateCentrePoint(const arrPointsIn : TArray<TGeomPoint>) : TGeomPoint; static;
+
+
         end;
 
         TGeomLineIntersectionData = record
@@ -133,9 +139,24 @@ implementation
                 shiftZ( deltaZIn );
             end;
 
+    //scale point distance from other point
+        procedure TGeomPoint.scalePoint(const scaleFactorIn     : double;
+                                        const referencePointIn  : TGeomPoint);
+            begin
+                //scale the x value
+                    scaleLinear(referencePointIn.x, self.x,
+                                scaleFactorIn,      self.x  );
+
+                //scale the y value
+                    scaleLinear(referencePointIn.y, self.y,
+                                scaleFactorIn,      self.y  );
+
+                //scale the z value
+                    scaleLinear(referencePointIn.z, self.z,
+                                scaleFactorIn,      self.z  );
+            end;
+
     //comparison
-
-
         function TGeomPoint.greaterThan(const pointIn : TGeomPoint) : boolean;
             begin
                 result :=       (pointIn.x < self.x)

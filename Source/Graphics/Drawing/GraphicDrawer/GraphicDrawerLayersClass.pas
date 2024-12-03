@@ -30,6 +30,7 @@ interface
                 //helper methods
                     //return a specified layer's graphic objects array
                         function getArrGraphicObjects(const layerKeyIn : string) : TArray<TGraphicObject>;
+                //boudning box
                     //calculate the bounding box for a specific layer
                         function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
                     //calculate the net bounding box for active layers
@@ -66,7 +67,7 @@ implementation
                             setCurrentDrawingLayer( 'Default Layer' );
 
                     //get the drawing geometry array and add the new drawing geometry to it
-                        layerGeometryMap.TryGetValue( currentDrawingLayer, arrGraphicObjects );
+                        arrGraphicObjects := getArrGraphicObjects( currentDrawingLayer );
 
                         graphicObjectCount := length( arrGraphicObjects );
 
@@ -82,13 +83,14 @@ implementation
             //return a drawing geometry array for a specified layer
                 function TGraphicDrawerLayers.getArrGraphicObjects(const layerKeyIn : string) : TArray<TGraphicObject>;
                     var
-                        arrDrawingGeomOut : TArray<TGraphicObject>;
+                        arrGraphicObjectsOut : TArray<TGraphicObject>;
                     begin
-                        layerGeometryMap.TryGetValue( layerKeyIn, arrDrawingGeomOut );
+                        layerGeometryMap.TryGetValue( layerKeyIn, arrGraphicObjectsOut );
 
-                        result := arrDrawingGeomOut;
+                        result := arrGraphicObjectsOut;
                     end;
 
+        //boudning box
             //calculate the bounding box for a specific layer
                 function TGraphicDrawerLayers.calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
                     var
@@ -193,13 +195,18 @@ implementation
         //modifiers
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);
                 var
+                    existsInList,
+                    existsInMap,
                     layerKeyExists      : boolean;
                     drawingGeomArray    : TArray<TGraphicObject>;
                 begin
                     currentDrawingLayer := layerKeyIn;
 
                     //check to see if the layer key exists
-                        layerKeyExists := ( layerGeometryMap.TryGetValue( layerKeyIn, drawingGeomArray ) AND orderedLayerKeys.Contains( currentDrawingLayer ) );
+                        existsInMap     := layerGeometryMap.TryGetValue( layerKeyIn, drawingGeomArray );
+                        existsInList    := orderedLayerKeys.Contains( currentDrawingLayer );
+
+                        layerKeyExists := existsInMap AND existsInList ;
 
                         if (layerKeyExists) then
                             exit();
