@@ -98,5 +98,4 @@ implementation
                     result := TGeomBox.create( textHandlePointXY, textHandlePointXY );
                 end;
 
-
 end.
