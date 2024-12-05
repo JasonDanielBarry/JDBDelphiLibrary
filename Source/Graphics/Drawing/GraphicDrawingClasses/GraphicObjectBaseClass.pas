@@ -13,11 +13,11 @@ interface
     type
         TGraphicObject = class
             private
-
+                //
             protected
                 var
                     lineThickness       : integer;
-                    objectDrawingType   : EGraphicDrawing;
+                    objectDrawingType   : EGraphicObjectType;
                     fillColour,
                     lineColour          : TColor;
                     lineStyle           : TPenStyle;
@@ -29,12 +29,12 @@ interface
 
             public
                 //constructor
-                    constructor create(); overload;
+                    constructor create(const drawingTypeIn : EGraphicObjectType); overload;
                     constructor create( const   lineThicknessIn : integer;
-                                        const   drawingTypeIn   : EGraphicDrawing;
+                                        const   drawingTypeIn   : EGraphicObjectType;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle     ); overload;
+                                        const   lineStyleIn     : TPenStyle         ); overload;
                 //destructor
                     destructor destroy(); override;
                 //draw to canvas
@@ -68,21 +68,22 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicObject.create();
+            constructor TGraphicObject.create(const drawingTypeIn : EGraphicObjectType);
                 begin
                     inherited create();
+
+                    objectDrawingType := drawingTypeIn;
                 end;
 
             constructor TGraphicObject.create(  const   lineThicknessIn : integer;
-                                                const   drawingTypeIn   : EGraphicDrawing;
+                                                const   drawingTypeIn   : EGraphicObjectType;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
-                                                const   lineStyleIn     : TPenStyle     );
+                                                const   lineStyleIn     : TPenStyle             );
                 begin
-                    inherited create();
+                    create( drawingTypeIn );
 
                     lineThickness       := lineThicknessIn;
-                    objectDrawingType   := drawingTypeIn;
                     fillColour          := fillColourIn;
                     lineColour          := lineColourIn;
                     lineStyle           := lineStyleIn;

@@ -17,7 +17,7 @@ interface
             public
                 constructor create();
                 destructor destroy(); override;
-                function getDrawingType() : EGraphicDrawing; virtual; abstract;
+                function getDrawingType() : EGraphicObjectType; virtual; abstract;
                 function boundingBox() : TGeomBox; virtual; abstract;
                 function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
                 procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;

@@ -42,7 +42,7 @@ interface
                     //text
                         procedure addText(  const   textStringIn        : string;
                                             const   textXIn, textYIn    : double;
-                                            const   textHeightIn        : integer = 11;
+                                            const   textSizeIn          : integer = 9;
                                             const   textColourIn        : TColor = TColors.Black;
                                             const   textFontStylesIn    : TFontStyles = []          );
                 //modifiers
@@ -116,7 +116,7 @@ implementation
             //text
                 procedure TGraphicDrawerObjectAdder.addText(const   textStringIn        : string;
                                                             const   textXIn, textYIn    : double;
-                                                            const   textHeightIn        : integer = 11;
+                                                            const   textSizeIn          : integer = 9;
                                                             const   textColourIn        : TColor = TColors.Black;
                                                             const   textFontStylesIn    : TFontStyles = []      );
                     var
@@ -128,7 +128,7 @@ implementation
 
                         textTopLeftPoint := TGeomPoint.create( textXIn, textYIn );
 
-                        newGraphicText := TGraphicText.create(  textHeightIn,
+                        newGraphicText := TGraphicText.create(  textSizeIn,
                                                                 trim( textStringIn ),
                                                                 textColourIn,
                                                                 textFontStylesIn,

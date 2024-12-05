@@ -33,7 +33,7 @@ interface
             //destructor
                 destructor destroy(); override;
             //accessors
-                function getDrawingType() : EGraphicDrawing; override;
+                function getDrawingType() : EGraphicObjectType; override;
             //dimension manipulation
                 //set dimensions
                     procedure setDimensions(dimensionCountIn : integer);
@@ -113,9 +113,9 @@ implementation
                 end;
 
         //accessors
-            function TGeomSpaceVector.getDrawingType() : EGraphicDrawing;
+            function TGeomSpaceVector.getDrawingType() : EGraphicObjectType;
                 begin
-                    result := EGraphicDrawing.gdSpaceVector;
+                    result := EGraphicObjectType.gdSpaceVector;
                 end;
 
         //length manipulation

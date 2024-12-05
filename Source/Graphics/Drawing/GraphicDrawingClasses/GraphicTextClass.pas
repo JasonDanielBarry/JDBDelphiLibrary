@@ -19,14 +19,14 @@ interface
         TGraphicText = class(TGraphicObject)
             private
                 var
-                    textHeight          : integer;
+                    textSize            : integer;
                     textString          : string;
                     textColour          : TColor;
                     textFontStyles      : TFontStyles;
                     textHandlePointXY   : TGeomPoint;
             public
                 //constructor
-                    constructor create( const   textHeightIn        : integer;
+                    constructor create( const   textSizeIn          : integer;
                                         const   textStringIn        : string;
                                         const   textColourIn        : TColor;
                                         const   textFontStylesIn    : TFontStyles;
@@ -44,15 +44,15 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicText.create(const   textHeightIn        : integer;
+            constructor TGraphicText.create(const   textSizeIn          : integer;
                                             const   textStringIn        : string;
                                             const   textColourIn        : TColor;
                                             const   textFontStylesIn    : TFontStyles;
                                             const   textHandlePointIn   : TGeomPoint );
                 begin
-                    inherited create();
+                    inherited create( EGraphicObjectType.gdText );
 
-                    textHeight          := textHeightIn;
+                    textSize            := textSizeIn;
                     textString          := textStringIn;
                     textColour          := textColourIn;
                     textFontStyles      := textFontStylesIn;
@@ -72,19 +72,22 @@ implementation
                     textDrawingPointLT : TPointF;
                 begin
                     //set font properties
-                        canvasInOut.Font.Size   := textHeight;
+                        canvasInOut.Font.size   := textSize;
                         canvasInOut.Font.Color  := textColour;
+                        canvasInOut.Font.Name   := 'Segoe UI';
                         canvasInOut.Font.Style  := textFontStyles;
                         canvasInOut.Brush.Style := TBrushStyle.bsClear;
 
                     //get text position on canvas
                         textDrawingPointLT := axisConverterIn.XY_to_LT( textHandlePointXY );
 
-                    try //try..except used as the first time draw is called the axis converter might not have all information needed to convert points correctly yet
-                        canvasInOut.TextOut( round(textDrawingPointLT.x), round(textDrawingPointLT.y), textString );
-                    except
+                    //try..except used as the first time draw is called the axis converter might not have all information needed to convert points correctly yet
+                    //which causes textDrawingPointLT X and Y to be INF
+                        try
+                            canvasInOut.TextOut( round(textDrawingPointLT.X), round(textDrawingPointLT.Y), textString );
+                        except
 
-                    end;
+                        end;
 
                     canvasInOut.Brush.Style := TBrushStyle.bsSolid;
                 end;

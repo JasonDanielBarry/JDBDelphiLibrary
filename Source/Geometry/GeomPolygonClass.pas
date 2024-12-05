@@ -18,7 +18,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingType() : EGraphicDrawing; override;
+                    function getDrawingType() : EGraphicObjectType; override;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>; override;
                 //calculations
@@ -42,9 +42,9 @@ implementation
                     inherited destroy();
                 end;
         //accessors
-            function TGeomPolygon.getDrawingType() : EGraphicDrawing;
+            function TGeomPolygon.getDrawingType() : EGraphicObjectType;
                 begin
-                    result := EGraphicDrawing.gdPolygon;
+                    result := EGraphicObjectType.gdPolygon;
                 end;
 
         //drawing points
