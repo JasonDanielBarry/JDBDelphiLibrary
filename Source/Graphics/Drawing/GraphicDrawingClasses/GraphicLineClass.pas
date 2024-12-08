@@ -8,6 +8,7 @@ interface
             Winapi.D2D1, Vcl.Direct2D,
             vcl.Graphics,
         //custom
+            GraphicDrawingTypes,
             GraphicGeometryClass,
             DrawingAxisConversionClass,
             GeometryTypes,

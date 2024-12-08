@@ -24,6 +24,7 @@ interface
                     textColour          : TColor;
                     textFontStyles      : TFontStyles;
                     textHandlePointXY   : TGeomPoint;
+                procedure setFontProperties(var canvasInOut : TDirect2DCanvas);
             public
                 //constructor
                     constructor create( const   textSizeIn          : integer;
@@ -42,6 +43,17 @@ interface
 
 implementation
 
+    //private
+        procedure TGraphicText.setFontProperties(var canvasInOut : TDirect2DCanvas);
+            begin
+                //set font properties
+                    canvasInOut.Font.size   := textSize;
+                    canvasInOut.Font.Color  := textColour;
+                    canvasInOut.Font.Name   := 'Segoe UI';
+                    canvasInOut.Font.Style  := textFontStyles;
+                    canvasInOut.Brush.Style := TBrushStyle.bsClear;
+            end;
+
     //public
         //constructor
             constructor TGraphicText.create(const   textSizeIn          : integer;
@@ -50,7 +62,7 @@ implementation
                                             const   textFontStylesIn    : TFontStyles;
                                             const   textHandlePointIn   : TGeomPoint );
                 begin
-                    inherited create( EGraphicObjectType.gdText );
+                    inherited create();
 
                     textSize            := textSizeIn;
                     textString          := textStringIn;
@@ -71,12 +83,7 @@ implementation
                 var
                     textDrawingPointLT : TPointF;
                 begin
-                    //set font properties
-                        canvasInOut.Font.size   := textSize;
-                        canvasInOut.Font.Color  := textColour;
-                        canvasInOut.Font.Name   := 'Segoe UI';
-                        canvasInOut.Font.Style  := textFontStyles;
-                        canvasInOut.Brush.Style := TBrushStyle.bsClear;
+                    setFontProperties( canvasInOut );
 
                     //get text position on canvas
                         textDrawingPointLT := axisConverterIn.XY_to_LT( textHandlePointXY );
@@ -85,11 +92,9 @@ implementation
                     //which causes textDrawingPointLT X and Y to be INF
                         try
                             canvasInOut.TextOut( round(textDrawingPointLT.X), round(textDrawingPointLT.Y), textString );
-                        except
-
+                        finally
+                            canvasInOut.Brush.Style := TBrushStyle.bsSolid;
                         end;
-
-                    canvasInOut.Brush.Style := TBrushStyle.bsSolid;
                 end;
 
         //bounding box

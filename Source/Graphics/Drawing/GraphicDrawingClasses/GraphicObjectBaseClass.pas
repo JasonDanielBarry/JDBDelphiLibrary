@@ -3,8 +3,9 @@ unit GraphicObjectBaseClass;
 interface
 
     uses
-        Winapi.D2D1, Vcl.Direct2D,
-        vcl.Graphics,
+        Winapi.D2D1,
+        system.UITypes,
+        Vcl.Direct2D, vcl.Graphics,
         GeomBox,
         GraphicDrawingTypes,
         DrawingAxisConversionClass
@@ -13,28 +14,28 @@ interface
     type
         TGraphicObject = class
             private
-                //
-            protected
                 var
+                    filled              : boolean;
                     lineThickness       : integer;
-                    objectDrawingType   : EGraphicObjectType;
                     fillColour,
                     lineColour          : TColor;
                     lineStyle           : TPenStyle;
+            protected
+                var
+                    objectDrawingType   : EGraphicObjectType;
                 //set canvas properties for drawing
                     //fill
-                        procedure setFillProperties(var canvasInOut : TDirect2DCanvas);
+                        function setFillProperties(var canvasInOut : TDirect2DCanvas) : boolean;
                     //line
                         procedure setLineProperties(var canvasInOut : TDirect2DCanvas);
-
             public
                 //constructor
-                    constructor create(const drawingTypeIn : EGraphicObjectType); overload;
-                    constructor create( const   lineThicknessIn : integer;
-                                        const   drawingTypeIn   : EGraphicObjectType;
+                    constructor create(); overload;
+                    constructor create( const   filledIn        : boolean;
+                                        const   lineThicknessIn : integer;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle         ); overload;
+                                        const   lineStyleIn     : TPenStyle ); overload;
                 //destructor
                     destructor destroy(); override;
                 //draw to canvas
@@ -46,14 +47,27 @@ interface
 
 implementation
 
+    uses
+        vcl.forms;
+
     //private
         //
 
     //protected
         //set canvas properties for drawing
             //fill
-                procedure TGraphicObject.setFillProperties(var canvasInOut : TDirect2DCanvas);
+                function TGraphicObject.setFillProperties(var canvasInOut : TDirect2DCanvas) : boolean;
                     begin
+                        //hollow object
+                            if ( NOT(filled) ) then
+                                begin
+                                    Application.MessageBox('', '');
+
+                                    canvasInOut.Brush.Style := TBrushStyle.bsClear;
+                                    result := False;
+                                    exit();
+                                end;
+
                         canvasInOut.Brush.Color := fillColour;
                         canvasInOut.Brush.Style := TBrushStyle.bsSolid;
                     end;
@@ -68,25 +82,24 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicObject.create(const drawingTypeIn : EGraphicObjectType);
+            constructor TGraphicObject.create();
+                begin
+                    inherited create();
+                end;
+
+            constructor TGraphicObject.create(  const   filledIn        : boolean;
+                                                const   lineThicknessIn : integer;
+                                                const   fillColourIn,
+                                                        lineColourIn    : TColor;
+                                                const   lineStyleIn     : TPenStyle );
                 begin
                     inherited create();
 
-                    objectDrawingType := drawingTypeIn;
-                end;
-
-            constructor TGraphicObject.create(  const   lineThicknessIn : integer;
-                                                const   drawingTypeIn   : EGraphicObjectType;
-                                                const   fillColourIn,
-                                                        lineColourIn    : TColor;
-                                                const   lineStyleIn     : TPenStyle             );
-                begin
-                    create( drawingTypeIn );
-
-                    lineThickness       := lineThicknessIn;
-                    fillColour          := fillColourIn;
-                    lineColour          := lineColourIn;
-                    lineStyle           := lineStyleIn;
+                    filled          := filledIn;
+                    lineThickness   := lineThicknessIn;
+                    fillColour      := fillColourIn;
+                    lineColour      := lineColourIn;
+                    lineStyle       := lineStyleIn;
                 end;
 
         //destructor

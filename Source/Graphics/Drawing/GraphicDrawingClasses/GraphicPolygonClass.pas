@@ -17,7 +17,8 @@ interface
     type
         TGraphicPolygon = class(TGraphicGeometry)
             //constructor
-                constructor create( const   lineThicknessIn : integer;
+                constructor create( const   filledIn        : boolean;
+                                    const   lineThicknessIn : integer;
                                     const   fillColourIn,
                                             lineColourIn    : TColor;
                                     const   lineStyleIn     : TPenStyle;
@@ -33,13 +34,15 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicPolygon.create( const   lineThicknessIn : integer;
+            constructor TGraphicPolygon.create( const   filledIn        : boolean;
+                                                const   lineThicknessIn : integer;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
                 begin
-                    inherited create(   lineThicknessIn,
+                    inherited create(   filledIn,
+                                        lineThicknessIn,
                                         fillColourIn,
                                         lineColourIn,
                                         lineStyleIn,
@@ -56,27 +59,26 @@ implementation
             procedure TGraphicPolygon.drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                                     var canvasInOut         : TDirect2DCanvas       );
                 var
-                    pathGeometry : ID2D1PathGeometry;
+                    mustFillPolygon : boolean;
+                    pathGeometry    : ID2D1PathGeometry;
                 begin
                     if (length( geometryPoints ) < 3) then
                         exit();
 
-                    pathGeometry := createPathGeometry(
-                                                            D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED,
-                                                            D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED,
-                                                            axisConverterIn
-                                                      );
+                    //get path geometry
+                        pathGeometry := createPathGeometry(
+                                                                D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED,
+                                                                D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED,
+                                                                axisConverterIn
+                                                          );
 
-                    if ( NOT(fillColour = TColors.Null) ) then
-                        begin
-                            setFillProperties( canvasInOut );
-
+                    //draw fill
+                        if ( setFillProperties( canvasInOut ) ) then
                             canvasInOut.FillGeometry( pathGeometry );
-                        end;
 
-                    setLineProperties( canvasInOut );
-
-                    canvasInOut.DrawGeometry( pathGeometry );
+                    //draw line
+                        setLineProperties( canvasInOut );
+                        canvasInOut.DrawGeometry( pathGeometry );
                 end;
 
 end.

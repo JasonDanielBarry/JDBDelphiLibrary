@@ -48,21 +48,23 @@ implementation
                 polyline        : TGeomPolyLine;
                 polygon         : TGeomPolygon;
             begin
-                //box
+                //polygon
                     GraphicDrawerInOut.setCurrentDrawingLayer('Polygon Layer');
 
                     polygon := TGeomPolygon.create();
 
                     polygon.addVertex(10, 10);
-                    polygon.addVertex(100, 10);
-                    polygon.addVertex(100, 100);
+                    polygon.addVertex(50, 10);
+                    polygon.addVertex(100, 40);
+                    polygon.addVertex(100, 70);
+                    polygon.addVertex(50, 100);
                     polygon.addVertex(10, 100);
 
-                    GraphicDrawerInOut.addPolygon( polygon, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
+                    GraphicDrawerInOut.addPolygon( polygon, True, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                     FreeAndNil( polygon );
 
-                    GraphicDrawerInOut.addText('This is a box', 50, 50);
+                    GraphicDrawerInOut.addText(50, 50, 'This is a polygon');
 
                 //line 1
                     GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');
@@ -76,7 +78,7 @@ implementation
 
                      FreeAndNil( line );
 
-                    GraphicDrawerInOut.addText('This is a line', 115, 115);
+                    GraphicDrawerInOut.addText(115, 115, 'This is a line');
 
                 //polyline
                     GraphicDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
@@ -97,14 +99,21 @@ implementation
 
                     FreeAndNil( polyline );
 
-                    GraphicDrawerInOut.addText('This is a polyline', 140, 140);
+                    GraphicDrawerInOut.addText(140, 140, 'This is a polyline');
+
+                //rectangle
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Rectangle');
+
+                    GraphicDrawerInOut.addRectangle( 50, 75, 150, 10, True, 4, 10, TColors.Burlywood, TColors.Darkblue, TPenStyle.psDash );
+
+                    GraphicDrawerInOut.addText(150, 10, 'This is a round rectangle');
 
                 //text
                     GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer');
 
-                    GraphicDrawerInOut.addText('This is a short'#13'sentence of'#13'4 lines'#13'at (0, 0)', 0, 0);
+                    GraphicDrawerInOut.addText(0, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, 0)');
 
-                    GraphicDrawerInOut.addText('This is a short'#13'sentence of'#13'4 lines'#13'at (200, 10)', 200, 10);
+                    GraphicDrawerInOut.addText(200, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, 10)');
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
@@ -209,18 +218,7 @@ implementation
                 //beam
                     GraphicDrawerInOut.setCurrentDrawingLayer('Beam');
 
-                    polygon := TGeomPolygon.create();
-
-                    polygon.addVertex(0, 0);
-                    polygon.addVertex(300, 0);
-                    polygon.addVertex(300, 500);
-                    polygon.addVertex(0, 500);
-
-                    polygon.shift(250 + 50, 300);
-
-                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Lightgreen, TColors.Black );
-
-                    FreeAndNil( polygon );
+                    GraphicDrawerInOut.addRectangle( 300, 500, 250 + 50, 300, True, 1, 0, TColors.Lightgreen );
 
                     //flanges
                         //bottom
@@ -246,16 +244,7 @@ implementation
                 //column
                     GraphicDrawerInOut.setCurrentDrawingLayer('Column');
 
-                    polygon := TGeomPolygon.create();
-
-                    polygon.addVertex(0, 0);
-                    polygon.addVertex(250, 0);
-                    polygon.addVertex(250, 1000);
-                    polygon.addVertex(0, 1000);
-
-                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Cornflowerblue, TColors.Black );
-
-                    FreeAndNil( polygon );
+                    GraphicDrawerInOut.addRectangle( 250, 1000, 0, 0, True, 1, 0, TColors.Cornflowerblue );
 
                     //flanges
                         //left
@@ -279,18 +268,7 @@ implementation
                 //plate
                     GraphicDrawerInOut.setCurrentDrawingLayer('Plate');
 
-                    polygon := TGeomPolygon.create();
-
-                    polygon.addVertex(0, 0);
-                    polygon.addVertex(250, 0);
-                    polygon.addVertex(250, 350);
-                    polygon.addVertex(0, 350);
-
-                    polygon.shift(250, 400);
-
-                    GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Yellow, TColors.Black );
-
-                    FreeAndNil( polygon );
+                    GraphicDrawerInOut.addRectangle( 250, 350, 250, 400, True, 1, 0, TColors.Yellow );
 
             //weld
                 GraphicDrawerInOut.setCurrentDrawingLayer('Weld');
@@ -304,7 +282,7 @@ implementation
 
                 polygon.shift(250, 400);
 
-                GraphicDrawerInOut.addPolygon( polygon, 1, TColors.Blue, TColors.Black );
+                GraphicDrawerInOut.addPolygon( polygon, True, 1, TColors.Blue, TColors.Black );
 
                 FreeAndNil( polygon );
 
@@ -312,18 +290,16 @@ implementation
                 GraphicDrawerInOut.setCurrentDrawingLayer('Bolts');
 
                 for i := 0 to 5 do
-                    begin
-                        for j := 0 to 2 do
-                            begin
-                                polygon := _creatBoltPolygon(100 + 50 * j, 50 + i * 50);
+                    for j := 0 to 2 do
+                        begin
+                            polygon := _creatBoltPolygon(100 + 50 * j, 50 + i * 50);
 
-                                polygon.shift(250, 400);
+                            polygon.shift(250, 400);
 
-                                GraphicDrawerInOut.addPolygon( polygon, 3, TColors.Lightslategrey, TColors.Black );
+                            GraphicDrawerInOut.addPolygon( polygon, True, 3, TColors.Lightseagreen, TColors.Black );
 
-                                FreeAndNil( polygon );
-                            end;
-                    end;
+                            FreeAndNil( polygon );
+                        end;
         end;
 
     procedure TForm1.SoilNailWallGraphic(var GraphicDrawerInOut: TGraphicDrawerObjectAdder);
@@ -342,7 +318,7 @@ implementation
             polygon.addVertex(0, 0);
             polygon.addVertex(-2, 0);
 
-            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Lightgreen );
+            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Lightgreen );
 
             FreeAndNil( polygon );
 
@@ -354,7 +330,7 @@ implementation
             polygon.addVertex(20, 15);
             polygon.addVertex(0, 15);
 
-            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Orangered );
+            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Orangered );
 
             FreeAndNil( polygon );
 
@@ -397,7 +373,7 @@ implementation
             polygon.addVertex(-0.35, 15);
             polygon.addVertex(-0.35, 0);
 
-            GraphicDrawerInOut.addPolygon( polygon, 2, TColors.Yellow );
+            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Yellow );
 
             FreeAndNil( polygon );
         end;

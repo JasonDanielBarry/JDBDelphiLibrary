@@ -26,7 +26,8 @@ interface
                                                 const axisConverterIn   : TDrawingAxisConverter) : ID2D1PathGeometry;
             public
                 //constructor
-                    constructor create( const   lineThicknessIn : integer;
+                    constructor create( const   filledIn        : boolean;
+                                        const   lineThicknessIn : integer;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
                                         const   lineStyleIn     : TPenStyle;
@@ -89,17 +90,21 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicGeometry.create(const   lineThicknessIn : integer;
+            constructor TGraphicGeometry.create(const   filledIn        : boolean;
+                                                const   lineThicknessIn : integer;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
                 begin
-                    inherited create(   lineThicknessIn,
-                                        geometryIn.getDrawingType(),
+                    inherited create(   filledIn,
+                                        lineThicknessIn,
                                         fillColourIn,
                                         lineColourIn,
-                                        lineStyleIn                 );
+                                        lineStyleIn         );
+
+                    //drawing type
+                        objectDrawingType := geometryIn.getDrawingType();
 
                     //get the drawing points
                         geometryPoints := geometryIn.getDrawingPoints();
@@ -110,7 +115,8 @@ implementation
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
                 begin
-                    create( lineThicknessIn,
+                    create( False,
+                            lineThicknessIn,
                             TColors.Null,
                             lineColourIn,
                             lineStyleIn,

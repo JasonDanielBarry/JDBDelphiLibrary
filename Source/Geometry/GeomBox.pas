@@ -74,7 +74,7 @@ implementation
     //construction
         constructor TGeomBox.create(const point1In, point2In : TGeomPoint);
             begin
-                setPoints( point1In, point2In );
+                self.setPoints( point1In, point2In );
             end;
 
         constructor TGeomBox.create(const arrGeomBoxesIn : TArray<TGeomBox>);
