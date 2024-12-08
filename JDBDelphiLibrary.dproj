@@ -147,6 +147,7 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicReactangleClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
