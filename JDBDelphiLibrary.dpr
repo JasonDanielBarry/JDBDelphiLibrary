@@ -28,7 +28,7 @@ uses
   DrawingAxisConversionClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionClass.pas',
   DrawingAxisConversionPanningClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionPanningClass.pas',
   DrawingAxisConversionZoomingClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionZoomingClass.pas',
-  GeneralMathMethods in 'Source\Mathematics\GeneralMathMethods.pas',
+  LinearRescalingMethods in 'Source\Mathematics\LinearRescalingMethods.pas',
   InterpolatorClass in 'Source\Mathematics\InterpolatorClass.pas',
   LinearAlgebraTypes in 'Source\Mathematics\LinearAlgebra\LinearAlgebraTypes.pas',
   LineIntersectionMethods in 'Source\Mathematics\LinearAlgebra\LineIntersectionMethods.pas',

@@ -1,12 +1,9 @@
-unit GeneralMathMethods;
+unit LinearRescalingMethods;
 
 interface
 
     uses
-        System.SysUtils, system.Math, system.Math.Vectors;
-
-    //max betweem three values
-        function max(const value1In, value2In, value3In : double) : double; overload;
+        System.SysUtils, system.Math;
 
     //scale line
         procedure scaleLinear(  const   startValueIn, endValueIn,
@@ -26,14 +23,6 @@ interface
                                 out     newStartValueOut,   newEndValueOut  : double    ); overload;
 
 implementation
-
-    //max betweem three values
-        function max(const value1In, value2In, value3In : double) : double;
-            begin
-                result := system.math.max(value1In, value2In);
-
-                result := system.math.max(result, value3In);
-            end;
 
     //scale line
         procedure scaleLinear(  const   startValueIn, endValueIn,

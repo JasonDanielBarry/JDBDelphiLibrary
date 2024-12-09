@@ -4,7 +4,6 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Types,
-        GeneralMathMethods,
         GeometryTypes, GeomBox,
         DrawingAxisConversionCalculationsClass
         ;
@@ -13,7 +12,7 @@ interface
         TDrawingAxisZoomingConverter = class(TDrawingAxisConvertionCalculator)
             private
                 //calculate the zoom scale factor
-                    function calculateZoomScaleFactor(const newZoomPercentage : double) : double; inline;
+                    function calculateZoomScaleFactor(const newZoomPercentage : double) : double;
                 //zooming by percent
                     procedure zoom( const newZoomPercentageIn   : double;
                                     const zoomAboutPointIn      : TGeomPoint ); overload;

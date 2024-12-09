@@ -47,9 +47,6 @@ interface
 
 implementation
 
-    uses
-        vcl.forms;
-
     //private
         //
 
@@ -58,13 +55,12 @@ implementation
             //fill
                 function TGraphicObject.setFillProperties(var canvasInOut : TDirect2DCanvas) : boolean;
                     begin
+                        result := filled;
+
                         //hollow object
                             if ( NOT(filled) ) then
                                 begin
-                                    Application.MessageBox('', '');
-
                                     canvasInOut.Brush.Style := TBrushStyle.bsClear;
-                                    result := False;
                                     exit();
                                 end;
 

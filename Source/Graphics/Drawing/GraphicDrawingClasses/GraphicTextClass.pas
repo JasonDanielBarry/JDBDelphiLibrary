@@ -88,7 +88,7 @@ implementation
                     //get text position on canvas
                         textDrawingPointLT := axisConverterIn.XY_to_LT( textHandlePointXY );
 
-                    //try..except used as the first time draw is called the axis converter might not have all information needed to convert points correctly yet
+                    //try..finally used as the first time draw is called the axis converter might not have all information needed to convert points correctly yet
                     //which causes textDrawingPointLT X and Y to be INF
                         try
                             canvasInOut.TextOut( round(textDrawingPointLT.X), round(textDrawingPointLT.Y), textString );

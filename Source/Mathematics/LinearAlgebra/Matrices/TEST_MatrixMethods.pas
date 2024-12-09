@@ -16,8 +16,6 @@ interface
 //        procedure TearDown;
         // Sample Methods
         // Simple single Test
-//        [Test]
-//        procedure testGaussElimination();
         [Test]
         procedure TestDeterminantAndInverse();
         [Test]
@@ -28,7 +26,6 @@ interface
 implementation
 
     uses
-        GeneralMathMethods,
         LinearAlgebraTypes,
         MatrixHelperMethods,
         MatrixDeterminantMethods,
@@ -42,43 +39,6 @@ implementation
 //procedure TTestMatrixMethods.TearDown();
 //begin
 //end;
-
-//procedure TTestMatrixMethods.testGaussElimination();
-//    var
-//        detLaplace,
-//        detGauss    : double;
-//        testMatrix  : TLAMatrix;
-//    begin
-//        //2 x 2
-//            testMatrix := [ [1, 2],
-//                            [3, 4]  ];
-//
-//            detLaplace := matrixDeterminant(testMatrix);
-//            detGauss := matrixDeterminantGauss(testMatrix);
-//
-//            assert.AreEqual(detLaplace, detGauss, 1e-3);
-//
-//        //3 x 3
-//            testMatrix := [ [1, 8, 5],
-//                            [6, 4, 2],
-//                            [9, 7, 3]   ];
-//
-//            detLaplace := matrixDeterminant(testMatrix);
-//            detGauss := matrixDeterminantGauss(testMatrix);
-//
-//            assert.AreEqual(detLaplace, detGauss, 1e-3);
-//
-//        //4 x 4
-//            testMatrix := [ [ 1,  5, 16, 11],
-//                            [ 3, 14, 12, 10],
-//                            [ 9, 10, 11, 12],
-//                            [13, 14, 15, 16]    ];
-//
-//            detLaplace := matrixDeterminant(testMatrix);
-//            detGauss := matrixDeterminantGauss(testMatrix);
-//
-//            assert.AreEqual(detLaplace, detGauss, 1e-3);
-//    end;
 
 procedure TTestMatrixMethods.TestDeterminantAndInverse();
     var

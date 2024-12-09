@@ -4,7 +4,6 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Types,
-        GeneralMathMethods,
         LinearInterpolationMethods,
         GeometryTypes, GeomBox,
         DrawingAxisConversionBaseClass
@@ -14,15 +13,15 @@ interface
         TDrawingAxisConvertionCalculator = class(TDrawingAxisConverterBase)
             private
                 //canvas-to-drawing
-                    function L_to_X(const L_In : double) : double; inline;
-                    function T_to_Y(const T_In : double) : double; inline;
+                    function L_to_X(const L_In : double) : double;
+                    function T_to_Y(const T_In : double) : double;
                 //drawing-to-canvas
-                    function X_to_L(const X_In : double) : double; inline;
-                    function Y_to_T(const Y_In : double) : double; inline;
+                    function X_to_L(const X_In : double) : double;
+                    function Y_to_T(const Y_In : double) : double;
                 //canvas-to-drawing
-                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload; inline;
+                    function LT_to_XY(const L_In, T_In : double) : TGeomPoint; overload;
                 //drawing-to-canvas
-                    function XY_to_LT(const X_In, Y_In : double) : TPointF; overload; inline;
+                    function XY_to_LT(const X_In, Y_In : double) : TPointF; overload;
             public
                 //constructor
                     constructor create(); override;

@@ -4,7 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Math.Vectors, system.Types,
-        GeneralMathMethods,
+        LinearRescalingMethods,
         GeometryTypes
         ;
 

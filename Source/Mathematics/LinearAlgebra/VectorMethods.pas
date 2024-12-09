@@ -4,7 +4,6 @@ interface
 
     uses
         system.SysUtils, system.Math, math.Vectors,
-        GeneralMathMethods,
         LinearAlgebraTypes
         ;
 

@@ -15,7 +15,6 @@ implementation
 
     uses
         system.Math,
-        GeneralMathMethods,
         LinearAlgebraTypes,
         VectorMethods,
         MatrixMethods

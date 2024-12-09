@@ -4,7 +4,6 @@ interface
 
     uses
         System.SysUtils, system.Types, system.math, system.Threading, system.Classes,
-        GeneralMathMethods,
         LinearAlgebraTypes,
         MatrixHelperMethods,
         MatrixDeterminantMethods,

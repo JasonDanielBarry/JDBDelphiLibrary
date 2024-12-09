@@ -109,7 +109,7 @@
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionPanningClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionZoomingClass.pas"/>
-        <DCCReference Include="Source\Mathematics\GeneralMathMethods.pas"/>
+        <DCCReference Include="Source\Mathematics\LinearRescalingMethods.pas"/>
         <DCCReference Include="Source\Mathematics\InterpolatorClass.pas"/>
         <DCCReference Include="Source\Mathematics\LinearAlgebra\LinearAlgebraTypes.pas"/>
         <DCCReference Include="Source\Mathematics\LinearAlgebra\LineIntersectionMethods.pas"/>
