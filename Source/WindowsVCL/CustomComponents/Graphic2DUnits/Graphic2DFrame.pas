@@ -500,7 +500,8 @@ implementation
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
                     //draw a border around the paintbox edge
-                        canvasIn.brush.Color  := TColors.Silver;
+                        canvasIn.brush.Color := TColors.Silver;
+                        canvasIn.brush.Style := TBrushStyle.bsSolid;
 
                         canvasIn.FrameRect(
                                                 Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height)
