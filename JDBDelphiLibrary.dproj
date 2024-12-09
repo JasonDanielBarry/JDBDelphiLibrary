@@ -148,6 +148,7 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicEllipseClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

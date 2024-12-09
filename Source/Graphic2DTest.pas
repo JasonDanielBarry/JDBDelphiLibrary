@@ -108,6 +108,13 @@ implementation
 
                     GraphicDrawerInOut.addText(150, 10, 'This is a round rectangle');
 
+                //ellipse
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Ellipse');
+
+                    GraphicDrawerInOut.addEllipse(75, 50, -100, 50, True, 6, Tcolors.Lightseagreen);
+
+                    GraphicDrawerInOut.addText(-100, 50, 'This is an ellipse');
+
                 //text
                     GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer');
 
@@ -292,13 +299,20 @@ implementation
                 for i := 0 to 5 do
                     for j := 0 to 2 do
                         begin
-                            polygon := _creatBoltPolygon(100 + 50 * j, 50 + i * 50);
+                            var centreX, centreY : double;
+
+                            centreX := 100 + 50 * j;
+                            centreY := 50 + i * 50;
+
+                            polygon := _creatBoltPolygon( centreX, centreY );
 
                             polygon.shift(250, 400);
 
-                            GraphicDrawerInOut.addPolygon( polygon, True, 3, TColors.Lightseagreen, TColors.Black );
+                            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Lightseagreen, TColors.Black );
 
                             FreeAndNil( polygon );
+
+                            GraphicDrawerInOut.addEllipse(14, 14, centreX + 250, centreY + 400, False, 1);
                         end;
         end;
 

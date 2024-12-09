@@ -95,10 +95,7 @@ implementation
 
                     cornerRadius := rectangleCornerRadiusIn;
 
-                    localMinPoint := TGeomPoint.create( 0, 0 );
-                    localMaxPoint := TGeomPoint.create( rectangleWidthIn, rectangleHeightIn );
-
-                    rectangleBox.setPoints( localMinPoint, localMaxPoint );
+                    rectangleBox := TGeomBox.newBox( rectangleWidthIn, rectangleHeightIn );
 
                     rectangleBox.shiftBox( bottomLeftPointIn.x, bottomLeftPointIn.y );
                 end;

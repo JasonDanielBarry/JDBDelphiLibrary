@@ -63,6 +63,9 @@ interface
                 property xMax : double read maxPoint.x;
                 property yMax : double read maxPoint.y;
                 property zMax : double read maxPoint.z;
+            //new box with min point at (0, 0, 0) and x, y, x dimensions
+                class function newBox(const xDimensionIn, yDimensionIn : double) : TGeomBox; overload; static;
+                class function newBox(const xDimensionIn, yDimensionIn, zDimensionIn : double) : TGeomBox; overload; static;
             //determine bounding box from an array of points
                 class function determineBoundingBox(const arrGeomPointsIn : TArray<TGeomPoint>) : TGeomBox; overload; static;
             //determine bounding box from an array of boxes
@@ -282,6 +285,22 @@ implementation
         procedure TGeomBox.scaleBox(const scaleFactorIn : double);
             begin
                 self.scaleBox( scaleFactorIn, self.getCentrePoint() );
+            end;
+
+    //new box with min point at (0, 0, 0) and x, y, x dimensions
+        class function TGeomBox.newBox(const xDimensionIn, yDimensionIn : double) : TGeomBox;
+            begin
+                result := newBox(xDimensionIn, yDimensionIn, 0);
+            end;
+
+        class function TGeomBox.newBox(const xDimensionIn, yDimensionIn, zDimensionIn : double) : TGeomBox;
+            var
+                localMinPoint, localMaxPoint : TGeomPoint;
+            begin
+                localMinPoint := TGeomPoint.create(0, 0, 0);
+                localMaxPoint := TGeomPoint.create(xDimensionIn, yDimensionIn, zDimensionIn);
+
+                result := TGeomBox.create( localMinPoint, localMaxPoint );
             end;
 
     //determine bounding box from an array of points

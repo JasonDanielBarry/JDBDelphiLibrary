@@ -62,7 +62,8 @@ uses
   GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas',
   GraphicDrawerObjectAdderClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas',
   GraphicTextClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas',
-  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas';
+  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas',
+  GraphicEllipseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicEllipseClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

@@ -11,7 +11,8 @@ interface
             ColourMethods,
             DrawingAxisConversionClass,
             GraphicObjectBaseClass,
-            GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass, GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass,
+            GraphicEllipseClass, GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass,
+            GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass,
             GraphicDrawerBaseClass,
             GeometryTypes,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass
@@ -25,21 +26,32 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //add different drawing graphic objects
+                    //ellipse
+                        procedure addEllipse(   const   diameterXIn,  diameterYIn,
+                                                        centreXIn,    centreYIn     : double;
+                                                const   filledIn                    : boolean = True;
+                                                const   lineThicknessIn             : integer = 2;
+                                                const   fillColourIn                : TColor = TColors.Null;
+                                                const   lineColourIn                : TColor = TColors.Black;
+                                                const   lineStyleIn                 : TPenStyle = TPenStyle.psSolid );
                     //geometry
-                        procedure addLine(  const lineIn            : TGeomLine;
-                                            const lineThicknessIn   : integer = 2;
-                                            const colourIn          : TColor = TColors.Black;
-                                            const styleIn           : TPenStyle = TPenStyle.psSolid );
-                        procedure addPolyline(  const polylineIn        : TGeomPolyLine;
+                        //line
+                            procedure addLine(  const lineIn            : TGeomLine;
                                                 const lineThicknessIn   : integer = 2;
                                                 const colourIn          : TColor = TColors.Black;
                                                 const styleIn           : TPenStyle = TPenStyle.psSolid );
-                        procedure addPolygon(   const polygonIn         : TGeomPolygon;
-                                                const filledIn          : boolean = True;
-                                                const lineThicknessIn   : integer = 2;
-                                                const fillColourIn      : TColor = TColors.Null;
-                                                const lineColourIn      : TColor = TColors.Black;
-                                                const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
+                        //polyline
+                            procedure addPolyline(  const polylineIn        : TGeomPolyLine;
+                                                    const lineThicknessIn   : integer = 2;
+                                                    const colourIn          : TColor = TColors.Black;
+                                                    const styleIn           : TPenStyle = TPenStyle.psSolid );
+                        //polygon
+                            procedure addPolygon(   const polygonIn         : TGeomPolygon;
+                                                    const filledIn          : boolean = True;
+                                                    const lineThicknessIn   : integer = 2;
+                                                    const fillColourIn      : TColor = TColors.Null;
+                                                    const lineColourIn      : TColor = TColors.Black;
+                                                    const lineStyleIn       : TPenStyle = TPenStyle.psSolid     );
                     //rectanlge
                         procedure addRectangle( const   widthIn, heightIn,
                                                         leftIn, bottomIn    : double;
@@ -75,55 +87,83 @@ implementation
                 end;
 
         //add different drawing graphic objects
-            //geometry
-                procedure TGraphicDrawerObjectAdder.addLine(const lineIn            : TGeomLine;
-                                                            const lineThicknessIn   : integer = 2;
-                                                            const colourIn          : TColor = TColors.Black;
-                                                            const styleIn           : TPenStyle = TPenStyle.psSolid );
+            //ellipse
+                procedure TGraphicDrawerObjectAdder.addEllipse( const   diameterXIn,  diameterYIn,
+                                                                        centreXIn,    centreYIn     : double;
+                                                                const   filledIn                    : boolean = True;
+                                                                const   lineThicknessIn             : integer = 2;
+                                                                const   fillColourIn                : TColor = TColors.Null;
+                                                                const   lineColourIn                : TColor = TColors.Black;
+                                                                const   lineStyleIn                 : TPenStyle = TPenStyle.psSolid );
                     var
-                        newGraphicGeometry : TGraphicGeometry;
+                        centrePoint         : TGeomPoint;
+                        newGraphicEllipse   : TGraphicEllipse;
                     begin
-                        newGraphicGeometry := TGraphicLine.create(  lineThicknessIn,
-                                                                    colourIn,
-                                                                    styleIn,
-                                                                    lineIn          );
+                        centrePoint := TGeomPoint.create( centreXIn, centreYIn );
 
-                        addGraphicObject( newGraphicGeometry );
-                    end;
-
-                procedure TGraphicDrawerObjectAdder.addPolyline(const polylineIn        : TGeomPolyLine;
-                                                                const lineThicknessIn   : integer = 2;
-                                                                const colourIn          : TColor = TColors.Black;
-                                                                const styleIn           : TPenStyle = TPenStyle.psSolid );
-                    var
-                        newGraphicGeometry : TGraphicGeometry;
-                    begin
-                        newGraphicGeometry := TGraphicPolyline.create(  lineThicknessIn,
-                                                                        colourIn,
-                                                                        styleIn,
-                                                                        polylineIn      );
-
-                        addGraphicObject( newGraphicGeometry );
-                    end;
-
-                procedure TGraphicDrawerObjectAdder.addPolygon( const polygonIn         : TGeomPolygon;
-                                                                const filledIn          : boolean = True;
-                                                                const lineThicknessIn   : integer = 2;
-                                                                const fillColourIn      : TColor = TColors.Null;
-                                                                const lineColourIn      : TColor = TColors.Black;
-                                                                const lineStyleIn       : TPenStyle = TPenStyle.psSolid );
-                    var
-                        newGraphicGeometry : TGraphicGeometry;
-                    begin
-                        newGraphicGeometry := TGraphicPolygon.create(   filledIn,
+                        newGraphicEllipse := TGraphicEllipse.create(    filledIn,
                                                                         lineThicknessIn,
+                                                                        diameterXIn, diameterYIn,
                                                                         fillColourIn,
                                                                         lineColourIn,
                                                                         lineStyleIn,
-                                                                        polygonIn       );
+                                                                        centrePoint                 );
 
-                        addGraphicObject( newGraphicGeometry );
+                        addGraphicObject( newGraphicEllipse );
                     end;
+
+            //geometry
+                //line
+                    procedure TGraphicDrawerObjectAdder.addLine(const lineIn            : TGeomLine;
+                                                                const lineThicknessIn   : integer = 2;
+                                                                const colourIn          : TColor = TColors.Black;
+                                                                const styleIn           : TPenStyle = TPenStyle.psSolid );
+                        var
+                            newGraphicGeometry : TGraphicGeometry;
+                        begin
+                            newGraphicGeometry := TGraphicLine.create(  lineThicknessIn,
+                                                                        colourIn,
+                                                                        styleIn,
+                                                                        lineIn          );
+
+                            addGraphicObject( newGraphicGeometry );
+                        end;
+
+                //polyline
+                    procedure TGraphicDrawerObjectAdder.addPolyline(const polylineIn        : TGeomPolyLine;
+                                                                    const lineThicknessIn   : integer = 2;
+                                                                    const colourIn          : TColor = TColors.Black;
+                                                                    const styleIn           : TPenStyle = TPenStyle.psSolid );
+                        var
+                            newGraphicGeometry : TGraphicGeometry;
+                        begin
+                            newGraphicGeometry := TGraphicPolyline.create(  lineThicknessIn,
+                                                                            colourIn,
+                                                                            styleIn,
+                                                                            polylineIn      );
+
+                            addGraphicObject( newGraphicGeometry );
+                        end;
+
+                //polygon
+                    procedure TGraphicDrawerObjectAdder.addPolygon( const polygonIn         : TGeomPolygon;
+                                                                    const filledIn          : boolean = True;
+                                                                    const lineThicknessIn   : integer = 2;
+                                                                    const fillColourIn      : TColor = TColors.Null;
+                                                                    const lineColourIn      : TColor = TColors.Black;
+                                                                    const lineStyleIn       : TPenStyle = TPenStyle.psSolid );
+                        var
+                            newGraphicGeometry : TGraphicGeometry;
+                        begin
+                            newGraphicGeometry := TGraphicPolygon.create(   filledIn,
+                                                                            lineThicknessIn,
+                                                                            fillColourIn,
+                                                                            lineColourIn,
+                                                                            lineStyleIn,
+                                                                            polygonIn       );
+
+                            addGraphicObject( newGraphicGeometry );
+                        end;
 
             //rectanlge
                 procedure TGraphicDrawerObjectAdder.addRectangle(   const   widthIn, heightIn,
