@@ -19,8 +19,6 @@ interface
                     destructor destroy(); override;
                 //accessors
                     function getDrawingType() : EGraphicObjectType; override;
-                //drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; override;
                 //calculations
                     function calculatePerimeter() : double;
                     function calculatePolygonArea() : double; overload;
@@ -47,24 +45,6 @@ implementation
                     result := EGraphicObjectType.gdPolygon;
                 end;
 
-        //drawing points
-            function TGeomPolygon.getDrawingPoints() : TArray<TGeomPoint>;
-                var
-                    arrLen              : integer;
-                    arrDrawingPointsOut : TArray<TGeomPoint>;
-                begin
-                    arrDrawingPointsOut := inherited getDrawingPoints();
-
-                    arrLen := length(arrDrawingPointsOut);
-
-                    //close polygon
-                        SetLength(arrDrawingPointsOut, arrLen + 1);
-
-                        arrDrawingPointsOut[arrLen] := arrDrawingPointsOut[0];
-
-                    result := arrDrawingPointsOut;
-                end;
-
         //calculations
             function TGeomPolygon.calculatePerimeter() : double;
                 var
@@ -73,7 +53,10 @@ implementation
                     closingLineStartPoint,
                     closingLineEndPoint    : TGeomPoint;
                 begin
-                    //calculate the closing line length
+                    //get the polyline length
+                        polylineLength := calculatePolylineLength();
+
+                    //calculate the closing line length------------------------------------------------------------------
                         //start point is the polyline last vertex
                             closingLineStartPoint := arrGeomPoints[vertexCount() - 1];
 
@@ -82,9 +65,7 @@ implementation
 
                         //get the length
                             closingLineLength := TGeomLine.calculateLength( closingLineStartPoint, closingLineEndPoint );
-
-                    //get the polyline length
-                        polylineLength := calculatePolylineLength();
+                    //---------------------------------------------------------------------------------------------------
 
                     //the polygon perimeter = polyline length + closing line length
                         result := closingLineLength + polylineLength;
@@ -100,7 +81,7 @@ implementation
                     i, arrLen   : integer;
                     areaSum     : double;
                 begin
-                    //shoelace formula calculation
+                    //this function uses the Shoelace formula calculation
 
                     areaSum := 0;
 
@@ -114,6 +95,5 @@ implementation
 
                     result := areaSum;
                 end;
-
 
 end.

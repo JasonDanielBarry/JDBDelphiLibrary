@@ -38,12 +38,14 @@ interface
                     function getStartPoint() : TGeomPoint;
                     function getEndPoint() : TGeomPoint;
                 //modifiers
-                    procedure setStartPoint(const xIn, yIn : double); overload;
-                    procedure setStartPoint(const xIn, yIn, zIn : double); overload;
-                    procedure setStartPoint(const startPointIn : TGeomPoint); overload;
-                    procedure setEndPoint(const xIn, yIn : double); overload;
-                    procedure setEndPoint(const xIn, yIn, zIn : double); overload;
-                    procedure setEndPoint(const endPointIn : TGeomPoint); overload;
+                    //start point
+                        procedure setStartPoint(const xIn, yIn : double); overload;
+                        procedure setStartPoint(const xIn, yIn, zIn : double); overload;
+                        procedure setStartPoint(const startPointIn : TGeomPoint); overload;
+                    //end point
+                        procedure setEndPoint(const xIn, yIn : double); overload;
+                        procedure setEndPoint(const xIn, yIn, zIn : double); overload;
+                        procedure setEndPoint(const endPointIn : TGeomPoint); overload;
                     procedure setPoints(const startPointIn, endPointIn : TGeomPoint);
                 //calculattions
                     //line length
@@ -58,18 +60,10 @@ interface
                                                             const freeLineIn    : boolean = True) : TGeomLineIntersectionData; overload;
                         class function calculateLineIntersection(   const line1In, line2In  : TGeomLine;
                                                                     const freeLinesIn       : boolean = True    ) : TGeomLineIntersectionData; overload; static;
-                //bounding box
-                    function boundingBox() : TGeomBox; override;
-                //drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; override;
-                //shift geometry
-                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); override;
-
         end;
 
 implementation
 
-//----------------------------------------------------------------------------------------------------
     //private
         //helper methods
             //calculat line projections on 3 axes
@@ -109,7 +103,7 @@ implementation
                 begin
                     create();
 
-                    assignPoints(startPointIn, endPointIn);
+                    assignPoints( startPointIn, endPointIn );
                 end;
 
         //destructor
@@ -118,6 +112,68 @@ implementation
                     FreeAndNil(lineVector);
 
                     inherited destroy();
+                end;
+
+        //accessors
+            function TGeomLine.getDrawingType() : EGraphicObjectType;
+                begin
+                    result := EGraphicObjectType.gdLine;
+                end;
+
+            function TGeomLine.getStartPoint() : TGeomPoint;
+                begin
+                    result := arrGeomPoints[0];
+                end;
+
+            function TGeomLine.getEndPoint() : TGeomPoint;
+                begin
+                    result := arrGeomPoints[1];
+                end;
+
+        //modifiers
+            //start point
+                procedure TGeomLine.setStartPoint(const xIn, yIn : double);
+                    begin
+                        setStartPoint( xIn, yIn, 0 );
+                    end;
+
+                procedure TGeomLine.setStartPoint(const xIn, yIn, zIn : double);
+                    var
+                        newStartPoint : TGeomPoint;
+                    begin
+                        newStartPoint := TGeomPoint.create( xIn, yIn, zIn );
+
+                        setStartPoint( newStartPoint );
+                    end;
+
+                procedure TGeomLine.setStartPoint(const startPointIn : TGeomPoint);
+                    begin
+                        assignPoints(startPointIn, arrGeomPoints[1]);
+                    end;
+
+            //end point
+                procedure TGeomLine.setEndPoint(const xIn, yIn : double);
+                    begin
+                        setEndPoint( xIn, yIn, 0 );
+                    end;
+
+                procedure TGeomLine.setEndPoint(const xIn, yIn, zIn : double);
+                    var
+                        newEndPoint : TGeomPoint;
+                    begin
+                        newEndPoint := TGeomPoint.create( xIn, yIn, zIn );
+
+                        setEndPoint( newEndPoint );
+                    end;
+
+                procedure TGeomLine.setEndPoint(const endPointIn : TGeomPoint);
+                    begin
+                        assignPoints(arrGeomPoints[0], endPointIn);
+                    end;
+
+            procedure TGeomLine.setPoints(const startPointIn, endPointIn : TGeomPoint);
+                begin
+                    assignPoints(startPointIn, endPointIn);
                 end;
 
         //calculations
@@ -131,11 +187,11 @@ implementation
                     var
                         dx, dy, dz : double;
                     begin
-                        dx := endPointIn.x - startPointIn.x; 
-                        dy := endPointIn.y - startPointIn.y; 
-                        dz := endPointIn.z - startPointIn.z; 
-                    
-                        result := vectorNormalise([dx, dy, dx]);                                           
+                        dx := endPointIn.x - startPointIn.x;
+                        dy := endPointIn.y - startPointIn.y;
+                        dz := endPointIn.z - startPointIn.z;
+
+                        result := vectorNormalise( [dx, dy, dx] );
                     end;
 
             //unit vector
@@ -190,155 +246,32 @@ implementation
                 class function TGeomLine.calculateLineIntersection( const line1In, line2In  : TGeomLine;
                                                                     const freeLinesIn       : boolean = True    ) : TGeomLineIntersectionData;
                     var
+                        line1Point0, line1Point1,
+                        line2Point0, line2Point1    : TGeomPoint;
                         lineIntersectionDataOut     : TGeomLineIntersectionData;
-                    procedure
-                        _getIntersectionPoint();
-                            var
-                                line1Point0, line1Point1,
-                                line2Point0, line2Point1 : TGeomPoint;
-                            begin
-                                //get points from lines
-                                    //line 1
-                                        line1Point0 := line1In.getStartPoint();
-                                        line1Point1 := line1In.getEndPoint();
-
-                                    //line 2
-                                        line2Point0 := line2In.getStartPoint();
-                                        line2Point1 := line2In.getEndPoint();
-
-                                //calculate intersection point
-                                    lineIntersectionDataOut.point := geomLineIntersectionPoint( lineIntersectionDataOut.intersectionExists,
-                                                                                                line1Point0, line1Point1,
-                                                                                                line2Point0, line2Point1                    );
-                            end;
-                    procedure
-                        _determineIntersectionRegion();
-                            var
-                                isWithinLine1, isWithinLine2    : boolean;
-                                line1Bound, line2Bound          : TGeomBox;
-                            begin
-                                //get line bounding boxes
-                                    line1Bound := line1In.boundingBox();
-                                    line2Bound := line2In.boundingBox();
-
-                                //test if point is on either line
-                                    isWithinLine1 := line1Bound.pointIsWithin(lineIntersectionDataOut.point);
-                                    isWithinLine2 := line2Bound.pointIsWithin(lineIntersectionDataOut.point);
-
-                                if (isWithinLine1 OR isWithinLine2) then
-                                    lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brInside
-                                else
-                                    lineIntersectionDataOut.relativeToBound := EBoundaryRelation.brOutside;
-                            end;
-                    procedure
-                        _freeLines();
-                            begin
-                                //free lines if necessary
-                                    if (freeLinesIn) then
-                                        begin
-                                            FreeAndNil(line1In);
-                                            FreeAndNil(line2In);
-                                        end;
-                            end;
                     begin
-                        _getIntersectionPoint();
+                        //get points from lines
+                            //line 1
+                                line1Point0 := line1In.getStartPoint();
+                                line1Point1 := line1In.getEndPoint();
 
-                        if (lineIntersectionDataOut.intersectionExists) then
-                            _determineIntersectionRegion();
+                            //line 2
+                                line2Point0 := line2In.getStartPoint();
+                                line2Point1 := line2In.getEndPoint();
 
-                        _freeLines();
+                        //calculate intersection data
+                            lineIntersectionDataOut := geomLineIntersectionPoint(   line1Point0, line1Point1,
+                                                                                    line2Point0, line2Point1    );
+
+                        //free lines if necessary
+                            if (freeLinesIn) then
+                                begin
+                                    FreeAndNil( line1In );
+                                    FreeAndNil( line2In );
+                                end;
 
                         result := lineIntersectionDataOut;
                     end;
 
-        //accessors
-            function TGeomLine.getDrawingType() : EGraphicObjectType;
-                begin
-                    result := EGraphicObjectType.gdLine;
-                end;
-
-            function TGeomLine.getStartPoint() : TGeomPoint;
-                begin
-                    result := arrGeomPoints[0];
-                end;
-
-            function TGeomLine.getEndPoint() : TGeomPoint;
-                begin
-                    result := arrGeomPoints[1];
-                end;
-
-        //modifiers
-            procedure TGeomLine.setStartPoint(const xIn, yIn : double);
-                begin
-                    setStartPoint( xIn, yIn, 0 );
-                end;
-
-            procedure TGeomLine.setStartPoint(const xIn, yIn, zIn : double);
-                var
-                    newStartPoint : TGeomPoint;
-                begin
-                    newStartPoint := TGeomPoint.create( xIn, yIn, zIn );
-
-                    setStartPoint( newStartPoint );
-                end;
-
-            procedure TGeomLine.setStartPoint(const startPointIn : TGeomPoint);
-                begin
-                    assignPoints(startPointIn, arrGeomPoints[1]);
-                end;
-
-            procedure TGeomLine.setEndPoint(const xIn, yIn : double);
-                begin
-                    setEndPoint( xIn, yIn, 0 );
-                end;
-
-            procedure TGeomLine.setEndPoint(const xIn, yIn, zIn : double);
-                var
-                    newEndPoint : TGeomPoint;
-                begin
-                    newEndPoint := TGeomPoint.create( xIn, yIn, zIn );
-
-                    setEndPoint( newEndPoint );
-                end;
-
-            procedure TGeomLine.setEndPoint(const endPointIn : TGeomPoint);
-                begin
-                    assignPoints(arrGeomPoints[0], endPointIn);
-                end;
-
-            procedure TGeomLine.setPoints(const startPointIn, endPointIn : TGeomPoint);
-                begin
-                    assignPoints(startPointIn, endPointIn);
-                end;
-
-        //bounding box
-            function TGeomLine.boundingBox() : TGeomBox;
-                var
-                    boxOut : TGeomBox;
-                begin
-                    boxOut := TGeomBox.create(arrGeomPoints[0], arrGeomPoints[1]);
-
-                    result := boxOut;
-                end;
-
-        //drawing points
-            function TGeomLine.getDrawingPoints() : TArray<TGeomPoint>;
-                var
-                    arrPointsOut : TArray<TGeomPoint>;
-                begin
-                    SetLength(arrPointsOut, 2);
-
-                    arrPointsOut[0] := arrGeomPoints[0];
-                    arrPointsOut[1] := arrGeomPoints[1];
-
-                    result := arrPointsOut;
-                end;
-
-        //shift geometry
-            procedure TGeomLine.shift(const deltaXIn, deltaYIn, deltaZIn : double);
-                begin
-                    arrGeomPoints[0].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
-                    arrGeomPoints[1].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
-                end;
 
 end.

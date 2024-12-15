@@ -39,12 +39,6 @@ interface
                     class function calculatePolylineLength(const arrPointsIn : TArray<TGeomPoint>) : double; overload; static;
                 //helper methods
                     function vertexCount() : integer;
-                //bounding box
-                    function boundingBox() : TGeomBox; override;
-                //drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; override;
-                //shift geometry
-                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); override;
         end;
 
 implementation
@@ -164,27 +158,6 @@ implementation
             function TGeomPolyLine.vertexCount() : integer;
                 begin
                     result := Length(arrGeomPoints);
-                end;
-
-        //bounding box
-            function TGeomPolyLine.boundingBox() : TGeomBox;
-                begin
-                    result := TGeomBox.determineBoundingBox( arrGeomPoints );
-                end;
-
-        //drawing points
-            function TGeomPolyLine.getDrawingPoints() : TArray<TGeomPoint>;
-                begin
-                    result := arrGeomPoints;
-                end;
-
-        //shift geometry
-            procedure TGeomPolyLine.shift(const deltaXIn, deltaYIn, deltaZIn : double);
-                var
-                    i : integer;
-                begin
-                    for i := 0 to ( vertexCount() - 1 ) do
-                        arrGeomPoints[i].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                 end;
 
 end.

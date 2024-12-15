@@ -60,6 +60,8 @@ implementation
                     polygon.addVertex(50, 100);
                     polygon.addVertex(10, 100);
 
+                    polygon.rotate(45);
+
                     GraphicDrawerInOut.addPolygon( polygon, True, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                     FreeAndNil( polygon );
@@ -362,9 +364,10 @@ implementation
                         line := TGeomLine.create();
 
                         line.setStartPoint(0, 0);
-                        line.setEndPoint(20, -4);
+                        line.setEndPoint(20, 0);
 
                         line.shift(0, y);
+                        line.rotate( -10, line.getStartPoint() );
 
                         GraphicDrawerInOut.addLine( line, 16, TColors.Grey);
                         GraphicDrawerInOut.addLine( line, 4, TColors.Darkblue );

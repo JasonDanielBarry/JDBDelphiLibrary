@@ -25,6 +25,11 @@ interface
         function solveLinearSystem( const coefficientmatrixIn   : TLAMatrix;
                                     const constantVectorIn      : TLAVector ) : TLAVector;
 
+    //rotation matrix
+        function rotationMatrix2D(const rotationAngleIn : double) : TLAMatrix;
+
+        function rotationMatrix3D(const alphaIn, betaIn, gammaIn : double) : TLAMatrix;
+
     //transpose
         function matrixTranspose(const matrixIn : TLAMatrix) : TLAMatrix;
 
@@ -211,6 +216,56 @@ implementation
                     solutionVector := matrixMultiplication(coeffInverse, constantVectorIn);
 
                 result := solutionVector;
+            end;
+
+    //rotation matrix
+        function rotationMatrix2D(const rotationAngleIn : double) : TLAMatrix;
+            var
+                a                   : double;
+                rotationMatrixOut   : TLAMatrix;
+            begin
+                //convert degrees to radians
+                    a := DegToRad( rotationAngleIn );
+
+                //set matrix size
+                    setMatrixSize(2, 2, rotationMatrixOut);
+
+                //populate rotation matrix
+                    rotationMatrixOut[0][0] := cos(a);
+                    rotationMatrixOut[0][1] := -sin(a);
+                    rotationMatrixOut[1][0] := sin(a);
+                    rotationMatrixOut[1][1] := cos(a);
+
+                result := rotationMatrixOut;
+            end;
+
+        function rotationMatrix3D(const alphaIn, betaIn, gammaIn : double) : TLAMatrix;
+            var
+                a, b, g             : double;
+                rotationMatrixOut   : TLAMatrix;
+            begin
+                //convert degrees to radians
+                    a := DegToRad(  alphaIn  );
+                    b := DegToRad(  betaIn   );
+                    g := DegToRad(  gammaIn  );
+
+                //set matrix size
+                    setMatrixSize(3, 3, rotationMatrixOut);
+
+                //populate rotation matrix
+                    rotationMatrixOut[0][0] := cos(b) * cos(g);
+                    rotationMatrixOut[0][1] := sin(a) * sin(b) * cos(g) - cos(a) * sin(g);
+                    rotationMatrixOut[0][2] := cos(a) * sin(b) * cos(g) + sin(a) * sin(g);
+
+                    rotationMatrixOut[1][0] := cos(b) * sin(g);
+                    rotationMatrixOut[1][1] := sin(a) * sin(b) * sin(g) + cos(a) * cos(g);
+                    rotationMatrixOut[1][2] := cos(a) * sin(b) * sin(g) - sin(a) * cos(g);
+
+                    rotationMatrixOut[2][0] := -sin(b);
+                    rotationMatrixOut[2][1] := sin(a) * cos(b);
+                    rotationMatrixOut[2][2] := cos(a) * cos(b);
+
+                result := rotationMatrixOut;
             end;
 
     //transpose

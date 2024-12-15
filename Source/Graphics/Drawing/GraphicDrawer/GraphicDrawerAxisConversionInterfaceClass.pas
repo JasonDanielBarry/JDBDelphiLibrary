@@ -67,8 +67,8 @@ implementation
                         result := axisConverter.getDrawingRegion();
                     end;
 
-                procedure TGraphicDrawerAxisConversionInterface.setDrawingRegion(  const bufferIn : double;
-                                                                                const regionIn : TGeomBox   );
+                procedure TGraphicDrawerAxisConversionInterface.setDrawingRegion(   const bufferIn : double;
+                                                                                    const regionIn : TGeomBox   );
                     begin
                         axisConverter.setDrawingRegion(bufferIn, regionIn);
                     end;
@@ -166,6 +166,5 @@ implementation
 
                     result := axisConverter.processWindowsMessages( messageIn, newMousePositionIn );
                 end;
-
 
 end.

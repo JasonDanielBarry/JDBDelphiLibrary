@@ -23,55 +23,113 @@ interface
                 //get drawing type
                     function getDrawingType() : EGraphicObjectType; virtual; abstract;
                 //bounding box
-                    function boundingBox() : TGeomBox; virtual; abstract;
+                    function boundingBox() : TGeomBox;
                     class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
-                //get drawing points
-                    function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
+                //centre point
+                    function calculateCentrePoint() : TGeomPoint;
+                //drawing points
+                    function getDrawingPoints() : TArray<TGeomPoint>;
+                //rotation
+                    procedure rotate(   const rotationAngleIn           : double;
+                                        const rotationReferencePointIn  : TGeomPoint    ); overload;
+                    procedure rotate(const rotationAngleIn : double); overload;
                 //shift the geometry
-                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;
+                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload;
                     procedure shift(const deltaXIn, deltaYIn : double); overload;
         end;
 
-
-
 implementation
 
-    constructor TGeomBase.create();
-        begin
-            inherited create();
-        end;
+    //public
+        //constructor
+            constructor TGeomBase.create();
+                begin
+                    inherited create();
+                end;
 
-    destructor TGeomBase.destroy();
-        begin
-            SetLength(arrGeomPoints, 0);
+        //destructor
+            destructor TGeomBase.destroy();
+                begin
+                    SetLength(arrGeomPoints, 0);
 
-            inherited destroy();
-        end;
+                    inherited destroy();
+                end;
 
-    procedure TGeomBase.shift(const deltaXIn, deltaYIn : double);
-        begin
-            self.shift(deltaXIn, deltaYIn, 0);
-        end;
+        //bounding box
+            function TGeomBase.boundingBox() : TGeomBox;
+                begin
+                    result := TGeomBox.determineBoundingBox( arrGeomPoints );
+                end;
 
-    class function TGeomBase.determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;
-        var
-            i, geomCount    : integer;
-            boxOut          : TGeomBox;
-            arrGeomBox      : TArray<TGeomBox>;
-        begin
-            geomCount := length(arrGeomIn);
+            class function TGeomBase.determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox;
+                var
+                    i, geomCount    : integer;
+                    boxOut          : TGeomBox;
+                    arrGeomBox      : TArray<TGeomBox>;
+                begin
+                    geomCount := length(arrGeomIn);
 
-            if (geomCount < 1) then
-                exit();
+                    if (geomCount < 1) then
+                        exit();
 
-            SetLength(arrGeomBox, geomCount);
+                    SetLength(arrGeomBox, geomCount);
 
-            for i := 0 to (geomCount - 1) do
-                arrGeomBox[i] := arrGeomIn[i].boundingBox();
+                    for i := 0 to (geomCount - 1) do
+                        arrGeomBox[i] := arrGeomIn[i].boundingBox();
 
-            boxOut := TGeomBox.create(arrGeomBox);
+                    boxOut := TGeomBox.determineBoundingBox( arrGeomBox );
 
-            result := boxOut;
-        end;
+                    result := boxOut;
+                end;
+
+        //centre point
+            function TGeomBase.calculateCentrePoint() : TGeomPoint;
+                begin
+                    result := TGeomPoint.calculateCentrePoint( arrGeomPoints );
+                end;
+
+        //drawing points
+            function TGeomBase.getDrawingPoints() : TArray<TGeomPoint>;
+                begin
+                    result := arrGeomPoints;
+                end;
+
+        //rotation
+            procedure TGeomBase.rotate( const rotationAngleIn           : double;
+                                        const rotationReferencePointIn  : TGeomPoint );
+                begin
+                    TGeomPoint.rotateArrPoints(
+                                                    rotationAngleIn,
+                                                    rotationReferencePointIn,
+                                                    arrGeomPoints
+                                              );
+                end;
+
+            procedure TGeomBase.rotate(const rotationAngleIn : double);
+                begin
+                    TGeomPoint.rotateArrPoints(
+                                                    rotationAngleIn,
+                                                    arrGeomPoints
+                                              );
+                end;
+
+        //shift the geometry
+            procedure TGeomBase.shift(const deltaXIn, deltaYIn, deltaZIn : double);
+                var
+                    i : integer;
+                begin
+                    for i := 0 to (length(arrGeomPoints) - 1) do
+                        arrGeomPoints[i].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                end;
+
+            procedure TGeomBase.shift(const deltaXIn, deltaYIn : double);
+                var
+                    i : integer;
+                begin
+                    for i := 0 to (length(arrGeomPoints) - 1) do
+                        arrGeomPoints[i].shiftPoint( deltaXIn, deltaYIn );
+                end;
+
+
 
 end.

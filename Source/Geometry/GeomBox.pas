@@ -14,7 +14,6 @@ interface
                 minPoint, maxPoint : TGeomPoint;
             //construction
                 constructor create(const point1In, point2In : TGeomPoint); overload;
-                constructor create(const arrGeomBoxesIn : TArray<TGeomBox>); overload;
             //copy other
                 procedure copyBox(const otherBoxIn : TGeomBox);
             //centre point
@@ -78,11 +77,6 @@ implementation
         constructor TGeomBox.create(const point1In, point2In : TGeomPoint);
             begin
                 self.setPoints( point1In, point2In );
-            end;
-
-        constructor TGeomBox.create(const arrGeomBoxesIn : TArray<TGeomBox>);
-            begin
-                Self.copyBox( determineBoundingBox(arrGeomBoxesIn) );
             end;
 
     //copy other

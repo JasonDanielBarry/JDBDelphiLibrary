@@ -7,7 +7,8 @@ interface
         LineIntersectionMethods,
         LinearAlgebraTypes,
         MatrixMethods,
-        GeometryTypes
+        GeometryTypes,
+        GeomBox
         ;
 
    
@@ -20,9 +21,8 @@ interface
 
     
     //calculate the intersection point of two lines
-        function geomLineIntersectionPoint( out     linesIntersectOut               : boolean;
-                                            const   line1Point0In, line1Point1In,
-                                                    line2Point0In, line2Point1In    : TGeomPoint) : TGeomPoint;
+        function geomLineIntersectionPoint( const   line1Point0In, line1Point1In,
+                                                    line2Point0In, line2Point1In    : TGeomPoint) : TGeomLineIntersectionData;
 
 implementation
 
@@ -76,32 +76,10 @@ implementation
                     result := geomTriangleArea(point1In, point2In, point3);
                 end;
 
-    //calculate the area of a polygon
-
-            function geomPolygonArea(const arrGeomPointsIn : TArray<TGeomPoint>) : double;
-                var
-                    i, arrLen   : integer;
-                    areaSum     : double;
-                begin
-                    //shoelace formula calculation
-
-                    areaSum := 0;
-
-                    arrLen := Length(arrGeomPointsIn);
-
-                    //shoelace calculation
-                        for i := 0 to (arrLen - 2) do
-                            areaSum := areaSum + geomTriangleArea(arrGeomPointsIn[i], arrGeomPointsIn[i + 1]);
-
-                        areaSum := areaSum + geomTriangleArea(arrGeomPointsIn[arrLen - 1], arrGeomPointsIn[0]);
-
-                    result := areaSum;
-                end;
-
     //calculate the intersection point of two lines
-        function geomLineIntersectionPoint( out     linesIntersectOut               : boolean;
-                                            const   line1Point0In, line1Point1In,
-                                                    line2Point0In, line2Point1In    : TGeomPoint) : TGeomPoint;
+        function calculateLineIntersectionPoint(out     linesIntersectOut               : boolean;
+                                                const   line1Point0In, line1Point1In,
+                                                        line2Point0In, line2Point1In    : TGeomPoint) : TGeomPoint;
             var
                 l1x0, l1y0, l1x1, l1y1,
                 l2x0, l2y0, l2x1, l2y1  : double;
@@ -126,6 +104,51 @@ implementation
                 result := TGeomPoint.create( intersectionPoint );
             end;
 
+        function determineLineIntersectionRegion(const  intersectionPointIn,
+                                                        line1Point0In, line1Point1In,
+                                                        line2Point0In, line2Point1In    : TGeomPoint) : EBoundaryRelation;
+            var
+                isWithinLine1,  isWithinLine2   : boolean;
+                line1Bound,     line2Bound      : TGeomBox;
+                boundaryRelationOut             : EBoundaryRelation;
+            begin
+                //get line bounding boxes
+                    line1Bound := TGeomBox.create( line1Point0In, line1Point1In );
+                    line2Bound := TGeomBox.create( line2Point0In, line2Point1In );
+
+                //test if point is on either line
+                    isWithinLine1 := line1Bound.pointIsWithin( intersectionPointIn );
+                    isWithinLine2 := line2Bound.pointIsWithin( intersectionPointIn );
+
+                //test if the intersection point lies within the boundaries of the two lines
+                    if (isWithinLine1 OR isWithinLine2) then
+                        boundaryRelationOut := EBoundaryRelation.brInside
+                    else
+                        boundaryRelationOut := EBoundaryRelation.brOutside;
+
+                result := boundaryRelationOut;
+            end;
+
+        function geomLineIntersectionPoint( const   line1Point0In, line1Point1In,
+                                                    line2Point0In, line2Point1In    : TGeomPoint) : TGeomLineIntersectionData;
+            var
+                intersectionDataOut : TGeomLineIntersectionData;
+            begin
+                //calculate the intersection point
+                    intersectionDataOut.point := calculateLineIntersectionPoint(    intersectionDataOut.intersectionExists,
+                                                                                    line1Point0In, line1Point1In,
+                                                                                    line2Point0In, line2Point1In                );
+
+                //determine where the intersection lies
+                    if (intersectionDataOut.intersectionExists) then
+                        begin
+                            intersectionDataOut.relativeToBound := determineLineIntersectionRegion( intersectionDataOut.point,
+                                                                                                    line1Point0In, line1Point1In,
+                                                                                                    line2Point0In, line2Point1In    );
+                        end;
+
+                result := intersectionDataOut;
+            end;
 
 
 end.
