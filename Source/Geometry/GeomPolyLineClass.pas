@@ -15,8 +15,7 @@ interface
             private
                 //
             protected
-                //member variables
-                    arrVertices : TArray<TGeomPoint>;
+                //
             public
                 //constructor
                     constructor create();
@@ -61,7 +60,7 @@ implementation
                 begin
                     inherited create();
 
-                    SetLength(arrVertices,  0);
+                    SetLength(arrGeomPoints,  0);
                 end;
 
         //destructor
@@ -78,7 +77,7 @@ implementation
 
             function TGeomPolyLine.getVertex(indexIn : integer) : TGeomPoint;
                 begin
-                    result := arrVertices[indexIn];
+                    result := arrGeomPoints[indexIn];
                 end;
 
         //add a line to the array of lines
@@ -106,9 +105,9 @@ implementation
                     //test to see if the new point already exists
                         for i := 0 to (vertexCount() - 1) do
                             begin
-                                dx := abs(newVertexIn.x - arrVertices[i].x);
-                                dy := abs(newVertexIn.y - arrVertices[i].y);
-                                dz := abs(newVertexIn.z - arrVertices[i].z);
+                                dx := abs(newVertexIn.x - arrGeomPoints[i].x);
+                                dy := abs(newVertexIn.y - arrGeomPoints[i].y);
+                                dz := abs(newVertexIn.z - arrGeomPoints[i].z);
 
                                 dp := sqrt( power(dx, 2) + power(dy, 2) + power(dz, 2) );
 
@@ -123,29 +122,29 @@ implementation
                             end;
 
                     //increment vertex array
-                        SetLength(arrVertices, vertexCount() + 1);
+                        SetLength(arrGeomPoints, vertexCount() + 1);
 
                     //add new vertex to array
-                        arrVertices[vertexCount() - 1].copyPoint( newVertexIn );
+                        arrGeomPoints[vertexCount() - 1].copyPoint( newVertexIn );
                 end;
 
             //edit a currently selected vertex
                 procedure TGeomPolyLine.editVertex( indexIn         : integer;
                                                     xIn, yIn, zIn   : double    );
                     begin
-                        arrVertices[indexIn].setPoint( xIn, yIn, zIn );
+                        arrGeomPoints[indexIn].setPoint( xIn, yIn, zIn );
                     end;
 
                 procedure TGeomPolyLine.editVertex( indexIn     : integer;
                                                     newPointIn  : TGeomPoint);
                     begin
-                        arrVertices[indexIn].copyPoint( newPointIn );
+                        arrGeomPoints[indexIn].copyPoint( newPointIn );
                     end;
 
         //calculations
             function TGeomPolyLine.calculatePolylineLength() : double;
                 begin
-                    result := calculatePolylineLength( arrVertices );
+                    result := calculatePolylineLength( arrGeomPoints );
                 end;
 
             class function TGeomPolyLine.calculatePolylineLength(const arrPointsIn : TArray<TGeomPoint>) : double;
@@ -164,19 +163,19 @@ implementation
         //helper methods
             function TGeomPolyLine.vertexCount() : integer;
                 begin
-                    result := Length(arrVertices);
+                    result := Length(arrGeomPoints);
                 end;
 
         //bounding box
             function TGeomPolyLine.boundingBox() : TGeomBox;
                 begin
-                    result := TGeomBox.determineBoundingBox( arrVertices );
+                    result := TGeomBox.determineBoundingBox( arrGeomPoints );
                 end;
 
         //drawing points
             function TGeomPolyLine.getDrawingPoints() : TArray<TGeomPoint>;
                 begin
-                    result := arrVertices;
+                    result := arrGeomPoints;
                 end;
 
         //shift geometry
@@ -185,7 +184,7 @@ implementation
                     i : integer;
                 begin
                     for i := 0 to ( vertexCount() - 1 ) do
-                        arrVertices[i].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                        arrGeomPoints[i].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                 end;
 
 end.

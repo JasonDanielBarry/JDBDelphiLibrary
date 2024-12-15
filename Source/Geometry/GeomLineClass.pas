@@ -19,19 +19,18 @@ interface
                         y : integer = 1;
                         z : integer = 2;
                 var
-                    startPoint, endPoint    : TGeomPoint;
-                    lineVector              : TGeomSpaceVector;
+                    lineVector : TGeomSpaceVector;
                 //helper methods
                     //calculat line projections on 3 axes
                         procedure calculateAxisProjections();
                     //assign points
-                        procedure assignPoints(startPointIn, endPointIn : TGeomPoint);
+                        procedure assignPoints(const startPointIn, endPointIn : TGeomPoint);
             strict protected
                 //
             public
                 //constructor
                     constructor create(); overload;
-                    constructor create(startPointIn, endPointIn : TGeomPoint); overload;
+                    constructor create(const startPointIn, endPointIn : TGeomPoint); overload;
                 //destructor
                     destructor destroy(); override;
                 //accessors
@@ -41,11 +40,11 @@ interface
                 //modifiers
                     procedure setStartPoint(const xIn, yIn : double); overload;
                     procedure setStartPoint(const xIn, yIn, zIn : double); overload;
-                    procedure setStartPoint(startPointIn : TGeomPoint); overload;
+                    procedure setStartPoint(const startPointIn : TGeomPoint); overload;
                     procedure setEndPoint(const xIn, yIn : double); overload;
                     procedure setEndPoint(const xIn, yIn, zIn : double); overload;
-                    procedure setEndPoint(endPointIn : TGeomPoint); overload;
-                    procedure setPoints(startPointIn, endPointIn : TGeomPoint);
+                    procedure setEndPoint(const endPointIn : TGeomPoint); overload;
+                    procedure setPoints(const startPointIn, endPointIn : TGeomPoint);
                 //calculattions
                     //line length
                         function calculateLength() : double; overload;
@@ -53,7 +52,7 @@ interface
                     //unit vector
                         function unitVector() : TGeomSpaceVector;
                     //parametric line equation point
-                        function parametricEquationPoint(tIn : double) : TGeomPoint;
+                        function parametricEquationPoint(const tIn : double) : TGeomPoint;
                     //line intersection
                         function calculateLineIntersection( const lineIn        : TGeomLine;
                                                             const freeLineIn    : boolean = True) : TGeomLineIntersectionData; overload;
@@ -77,16 +76,16 @@ implementation
                 //x-axis (x-component)
                     procedure TGeomLine.calculateAxisProjections();
                         begin
-                            lineVector[x] := endPoint.x - startPoint.x;
-                            lineVector[y] := endPoint.y - startPoint.y;
-                            lineVector[z] := endPoint.z - startPoint.z;
+                            lineVector[x] := arrGeomPoints[1].x - arrGeomPoints[0].x;
+                            lineVector[y] := arrGeomPoints[1].y - arrGeomPoints[0].y;
+                            lineVector[z] := arrGeomPoints[1].z - arrGeomPoints[0].z;
                         end;
 
             //assign points
-                procedure TGeomLine.assignPoints(startPointIn, endPointIn : TGeomPoint);
+                procedure TGeomLine.assignPoints(const startPointIn, endPointIn : TGeomPoint);
                     begin
-                        startPoint.copyPoint( startPointIn );
-                        endPoint.copyPoint( endPointIn );
+                        arrGeomPoints[0].copyPoint( startPointIn );
+                        arrGeomPoints[1].copyPoint( endPointIn );
 
                         calculateAxisProjections();
                     end;
@@ -102,9 +101,11 @@ implementation
                     lineVector := TGeomSpaceVector.create();
 
                     lineVector.setDimensions(3);
+
+                    SetLength(arrGeomPoints, 2);
                 end;
 
-            constructor TGeomLine.create(startPointIn, endPointIn : TGeomPoint);
+            constructor TGeomLine.create(const startPointIn, endPointIn : TGeomPoint);
                 begin
                     create();
 
@@ -123,7 +124,7 @@ implementation
             //line length
                 function TGeomLine.calculateLength() : double;
                     begin
-                        result := calculateLength( startPoint, endPoint );
+                        result := calculateLength( arrGeomPoints[0], arrGeomPoints[1] );
                     end;
 
                 class function TGeomLine.calculateLength(const startPointIn, endPointIn : TGeomPoint) : double;
@@ -144,7 +145,7 @@ implementation
                     end;
 
             //parametric line equation point
-                function TGeomLine.parametricEquationPoint(tIn : double) : TGeomPoint;
+                function TGeomLine.parametricEquationPoint(const tIn : double) : TGeomPoint;
                     var
                         lineUnitVector  : TGeomSpaceVector;
                         pointOut        : TGeomPoint;
@@ -152,9 +153,9 @@ implementation
                         lineUnitVector := unitVector();
 
                         //(x, y, z) = (x0, y0, z0) + t<ux, uy, uz>
-                            pointOut.x := startPoint.x + tIn * lineUnitVector[0];
-                            pointOut.y := startPoint.y + tIn * lineUnitVector[1];
-                            pointOut.z := startPoint.z + tIn * lineUnitVector[2];
+                            pointOut.x := arrGeomPoints[0].x + tIn * lineUnitVector[0];
+                            pointOut.y := arrGeomPoints[0].y + tIn * lineUnitVector[1];
+                            pointOut.z := arrGeomPoints[0].z + tIn * lineUnitVector[2];
 
                         FreeAndNil(lineUnitVector);
 
@@ -258,12 +259,12 @@ implementation
 
             function TGeomLine.getStartPoint() : TGeomPoint;
                 begin
-                    result := startPoint;
+                    result := arrGeomPoints[0];
                 end;
 
             function TGeomLine.getEndPoint() : TGeomPoint;
                 begin
-                    result := endPoint;
+                    result := arrGeomPoints[1];
                 end;
 
         //modifiers
@@ -281,9 +282,9 @@ implementation
                     setStartPoint( newStartPoint );
                 end;
 
-            procedure TGeomLine.setStartPoint(startPointIn : TGeomPoint);
+            procedure TGeomLine.setStartPoint(const startPointIn : TGeomPoint);
                 begin
-                    assignPoints(startPointIn, endPoint);
+                    assignPoints(startPointIn, arrGeomPoints[1]);
                 end;
 
             procedure TGeomLine.setEndPoint(const xIn, yIn : double);
@@ -300,12 +301,12 @@ implementation
                     setEndPoint( newEndPoint );
                 end;
 
-            procedure TGeomLine.setEndPoint(endPointIn : TGeomPoint);
+            procedure TGeomLine.setEndPoint(const endPointIn : TGeomPoint);
                 begin
-                    assignPoints(startPoint, endPointIn);
+                    assignPoints(arrGeomPoints[0], endPointIn);
                 end;
 
-            procedure TGeomLine.setPoints(startPointIn, endPointIn : TGeomPoint);
+            procedure TGeomLine.setPoints(const startPointIn, endPointIn : TGeomPoint);
                 begin
                     assignPoints(startPointIn, endPointIn);
                 end;
@@ -315,7 +316,7 @@ implementation
                 var
                     boxOut : TGeomBox;
                 begin
-                    boxOut := TGeomBox.create(startPoint, endPoint);
+                    boxOut := TGeomBox.create(arrGeomPoints[0], arrGeomPoints[1]);
 
                     result := boxOut;
                 end;
@@ -327,8 +328,8 @@ implementation
                 begin
                     SetLength(arrPointsOut, 2);
 
-                    arrPointsOut[0] := startPoint;
-                    arrPointsOut[1] := endPoint;
+                    arrPointsOut[0] := arrGeomPoints[0];
+                    arrPointsOut[1] := arrGeomPoints[1];
 
                     result := arrPointsOut;
                 end;
@@ -336,8 +337,8 @@ implementation
         //shift geometry
             procedure TGeomLine.shift(const deltaXIn, deltaYIn, deltaZIn : double);
                 begin
-                    startPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
-                    endPoint.shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                    arrGeomPoints[0].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
+                    arrGeomPoints[1].shiftPoint( deltaXIn, deltaYIn, deltaZIn );
                 end;
 
 end.

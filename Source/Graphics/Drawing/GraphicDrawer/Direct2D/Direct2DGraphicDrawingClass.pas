@@ -28,9 +28,6 @@ interface
 
 implementation
 
-    //private
-
-
     //public
         //constructor
             constructor TDirect2DGraphicDrawer.create();
@@ -49,7 +46,8 @@ implementation
                                                         const drawingBackgroundColourIn     : TColor;
                                                         const canvasIn                      : TDirect2DCanvas   );
                 begin
-                    Direct2DDrawingCanvas := canvasIn;
+                    //set the canvas
+                        Direct2DDrawingCanvas := canvasIn;
 
                     //draw all geometry
                         inherited drawAll( canvasWidthIn, canvasHeightIn, drawingBackgroundColourIn );

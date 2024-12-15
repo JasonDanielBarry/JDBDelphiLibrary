@@ -31,7 +31,8 @@ interface
                         function calculateRegionDomain() : double;
                     //range
                         function calculateRegionRange() : double;
-
+                    //validity
+                        function isValid() : boolean;
         end;
 
 implementation
@@ -91,6 +92,28 @@ implementation
                 function TDrawingAxisConverterBase.calculateRegionRange() : double;
                     begin
                         result := drawingRegion.calculateYDimension();
+                    end;
+
+            //validity
+                function TDrawingAxisConverterBase.isValid() : boolean;
+                    var
+                        canvasDimensionsAreValid,
+                        drawingRegionDimensionsAreValid : boolean;
+                    begin
+                        //check that the canvas dimensions are set
+                            canvasDimensionsAreValid := NOT(
+                                                                    IsZero( canvasDimensions.Width )
+                                                                OR  IsZero( canvasDimensions.Height)
+                                                           );
+
+                        //check that the region dimensions are set
+                            drawingRegionDimensionsAreValid := NOT(
+                                                                            IsZero( drawingRegion.calculateXDimension() )
+                                                                        OR  IsZero( drawingRegion.calculateYDimension() )
+                                                                  );
+
+                        result :=       canvasDimensionsAreValid
+                                    AND drawingRegionDimensionsAreValid;
                     end;
 
 end.

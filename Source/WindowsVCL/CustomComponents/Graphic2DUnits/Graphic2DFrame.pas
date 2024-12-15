@@ -462,9 +462,15 @@ implementation
                 end;
 
             procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
+                var
+                    validGraphicDrawerState : boolean;
                 begin
-                    try
-                        if NOT(D2DGraphicDrawer.getMouseControlActive()) then
+                    //if the graphic drawer is nil then nothing can happen
+                        if ( NOT(Assigned(D2DGraphicDrawer)) ) then
+                            exit();
+
+                    //set the cursor based on the user input
+                        if ( NOT(D2DGraphicDrawer.getMouseControlActive()) ) then
                             begin
                                 PaintBoxGraphic.Cursor := crDefault;
                                 exit();
@@ -476,9 +482,6 @@ implementation
                             WM_MBUTTONUP:
                                 PaintBoxGraphic.Cursor := crDefault;
                         end;
-                    except
-
-                    end;
                 end;
 
         //zooming methods

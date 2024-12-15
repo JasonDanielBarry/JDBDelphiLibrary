@@ -155,8 +155,8 @@ implementation
                     result := axisConverter.MouseControlActive;
                 end;
 
-            function TGraphicDrawerAxisConversionInterface.processWindowsMessages( const messageIn             : Tmessage;
-                                                                                const newMousePositionIn    : TPoint    ) : boolean;
+            function TGraphicDrawerAxisConversionInterface.processWindowsMessages(  const messageIn             : Tmessage;
+                                                                                    const newMousePositionIn    : TPoint    ) : boolean;
                 begin
                     if (self = nil) then
                         begin

@@ -75,10 +75,10 @@ implementation
                 begin
                     //calculate the closing line length
                         //start point is the polyline last vertex
-                            closingLineStartPoint := arrVertices[vertexCount() - 1];
+                            closingLineStartPoint := arrGeomPoints[vertexCount() - 1];
 
                         //end point is polyline first vertex
-                            closingLineEndPoint := arrVertices[0];
+                            closingLineEndPoint := arrGeomPoints[0];
 
                         //get the length
                             closingLineLength := TGeomLine.calculateLength( closingLineStartPoint, closingLineEndPoint );
@@ -92,7 +92,7 @@ implementation
 
             function TGeomPolygon.calculatePolygonArea() : double;
                 begin
-                    result := calculatePolygoneArea( arrVertices );
+                    result := calculatePolygoneArea( arrGeomPoints );
                 end;
 
             class function TGeomPolygon.calculatePolygoneArea(const arrPointsIn : TArray<TGeomPoint>) : double;

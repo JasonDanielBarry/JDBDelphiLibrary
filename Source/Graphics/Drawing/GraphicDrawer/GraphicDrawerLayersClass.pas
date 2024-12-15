@@ -151,6 +151,10 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
+                        //only draw if axis converter has valid dimensions
+                            if ( NOT(axisConverter.isValid()) ) then
+                                exit();
+
                         //loop through active layers of the layer-geometry map
                             for layer in arrActiveDrawingLayers do
                                 begin

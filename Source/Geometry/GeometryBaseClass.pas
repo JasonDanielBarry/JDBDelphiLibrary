@@ -13,16 +13,23 @@ interface
             private
                 //
             protected
-                //
+                var
+                    arrGeomPoints : TArray<TGeomPoint>;
             public
-                constructor create();
-                destructor destroy(); override;
-                function getDrawingType() : EGraphicObjectType; virtual; abstract;
-                function boundingBox() : TGeomBox; virtual; abstract;
-                function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
-                procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;
-                procedure shift(const deltaXIn, deltaYIn : double); overload;
-                class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
+                //constructor
+                    constructor create();
+                //destructor
+                    destructor destroy(); override;
+                //get drawing type
+                    function getDrawingType() : EGraphicObjectType; virtual; abstract;
+                //bounding box
+                    function boundingBox() : TGeomBox; virtual; abstract;
+                    class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
+                //get drawing points
+                    function getDrawingPoints() : TArray<TGeomPoint>; virtual; abstract;
+                //shift the geometry
+                    procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload; virtual; abstract;
+                    procedure shift(const deltaXIn, deltaYIn : double); overload;
         end;
 
 
@@ -36,7 +43,9 @@ implementation
 
     destructor TGeomBase.destroy();
         begin
-            inherited Destroy();
+            SetLength(arrGeomPoints, 0);
+
+            inherited destroy();
         end;
 
     procedure TGeomBase.shift(const deltaXIn, deltaYIn : double);

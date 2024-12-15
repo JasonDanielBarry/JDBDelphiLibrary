@@ -362,7 +362,7 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'X-Axis:'
       Layout = tlCenter
-      ExplicitWidth = 37
+      ExplicitWidth = 36
       ExplicitHeight = 15
     end
     object EditXMin: TEdit
@@ -385,7 +385,7 @@ object CustomGraphic2D: TCustomGraphic2D
       Alignment = taCenter
       Caption = '< x <'
       Layout = tlCenter
-      ExplicitWidth = 28
+      ExplicitWidth = 27
       ExplicitHeight = 15
     end
     object EditXMax: TEdit
@@ -412,7 +412,7 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'Y-Axis:'
       Layout = tlCenter
-      ExplicitWidth = 37
+      ExplicitWidth = 36
       ExplicitHeight = 15
     end
     object EditYMin: TEdit
