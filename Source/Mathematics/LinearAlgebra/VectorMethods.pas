@@ -136,7 +136,7 @@ implementation
                 negativeTailVector : TLAVector;
             begin
                 //subtraction can only occur if the vectors have the same size
-                    if ( NOT(vectorsAreSameSize(vectorHeadIn, vectorTailIn)) ) then
+                    if ( NOT(vectorsAreSameSize( vectorHeadIn, vectorTailIn )) ) then
                         exit();
 
                 //the tail is subtracted from the head
@@ -153,7 +153,7 @@ implementation
                 dotProductSum   : double;
             begin
                 //dot product can only occur if the vectors have the same size
-                    if ( NOT(vectorsAreSameSize(vector1In, vector2In)) ) then
+                    if ( NOT(vectorsAreSameSize( vector1In, vector2In )) ) then
                         exit();
 
                 //multiply each element of V1 and V2 and add

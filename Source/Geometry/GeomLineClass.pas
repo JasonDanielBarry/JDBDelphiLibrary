@@ -5,6 +5,7 @@ interface
     uses
         system.sysUtils, system.Math, system.Types,
         GraphicDrawingTypes,
+        LinearAlgebraTypes,
         VectorMethods,
         GeometryMathMethods,
         GeometryTypes, GeomBox,
@@ -185,13 +186,11 @@ implementation
 
                 class function TGeomLine.calculateLength(const startPointIn, endPointIn : TGeomPoint) : double;
                     var
-                        dx, dy, dz : double;
+                        localLineVector : TLAVector;
                     begin
-                        dx := endPointIn.x - startPointIn.x;
-                        dy := endPointIn.y - startPointIn.y;
-                        dz := endPointIn.z - startPointIn.z;
+                        localLineVector := TGeomPoint.calculateVector( endPointIn, startPointIn );
 
-                        result := vectorNormalise( [dx, dy, dx] );
+                        result := vectorNormalise( localLineVector );
                     end;
 
             //unit vector

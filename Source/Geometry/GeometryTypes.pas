@@ -6,7 +6,7 @@ interface
         System.SysUtils, system.Math, system.Types,
         LinearAlgebraTypes,
         LinearRescalingMethods,
-        MatrixMethods
+        MatrixMethods, VectorMethods
         ;
 
      type
@@ -22,6 +22,8 @@ interface
                                             const rotationReferencePointIn  : TGeomPoint);
                     procedure rotatePoint3D(const rotationMatrixIn          : TLAMatrix;
                                             const rotationReferencePointIn  : TGeomPoint);
+                //to vector
+                    function toVector() : TLAVector;
             public
                 var
                     x, y, z : double;
@@ -66,9 +68,10 @@ interface
                                                     var arrGeomPointsIn             : TArray<TGeomPoint>); overload; static;
                     class procedure rotateArrPoints(const alphaIn, betaIn, gammaIn  : double;
                                                     var arrGeomPointsIn             : TArray<TGeomPoint>); overload; static;
+                //calculate vector from tail to head
+                    class function calculateVector(const headPointIn, tailPointIn : TGeomPoint) : TLAVector; static;
                 //calculate centre point
                     class function calculateCentrePoint(const arrPointsIn : TArray<TGeomPoint>) : TGeomPoint; static;
-
         end;
 
         TGeomLineIntersectionData = record
@@ -123,6 +126,20 @@ implementation
                                     rotatedVector[1] + rotationReferencePointIn.y,
                                     rotatedVector[2] + rotationReferencePointIn.z
                                 );
+                end;
+
+        //to vector
+            function TGeomPoint.toVector() : TLAVector;
+                var
+                    vectorOut : TLAVector;
+                begin
+                    SetLength( vectorOut, 3 );
+
+                    vectorOut[0] := self.x;
+                    vectorOut[1] := self.y;
+                    vectorOut[2] := self.z;
+
+                    result := vectorOut;
                 end;
 
     //public
@@ -333,6 +350,17 @@ implementation
                     rotateArrPoints(    alphaIn, betaIn, gammaIn,
                                         groupCentrePoint,
                                         arrGeomPointsIn             );
+                end;
+
+        //calculate vector from tail to head
+            class function TGeomPoint.calculateVector(const headPointIn, tailPointIn : TGeomPoint) : TLAVector;
+                var
+                    vectorHead, vectorTail : TLAVector;
+                begin
+                    vectorHead := headPointIn.toVector();
+                    vectorTail := tailPointIn.toVector();
+
+                    result := vectorSubtraction( vectorHead, vectorTail );
                 end;
 
         //calculate centre point

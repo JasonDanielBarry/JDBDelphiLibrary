@@ -27,6 +27,9 @@ interface
                     class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;
                 //centre point
                     function calculateCentrePoint() : TGeomPoint;
+                    procedure setCentrePoint(const xIn, yIn : double); overload;
+                    procedure setCentrePoint(const xIn, yIn, zIn : double); overload;
+                    procedure setCentrePoint(const newCentrePointIn : TGeomPoint); overload;
                 //drawing points
                     function getDrawingPoints() : TArray<TGeomPoint>;
                 //rotation
@@ -86,6 +89,25 @@ implementation
             function TGeomBase.calculateCentrePoint() : TGeomPoint;
                 begin
                     result := TGeomPoint.calculateCentrePoint( arrGeomPoints );
+                end;
+
+            procedure TGeomBase.setCentrePoint(const xIn, yIn : double);
+                begin
+                    setCentrePoint( xIn, yIn, 0 );
+                end;
+
+            procedure TGeomBase.setCentrePoint(const xIn, yIn, zIn : double);
+                var
+                    newCentrePoint : TGeomPoint;
+                begin
+                    newCentrePoint := TGeomPoint.create( xIn, yIn, zIn );
+
+                    setCentrePoint( newCentrePoint );
+                end;
+
+            procedure TGeomBase.setCentrePoint(const newCentrePointIn : TGeomPoint);
+                begin
+                    TGeomBox.setCentrePoint( newCentrePointIn, arrGeomPoints );
                 end;
 
         //drawing points

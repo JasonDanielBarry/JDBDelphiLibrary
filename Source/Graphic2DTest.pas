@@ -62,11 +62,13 @@ implementation
 
                     polygon.rotate(45);
 
+                    polygon.setCentrePoint(50, 100);
+
                     GraphicDrawerInOut.addPolygon( polygon, True, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                     FreeAndNil( polygon );
 
-                    GraphicDrawerInOut.addText(50, 50, 'This is a polygon');
+                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon');
 
                 //line 1
                     GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');

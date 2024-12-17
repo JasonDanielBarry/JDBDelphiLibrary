@@ -4,6 +4,7 @@ interface
 
     uses
         System.SysUtils, system.Math, system.Math.Vectors, system.Types,
+        LinearAlgebraTypes,
         LinearRescalingMethods,
         GeometryTypes
         ;
@@ -24,6 +25,8 @@ interface
                 procedure setCentrePoint(const xIn, yIn, zIn : double); overload;
                 procedure setCentrePoint(const xIn, yIn : double); overload;
                 procedure setCentrePoint(const newCentrePointIn : TGeomPoint); overload;
+                class procedure setCentrePoint( const newCentrePointIn  : TGeomPoint;
+                                                var arrGeomPointsIn     : TArray<TGeomPoint> ); overload; static;
             //set boundaries
                 procedure setXBounds(const xMinIn, xMaxIn : double);
                 procedure setYBounds(const yMinIn, yMaxIn : double);
@@ -132,6 +135,28 @@ implementation
                                     newCentrePointIn.y,
                                     newCentrePointIn.z
                               );
+            end;
+
+        class procedure TGeomBox.setCentrePoint(const newCentrePointIn  : TGeomPoint;
+                                                var arrGeomPointsIn     : TArray<TGeomPoint>);
+            var
+                i                   : integer;
+                currentCentrePoint  : TGeomPoint;
+                shiftVector         : TLAVector;
+            begin
+                //calculate the centre point of the point array
+                    currentCentrePoint := TGeomPoint.calculateCentrePoint( arrGeomPointsIn );
+
+                //calculate how far the points array must shift
+                    shiftVector := TGeomPoint.calculateVector( newCentrePointIn, currentCentrePoint );
+
+                //loop through the array and shift each point
+                    for i := 0 to (length(arrGeomPointsIn) - 1) do
+                        arrGeomPointsIn[i].shiftPoint(
+                                                        shiftVector[0],
+                                                        shiftVector[1],
+                                                        shiftVector[2]
+                                                     );
             end;
 
     //set boundaries
