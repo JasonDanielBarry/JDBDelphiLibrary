@@ -96,6 +96,9 @@ implementation
                                                         lineColourIn    : TColor;
                                                 const   lineStyleIn     : TPenStyle;
                                                 const   geometryIn      : TGeomBase );
+                var
+                    i, pointCount       : integer;
+                    localGeometryPoints : TArray<TGeomPoint>;
                 begin
                     inherited create(   filledIn,
                                         lineThicknessIn,
@@ -106,8 +109,15 @@ implementation
                     //drawing type
                         objectDrawingType := geometryIn.getDrawingType();
 
-                    //get the drawing points
-                        geometryPoints := geometryIn.getDrawingPoints();
+                    //copy in the drawing points
+                        localGeometryPoints := geometryIn.getDrawingPoints();
+
+                        pointCount := length( localGeometryPoints );
+
+                        SetLength( geometryPoints, pointCount );
+
+                        for i := 0 to (pointCount - 1) do
+                            geometryPoints[i].copyPoint( localGeometryPoints[i] );
                 end;
 
             constructor TGraphicGeometry.create(const   lineThicknessIn : integer;

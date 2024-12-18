@@ -42,7 +42,8 @@ interface
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); virtual; abstract;
                 //bounding box
-                    function determineBoundingBox() : TGeomBox; virtual; abstract;
+                    function determineBoundingBox() : TGeomBox; overload; virtual; abstract;
+                    class function determineBoundingBox(const arrGraphicObjectsIn : TArray<TGraphicObject>) : TGeomBox; overload; static;
         end;
 
 implementation
@@ -102,6 +103,23 @@ implementation
             destructor TGraphicObject.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //bounding box
+            class function TGraphicObject.determineBoundingBox(const arrGraphicObjectsIn : TArray<TGraphicObject>) : TGeomBox;
+                var
+                    i, graphicObjectsCount  : integer;
+                    boundingBoxOut          : TGeomBox;
+                    arrBoundingBoxes        : TArray<TGeomBox>;
+                begin
+                    graphicObjectsCount := length( arrGraphicObjectsIn );
+
+                    SetLength( arrBoundingBoxes, graphicObjectsCount );
+
+                    for i := 0 to (graphicObjectsCount - 1) do
+                        arrBoundingBoxes[i] := arrGraphicObjectsIn[i].determineBoundingBox();
+
+                    result := TGeomBox.determineBoundingBox( arrBoundingBoxes );
                 end;
 
 end.

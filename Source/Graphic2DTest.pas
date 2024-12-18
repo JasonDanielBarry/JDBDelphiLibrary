@@ -80,8 +80,6 @@ implementation
 
                      GraphicDrawerInOut.addLine(line, 4, TColors.Black);
 
-                     FreeAndNil( line );
-
                     GraphicDrawerInOut.addText(115, 115, 'This is a line');
 
                 //polyline
@@ -89,21 +87,27 @@ implementation
 
                     polyline := TGeomPolyLine.create();
 
-                    const NUM_POINTS : integer = 1500;
+                    const NUM_POINTS : integer = 3000;
 
                     for i := 0 to NUM_POINTS do
                         begin
-                            x := -50 + ((200 - 10) / NUM_POINTS) * i;
-                            y := 5 * sin(x - 10) + x;
+                            x := -100 + ((300 - 10) / NUM_POINTS) * i;
+                            y := 5 * sin(x - 10);
 
                             polyline.addVertex(x, y);
                         end;
 
+                    polyline.setCentrePoint( line.calculateCentrePoint() );
+
+                    polyline.rotate(45);
+
                     GraphicDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
 
-                    FreeAndNil( polyline );
+                    FreeAndNil( line );
 
-                    GraphicDrawerInOut.addText(140, 140, 'This is a polyline');
+                    GraphicDrawerInOut.addText( polyline.boundingBox().xMax, polyline.boundingBox().yMax, 'This is a polyline' );
+
+                    FreeAndNil( polyline );
 
                 //rectangle
                     GraphicDrawerInOut.setCurrentDrawingLayer('Rectangle');
@@ -189,7 +193,7 @@ implementation
 
                             polyLine.addVertex(x, y);
 
-                            x := x + 0.25;
+                            x := x + 0.2;
                         end;
 
                     GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
@@ -361,24 +365,25 @@ implementation
 
                 y := 15 - 1.0;
 
+                line := TGeomLine.create();
+
+                line.setStartPoint(0, 0);
+                line.setEndPoint(20, 0);
+
+                line.shift(0, y);
+                line.rotate( -10, line.getStartPoint() );
+
                 while (y > 1.0) do
                     begin
-                        line := TGeomLine.create();
-
-                        line.setStartPoint(0, 0);
-                        line.setEndPoint(20, 0);
-
-                        line.shift(0, y);
-                        line.rotate( -10, line.getStartPoint() );
-
                         GraphicDrawerInOut.addLine( line, 16, TColors.Grey);
                         GraphicDrawerInOut.addLine( line, 4, TColors.Darkblue );
 
-                        FreeAndNil( line );
-
+                        line.shift(0, -1.5);
 
                         y := y - 1.5;
                     end;
+
+                FreeAndNil( line );
             end;
 
 

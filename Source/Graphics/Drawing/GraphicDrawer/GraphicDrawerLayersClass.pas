@@ -24,13 +24,16 @@ interface
                     currentDrawingLayer     : string;
                     orderedLayerKeys        : TList<string>;
                     arrActiveDrawingLayers  : TArray<string>;
+                    arrActiveGraphicObjects : Tarray<TGraphicObject>;
                     layerGeometryMap        : TLayerGeometryMap;
                 //add graphic drawing object to the drawing object container
                     procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); override;
                 //helper methods
                     //return a specified layer's graphic objects array
                         function getArrGraphicObjects(const layerKeyIn : string) : TArray<TGraphicObject>;
-                //boudning box
+                    //collect all active graphic objects into one array in order
+                        procedure collectActiveGraphicObjectsIntoArray();
+                //bounding box
                     //calculate the bounding box for a specific layer
                         function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
                     //calculate the net bounding box for active layers
@@ -71,7 +74,7 @@ implementation
 
                         graphicObjectCount := length( arrGraphicObjects );
 
-                        SetLength(arrGraphicObjects, graphicObjectCount + 1);
+                        SetLength( arrGraphicObjects, graphicObjectCount + 1 );
 
                         arrGraphicObjects[ graphicObjectCount ] := drawingGeometryIn;
 
@@ -90,50 +93,56 @@ implementation
                         result := arrGraphicObjectsOut;
                     end;
 
-        //boudning box
+            //collect all active graphic objects into one array in order
+                procedure TGraphicDrawerLayers.collectActiveGraphicObjectsIntoArray();
+                    var
+                        i,
+                        startIndex,
+                        graphicObjectsCount             : integer;
+                        layer                           : string;
+                        arrCurrentLayerGraphicObjects   : TArray<TGraphicObject>;
+                    begin
+                        startIndex          := 0;
+                        graphicObjectsCount := 0;
+
+                        for layer in arrActiveDrawingLayers do
+                            begin
+                                //get the graphic objects for the specified layer
+                                    arrCurrentLayerGraphicObjects := getArrGraphicObjects( layer );
+
+                                    graphicObjectsCount := graphicObjectsCount + length( arrCurrentLayerGraphicObjects );
+
+                                //resize the array
+                                    SetLength( arrActiveGraphicObjects, graphicObjectsCount );
+
+                                //add the graphic objects from the current layer to the array
+                                    for i := 0 to (length(arrCurrentLayerGraphicObjects) - 1) do
+                                        arrActiveGraphicObjects[ i + startIndex ] := arrCurrentLayerGraphicObjects[i];
+
+                                //reset start index
+                                    startIndex := graphicObjectsCount;
+                            end;
+                    end;
+
+        //bounding box
             //calculate the bounding box for a specific layer
                 function TGraphicDrawerLayers.calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
                     var
-                        i, graphicObjectCount   : integer;
-                        arrBoundingBoxes        : TArray<TGeomBox>;
-                        arrGraphicObjects       : TArray<TGraphicObject>;
+                        arrGraphicObjects : TArray<TGraphicObject>;
                     begin
                         //get graphic objects array for specified layer
                             arrGraphicObjects := getArrGraphicObjects( layerKeyIn );
 
-                        graphicObjectCount := length( arrGraphicObjects );
-
-                        SetLength( arrBoundingBoxes, graphicObjectCount );
-
-                        for i := 0 to (graphicObjectCount - 1) do
-                            arrBoundingBoxes[i] := arrGraphicObjects[i].determineBoundingBox();
-
-                        result := TGeomBox.determineBoundingBox( arrBoundingBoxes );
+                        result := TGraphicObject.determineBoundingBox( arrGraphicObjects );
                     end;
 
             //calculate the geometry net bounding box for active geometry
                 procedure TGraphicDrawerLayers.calculateNetBoundingBox();
                     var
-                        i, activeLayerCount : integer;
-                        layerKey            : string;
-                        netBoundingBox      : TGeomBox;
-                        arrBoundingBoxes    : TArray<TGeomBox>;
-                        arrGraphicGeom      : TArray<TGraphicObject>;
+                        layerKey        : string;
+                        netBoundingBox  : TGeomBox;
                     begin
-                        activeLayerCount := length( arrActiveDrawingLayers );
-
-                        SetLength( arrBoundingBoxes, activeLayerCount );
-
-                        i := 0;
-
-                        for layerKey in arrActiveDrawingLayers do
-                            begin
-                                arrBoundingBoxes[i] := calculateLayerBoundingBox( layerKey );
-
-                                inc( i );
-                            end;
-
-                        netBoundingBox := TGeomBox.determineBoundingBox( arrBoundingBoxes );
+                        netBoundingBox := TGraphicObject.determineBoundingBox( arrActiveGraphicObjects );
 
                         axisConverter.setGeometryBoundary( netBoundingBox );
                     end;
@@ -151,18 +160,14 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        //only draw if axis converter has valid dimensions
-                            if ( NOT(axisConverter.isValid()) ) then
-                                exit();
+                        {$IFDEF DEBUG}
+                            //only draw if axis converter has valid dimensions
+                                if ( NOT(axisConverter.isValid()) ) then
+                                    exit();
+                        {$ENDIF}
 
-                        //loop through active layers of the layer-geometry map
-                            for layer in arrActiveDrawingLayers do
-                                begin
-                                    arrDrawingGeometry := getArrGraphicObjects( layer );
-
-                                    for i := 0 to ( length(arrDrawingGeometry) - 1 ) do
-                                        arrDrawingGeometry[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
-                                end;
+                            for i := 0 to ( length(arrActiveGraphicObjects) - 1 ) do
+                                arrActiveGraphicObjects[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                     end;
 
     //public
@@ -226,9 +231,14 @@ implementation
 
             procedure TGraphicDrawerLayers.setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
                 begin
-                    arrActiveDrawingLayers := arrActiveDrawingLayersIn;
+                    //set active layers array
+                        arrActiveDrawingLayers := arrActiveDrawingLayersIn;
 
-                    calculateNetBoundingBox();
+                    //place all the active graphic object into a single array for drawing
+                        collectActiveGraphicObjectsIntoArray();
+
+                    //calculate the bounding box for the reset zoom function
+                        calculateNetBoundingBox();
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects
