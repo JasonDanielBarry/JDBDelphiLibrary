@@ -68,7 +68,7 @@ implementation
 
                     FreeAndNil( polygon );
 
-                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon');
+                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon'#13'rotated 45'#176);
 
                 //line 1
                     GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');
@@ -99,13 +99,13 @@ implementation
 
                     polyline.setCentrePoint( line.calculateCentrePoint() );
 
-                    polyline.rotate(45);
+                    polyline.rotate(30);
 
                     GraphicDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
 
                     FreeAndNil( line );
 
-                    GraphicDrawerInOut.addText( polyline.boundingBox().xMax, polyline.boundingBox().yMax, 'This is a polyline' );
+                    GraphicDrawerInOut.addText( polyline.boundingBox().xMax, polyline.boundingBox().yMax, 'This is a polyline'#13'rotated 30'#176 );
 
                     FreeAndNil( polyline );
 
@@ -133,7 +133,11 @@ implementation
                 //vertical boundary test
                     GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 2');
 
-                    GraphicDrawerInOut.addText(150, 200, 'This is a short'#13'sentence of'#13'3 lines');
+                    GraphicDrawerInOut.addText( 150, 200,
+                                                'This is a short'#13'sentence of'#13'3 lines',
+                                                18,
+                                                Tcolors.Darkred,
+                                                [TFontStyle.fsBold, TFontStyle.fsItalic, TFontStyle.fsUnderline] );
 
                     GraphicDrawerInOut.addText(150, -50, 'This is a short'#13'sentence of'#13'3 lines');
             end;

@@ -99,7 +99,7 @@ implementation
 
                 scaleLinear(startValueIn,       endValueIn,
                             scaleAboutValueIn,  scaleFactor,
-                            newStartValueOut,   newEndValueOut );
+                            newStartValueOut,   newEndValueOut);
             end;
 
 
