@@ -67,6 +67,12 @@ implementation
             var
                 scaleFactor : double;
             begin
+                if ( SameValue(startValueIn, endValueIn) ) then
+                    begin
+                        newEndValueOut := startValueIn + newLengthIn;
+                        exit();
+                    end;
+
                 //the scale factor is the ratio of the new line length to the old line length
                     scaleFactor := abs( newLengthIn / (endValueIn - startValueIn) );
 
@@ -81,6 +87,13 @@ implementation
             var
                 scaleFactor : double;
             begin
+                if ( SameValue(startValueIn, endValueIn) ) then
+                    begin
+                        newStartValueOut    := startValueIn - (newLengthIn / 2);
+                        newEndValueOut      := endValueIn   + (newLengthIn / 2);
+                        exit();
+                    end;
+
                 //the scale factor is the ratio of the new line length to the old line length
                     scaleFactor := abs( newLengthIn / (endValueIn - startValueIn) );
 

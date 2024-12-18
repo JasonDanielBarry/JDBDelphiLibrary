@@ -190,13 +190,13 @@ implementation
         procedure TGeomBox.setPoints(const point1In, point2In : TGeomPoint);
             begin
                 //min point
-                    minPoint.x := min(point1In.x, point2In.x);
-                    minPoint.y := min(point1In.y, point2In.y);
-                    minPoint.z := min(point1In.z, point2In.z);
+                    minPoint.x := min( point1In.x, point2In.x );
+                    minPoint.y := min( point1In.y, point2In.y );
+                    minPoint.z := min( point1In.z, point2In.z );
                 //max point
-                    maxPoint.x := max(point1In.x, point2In.x);
-                    maxPoint.y := max(point1In.y, point2In.y);
-                    maxPoint.z := max(point1In.z, point2In.z);
+                    maxPoint.x := max( point1In.x, point2In.x );
+                    maxPoint.y := max( point1In.y, point2In.y );
+                    maxPoint.z := max( point1In.z, point2In.z );
             end;
 
     //shift box

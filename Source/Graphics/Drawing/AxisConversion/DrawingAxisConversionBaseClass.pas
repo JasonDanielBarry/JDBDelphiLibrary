@@ -43,7 +43,10 @@ implementation
                 begin
                     inherited create();
 
-                    drawingRegion.setBounds( 0, 0, 0, 0, 0, 0 );
+                    //canvas and drawing region dimensions set to an initial value
+                    //to prevent any initial errors from occuring
+                        setCanvasDimensions( 10, 10 );
+                        drawingRegion := TGeomBox.newBox( 10, 10 );
                 end;
 
         //destructor
@@ -68,7 +71,7 @@ implementation
 
             //drawingRegion space boundaries
                 procedure TDrawingAxisConverterBase.setDrawingRegion(   const bufferIn : double;
-                                                                        const regionIn : TGeomBox );
+                                                                        const regionIn : TGeomBox   );
                     var
                         buffer : double;
                     begin

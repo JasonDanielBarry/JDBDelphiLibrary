@@ -124,11 +124,18 @@ implementation
                     GraphicDrawerInOut.addText(-100, 50, 'This is an ellipse');
 
                 //text
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer');
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 1');
 
-                    GraphicDrawerInOut.addText(0, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, 0)');
+                    GraphicDrawerInOut.addText(0, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, -20)');
 
-                    GraphicDrawerInOut.addText(200, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, 10)');
+                    GraphicDrawerInOut.addText(200, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, -20)');
+
+                //vertical boundary test
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 2');
+
+                    GraphicDrawerInOut.addText(150, 200, 'This is a short'#13'sentence of'#13'3 lines');
+
+                    GraphicDrawerInOut.addText(150, -50, 'This is a short'#13'sentence of'#13'3 lines');
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);

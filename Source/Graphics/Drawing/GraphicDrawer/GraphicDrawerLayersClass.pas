@@ -105,23 +105,24 @@ implementation
                         startIndex          := 0;
                         graphicObjectsCount := 0;
 
-                        for layer in arrActiveDrawingLayers do
-                            begin
-                                //get the graphic objects for the specified layer
-                                    arrCurrentLayerGraphicObjects := getArrGraphicObjects( layer );
+                        //loop through the layers and splice all layers' graphic object arrays together
+                            for layer in arrActiveDrawingLayers do
+                                begin
+                                    //get the graphic objects for the specified layer
+                                        arrCurrentLayerGraphicObjects := getArrGraphicObjects( layer );
 
-                                    graphicObjectsCount := graphicObjectsCount + length( arrCurrentLayerGraphicObjects );
+                                        graphicObjectsCount := graphicObjectsCount + length( arrCurrentLayerGraphicObjects );
 
-                                //resize the array
-                                    SetLength( arrActiveGraphicObjects, graphicObjectsCount );
+                                    //resize the array
+                                        SetLength( arrActiveGraphicObjects, graphicObjectsCount );
 
-                                //add the graphic objects from the current layer to the array
-                                    for i := 0 to (length(arrCurrentLayerGraphicObjects) - 1) do
-                                        arrActiveGraphicObjects[ i + startIndex ] := arrCurrentLayerGraphicObjects[i];
+                                    //add the graphic objects from the current layer to the array
+                                        for i := 0 to (length(arrCurrentLayerGraphicObjects) - 1) do
+                                            arrActiveGraphicObjects[ i + startIndex ] := arrCurrentLayerGraphicObjects[i];
 
-                                //reset start index
-                                    startIndex := graphicObjectsCount;
-                            end;
+                                    //reset start index
+                                        startIndex := graphicObjectsCount;
+                                end;
                     end;
 
         //bounding box
@@ -160,14 +161,8 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        {$IFDEF DEBUG}
-                            //only draw if axis converter has valid dimensions
-                                if ( NOT(axisConverter.isValid()) ) then
-                                    exit();
-                        {$ENDIF}
-
-                            for i := 0 to ( length(arrActiveGraphicObjects) - 1 ) do
-                                arrActiveGraphicObjects[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+                        for i := 0 to ( length(arrActiveGraphicObjects) - 1 ) do
+                            arrActiveGraphicObjects[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                     end;
 
     //public

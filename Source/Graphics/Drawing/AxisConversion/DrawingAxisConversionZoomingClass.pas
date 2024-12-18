@@ -108,6 +108,15 @@ implementation
                 begin
                     geometryBoundary.copyBox( boundaryBoxIn );
 
+                    //the geometry boundary cannot have a zero dimensions-----------
+                    //or it breaks the drawing region
+                        if ( IsZero( geometryBoundary.calculateXDimension() ) ) then
+                            geometryBoundary.setXDimension(1e-2);
+
+                        if ( IsZero( geometryBoundary.calculateYDimension() ) ) then
+                            geometryBoundary.setYDimension(1e-2);
+                    //--------------------------------------------------------------
+
                     geometryBoundaryCentre.copyPoint( geometryBoundary.getCentrePoint() );
                 end;
 
