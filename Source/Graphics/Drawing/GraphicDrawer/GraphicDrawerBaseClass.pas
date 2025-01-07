@@ -26,7 +26,7 @@ interface
                 //drawing procedures
                     //draw all geometry
                         procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
-                                            const drawingBackgroundColourIn     : TColor    ); virtual;
+                                            const drawingBackgroundColourIn     : TColor    );
             public
                 //constructor
                     constructor create(); virtual;

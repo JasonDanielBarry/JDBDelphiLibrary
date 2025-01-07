@@ -41,7 +41,7 @@ interface
             strict protected
                 //draw all geometry
                     procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
-                                        const drawingBackgroundColourIn     : TColor    ); override;
+                                        const drawingBackgroundColourIn     : TColor    );
             public
                 //constructor
                     constructor create(); override;
