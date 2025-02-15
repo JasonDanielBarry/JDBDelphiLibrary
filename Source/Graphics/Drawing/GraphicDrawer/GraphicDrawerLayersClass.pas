@@ -154,14 +154,16 @@ implementation
                 procedure TGraphicDrawerLayers.drawAll( const canvasWidthIn, canvasHeightIn : integer;
                                                         const drawingBackgroundColourIn     : TColor    );
                     var
-                        i                   : integer;
-                        layer               : string;
-                        arrDrawingGeometry  : TArray<TGraphicObject>;
+                        i, graphicObjectsCount  : integer;
+                        layer                   : string;
+                        arrDrawingGeometry      : TArray<TGraphicObject>;
                     begin
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        for i := 0 to ( length(arrActiveGraphicObjects) - 1 ) do
+                        graphicObjectsCount := length(arrActiveGraphicObjects);
+
+                        for i := 0 to ( graphicObjectsCount - 1 ) do
                             arrActiveGraphicObjects[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                     end;
 

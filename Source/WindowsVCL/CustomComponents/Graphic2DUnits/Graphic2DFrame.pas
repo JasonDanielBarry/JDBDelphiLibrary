@@ -389,17 +389,17 @@ implementation
 
                     for i := 0 to (CheckListBoxLayerTable.Count - 1) do
                         begin
-                            if (CheckListBoxLayerTable.Checked[i]) then
-                                begin
-                                    inc( activeLayerCount );
+                            if ( NOT(CheckListBoxLayerTable.Checked[i]) ) then
+                                continue;
 
-                                    SetLength( arrActiveLayers, activeLayerCount );
+                            inc( activeLayerCount );
 
-                                    arrActiveLayers[ activeLayerCount - 1 ] := CheckListBoxLayerTable.Items[i];
-                                end;
+                            SetLength( arrActiveLayers, activeLayerCount );
+
+                            arrActiveLayers[ activeLayerCount - 1 ] := CheckListBoxLayerTable.Items[i];
                         end;
 
-                    //catch error of no layers being selected
+                    //catch error of no layers selected
                         if (activeLayerCount < 1) then
                             begin
                                 Application.MessageBox('Cannot disable all layers', 'Error');
@@ -440,7 +440,7 @@ implementation
 
                     CheckListBoxLayerTable.Height := tableHeight;
 
-                    CheckListBoxLayerTable.Refresh();
+                    CheckListBoxLayerTable.Invalidate();
                 end;
 
         //mouse methods
