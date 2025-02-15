@@ -497,7 +497,7 @@ implementation
         //drawing procedures
             procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
-                    // nothing here
+                    //nothing here
                 end;
 
             procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TDirect2DCanvas);
@@ -524,7 +524,7 @@ implementation
 
                         D2DBufferCanvas.RenderTarget.SetTextAntialiasMode( TD2D1TextAntiAliasMode.D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE );
 
-                    //draw to the surface
+                    //draw to the D2D canvas
                         D2DBufferCanvas.BeginDraw();
 
                             //preDrawGraphic( D2DBufferCanvas );
@@ -536,7 +536,7 @@ implementation
                                                         D2DBufferCanvas
                                                     );
 
-                            postDrawGraphic( D2DBufferCanvas );
+                            //postDrawGraphic( D2DBufferCanvas );
 
                         D2DBufferCanvas.EndDraw();
 
@@ -651,7 +651,7 @@ implementation
             procedure TCustomGraphic2D.redrawGraphic();
                 begin
                     //this message is sent to wndProc where the graphic is updated and redrawn
-                        PostMessage(self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0);
+                        PostMessage( self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
