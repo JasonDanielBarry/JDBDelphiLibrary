@@ -10,12 +10,6 @@ interface
       [TestFixture]
       TTestGeomLineClass = class
       public
-//        [Setup]
-//        procedure Setup;
-//        [TearDown]
-//        procedure TearDown;
-        // Sample Methods
-        // Simple single Test
         [Test]
         procedure TestLineIntersection();
       end;
@@ -24,14 +18,6 @@ implementation
 
     uses
         GeometryTypes, GeomLineClass;
-
-//    procedure TTestGeomLineClass.Setup();
-//        begin
-//        end;
-//
-//    procedure TTestGeomLineClass.TearDown();
-//        begin
-//        end;
 
     procedure TTestGeomLineClass.TestLineIntersection();
         var

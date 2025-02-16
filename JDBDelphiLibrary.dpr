@@ -64,7 +64,9 @@ uses
   GraphicTextClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas',
   GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas',
   GraphicEllipseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicEllipseClass.pas',
-  InputManagerClass in 'Source\WindowsVCL\InputManagerClass.pas';
+  InputManagerClass in 'Source\WindowsVCL\InputManagerClass.pas',
+  FileReaderWriterClass in 'Source\FileManagement\FileReaderWriterClass.pas',
+  TEST_FileReaderWriterClass in 'Source\FileManagement\TEST_FileReaderWriterClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

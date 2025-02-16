@@ -3,7 +3,7 @@ unit InputManagerClass;
 interface
 
     uses
-        system.SysUtils, system.Generics.Collections, System.UITypes,
+        system.SysUtils, System.Classes, system.Generics.Collections, System.UITypes,
         Vcl.StdCtrls
         ;
 
@@ -27,10 +27,16 @@ interface
                     constructor create(const errorListBoxIn : TListBox);
                 //destructor
                     destructor destroy(); override;
-                //read input
-                    function readInput() : boolean; virtual; abstract;
-                //write to input controls
-                    procedure writeToInputControls(); virtual;
+                //process input
+                    //read input
+                        function readInput() : boolean; virtual; abstract;
+                    //write to input controls
+                        procedure writeToInputControls(); virtual;
+                //file management
+                    //read to file
+                        function readFromFile(const fileNameIn : string) : boolean; virtual; abstract;
+                    //save to file
+                        procedure saveToFile(const fileNameIn : string); virtual; abstract;
         end;
 
 implementation
