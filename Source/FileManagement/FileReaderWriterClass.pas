@@ -3,17 +3,19 @@ unit FileReaderWriterClass;
 interface
 
     uses
-        system.SysUtils, system.Classes
+        system.SysUtils, system.Classes, system.Generics.Collections,
+        Xml.XMLDoc, Xml.XMLIntf
         ;
 
     type
         TFileReaderWriter = class
             private
-                const
-                    VALUE_DELIMITER : char = ':';
+                type
+                    TIdenifierValueItem = TPair<string, string>;
+                    TIdentifierValueMap = TDictionary<string, string>;
                 var
                     fileName        : string;
-                    fileContents    : TStringList;
+                    fileContentsMap : TIdentifierValueMap;
             public
                 //constructor
                     constructor create(const fileNameIn : string);
@@ -24,11 +26,11 @@ interface
                 //save file
                     procedure saveFile();
                 //read methods
-                    function readBool(const identifierIn : string; const defaultValueIn : boolean = False) : boolean;
-                    function readInteger(const identifierIn : string; const defaultValueIn : integer = 0) : integer;
-                    function readDouble(const identifierIn : string; const defaultValueIn : double = 0) : double;
-                    function readChar(const identifierIn : string; const defaultValueIn : char = ' ') : char;
-                    function readString(const identifierIn : string; const defaultValueIn : string = '') : string;
+                    function tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
+                    function tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
+                    function tryReadDouble(const identifierIn : string; out valueOut : double; const defaultValueIn : double = 0) : boolean;
+                    function tryReadChar(const identifierIn : string; out valueOut : char; const defaultValueIn : char = ' ') : boolean;
+                    function tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
                 //write methods
                     procedure writeBool(const identifierIn : string; const valueIn : boolean);
                     procedure writeInteger(const identifierIn : string; const valueIn : integer);
@@ -43,63 +45,124 @@ implementation
         //constructor
             constructor TFileReaderWriter.create(const fileNameIn : string);
                 begin
+                    inherited create();
+
                     fileName := fileNameIn;
 
-                    fileContents := TStringList.Create();
-                    fileContents.Clear();
+                    fileContentsMap := TIdentifierValueMap.Create();
+                    fileContentsMap.Clear();
                 end;
 
         //destructor
             destructor TFileReaderWriter.destroy();
                 begin
+                    FreeAndNil( fileContentsMap );
+
                     inherited destroy();
                 end;
 
         //load file
             function TFileReaderWriter.loadFile() : boolean;
                 var
-                    fileDoesNotExist : boolean;
+                    fileDoesNotExist    : boolean;
+                    i, nodeCount        : integer;
+                    key, value          : string;
+                    rootNode, itemNode  : IXMLNode;
+                    XMLLoadDocument     : IXMLDocument;
                 begin
-                    fileDoesNotExist := NOT(FileExists( fileName ));
+                    //check that the file exist
+                        fileDoesNotExist := NOT( FileExists( fileName ) );
 
-                    if (fileDoesNotExist) then
-                        exit( false );
+                        if ( fileDoesNotExist ) then
+                            exit( false );
 
-                    fileContents.Clear();
+                    //clear the map
+                        fileContentsMap.Clear();
 
-                    fileContents.LoadFromFile( fileName );
+                    //load in the XML file
+                        XMLLoadDocument := LoadXMLDocument( fileName );
+
+                        rootNode := XMLLoadDocument.DocumentElement;
+
+                    //loop through the child nodes
+                        nodeCount := rootNode.ChildNodes.Count;
+
+                        for i := 0 to (nodeCount - 1) do
+                            begin
+                                itemNode := rootNode.ChildNodes[i];
+
+                                //place data in map
+                                    key := itemNode.Attributes['ID_KEY'];
+
+                                    value := itemNode.Text;
+
+                                    fileContentsMap.TryAdd( key, value );
+                            end;
                 end;
 
         //save file
             procedure TFileReaderWriter.saveFile();
+                var
+                    rootNode, itemNode  : IXMLNode;
+                    XMLSaveDocument     : IXMLDocument;
+                    mapItem             : TIdenifierValueItem;
                 begin
-                    fileContents.SaveToFile( fileName );
+                    //set up new document
+                        XMLSaveDocument := NewXMLDocument();
+
+                        XMLSaveDocument.Options := [ doNodeAutoIndent ];
+
+                        rootNode := XMLSaveDocument.AddChild('Items');
+
+                    //write each item to the XML document
+                        for mapItem in fileContentsMap do
+                            begin
+                                itemNode := rootNode.AddChild('Item');
+
+                                itemNode.Attributes['ID_KEY'] := mapItem.Key;
+
+                                itemNode.Text := mapItem.Value;
+                            end;
+
+                    //save the document
+                        XMLSaveDocument.SaveToFile( fileName );
                 end;
 
         //read methods
-            function TFileReaderWriter.readBool(const identifierIn : string; const defaultValueIn : boolean = False) : boolean;
+            function TFileReaderWriter.tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
                 begin
-                    asdf
+//                    fileContentsMap
+
+//                    asdf
                 end;
 
-            function TFileReaderWriter.readInteger(const identifierIn : string; const defaultValueIn : integer = 0) : integer;
+            function TFileReaderWriter.tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
                 begin
-                    asdf
+//                    asdf
                 end;
 
-            function TFileReaderWriter.readDouble(const identifierIn : string; const defaultValueIn : double = 0) : double;
+            function TFileReaderWriter.tryReadDouble(const identifierIn : string; out valueOut : double; const defaultValueIn : double = 0) : boolean;
                 begin
-                    asdf
+//                    asdf
                 end;
 
-            function TFileReaderWriter.readChar(const identifierIn : string; const defaultValueIn : char = ' ') : char;
-                begin
+            function TFileReaderWriter.tryReadChar(const identifierIn : string; out valueOut : char; const defaultValueIn : char = ' ') : boolean;
+                var
                     asdf
+                begin
+//                    asdf
                 end;
 
-            function TFileReaderWriter.readString(const identifierIn : string; const defaultValueIn : string = '') : string;
+            function TFileReaderWriter.tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
+                var
+                    keyDoesNotExist : boolean;
                 begin
-                    asdf
+                    keyDoesNotExist := NOT(fileContentsMap.TryGetValue( identifierIn, valueOut ));
+
+                    if ( keyDoesNotExist ) then
+                        valueOut := defaultValueIn;
+
+                    result := NOT( keyDoesNotExist );
                 end;
 
         //write methods
@@ -137,11 +200,9 @@ implementation
 
             procedure TFileReaderWriter.writeString(const identifierIn, valueIn : string);
                 var
-                    ID_And_Value : string;
+                    identifierAlreadyUsed : boolean;
                 begin
-                    ID_And_Value := identifierIn + ' ' + VALUE_DELIMITER + ' ' + valueIn;
-
-                    fileContents.add( ID_And_Value );
+                    identifierAlreadyUsed := fileContentsMap.TryAdd( identifierIn, valueIn );
                 end;
 
 
