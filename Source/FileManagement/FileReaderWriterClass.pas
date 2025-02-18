@@ -98,6 +98,8 @@ implementation
 
                                     fileContentsMap.TryAdd( key, value );
                             end;
+
+                    result := True;
                 end;
 
         //save file
@@ -130,39 +132,121 @@ implementation
 
         //read methods
             function TFileReaderWriter.tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
+                var
+                    keyExists, valueIsBool  : boolean;
+                    stringValue             : string;
                 begin
-//                    fileContentsMap
+                    //check the ID key exists
+                        keyExists := tryReadString( identifierIn, stringValue );
 
-//                    asdf
+                        if ( NOT(keyExists) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    //check the data is a boolean
+                        valueIsBool := TryStrToBool( stringValue, valueOut );
+
+                        if ( NOT(valueIsBool) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    result := True;
                 end;
 
             function TFileReaderWriter.tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
+                var
+                    keyExists, valueIsInt   : boolean;
+                    stringValue             : string;
                 begin
-//                    asdf
+                    //check the ID key exists
+                        keyExists := tryReadString( identifierIn, stringValue );
+
+                        if ( NOT(keyExists) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    //check the data is an integer
+                        valueIsInt := TryStrToInt( stringValue, valueOut );
+
+                        if ( NOT(valueIsInt) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    result := True;
                 end;
 
             function TFileReaderWriter.tryReadDouble(const identifierIn : string; out valueOut : double; const defaultValueIn : double = 0) : boolean;
+                var
+                    keyExists, valueIsDouble    : boolean;
+                    stringValue                 : string;
                 begin
-//                    asdf
+                    //check the ID key exists
+                        keyExists := tryReadString( identifierIn, stringValue );
+
+                        if ( NOT(keyExists) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    //check the data is an integer
+                        valueIsDouble := TryStrToFloat( stringValue, valueOut );
+
+                        if ( NOT(valueIsDouble) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    result := True;
                 end;
 
             function TFileReaderWriter.tryReadChar(const identifierIn : string; out valueOut : char; const defaultValueIn : char = ' ') : boolean;
                 var
-                    asdf
+                    keyExists, valueIsChar  : boolean;
+                    stringValue             : string;
                 begin
-//                    asdf
+                    //check the ID key exists
+                        keyExists := tryReadString( identifierIn, stringValue );
+
+                        if ( NOT(keyExists) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    //check data is a char
+                        valueIsChar := ( length(stringValue) = 1 );
+
+                        if ( NOT(valueIsChar) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( false );
+                            end;
+
+                    valueOut := stringValue[1];
+
+                    result := True;
                 end;
 
             function TFileReaderWriter.tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
                 var
-                    keyDoesNotExist : boolean;
+                    keyExists : boolean;
                 begin
-                    keyDoesNotExist := NOT(fileContentsMap.TryGetValue( identifierIn, valueOut ));
+                    keyExists := fileContentsMap.TryGetValue( identifierIn, valueOut );
 
-                    if ( keyDoesNotExist ) then
+                    if ( NOT(keyExists) ) then
                         valueOut := defaultValueIn;
 
-                    result := NOT( keyDoesNotExist );
+                    result := keyExists;
                 end;
 
         //write methods
