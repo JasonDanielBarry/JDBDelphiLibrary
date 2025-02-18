@@ -42,7 +42,7 @@ implementation
     //public
         constructor TJDBGraphic2D.Create(AOwner: TComponent);
             begin
-                inherited create(AOwner);
+                inherited create( AOwner );
 
                 customGraphic := TCustomGraphic2D.create(Self);
                 customGraphic.parent := self;

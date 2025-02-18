@@ -39,7 +39,8 @@ implementation
                     self.ParentCustomHint       := True;
                     self.ParentDoubleBuffered   := True;
                     self.ParentFont             := True;
-                    self.ParentShowHint         := True;
+
+                    self.ShowHint := True;
 
                 //style
                     self.StyleElements := [seFont,seClient,seBorder];
