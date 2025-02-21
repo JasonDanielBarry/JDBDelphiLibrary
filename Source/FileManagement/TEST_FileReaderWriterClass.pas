@@ -11,7 +11,7 @@ interface
         TTestFileReaderWriterClass = class
             private
                 const
-                    TEST_FILE_PATH : string = 'C:\Users\jasonbarry\Documents\FRWTestFile.xml';
+                    TEST_FILE_PATH : string = '..\FRWTestFile.xml';
                 procedure deleteTestFile();
             public
                 [Test]

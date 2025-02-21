@@ -4,7 +4,7 @@ interface
 
     uses
         system.SysUtils, system.Classes, system.Generics.Collections, system.StrUtils,
-        Xml.XMLDoc, Xml.XMLIntf
+        Xml.XMLDoc, Xml.XMLIntf, xml.xmldom
         ;
 
     type
@@ -12,12 +12,33 @@ interface
             private
                 const
                     ARRAY_ELEMENT_DELIMITER : string = ';';
-                type
-                    TIdenifierValueItem = TPair<string, string>;
-                    TIdentifierValueMap = TDictionary<string, string>;
+                    ITEM_PREFIX             : string = 'Item_';
+                    //data type strings
+                        DT_NONE     : string = 'none';
+                        DT_BOOL     : string = 'boolean';
+                        DT_INT      : string = 'integer';
+                        DT_DOUBLE   : string = 'double';
+                        DT_CHAR     : string = 'char';
+                        DT_STRING   : string = 'string';
                 var
                     fileName        : string;
-                    fileContentsMap : TIdentifierValueMap;
+                    rootNode        : IXMLNode;
+                    XMLFileDocument : IXMLDocument;
+                //read and write sinlge values to XML
+                    function tryReadValueFromXML(const identifierIn, dataTypeIn : string; out valueIn : string) : boolean;
+                    procedure writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
+            protected
+                //made a new document
+                    procedure makeNewXMLDocument();
+                //get an identifier's node
+                    function getNode(const identifierIn : string) : IXMLNode;
+                //create a new node
+                    function newNode(const identifierIn : string) : IXMLNode;
+                //check that a node with the identifier exists
+                    function checkNodeExists(const identifierIn : string) : boolean;
+                //get an identifier's data type
+                    function getIdentifierDataType(const identifierIn : string) : string;
+
             public
                 //constructor
                     constructor create(const fileNameIn : string); virtual;
@@ -44,7 +65,7 @@ interface
                         procedure writeInteger(const identifierIn : string; const valueIn : integer);
                         procedure writeDouble(const identifierIn : string; const valueIn : double);
                         procedure writeChar(const identifierIn : string; const valueIn : char);
-                        procedure writeString(const identifierIn, valueIn : string);
+                        procedure writeString(const identifierIn, valueIn : string); overload;
                     //arrays
                         procedure writeIntegerArray(const identifierIn : string; const valueArrayIn : TArray<integer>);
                         procedure writeDoubleArray(const identifierIn : string; const valueArrayIn : TArray<double>);
@@ -52,6 +73,76 @@ interface
         end;
 
 implementation
+
+    //private
+        //read and write sinlge values to XML
+            function TFileReaderWriter.tryReadValueFromXML(const identifierIn, dataTypeIn : string; out valueIn : string) : boolean;
+                begin
+
+                end;
+
+            procedure TFileReaderWriter.writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
+                var
+                    itemNode : IXMLNode;
+                begin
+                    if checkNodeExists( identifierIn ) then
+                        exit();
+
+                    itemNode := rootNode.AddChild( ITEM_PREFIX + identifierIn );
+
+                    itemNode.AddChild('DataType').text  := dataTypeIn;
+                    itemNode.AddChild('Value').text     := Trim( valueIn );
+                end;
+
+    //protected
+        //made a new document
+            procedure TFileReaderWriter.makeNewXMLDocument();
+                begin
+                    XMLFileDocument         := NewXMLDocument();
+                    XMLFileDocument.Options := XMLFileDocument.Options + [doNodeAutoIndent];
+                    XMLFileDocument.Active  := True;
+                    rootNode                := XMLFileDocument.AddChild('Root');
+                end;
+
+        //get an identifier's node
+            function TFileReaderWriter.getNode(const identifierIn : string) : IXMLNode;
+                begin
+                    result := rootNode.AddChild( ITEM_PREFIX + identifierIn );
+                end;
+
+        //create a new node
+            function TFileReaderWriter.newNode(const identifierIn : string) : IXMLNode;
+                begin
+                       asdf
+                end;
+
+        //check that a node exists
+            function TFileReaderWriter.checkNodeExists(const identifierIn : string) : boolean;
+                var
+                    testNodeName    : string;
+                    itemNode        : IXMLNode;
+                begin
+                    testNodeName := ITEM_PREFIX + identifierIn;
+
+                    itemNode := rootNode.ChildNodes.FindNode( testNodeName );
+
+                    if Assigned( itemNode ) then
+                        exit();
+                end;
+
+        //get an identifier's data type
+            function TFileReaderWriter.getIdentifierDataType(const identifierIn : string) : string;
+                var
+                    identifierExists    : boolean;
+                    itemNode            : IXMLNode;
+                begin
+                    identifierExists := checkNodeExists( identifierIn );
+
+                    if ( NOT(identifierExists) ) then
+                        exit( DT_NONE );
+
+                    itemNode := rootNode.ChildNodes.FindNode( testNodeName );
+                end;
 
     //public
         //constructor
@@ -61,15 +152,12 @@ implementation
 
                     fileName := fileNameIn;
 
-                    fileContentsMap := TIdentifierValueMap.Create();
-                    fileContentsMap.Clear();
+                    makeNewXMLDocument();
                 end;
 
         //destructor
             destructor TFileReaderWriter.destroy();
                 begin
-                    FreeAndNil( fileContentsMap );
-
                     inherited destroy();
                 end;
 
@@ -79,8 +167,7 @@ implementation
                     fileDoesNotExist    : boolean;
                     i, nodeCount        : integer;
                     key, value          : string;
-                    rootNode, itemNode  : IXMLNode;
-                    XMLLoadDocument     : IXMLDocument;
+                    itemNode            : IXMLNode;
                 begin
                     //check that the file exist
                         fileDoesNotExist := NOT( FileExists( fileName ) );
@@ -88,58 +175,22 @@ implementation
                         if ( fileDoesNotExist ) then
                             exit( false );
 
-                    //clear the map
-                        fileContentsMap.Clear();
-
                     //load in the XML file
-                        XMLLoadDocument := LoadXMLDocument( fileName );
+                        XMLFileDocument := LoadXMLDocument( fileName );
 
-                        rootNode := XMLLoadDocument.DocumentElement;
+                        XMLFileDocument.Active := True;
 
-                    //loop through the child nodes
-                        nodeCount := rootNode.ChildNodes.Count;
-
-                        for i := 0 to (nodeCount - 1) do
-                            begin
-                                itemNode := rootNode.ChildNodes[i];
-
-                                //place data in map
-                                    key := itemNode.Attributes['ID_KEY'];
-
-                                    value := itemNode.Text;
-
-                                    fileContentsMap.TryAdd( key, value );
-                            end;
+                    //get the root node
+                        rootNode := XMLFileDocument.DocumentElement;
 
                     result := True;
                 end;
 
         //save file
             procedure TFileReaderWriter.saveFile();
-                var
-                    rootNode, itemNode  : IXMLNode;
-                    XMLSaveDocument     : IXMLDocument;
-                    mapItem             : TIdenifierValueItem;
                 begin
-                    //set up new document
-                        XMLSaveDocument := NewXMLDocument();
-
-                        XMLSaveDocument.Options := [ doNodeAutoIndent ];
-
-                        rootNode := XMLSaveDocument.AddChild('Items');
-
-                    //write each item to the XML document
-                        for mapItem in fileContentsMap do
-                            begin
-                                itemNode := rootNode.AddChild('Item');
-
-                                itemNode.Attributes['ID_KEY'] := mapItem.Key;
-
-                                itemNode.Text := mapItem.Value;
-                            end;
-
                     //save the document
-                        XMLSaveDocument.SaveToFile( fileName );
+                        XMLFileDocument.SaveToFile( fileName );
                 end;
 
         //read methods
@@ -360,7 +411,7 @@ implementation
                     begin
                         boolString := BoolToStr( valueIn );
 
-                        writeString( identifierIn, boolString );
+                        writeValueToXML( identifierIn, DT_BOOL, boolString );
                     end;
 
                 procedure TFileReaderWriter.writeInteger(const identifierIn : string; const valueIn : integer);
@@ -369,7 +420,7 @@ implementation
                     begin
                         integerString := IntToStr( valueIn );
 
-                        writeString( identifierIn, integerString );
+                        writeValueToXML( identifierIn, DT_INT, integerString );
                     end;
 
                 procedure TFileReaderWriter.writeDouble(const identifierIn : string; const valueIn : double);
@@ -378,19 +429,19 @@ implementation
                     begin
                         doubleString := FloatToStr( valueIn );
 
-                        writeString( identifierIn, doubleString );
+                        writeValueToXML( identifierIn, DT_DOUBLE, doubleString );
                     end;
 
                 procedure TFileReaderWriter.writeChar(const identifierIn : string; const valueIn : char);
                     begin
-                        writeString( identifierIn, valueIn ); //char can cast to string automatically
+                        writeValueToXML( identifierIn, DT_CHAR, valueIn ); //char can cast to string automatically
                     end;
 
                 procedure TFileReaderWriter.writeString(const identifierIn, valueIn : string);
                     var
                         identifierAlreadyUsed : boolean;
                     begin
-                        identifierAlreadyUsed := fileContentsMap.TryAdd( identifierIn, trim( valueIn ) );
+                        writeValueToXML( identifierIn, DT_STRING, valueIn );
                     end;
 
             //arrays

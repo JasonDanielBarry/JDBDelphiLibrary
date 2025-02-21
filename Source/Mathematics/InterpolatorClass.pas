@@ -65,8 +65,8 @@ implementation
             var
                 pointOut : TPointF;
             begin
-                pointOut.X := lerp(tIn, x0, x1);
-                pointOut.Y := lerp(tIn, y0, y1);
+                pointOut.X := lerp( tIn, x0, x1 );
+                pointOut.Y := lerp( tIn, y0, y1 );
 
                 result := pointOut;
             end;
