@@ -49,7 +49,6 @@ interface
                         procedure writeIntegerArray(const identifierIn : string; const valueArrayIn : TArray<integer>);
                         procedure writeDoubleArray(const identifierIn : string; const valueArrayIn : TArray<double>);
                         procedure writeStringArray(const identifierIn : string; const valueArrayIn : TArray<string>);
-
         end;
 
 implementation
