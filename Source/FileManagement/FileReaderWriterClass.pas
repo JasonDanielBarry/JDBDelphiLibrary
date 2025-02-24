@@ -40,7 +40,6 @@ interface
             protected
                 //made a new document
                     procedure resetXMLDocument();
-
                 //create a new node belonging to the root node
                     function createNewNode(const nodeIdentifierIn, nodeDataTypeIn : string) : IXMLNode;
                 //check that a node with the identifier exists
