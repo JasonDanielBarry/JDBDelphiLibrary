@@ -202,14 +202,16 @@ implementation
                     nodeIdentifierAlreadyUsed   : boolean;
                     newNodeOut                  : IXMLNode;
                 begin
-                    nodeIdentifierAlreadyUsed := checkNodeExists( nodeIdentifierIn );
+                    //check if the node already exists
+                        nodeIdentifierAlreadyUsed := checkNodeExists( nodeIdentifierIn );
 
-                    if (nodeIdentifierAlreadyUsed) then
-                        exit( nil );
+                        if (nodeIdentifierAlreadyUsed) then
+                            exit( nil );
 
-                    newNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
+                    //create the new node and assign its data type
+                        newNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
 
-                    newNodeOut.AddChild( DATA_TYPE_STRING ).text := nodeDataTypeIn;
+                        newNodeOut.AddChild( DATA_TYPE_STRING ).text := nodeDataTypeIn;
 
                     result := newNodeOut;
                 end;
