@@ -24,6 +24,8 @@ interface
                 procedure testReadWriteString();
                 [Test]
                 procedure testReadWriteArrays();
+                [Test]
+                procedure testWriteData();
         end;
 
 implementation
@@ -242,6 +244,56 @@ implementation
                     assert.AreEqual<string>( stringArrayRead, stringArrayWrite );
 
                 FreeAndNil( fileReadWrite );
+        end;
+
+    procedure TTestFileReaderWriterClass.testWriteData();
+        var
+            integerArray    : TArray<integer>;
+            doubleArray     : TArray<double>;
+            stringArray     : TArray<string>;
+            fileReadWrite   : TFileReaderWriter;
+        begin
+            deleteTestFile();
+
+            fileReadWrite := TFileReaderWriter.create( TEST_FILE_PATH );
+
+            //boolean
+                fileReadWrite.writeBool( 'boolean1', True );
+                fileReadWrite.writeBool( 'boolean2', False );
+
+            //integer
+                fileReadWrite.writeInteger( 'integer1', 2 );
+                fileReadWrite.writeInteger( 'integer2', 8 );
+                fileReadWrite.writeInteger( 'integer3', 32 );
+                fileReadWrite.writeInteger( 'integer4', 128 );
+                fileReadWrite.writeInteger( 'integer5', 512 );
+
+            //double
+                fileReadWrite.writeDouble( 'double1', 123.456 );
+                fileReadWrite.writeDouble( 'double2', 654.987 );
+                fileReadWrite.writeDouble( 'double3', 741.852 );
+                fileReadWrite.writeDouble( 'double4', 369.258 );
+                fileReadWrite.writeDouble( 'double5', 159.753 );
+
+            //string
+                fileReadWrite.writeString( 'string1', 'asdf' );
+                fileReadWrite.writeString( 'string2', '!@#$%' );
+                fileReadWrite.writeString( 'string3', 'Jason Daniel Barry' );
+                fileReadWrite.writeString( 'string4', 'Youtube' );
+                fileReadWrite.writeString( 'string5', '123.456' );
+
+            //array
+                integerArray   := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+                doubleArray    := [1.1, 2.2, 456.987, 159.951, 45.98, 79.651, 1472.8523, 1234.0987];
+                stringArray    := ['This', 'I$', '@ string', '123 array', 'to %$#', '159 test', 'reading', '@nd', 'WRITING'];
+
+                fileReadWrite.writeIntegerArray( 'IntegerArray', integerArray );
+                fileReadWrite.writeDoubleArray( 'DoubleArray', doubleArray );
+                fileReadWrite.writeStringArray( 'StringArray', stringArray );
+
+            fileReadWrite.saveFile();
+
+            FreeAndNil( fileReadWrite );
         end;
 
 end.

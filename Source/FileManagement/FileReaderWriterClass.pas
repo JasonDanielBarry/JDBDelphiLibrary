@@ -20,12 +20,12 @@ interface
                         DT_NONE         : string = 'none';
                         DT_BOOL         : string = 'boolean';
                         DT_INT          : string = 'integer';
-                        DT_INT_ARRAY    : string = 'integerArray';
+                        DT_INT_ARRAY    : string = 'integer_array';
                         DT_DOUBLE       : string = 'double';
-                        DT_DOUBLE_ARRAY : string = 'doubleArray';
+                        DT_DOUBLE_ARRAY : string = 'double_array';
                         DT_CHAR         : string = 'char';
                         DT_STRING       : string = 'string';
-                        DT_STRING_ARRAY : string = 'stringArray';
+                        DT_STRING_ARRAY : string = 'string_array';
                 var
                     fileName        : string;
                     rootNode        : IXMLNode;
@@ -115,6 +115,8 @@ implementation
                             exit( False );
 
                     valueOut := trim( itemNode.ChildNodes.FindNode( VALUE_STRING ).Text );
+
+                    result := True;
                 end;
 
             procedure TFileReaderWriter.writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
@@ -478,7 +480,7 @@ implementation
                         stringValuesArray               : TArray<string>;
                     begin
                         //check if the identifier has a readable array
-                            readSuccessful := tryReadArrayFromXML( identifierIn, DT_STRING_ARRAY, stringValuesArray );
+                            readSuccessful := tryReadArrayFromXML( identifierIn, DT_STRING_ARRAY, arrayOut );
 
                             if ( NOT(readSuccessful) ) then
                                 begin
