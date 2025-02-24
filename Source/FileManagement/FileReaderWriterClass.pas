@@ -67,9 +67,9 @@ interface
                         function tryReadChar(const identifierIn : string; out valueOut : char; const defaultValueIn : char = ' ') : boolean;
                         function tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
                     //arrays
-                        function tryReadIntegerArray(const identifierIn : string; out valueOut : TArray<integer>) : boolean;
-                        function tryReadDoubleArray(const identifierIn : string; out valueOut : TArray<double>) : boolean;
-                        function tryReadStringArray(const identifierIn : string; out valueOut : TArray<string>) : boolean;
+                        function tryReadIntegerArray(const identifierIn : string; out arrayOut : TArray<integer>) : boolean;
+                        function tryReadDoubleArray(const identifierIn : string; out arrayOut : TArray<double>) : boolean;
+                        function tryReadStringArray(const identifierIn : string; out arrayOut : TArray<string>) : boolean;
                 //write methods
                     //single values
                         procedure writeBool(const identifierIn : string; const valueIn : boolean);
@@ -78,9 +78,9 @@ interface
                         procedure writeChar(const identifierIn : string; const valueIn : char);
                         procedure writeString(const identifierIn, valueIn : string); overload;
                     //arrays
-                        procedure writeIntegerArray(const identifierIn : string; const valueArrayIn : TArray<integer>);
-                        procedure writeDoubleArray(const identifierIn : string; const valueArrayIn : TArray<double>);
-                        procedure writeStringArray(const identifierIn : string; const valueArrayIn : TArray<string>);
+                        procedure writeIntegerArray(const identifierIn : string; const arrayIn : TArray<integer>);
+                        procedure writeDoubleArray(const identifierIn : string; const arrayIn : TArray<double>);
+                        procedure writeStringArray(const identifierIn : string; const arrayIn : TArray<string>);
         end;
 
 implementation
@@ -105,24 +105,27 @@ implementation
                     //check the node exists
                         nodeExists := tryGetNode( identifierIn, itemNode );
 
-                        if NOT(nodeExists) then
-                            exit();
+                        if NOT( nodeExists ) then
+                            exit( False );
 
                     //check the node is the required data type
                         nodeDataType := getNodeDataType( identifierIn );
 
                         if ( nodeDataType <> dataTypeIn ) then
-                            exit();
+                            exit( False );
 
-                    valueOut := itemNode.ChildNodes.FindNode( VALUE_STRING ).Text;
+                    valueOut := trim( itemNode.ChildNodes.FindNode( VALUE_STRING ).Text );
                 end;
 
             procedure TFileReaderWriter.writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
                 var
-                    itemNode : IXMLNode;
+                    nodeAlreadyExists   : boolean;
+                    itemNode            : IXMLNode;
                 begin
                     //check the node exists
-                        if checkNodeExists( identifierIn ) then
+                        nodeAlreadyExists := checkNodeExists( identifierIn );
+
+                        if ( nodeAlreadyExists ) then
                             exit();
 
                     //write the node's data-type & value
@@ -133,8 +136,37 @@ implementation
 
         //read and write arrays to XML
             function TFileReaderWriter.tryReadArrayFromXML(const identifierIn, dataTypeIn : string; out arrayOut : TArray<string>) : boolean;
+                var
+                    readSuccessful, valueIsArray    : boolean;
+                    i                               : integer;
+                    concatenatedStringArray         : string;
                 begin
+                    //test for key
+                        readSuccessful := tryReadValueFromXML( identifierIn, dataTypeIn, concatenatedStringArray );
 
+                        if ( NOT(readSuccessful) ) then
+                            begin
+                                arrayOut := [];
+                                exit( False );
+                            end;
+
+                    //test if value is an array
+                        valueIsArray := ( Pos( ARRAY_ELEMENT_DELIMITER, concatenatedStringArray ) > 1 );
+
+                        if ( NOT(valueIsArray) ) then
+                            begin
+                                arrayOut := [];
+                                exit( False );
+                            end;
+
+                    //split string into array
+                        arrayOut := SplitString( concatenatedStringArray, ARRAY_ELEMENT_DELIMITER );
+
+                    //trim elements
+                        for i := 0 to (length(arrayOut) - 1) do
+                            arrayOut[i] := trim(arrayOut[i]);
+
+                    result := True;
                 end;
 
             procedure TFileReaderWriter.writeArrayToXML(const identifierIn, dataTypeIn : string; arrayIn : TArray<string>);
@@ -189,21 +221,12 @@ implementation
                 end;
 
             function TFileReaderWriter.tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean;
-                var
-                    itemNode : IXMLNode;
                 begin
                     //get the node
-                        itemNode := getNode( nodeIdentifierIn );
+                        XMLNodeOut := getNode( nodeIdentifierIn );
 
                     //if item node = nil then the node does not exist
-                        if Assigned( itemNode ) then
-                            result := True
-
-                        else
-                            result := False;
-
-                    //output the node
-                        XMLNodeOut := itemNode;
+                        result := Assigned( XMLNodeOut );
                 end;
 
         //get an identifier's data type
@@ -276,13 +299,13 @@ implementation
             //single values
                 function TFileReaderWriter.tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
                     var
-                        keyExists, valueIsBool  : boolean;
-                        stringValue             : string;
+                        readSuccessful, valueIsBool :  boolean;
+                        stringValue                 : string;
                     begin
                         //check the ID key exists
-                            keyExists := tryReadString( identifierIn, stringValue );
+                            readSuccessful := tryReadValueFromXML( identifierIn, DT_BOOL, stringValue );
 
-                            if ( NOT(keyExists) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
                                     valueOut := defaultValueIn;
                                     exit( false );
@@ -302,13 +325,13 @@ implementation
 
                 function TFileReaderWriter.tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
                     var
-                        keyExists, valueIsInt   : boolean;
-                        stringValue             : string;
+                        readSuccessful, valueIsInt  : boolean;
+                        stringValue                 : string;
                     begin
                         //check the ID key exists
-                            keyExists := tryReadString( identifierIn, stringValue );
+                            readSuccessful := tryReadValueFromXML( identifierIn, DT_INT, stringValue );
 
-                            if ( NOT(keyExists) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
                                     valueOut := defaultValueIn;
                                     exit( false );
@@ -328,13 +351,13 @@ implementation
 
                 function TFileReaderWriter.tryReadDouble(const identifierIn : string; out valueOut : double; const defaultValueIn : double = 0) : boolean;
                     var
-                        keyExists, valueIsDouble    : boolean;
-                        stringValue                 : string;
+                        readSuccessful, valueIsDouble   : boolean;
+                        stringValue                     : string;
                     begin
                         //check the ID key exists
-                            keyExists := tryReadString( identifierIn, stringValue );
+                            readSuccessful := tryReadValueFromXML( identifierIn, DT_DOUBLE, stringValue );
 
-                            if ( NOT(keyExists) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
                                     valueOut := defaultValueIn;
                                     exit( false );
@@ -354,16 +377,16 @@ implementation
 
                 function TFileReaderWriter.tryReadChar(const identifierIn : string; out valueOut : char; const defaultValueIn : char = ' ') : boolean;
                     var
-                        keyExists, valueIsChar  : boolean;
-                        stringValue             : string;
+                        readSuccessful, valueIsChar : boolean;
+                        stringValue                 : string;
                     begin
                         //check the ID key exists
-                            keyExists := tryReadString( identifierIn, stringValue );
+                            readSuccessful := tryReadValueFromXML( identifierIn, DT_CHAR, stringValue );
 
-                            if ( NOT(keyExists) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
                                     valueOut := defaultValueIn;
-                                    exit( false );
+                                    exit( False );
                                 end;
 
                         //check data is a char
@@ -372,7 +395,7 @@ implementation
                             if ( NOT(valueIsChar) ) then
                                 begin
                                     valueOut := defaultValueIn;
-                                    exit( false );
+                                    exit( False );
                                 end;
 
                         valueOut := stringValue[1];
@@ -382,102 +405,86 @@ implementation
 
                 function TFileReaderWriter.tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
                     var
-                        keyExists : boolean;
+                        readSuccessful : boolean;
                     begin
-                        keyExists := fileContentsMap.TryGetValue( identifierIn, valueOut );
+                        readSuccessful := tryReadValueFromXML( identifierIn, DT_STRING, valueOut );
 
-                        if ( NOT(keyExists) ) then
+                        if ( NOT(readSuccessful) ) then
                             valueOut := defaultValueIn;
 
                         valueOut := trim( valueOut );
 
-                        result := keyExists;
+                        result := readSuccessful;
                     end;
 
             //arrays
-                function TFileReaderWriter.tryReadIntegerArray(const identifierIn : string; out valueOut : TArray<integer>) : boolean;
+                function TFileReaderWriter.tryReadIntegerArray(const identifierIn : string; out arrayOut : TArray<integer>) : boolean;
                     var
-                        canReadValue        : boolean;
+                        readSuccessful      : boolean;
                         i, arrLen           : integer;
                         stringValuesArray   : TArray<string>;
                     begin
-                        //check if the identifier has a readable
-                            canReadValue := tryReadStringArray( identifierIn, stringValuesArray );
+                        //check if the identifier has a readable array
+                            readSuccessful := tryReadArrayFromXML( identifierIn, DT_INT_ARRAY, stringValuesArray );
 
-                            if ( NOT(canReadValue) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
-                                    valueOut := [];
+                                    arrayOut := [];
                                     exit( False );
                                 end;
 
                         //convert data to integers
                             arrLen := Length( stringValuesArray );
 
-                            SetLength( valueOut, arrLen );
+                            SetLength( arrayOut, arrLen );
 
                             for i := 0 to (arrLen - 1) do
-                                valueOut[i] := StrToInt( stringValuesArray[i] );
+                                arrayOut[i] := StrToInt( stringValuesArray[i] );
 
                         result := True;
                     end;
 
-                function TFileReaderWriter.tryReadDoubleArray(const identifierIn : string; out valueOut : TArray<double>) : boolean;
+                function TFileReaderWriter.tryReadDoubleArray(const identifierIn : string; out arrayOut : TArray<double>) : boolean;
                     var
-                        canReadValue        : boolean;
+                        readSuccessful        : boolean;
                         i, arrLen           : integer;
                         stringValuesArray   : TArray<string>;
                     begin
-                        //check if the identifier has a readable
-                            canReadValue := tryReadStringArray( identifierIn, stringValuesArray );
+                        //check if the identifier has a readable array
+                            readSuccessful := tryReadArrayFromXML( identifierIn, DT_DOUBLE_ARRAY, stringValuesArray );
 
-                            if ( NOT(canReadValue) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
-                                    valueOut := [];
+                                    arrayOut := [];
                                     exit( False );
                                 end;
 
                         //convert data to doubles
                             arrLen := Length( stringValuesArray );
 
-                            SetLength( valueOut, arrLen );
+                            SetLength( arrayOut, arrLen );
 
                             for i := 0 to (arrLen - 1) do
-                                valueOut[i] := StrToFloat( stringValuesArray[i] );
+                                arrayOut[i] := StrToFloat( stringValuesArray[i] );
 
                         result := True;
                     end;
 
-                function TFileReaderWriter.tryReadStringArray(const identifierIn : string; out valueOut : TArray<string>) : boolean;
+                function TFileReaderWriter.tryReadStringArray(const identifierIn : string; out arrayOut : TArray<string>) : boolean;
 
                     var
-                        keyExists, valueIsArray : boolean;
-                        i                       : integer;
-                        concatenatedStringArray : string;
+                        readSuccessful, valueIsArray    : boolean;
+                        i                               : integer;
+                        stringValuesArray               : TArray<string>;
                     begin
-                        //test for key
-                            keyExists := tryReadString( identifierIn, concatenatedStringArray );
+                        //check if the identifier has a readable array
+                            readSuccessful := tryReadArrayFromXML( identifierIn, DT_STRING_ARRAY, stringValuesArray );
 
-                            if ( NOT(keyExists) ) then
+                            if ( NOT(readSuccessful) ) then
                                 begin
-                                    valueOut := [];
+                                    arrayOut := [];
                                     exit( False );
                                 end;
-
-                        //test if value is an array
-                            valueIsArray := ( Pos( ARRAY_ELEMENT_DELIMITER, concatenatedStringArray ) > 1 );
-
-                            if ( NOT(valueIsArray) ) then
-                                begin
-                                    valueOut := [];
-                                    exit( False );
-                                end;
-
-                        //split string into array
-                            valueOut := SplitString( concatenatedStringArray, ARRAY_ELEMENT_DELIMITER );
-
-                        //trim elements
-                            for i := 0 to (length(valueOut) - 1) do
-                                valueOut[i] := trim(valueOut[i]);
 
                         result := True;
                     end;
@@ -524,49 +531,39 @@ implementation
                     end;
 
             //arrays
-                procedure TFileReaderWriter.writeIntegerArray(const identifierIn : string; const valueArrayIn : TArray<integer>);
+                procedure TFileReaderWriter.writeIntegerArray(const identifierIn : string; const arrayIn : TArray<integer>);
                     var
                         i, arrLen           : integer;
                         stringValueArray    : TArray<string>;
                     begin
-                        arrLen := length( valueArrayIn );
+                        arrLen := length( arrayIn );
 
                         SetLength( stringValueArray, arrLen );
 
                         for i := 0 to (arrLen - 1) do
-                            stringValueArray[i] := IntToStr( valueArrayIn[i] );
+                            stringValueArray[i] := IntToStr( arrayIn[i] );
 
-                        writeStringArray( identifierIn, stringValueArray );
+                        writeArrayToXML( identifierIn, DT_INT_ARRAY, stringValueArray );
                     end;
 
-                procedure TFileReaderWriter.writeDoubleArray(const identifierIn : string; const valueArrayIn : TArray<double>);
+                procedure TFileReaderWriter.writeDoubleArray(const identifierIn : string; const arrayIn : TArray<double>);
                     var
                         i, arrLen           : integer;
                         stringValueArray    : TArray<string>;
                     begin
-                        arrLen := length( valueArrayIn );
+                        arrLen := length( arrayIn );
 
                         SetLength( stringValueArray, arrLen );
 
                         for i := 0 to (arrLen - 1) do
-                            stringValueArray[i] := FloatToStr( valueArrayIn[i] );
+                            stringValueArray[i] := FloatToStr( arrayIn[i] );
 
-                        writeStringArray( identifierIn, stringValueArray );
+                        writeArrayToXML( identifierIn, DT_DOUBLE_ARRAY, stringValueArray );
                     end;
 
-                procedure TFileReaderWriter.writeStringArray(const identifierIn : string; const valueArrayIn : TArray<string>);
-                    var
-                        i, arrLen               : integer;
-                        concatenatedStringArray : string;
+                procedure TFileReaderWriter.writeStringArray(const identifierIn : string; const arrayIn : TArray<string>);
                     begin
-                        arrLen := length( valueArrayIn );
-
-                        concatenatedStringArray := trim(valueArrayIn[0]);
-
-                        for i := 1 to (arrLen - 1) do
-                            concatenatedStringArray := concatenatedStringArray + ARRAY_ELEMENT_DELIMITER + trim(valueArrayIn[i]);
-
-                        writeString( identifierIn, concatenatedStringArray );
+                        writeArrayToXML( identifierIn, DT_STRING_ARRAY, arrayIn );
                     end;
 
 end.
