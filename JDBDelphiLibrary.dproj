@@ -171,6 +171,7 @@
         <DCCReference Include="Source\WindowsVCL\InputManagerClass.pas"/>
         <DCCReference Include="Source\FileManagement\FileReaderWriterClass.pas"/>
         <DCCReference Include="Source\FileManagement\TEST_FileReaderWriterClass.pas"/>
+        <DCCReference Include="Source\FileManagement\ArrayConversionMethods.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

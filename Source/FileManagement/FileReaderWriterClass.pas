@@ -4,7 +4,8 @@ interface
 
     uses
         system.SysUtils, system.Classes, system.Generics.Collections, system.StrUtils,
-        Xml.XMLDoc, Xml.XMLIntf, xml.xmldom
+        Xml.XMLDoc, Xml.XMLIntf, xml.xmldom,
+        ArrayConversionMethods
         ;
 
     type
@@ -30,8 +31,6 @@ interface
                     fileName        : string;
                     rootNode        : IXMLNode;
                     XMLFileDocument : IXMLDocument;
-                //get a node belonging to the root node
-                    function getNode(const nodeIdentifierIn : string) : IXMLNode;
                 //read and write sinlge values to XML
                     function tryReadValueFromXML(const identifierIn, dataTypeIn : string; out valueOut : string) : boolean;
                     procedure writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
@@ -86,12 +85,6 @@ interface
 implementation
 
     //private
-        //get a node belonging to the root node
-            function TFileReaderWriter.getNode(const nodeIdentifierIn : string) : IXMLNode;
-                begin
-                    result := rootNode.ChildNodes.FindNode( ITEM_PREFIX + nodeIdentifierIn );
-                end;
-
         //read and write sinlge values to XML
             function TFileReaderWriter.tryReadValueFromXML(const identifierIn, dataTypeIn : string; out valueOut : string) : boolean;
                 var
@@ -178,10 +171,7 @@ implementation
                 begin
                     arrLen := length( arrayIn );
 
-                    concatenatedStringArray := trim(arrayIn[0]);
-
-                    for i := 1 to (arrLen - 1) do
-                        concatenatedStringArray := concatenatedStringArray + ARRAY_ELEMENT_DELIMITER + trim( arrayIn[i] );
+                    concatenatedStringArray := string.join( ';', arrayIn );
 
                     writeValueToXML( identifierIn, dataTypeIn, concatenatedStringArray );
                 end;
@@ -227,7 +217,7 @@ implementation
             function TFileReaderWriter.tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean;
                 begin
                     //get the node
-                        XMLNodeOut := getNode( nodeIdentifierIn );
+                        XMLNodeOut := rootNode.ChildNodes.FindNode( ITEM_PREFIX + nodeIdentifierIn );
 
                     //if item node = nil then the node does not exist
                         result := Assigned( XMLNodeOut );
@@ -239,12 +229,10 @@ implementation
                     identifierExists    : boolean;
                     itemNode            : IXMLNode;
                 begin
-                    identifierExists := checkNodeExists( nodeIdentifierIn );
+                    identifierExists := tryGetNode( nodeIdentifierIn, itemNode );
 
                     if ( NOT(identifierExists) ) then
                         exit( DT_NONE );
-
-                    itemNode := getNode( nodeIdentifierIn );
 
                     result := itemNode.ChildNodes.FindNode( DATA_TYPE_STRING ).text;
                 end;
@@ -438,14 +426,7 @@ implementation
                                 end;
 
                         //convert data to integers
-                            arrLen := Length( stringValuesArray );
-
-                            SetLength( arrayOut, arrLen );
-
-                            for i := 0 to (arrLen - 1) do
-                                arrayOut[i] := StrToInt( stringValuesArray[i] );
-
-                        result := True;
+                            result := tryConvertStringArrayToIntArray( stringValuesArray, arrayOut );
                     end;
 
                 function TFileReaderWriter.tryReadDoubleArray(const identifierIn : string; out arrayOut : TArray<double>) : boolean;
@@ -464,14 +445,7 @@ implementation
                                 end;
 
                         //convert data to doubles
-                            arrLen := Length( stringValuesArray );
-
-                            SetLength( arrayOut, arrLen );
-
-                            for i := 0 to (arrLen - 1) do
-                                arrayOut[i] := StrToFloat( stringValuesArray[i] );
-
-                        result := True;
+                            result := tryConvertStringArrayToDoubleArray( stringValuesArray, arrayOut );
                     end;
 
                 function TFileReaderWriter.tryReadStringArray(const identifierIn : string; out arrayOut : TArray<string>) : boolean;
@@ -537,30 +511,18 @@ implementation
             //arrays
                 procedure TFileReaderWriter.writeIntegerArray(const identifierIn : string; const arrayIn : TArray<integer>);
                     var
-                        i, arrLen           : integer;
-                        stringValueArray    : TArray<string>;
+                        stringValueArray : TArray<string>;
                     begin
-                        arrLen := length( arrayIn );
-
-                        SetLength( stringValueArray, arrLen );
-
-                        for i := 0 to (arrLen - 1) do
-                            stringValueArray[i] := IntToStr( arrayIn[i] );
+                        stringValueArray := convertIntArrayToStringArray( arrayIn );
 
                         writeArrayToXML( identifierIn, DT_INT_ARRAY, stringValueArray );
                     end;
 
                 procedure TFileReaderWriter.writeDoubleArray(const identifierIn : string; const arrayIn : TArray<double>);
                     var
-                        i, arrLen           : integer;
-                        stringValueArray    : TArray<string>;
+                        stringValueArray : TArray<string>;
                     begin
-                        arrLen := length( arrayIn );
-
-                        SetLength( stringValueArray, arrLen );
-
-                        for i := 0 to (arrLen - 1) do
-                            stringValueArray[i] := FloatToStr( arrayIn[i] );
+                        stringValueArray := convertDoubleArrayToStringArray( arrayIn );
 
                         writeArrayToXML( identifierIn, DT_DOUBLE_ARRAY, stringValueArray );
                     end;
