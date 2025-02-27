@@ -31,6 +31,12 @@ implementation
                 begin
                     arrLen := length( stringArrayIn );
 
+                    if (arrLen < 1) then
+                        begin
+                            SetLength( intArrayOut, 0 );
+                            exit( False );
+                        end;
+
                     SetLength( intArrayOut, arrLen );
 
                     for i := 0 to ( arrLen - 1 ) do
@@ -40,7 +46,6 @@ implementation
                             if NOT(valueIsInt) then
                                 begin
                                     SetLength( intArrayOut, 0 );
-
                                     exit( False );
                                 end;
 
@@ -59,6 +64,12 @@ implementation
                 begin
                     arrLen := length( stringArrayIn );
 
+                    if (arrLen < 1) then
+                        begin
+                            SetLength( doubleArrayOut, 0 );
+                            exit( False );
+                        end;
+
                     SetLength( doubleArrayOut, arrLen );
 
                     for i := 0 to ( arrLen - 1 ) do
@@ -68,7 +79,6 @@ implementation
                             if NOT(valueIsDouble) then
                                 begin
                                     SetLength( doubleArrayOut, 0 );
-
                                     exit( False );
                                 end;
 

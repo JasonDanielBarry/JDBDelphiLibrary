@@ -5,7 +5,7 @@ interface
     uses
         system.SysUtils, system.Classes, system.Generics.Collections, system.StrUtils,
         Xml.XMLDoc, Xml.XMLIntf, xml.xmldom,
-        ArrayConversionMethods
+        ArrayConversionMethods, XMLDocumentMethods
         ;
 
     type
@@ -41,7 +41,7 @@ interface
                 //made a new document
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
-                    function createNewNode(const nodeIdentifierIn, nodeDataTypeIn : string) : IXMLNode;
+                    function tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
@@ -91,14 +91,15 @@ implementation
                     nodeDataType    : string;
                     itemNode        : IXMLNode;
                 begin
-                    //initialise output value
-                        valueOut := '';
-
                     //check the node exists
                         nodeExists := tryGetNode( identifierIn, itemNode );
 
                         if NOT( nodeExists ) then
-                            exit( False );
+                            begin
+                                valueOut := '';
+
+                                exit( False );
+                            end;
 
                     //check the node is the required data type
                         nodeDataType := getNodeDataType( identifierIn );
@@ -106,9 +107,7 @@ implementation
                         if ( nodeDataType <> dataTypeIn ) then
                             exit( False );
 
-                    valueOut := trim( itemNode.ChildNodes.FindNode( VALUE_STRING ).Text );
-
-                    result := True;
+                    result := tryReadStringFromXMLNode( itemNode, VALUE_STRING, valueOut );
                 end;
 
             procedure TFileReaderWriter.writeValueToXML(const identifierIn, dataTypeIn, valueIn : string);
@@ -117,15 +116,13 @@ implementation
                     itemNode            : IXMLNode;
                 begin
                     //check the node exists
-                        nodeAlreadyExists := checkNodeExists( identifierIn );
+                        nodeAlreadyExists := NOT(trycreateNewNode( identifierIn, dataTypeIn, itemNode ));
 
                         if ( nodeAlreadyExists ) then
                             exit();
 
                     //write the node's data-type & value
-                        itemNode := createNewNode( identifierIn, dataTypeIn );
-
-                        itemNode.AddChild( VALUE_STRING ).text := Trim( valueIn );
+                        writeStringToXMLNode( itemNode, VALUE_STRING, valueIn );
                 end;
 
         //read and write arrays to XML
@@ -186,23 +183,25 @@ implementation
                 end;
 
         //create a new node belonging to the root node
-            function TFileReaderWriter.createNewNode(const nodeIdentifierIn, nodeDataTypeIn : string) : IXMLNode;
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 var
-                    nodeIdentifierAlreadyUsed   : boolean;
-                    newNodeOut                  : IXMLNode;
+                    nodeIdentifierAlreadyUsed : boolean;
                 begin
                     //check if the node already exists
                         nodeIdentifierAlreadyUsed := checkNodeExists( nodeIdentifierIn );
 
                         if (nodeIdentifierAlreadyUsed) then
-                            exit( nil );
+                            begin
+                                newXMLNodeOut := nil;
+                                exit( False );
+                            end;
 
                     //create the new node and assign its data type
-                        newNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
+                        newXMLNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
 
-                        newNodeOut.AddChild( DATA_TYPE_STRING ).text := nodeDataTypeIn;
+                        newXMLNodeOut.AddChild( DATA_TYPE_STRING ).text := nodeDataTypeIn;
 
-                    result := newNodeOut;
+                    result := True;
                 end;
 
         //check that a node exists
@@ -290,28 +289,15 @@ implementation
             //single values
                 function TFileReaderWriter.tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
                     var
-                        readSuccessful, valueIsBool :  boolean;
-                        stringValue                 : string;
+                        itemNode : IXMLNode;
                     begin
-                        //check the ID key exists
-                            readSuccessful := tryReadValueFromXML( identifierIn, DT_BOOL, stringValue );
+                        if NOT( tryGetNode( identifierIn, itemNode ) ) then
+                            begin
+                                valueOut := defaultValueIn;
+                                exit( False );
+                            end;
 
-                            if ( NOT(readSuccessful) ) then
-                                begin
-                                    valueOut := defaultValueIn;
-                                    exit( false );
-                                end;
-
-                        //check the data is a boolean
-                            valueIsBool := TryStrToBool( stringValue, valueOut );
-
-                            if ( NOT(valueIsBool) ) then
-                                begin
-                                    valueOut := defaultValueIn;
-                                    exit( false );
-                                end;
-
-                        result := True;
+                        result := tryReadBooleanFromXMLNode( itemNode, VALUE_STRING, valueOut, defaultValueIn );
                     end;
 
                 function TFileReaderWriter.tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
@@ -470,11 +456,13 @@ implementation
             //single values
                 procedure TFileReaderWriter.writeBool(const identifierIn : string; const valueIn : boolean);
                     var
-                        boolString : string;
+                        boolString  : string;
+                        itemNode    : IXMLNode;
                     begin
-                        boolString := BoolToStr( valueIn );
+                        if NOT( tryCreateNewNode( identifierIn, DT_BOOL, itemNode ) ) then
+                            exit();
 
-                        writeValueToXML( identifierIn, DT_BOOL, boolString );
+                        writeBooleanToXMLNode( itemNode, VALUE_STRING, valueIn );
                     end;
 
                 procedure TFileReaderWriter.writeInteger(const identifierIn : string; const valueIn : integer);
