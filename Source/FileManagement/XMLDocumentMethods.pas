@@ -225,6 +225,9 @@ implementation
         //string
             procedure writeStringToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, stringValueIn : string);
                 begin
+                    if NOT( Assigned(XMLNodeInOut) ) then
+                        exit();
+
                     XMLNodeInOut.AddChild( dataIdentifierIn ).Text := trim( stringValueIn );
                 end;
 

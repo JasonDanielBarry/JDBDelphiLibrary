@@ -25,7 +25,10 @@ interface
                 [Test]
                 procedure testReadWriteArrays();
                 [Test]
+                procedure testReadGhostData();
+                [Test]
                 procedure testWriteData();
+
         end;
 
 implementation
@@ -242,6 +245,50 @@ implementation
                 //string
                     fileReadWrite.tryReadStringArray( 'StringArray', stringArrayRead );
                     assert.AreEqual<string>( stringArrayRead, stringArrayWrite );
+
+                FreeAndNil( fileReadWrite );
+        end;
+
+    procedure TTestFileReaderWriterClass.testReadGhostData();
+        var
+            testBool        : boolean;
+            testInt         : integer;
+            testDouble      : double;
+            testString      : string;
+            fileReadWrite   : TFileReaderWriter;
+        begin
+            deleteTestFile();
+
+            //save a file
+                fileReadWrite := TFileReaderWriter.create( TEST_FILE_PATH );
+
+                //boolean
+                    fileReadWrite.writeBool( 'boolean1', True );
+                    fileReadWrite.writeInteger( 'integer1', 2 );
+                    fileReadWrite.writeDouble( 'double1', 123.456 );
+                    fileReadWrite.writeString( 'string1', 'asdf' );
+
+                fileReadWrite.saveFile();
+
+                FreeAndNil( fileReadWrite );
+
+            //load the file
+                fileReadWrite := TFileReaderWriter.create( TEST_FILE_PATH );
+
+                fileReadWrite.loadFile();
+
+                //try read data that does not exist
+                    fileReadWrite.tryReadBool( 'ghostBool', testBool, True );
+                    assert.AreEqual( testBool, True );
+
+                    fileReadWrite.tryReadInteger( 'ghostInt', testInt, 101 );
+                    assert.AreEqual( testInt, 101 );
+
+                    fileReadWrite.tryReadDouble( 'ghostDouble', testDouble, 159.789 );
+                    assert.IsTrue( SameValue( testDouble, 159.789, 1e-3 ) );
+
+                    fileReadWrite.tryReadString( 'ghostString', testString, 'asdf' );
+                    assert.AreEqual( testString, 'asdf' );
 
                 FreeAndNil( fileReadWrite );
         end;
