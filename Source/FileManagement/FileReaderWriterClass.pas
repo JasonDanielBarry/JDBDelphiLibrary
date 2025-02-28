@@ -14,19 +14,9 @@ interface
                 const
                     ARRAY_ELEMENT_DELIMITER : string = ';';
                     ITEM_PREFIX             : string = 'Item_';
-                    DATA_TYPE_STRING        : string = 'DataType';
+                    ITEM_TYPE_STRING        : string = 'ItemType';
                     ROOT_STRING             : string = 'Root';
                     VALUE_STRING            : string = 'Value';
-                    //data type strings
-                        DT_NONE         : string = 'none';
-                        DT_BOOL         : string = 'boolean';
-                        DT_INT          : string = 'integer';
-                        DT_INT_ARRAY    : string = 'integer_array';
-                        DT_DOUBLE       : string = 'double';
-                        DT_DOUBLE_ARRAY : string = 'double_array';
-                        DT_CHAR         : string = 'char';
-                        DT_STRING       : string = 'string';
-                        DT_STRING_ARRAY : string = 'string_array';
                 var
                     fileName        : string;
                     rootNode        : IXMLNode;
@@ -35,7 +25,7 @@ interface
                 //made a new document
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
-                    function tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+                    function tryCreateNewNode(const nodeIdentifierIn, itemDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
@@ -86,7 +76,7 @@ implementation
                 end;
 
         //create a new node belonging to the root node
-            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, itemDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 var
                     nodeIdentifierAlreadyUsed : boolean;
                 begin
@@ -102,7 +92,7 @@ implementation
                     //create the new node and assign its data type
                         newXMLNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
 
-                        newXMLNodeOut.AddChild( DATA_TYPE_STRING ).text := nodeDataTypeIn;
+                        newXMLNodeOut.AddChild( ITEM_TYPE_STRING ).Text := itemDataTypeIn;
 
                     result := True;
                 end;
@@ -135,7 +125,7 @@ implementation
                     if ( NOT(identifierExists) ) then
                         exit( DT_NONE );
 
-                    result := itemNode.ChildNodes.FindNode( DATA_TYPE_STRING ).text;
+                    result := itemNode.ChildNodes.FindNode( ITEM_TYPE_STRING ).text;
                 end;
 
     //public
