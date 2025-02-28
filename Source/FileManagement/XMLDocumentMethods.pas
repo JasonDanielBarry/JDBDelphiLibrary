@@ -245,10 +245,18 @@ implementation
     //write data to XML node
         procedure writeDataToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, dataTypeIn, dataValueIn : string);
             var
-                childNode : IXMLNode;
+                identifierAlreadyUsed   : boolean;
+                childNode               : IXMLNode;
             begin
-                if NOT( Assigned(XMLNodeInOut) ) then
-                    exit();
+                //check if the XML node is assigned ( != nil )
+                    if NOT( Assigned(XMLNodeInOut) ) then
+                        exit();
+
+                //check if the data identifier is already used
+                    childNode := XMLNodeInOut.ChildNodes.FindNode( dataIdentifierIn );
+
+                    if ( Assigned( childNode ) ) then
+                        exit();
 
                 childNode := XMLNodeInOut.AddChild( dataIdentifierIn );
 
