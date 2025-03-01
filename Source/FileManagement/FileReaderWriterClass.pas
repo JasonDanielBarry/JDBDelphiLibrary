@@ -14,7 +14,6 @@ interface
                 const
                     ARRAY_ELEMENT_DELIMITER : string = ';';
                     ITEM_PREFIX             : string = 'Item_';
-                    ITEM_TYPE_STRING        : string = 'ItemType';
                     ROOT_STRING             : string = 'Root';
                     VALUE_STRING            : string = 'Value';
                 var
@@ -25,12 +24,12 @@ interface
                 //made a new document
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
-                    function tryCreateNewNode(const nodeIdentifierIn, itemDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+                    function tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
                 //get an identifier's data type
-                    function getNodeDataType(const nodeIdentifierIn : string) : string;
+                    function getNodeType(const nodeIdentifierIn : string) : string;
             public
                 //constructor
                     constructor create(const fileNameIn : string); virtual;
@@ -76,14 +75,14 @@ implementation
                 end;
 
         //create a new node belonging to the root node
-            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, itemDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 begin
                     //check if the node already exists
                         if NOT( tryCreateNewXMLChildNode( rootNode, ITEM_PREFIX + nodeIdentifierIn, newXMLNodeOut ) ) then
                             exit( False );
 
                     //store the new node's data type
-                        newXMLNodeOut.AddChild( ITEM_TYPE_STRING ).Text := itemDataTypeIn;
+                        setXMLNodeType( newXMLNodeOut, nodeTypeIn );
 
                     result := True;
                 end;
@@ -106,17 +105,14 @@ implementation
                 end;
 
         //get an identifier's data type
-            function TFileReaderWriter.getNodeDataType(const nodeIdentifierIn : string) : string;
+            function TFileReaderWriter.getNodeType(const nodeIdentifierIn : string) : string;
                 var
                     identifierExists    : boolean;
                     itemNode            : IXMLNode;
                 begin
-                    identifierExists := tryGetNode( nodeIdentifierIn, itemNode );
+                    tryGetNode( nodeIdentifierIn, itemNode );
 
-                    if ( NOT(identifierExists) ) then
-                        exit( DT_NONE );
-
-                    result := itemNode.ChildNodes.FindNode( ITEM_TYPE_STRING ).text;
+                    result := getXMLNodeType( itemNode );
                 end;
 
     //public

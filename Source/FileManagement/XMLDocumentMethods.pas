@@ -19,11 +19,12 @@ interface
             DT_STRING       : string = 'string';
             DT_STRING_ARRAY : string = 'string_array';
 
-
-
     //read data from XML node
         //try get a parent node's child node
             function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
+
+        //data type
+            function getXMLNodeType(const XMLNodeIn : IXMLNode) : string;
 
         //boolean
             function tryReadBooleanFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out boolValueOut : boolean; const defaultValueIn : boolean = False) : boolean;
@@ -49,7 +50,11 @@ interface
 
     //write data to XML node
         //create new child node
-            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean;
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, nodeTypeIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
+
+        //data type
+            procedure setXMLNodeType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
 
         //boolean
             procedure writeBooleanToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn : string; boolValueIn : boolean);
@@ -77,6 +82,8 @@ implementation
 
     const
         ARRAY_ELEMENT_DELIMITER : string = ';';
+        NODE_TYPE_STRING        : string = 'NodeType';
+        VALUE_TYPE_STRING       : string = 'ValueType';
 
     //read data from XML node
         //try get a parent node's child node
@@ -90,11 +97,11 @@ implementation
                     result := True;
                 end;
 
-        function tryReadDataFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, dataTypeIn : string; out dataValueOut : string) : boolean;
+        function tryReadValueFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, valueTypeIn : string; out valueOut : string) : boolean;
             var
                 childDataNode : IXMLNode;
             begin
-                dataValueOut := '';
+                valueOut := '';
 
                 //check if the parent node is assigned
                     if NOT( Assigned(XMLNodeIn) ) then
@@ -105,13 +112,22 @@ implementation
                         exit( False );
 
                 //check the child data node's data type is correct
-                    if NOT( childDataNode.Attributes['ValueType'] = dataTypeIn ) then
+                    if NOT( childDataNode.Attributes[ VALUE_TYPE_STRING ] = valueTypeIn ) then
                         exit( False );
 
-                dataValueOut := trim( childDataNode.Text );
+                valueOut := trim( childDataNode.Text );
 
                 result := True;
             end;
+
+        //data type
+            function getXMLNodeType(const XMLNodeIn : IXMLNode) : string;
+                begin
+                    if NOT( Assigned( XMLNodeIn ) ) then
+                        exit( DT_NONE );
+
+                    result := XMLNodeIn.Attributes[ NODE_TYPE_STRING ];
+                end;
 
         //boolean
             function tryReadBooleanFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out boolValueOut : boolean; const defaultValueIn : boolean = False) : boolean;
@@ -119,7 +135,7 @@ implementation
                     readSuccessful, dataIsBool  : boolean;
                     readDataValue               : string;
                 begin
-                    readSuccessful := tryReadDataFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_BOOL, readDataValue );
+                    readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_BOOL, readDataValue );
 
                     dataIsBool := TryStrToBool( readDataValue, boolValueOut );
 
@@ -138,7 +154,7 @@ implementation
                     readSuccessful, dataIsInteger   : boolean;
                     readStringValue                 : string;
                 begin
-                    readSuccessful := tryReadDataFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_INT, readStringValue );
+                    readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_INT, readStringValue );
 
                     dataIsInteger := TryStrToInt( readStringValue, integerValueOut );
 
@@ -157,7 +173,7 @@ implementation
                     readSuccessful, dataIsDouble    : boolean;
                     readStringValue                 : string;
                 begin
-                    readSuccessful := tryReadDataFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_DOUBLE, readStringValue );
+                    readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_DOUBLE, readStringValue );
 
                     dataIsDouble := TryStrToFloat( readStringValue, doubleValueOut );
 
@@ -175,7 +191,7 @@ implementation
                 var
                     readSuccessful : boolean;
                 begin
-                    readSuccessful := tryReadDataFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_STRING, stringValueOut );
+                    readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_STRING, stringValueOut );
 
                     if NOT( readSuccessful ) then
                         begin
@@ -192,7 +208,7 @@ implementation
                     readSuccessful, dataIsArray : boolean;
                     readDataValue               : string;
                 begin
-                    readSuccessful := tryReadDataFromXMLNode( XMLNodeIn, dataIdentifierIn, arrayTypeIn, readDataValue );
+                    readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, arrayTypeIn, readDataValue );
 
                     dataIsArray := Pos( ARRAY_ELEMENT_DELIMITER, readDataValue ) > 1;
 
@@ -285,7 +301,17 @@ implementation
                     result := True;
                 end;
 
-        procedure writeDataToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, dataTypeIn, dataValueIn : string);
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, nodeTypeIn : string; out newChildNodeOut : IXMLNode) : boolean;
+                begin
+                    if NOT( tryCreateNewXMLChildNode( parentNodeIn, childNodeIdentifierIn, newChildNodeOut ) ) then
+                        exit( False );
+
+                    setXMLNodeType( newChildNodeOut, nodeTypeIn );
+
+                    result := True;
+                end;
+
+        procedure writeValueToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, valueTypeIn, valueIn : string);
             var
                 childDataNode : IXMLNode;
             begin
@@ -298,9 +324,18 @@ implementation
                         exit();
 
                 //write data to child node
-                    childDataNode.Attributes['ValueType'] := dataTypeIn;
-                    childDataNode.Text := Trim( dataValueIn );
+                    childDataNode.Attributes[ VALUE_TYPE_STRING ] := valueTypeIn;
+                    childDataNode.Text := Trim( valueIn );
             end;
+
+        //data type
+            procedure setXMLNodeType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
+                begin
+                    if NOT( Assigned( XMLNodeInOut ) ) then
+                        exit();
+
+                    XMLNodeInOut.Attributes[ NODE_TYPE_STRING ] := nodeTypeIn;
+                end;
 
         //boolean
             procedure writeBooleanToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn : string; boolValueIn : boolean);
@@ -309,7 +344,7 @@ implementation
                 begin
                     boolStr := BoolToStr( boolValueIn, True );
 
-                    writeDataToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_BOOL, boolStr );
+                    writeValueToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_BOOL, boolStr );
                 end;
 
         //integer
@@ -319,7 +354,7 @@ implementation
                 begin
                     intStr := IntToStr( integerValueIn );
 
-                    writeDataToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_INT, intStr )
+                    writeValueToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_INT, intStr )
                 end;
 
         //double
@@ -329,13 +364,13 @@ implementation
                 begin
                     doubleStr := FloatToStr( doubleValueIn );
 
-                    writeDataToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_DOUBLE, doubleStr )
+                    writeValueToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_DOUBLE, doubleStr )
                 end;
 
         //string
             procedure writeStringToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, stringValueIn : string);
                 begin
-                    writeDataToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_STRING, stringValueIn );
+                    writeValueToXMLNode( XMLNodeInOut, dataIdentifierIn, DT_STRING, stringValueIn );
                 end;
 
         //arrays
@@ -345,7 +380,7 @@ implementation
                 begin
                     concatenatedArray := string.Join( ARRAY_ELEMENT_DELIMITER, stringArrayIn );
 
-                    writeDataToXMLNode( XMLNodeInOut, dataIdentifierIn, arrayTypeIn, concatenatedArray );
+                    writeValueToXMLNode( XMLNodeInOut, dataIdentifierIn, arrayTypeIn, concatenatedArray );
                 end;
 
             //integer
