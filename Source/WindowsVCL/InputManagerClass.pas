@@ -29,7 +29,7 @@ interface
                     destructor destroy(); override;
                 //process input
                     //read input
-                        function readInput() : boolean; virtual; abstract;
+                        function readFromInputControls() : boolean; virtual;
                     //write to input controls
                         procedure writeToInputControls(); virtual;
                 //file management
@@ -119,11 +119,18 @@ implementation
                     inherited destroy();
                 end;
 
-        //write to input controls
-            procedure TInputManager.writeToInputControls();
-                begin
-                    checkForInputErrors();
-                end;
+        //process input
+            //read input
+                function TInputManager.readFromInputControls() : boolean;
+                    begin
+                        //nothing here for now
+                    end;
+
+            //write to input controls
+                procedure TInputManager.writeToInputControls();
+                    begin
+                        checkForInputErrors();
+                    end;
 
 
 
