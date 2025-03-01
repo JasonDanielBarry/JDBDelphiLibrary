@@ -140,8 +140,7 @@ implementation
             //calculate the geometry net bounding box for active geometry
                 procedure TGraphicDrawerLayers.calculateNetBoundingBox();
                     var
-                        layerKey        : string;
-                        netBoundingBox  : TGeomBox;
+                        netBoundingBox : TGeomBox;
                     begin
                         netBoundingBox := TGraphicObject.determineBoundingBox( arrActiveGraphicObjects );
 
@@ -155,7 +154,6 @@ implementation
                                                         const drawingBackgroundColourIn     : TColor    );
                     var
                         i, graphicObjectsCount  : integer;
-                        layer                   : string;
                         arrDrawingGeometry      : TArray<TGraphicObject>;
                     begin
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,

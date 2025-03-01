@@ -462,8 +462,6 @@ implementation
                 end;
 
             procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
-                var
-                    validGraphicDrawerState : boolean;
                 begin
                     //if the graphic drawer is nil then nothing can happen
                         if ( NOT(Assigned(D2DGraphicDrawer)) ) then
@@ -655,8 +653,6 @@ implementation
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
-                var
-                    newGeometryBoundary : TGeomBox;
                 begin
                     setGraphicBackgroundColour();
 

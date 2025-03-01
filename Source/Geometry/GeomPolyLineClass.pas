@@ -89,10 +89,9 @@ implementation
 
             function TGeomPolyLine.addVertex(newVertexIn : TGeomPoint) : boolean;
                 var
-                    samePointTest                       : boolean;
-                    i                                   : integer;
-                    dx, dy, dz, dp                      : double;
-                    newLineStartPoint, newLineEndPoint  : TGeomPoint;
+                    samePointTest   : boolean;
+                    i               : integer;
+                    dx, dy, dz, dp  : double;
                 begin
                     result := true;
 

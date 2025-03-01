@@ -77,21 +77,12 @@ implementation
 
         //create a new node belonging to the root node
             function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, itemDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
-                var
-                    nodeIdentifierAlreadyUsed : boolean;
                 begin
                     //check if the node already exists
-                        nodeIdentifierAlreadyUsed := checkNodeExists( nodeIdentifierIn );
+                        if NOT( tryCreateNewXMLChildNode( rootNode, ITEM_PREFIX + nodeIdentifierIn, newXMLNodeOut ) ) then
+                            exit( False );
 
-                        if (nodeIdentifierAlreadyUsed) then
-                            begin
-                                newXMLNodeOut := nil;
-                                exit( False );
-                            end;
-
-                    //create the new node and assign its data type
-                        newXMLNodeOut := rootNode.AddChild( ITEM_PREFIX + nodeIdentifierIn );
-
+                    //store the new node's data type
                         newXMLNodeOut.AddChild( ITEM_TYPE_STRING ).Text := itemDataTypeIn;
 
                     result := True;
@@ -149,10 +140,7 @@ implementation
             //load file
                 function TFileReaderWriter.loadFile() : boolean;
                     var
-                        fileDoesNotExist    : boolean;
-                        i, nodeCount        : integer;
-                        key, value          : string;
-                        itemNode            : IXMLNode;
+                        fileDoesNotExist : boolean;
                     begin
                         //check that the file exist
                             fileDoesNotExist := NOT( FileExists( fileName ) );

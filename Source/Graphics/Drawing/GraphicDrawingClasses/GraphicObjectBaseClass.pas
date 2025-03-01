@@ -109,7 +109,6 @@ implementation
             class function TGraphicObject.determineBoundingBox(const arrGraphicObjectsIn : TArray<TGraphicObject>) : TGeomBox;
                 var
                     i, graphicObjectsCount  : integer;
-                    boundingBoxOut          : TGeomBox;
                     arrBoundingBoxes        : TArray<TGeomBox>;
                 begin
                     graphicObjectsCount := length( arrGraphicObjectsIn );

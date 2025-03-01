@@ -19,7 +19,12 @@ interface
             DT_STRING       : string = 'string';
             DT_STRING_ARRAY : string = 'string_array';
 
+
+
     //read data from XML node
+        //try get a parent node's child node
+            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
+
         //boolean
             function tryReadBooleanFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out boolValueOut : boolean; const defaultValueIn : boolean = False) : boolean;
 
@@ -43,6 +48,9 @@ interface
                 function TryReadStringArrayFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out stringArrayOut : TArray<string>) : boolean;
 
     //write data to XML node
+        //create new child node
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean;
+
         //boolean
             procedure writeBooleanToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn : string; boolValueIn : boolean);
 
@@ -71,23 +79,34 @@ implementation
         ARRAY_ELEMENT_DELIMITER : string = ';';
 
     //read data from XML node
+        //try get a parent node's child node
+            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
+                begin
+                    childNodeOut := parentNodeIn.ChildNodes.FindNode( childNodeIdentifierIn );
+
+                    if NOT( Assigned(childNodeOut) ) then
+                        exit( False );
+
+                    result := True;
+                end;
+
         function tryReadDataFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, dataTypeIn : string; out dataValueOut : string) : boolean;
             var
                 childDataNode : IXMLNode;
             begin
-                if NOT( Assigned(XMLNodeIn) ) then
-                    begin
-                        dataValueOut := '';
-                        exit( false );
-                    end;
+                dataValueOut := '';
 
-                childDataNode := XMLNodeIn.ChildNodes.FindNode( dataIdentifierIn );
+                //check if the parent node is assigned
+                    if NOT( Assigned(XMLNodeIn) ) then
+                        exit( False );
 
-                if NOT( childDataNode.Attributes['ValueType'] = dataTypeIn ) then
-                    begin
-                        dataValueOut := '';
-                        exit( false );
-                    end;
+                //test if the child node exists
+                    if NOT( tryGetXMLChildNode( XMLNodeIn, dataIdentifierIn, childDataNode ) ) then
+                        exit( False );
+
+                //check the child data node's data type is correct
+                    if NOT( childDataNode.Attributes['ValueType'] = dataTypeIn ) then
+                        exit( False );
 
                 dataValueOut := trim( childDataNode.Text );
 
@@ -229,7 +248,7 @@ implementation
             //string
                 function TryReadStringArrayFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out stringArrayOut : TArray<string>) : boolean;
                     var
-                        readSuccessful, dataIsArray : boolean;
+                        readSuccessful : boolean;
                     begin
                         readSuccessful := tryReadArrayFromXMLNode( XMLNodeIn, dataIdentifierIn, DT_STRING_ARRAY, stringArrayOut );
 
@@ -243,25 +262,44 @@ implementation
                     end;
 
     //write data to XML node
+        //create new child node
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean;
+                var
+                    childNodeAlreadyExists  : boolean;
+                    childNode               : IXMLNode;
+                begin
+                    //check if the data identifier is already used
+                        childNode := parentNodeIn.ChildNodes.FindNode( childNodeIdentifierIn );
+
+                        childNodeAlreadyExists := Assigned( childNode );
+
+                        if ( childNodeAlreadyExists ) then
+                            begin
+                                newChildNodeOut := nil;
+                                exit( False );
+                            end;
+
+                    //create the new child now
+                        newChildNodeOut := parentNodeIn.AddChild( childNodeIdentifierIn );
+
+                    result := True;
+                end;
+
         procedure writeDataToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn, dataTypeIn, dataValueIn : string);
             var
-                identifierAlreadyUsed   : boolean;
-                childNode               : IXMLNode;
+                childDataNode : IXMLNode;
             begin
                 //check if the XML node is assigned ( != nil )
                     if NOT( Assigned(XMLNodeInOut) ) then
                         exit();
 
-                //check if the data identifier is already used
-                    childNode := XMLNodeInOut.ChildNodes.FindNode( dataIdentifierIn );
-
-                    if ( Assigned( childNode ) ) then
+                //try create a child node
+                    if NOT( tryCreateNewXMLChildNode( XMLNodeInOut, dataIdentifierIn, childDataNode ) ) then
                         exit();
 
-                childNode := XMLNodeInOut.AddChild( dataIdentifierIn );
-
-                childNode.Attributes['ValueType'] := dataTypeIn;
-                childNode.Text := Trim( dataValueIn );
+                //write data to child node
+                    childDataNode.Attributes['ValueType'] := dataTypeIn;
+                    childDataNode.Text := Trim( dataValueIn );
             end;
 
         //boolean

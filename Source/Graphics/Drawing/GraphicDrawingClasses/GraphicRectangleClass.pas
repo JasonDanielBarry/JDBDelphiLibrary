@@ -82,8 +82,6 @@ implementation
                                                             lineColourIn            : TColor;
                                                     const   lineStyleIn             : TPenStyle;
                                                     const   bottomLeftPointIn       : TGeomPoint    );
-                var
-                    localMinPoint, localMaxPoint : TGeomPoint;
                 begin
                     inherited create(   filledIn,
                                         lineThicknessIn,

@@ -29,8 +29,7 @@ implementation
                                         scaleFactorIn           : double;
                                 out     newEndValueOut          : double );
             var
-                changeFactor,
-                lengthChange, lengthLow, lengthHigh, lengthOld : double;
+                lengthChange, lengthOld : double;
             begin
                 //check if the start value and end value are identical - cannot divide by zero
                     if ( SameValue(startValueIn, endValueIn) ) then

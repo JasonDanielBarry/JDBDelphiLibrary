@@ -59,8 +59,7 @@ implementation
             procedure TGraphicPolygon.drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                                     var canvasInOut         : TDirect2DCanvas       );
                 var
-                    mustFillPolygon : boolean;
-                    pathGeometry    : ID2D1PathGeometry;
+                    pathGeometry : ID2D1PathGeometry;
                 begin
                     if (length( geometryPoints ) < 3) then
                         exit();
