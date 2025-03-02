@@ -24,7 +24,8 @@ interface
             function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
 
         //data type
-            function getXMLNodeType(const XMLNodeIn : IXMLNode) : string;
+            function XMLNodeIsDataType(const XMLNodeIn : IXMLNode; const nodeDataTypeIn : string) : boolean;
+            function getXMLNodeDataType(const XMLNodeIn : IXMLNode) : string;
 
         //boolean
             function tryReadBooleanFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn : string; out boolValueOut : boolean; const defaultValueIn : boolean = False) : boolean;
@@ -54,7 +55,7 @@ interface
             function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, nodeTypeIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
 
         //data type
-            procedure setXMLNodeType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
+            procedure setXMLNodeDataType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
 
         //boolean
             procedure writeBooleanToXMLNode(var XMLNodeInOut : IXMLNode; const dataIdentifierIn : string; boolValueIn : boolean);
@@ -82,7 +83,7 @@ implementation
 
     const
         ARRAY_ELEMENT_DELIMITER : string = ';';
-        NODE_TYPE_STRING        : string = 'NodeType';
+        NODE_DATA_TYPE_STRING   : string = 'NodeDataType';
         VALUE_TYPE_STRING       : string = 'ValueType';
 
     //read data from XML node
@@ -99,19 +100,21 @@ implementation
 
         function tryReadValueFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, valueTypeIn : string; out valueOut : string) : boolean;
             var
-                childDataNode : IXMLNode;
+                nodeType        : string;
+                childDataNode   : IXMLNode;
             begin
-                valueOut := '';
+                //initialise value
+                    valueOut := '';
 
                 //check if the parent node is assigned
                     if NOT( Assigned(XMLNodeIn) ) then
                         exit( False );
 
-                //test if the child node exists
+                //get the child data node
                     if NOT( tryGetXMLChildNode( XMLNodeIn, dataIdentifierIn, childDataNode ) ) then
                         exit( False );
 
-                //check the child data node's data type is correct
+                //check the child data type is correct
                     if NOT( childDataNode.Attributes[ VALUE_TYPE_STRING ] = valueTypeIn ) then
                         exit( False );
 
@@ -121,12 +124,17 @@ implementation
             end;
 
         //data type
-            function getXMLNodeType(const XMLNodeIn : IXMLNode) : string;
+            function XMLNodeIsDataType(const XMLNodeIn : IXMLNode; const nodeDataTypeIn : string) : boolean;
+                begin
+                    result := ( getXMLNodeDataType( XMLNodeIn ) = nodeDataTypeIn );
+                end;
+
+            function getXMLNodeDataType(const XMLNodeIn : IXMLNode) : string;
                 begin
                     if NOT( Assigned( XMLNodeIn ) ) then
                         exit( DT_NONE );
 
-                    result := XMLNodeIn.Attributes[ NODE_TYPE_STRING ];
+                    result := XMLNodeIn.Attributes[ NODE_DATA_TYPE_STRING ];
                 end;
 
         //boolean
@@ -306,7 +314,7 @@ implementation
                     if NOT( tryCreateNewXMLChildNode( parentNodeIn, childNodeIdentifierIn, newChildNodeOut ) ) then
                         exit( False );
 
-                    setXMLNodeType( newChildNodeOut, nodeTypeIn );
+                    setXMLNodeDataType( newChildNodeOut, nodeTypeIn );
 
                     result := True;
                 end;
@@ -319,22 +327,22 @@ implementation
                     if NOT( Assigned(XMLNodeInOut) ) then
                         exit();
 
-                //try create a child node
+                //create a child data node
                     if NOT( tryCreateNewXMLChildNode( XMLNodeInOut, dataIdentifierIn, childDataNode ) ) then
                         exit();
 
-                //write data to child node
+                //write data to node
                     childDataNode.Attributes[ VALUE_TYPE_STRING ] := valueTypeIn;
                     childDataNode.Text := Trim( valueIn );
             end;
 
         //data type
-            procedure setXMLNodeType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
+            procedure setXMLNodeDataType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
                 begin
                     if NOT( Assigned( XMLNodeInOut ) ) then
                         exit();
 
-                    XMLNodeInOut.Attributes[ NODE_TYPE_STRING ] := nodeTypeIn;
+                    XMLNodeInOut.Attributes[ NODE_DATA_TYPE_STRING ] := nodeTypeIn;
                 end;
 
         //boolean

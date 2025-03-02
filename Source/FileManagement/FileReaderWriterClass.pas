@@ -24,7 +24,8 @@ interface
                 //made a new document
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
-                    function tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+                    function tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
+                    function tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
@@ -75,14 +76,23 @@ implementation
                 end;
 
         //create a new node belonging to the root node
-            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 begin
                     //check if the node already exists
                         if NOT( tryCreateNewXMLChildNode( rootNode, ITEM_PREFIX + nodeIdentifierIn, newXMLNodeOut ) ) then
                             exit( False );
 
+                    result := True;
+                end;
+
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+                begin
+                    //check if the node already exists
+                        if NOT( tryCreateNewNode( nodeIdentifierIn, newXMLNodeOut ) ) then
+                            exit( False );
+
                     //store the new node's data type
-                        setXMLNodeType( newXMLNodeOut, nodeTypeIn );
+                       setXMLNodeDataType( newXMLNodeOut, nodeTypeIn );
 
                     result := True;
                 end;
@@ -112,7 +122,7 @@ implementation
                 begin
                     tryGetNode( nodeIdentifierIn, itemNode );
 
-                    result := getXMLNodeType( itemNode );
+                    result := getXMLNodeDataType( itemNode );
                 end;
 
     //public

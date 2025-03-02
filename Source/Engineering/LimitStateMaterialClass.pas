@@ -10,8 +10,6 @@ interface
 
     type
         TLimitStateMaterial = class
-            const
-                LIMIT_STATE_MATERIAL_TYPE : string = 'TLimitStateMaterial';
             var
                 averageValue,
                 variationCoefficient,
@@ -76,25 +74,35 @@ implementation
         VARIATION_COEFFICIENT   : string = 'VariationCoefficient';
         DOWNGRADE_FACTOR        : string = 'DowngradeFactor';
         PARTIAL_FACTOR          : string = 'PartialFactor';
+        DT_LIMIT_STATE_MATERIAL : string = 'TLimitStateMaterial';
+
 
     function TLimitStateMaterial.tryReadFromXMLNode(const XMLNodeIn : IXMLNode) : boolean;
         var
             successfulRead : boolean;
         begin
+            if NOT( Assigned( XMLNodeIn ) ) then
+                exit( False );
+
+            if NOT( XMLNodeIsDataType( XMLNodeIn, DT_LIMIT_STATE_MATERIAL ) ) then
+                exit( False );
+
             successfulRead := tryReadDoubleFromXMLNode( XMLNodeIn, AVERAGE_VALUE, self.averageValue );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, VARIATION_COEFFICIENT, self.variationCoefficient   );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, DOWNGRADE_FACTOR,      self.downgradeFactor        );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, PARTIAL_FACTOR,        self.partialFactor, 1       );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, VARIATION_COEFFICIENT, self.variationCoefficient );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, DOWNGRADE_FACTOR,      self.downgradeFactor      );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, PARTIAL_FACTOR,        self.partialFactor, 1     );
 
             result := successfulRead;
         end;
 
     procedure TLimitStateMaterial.writeToXMLNode(var XMLNodeInOut : IXMLNode);
         begin
-            writeDoubleToXMLNode( XMLNodeInOut, AVERAGE_VALUE,          self.averageValue           );
-            writeDoubleToXMLNode( XMLNodeInOut, VARIATION_COEFFICIENT,  self.variationCoefficient   );
-            writeDoubleToXMLNode( XMLNodeInOut, DOWNGRADE_FACTOR,       self.downgradeFactor        );
-            writeDoubleToXMLNode( XMLNodeInOut, PARTIAL_FACTOR,         self.partialFactor          );
+            setXMLNodeDataType( XMLNodeInOut, DT_LIMIT_STATE_MATERIAL );
+
+            writeDoubleToXMLNode( XMLNodeInOut, AVERAGE_VALUE,          self.averageValue         );
+            writeDoubleToXMLNode( XMLNodeInOut, VARIATION_COEFFICIENT,  self.variationCoefficient );
+            writeDoubleToXMLNode( XMLNodeInOut, DOWNGRADE_FACTOR,       self.downgradeFactor      );
+            writeDoubleToXMLNode( XMLNodeInOut, PARTIAL_FACTOR,         self.partialFactor        );
         end;
 
 end.
