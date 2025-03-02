@@ -25,7 +25,7 @@ interface
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
                     function tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
-                    function tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
+                    function tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
@@ -85,14 +85,12 @@ implementation
                     result := True;
                 end;
 
-            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
+            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 begin
-                    //check if the node already exists
-                        if NOT( tryCreateNewNode( nodeIdentifierIn, newXMLNodeOut ) ) then
-                            exit( False );
+                    if NOT( tryCreateNewNode( nodeIdentifierIn, newXMLNodeOut ) ) then
+                        exit( False );
 
-                    //store the new node's data type
-                       setXMLNodeDataType( newXMLNodeOut, nodeTypeIn );
+                    setXMLNodeDataType( newXMLNodeOut, nodeDataTypeIn );
 
                     result := True;
                 end;

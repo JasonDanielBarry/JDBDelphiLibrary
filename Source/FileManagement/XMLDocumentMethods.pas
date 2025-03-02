@@ -51,8 +51,7 @@ interface
 
     //write data to XML node
         //create new child node
-            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
-            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, nodeTypeIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean;
 
         //data type
             procedure setXMLNodeDataType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
@@ -82,14 +81,18 @@ interface
 implementation
 
     const
-        ARRAY_ELEMENT_DELIMITER : string = ';';
-        NODE_DATA_TYPE_STRING   : string = 'NodeDataType';
-        VALUE_TYPE_STRING       : string = 'ValueType';
+        //general strings
+            ARRAY_ELEMENT_DELIMITER : string = ';';
+            NODE_DATA_TYPE_STRING   : string = 'NodeDataType';
+            VALUE_TYPE_STRING       : string = 'ValueType';
 
     //read data from XML node
         //try get a parent node's child node
             function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
                 begin
+                    if NOT( Assigned( parentNodeIn ) ) then
+                        exit( False );
+
                     childNodeOut := parentNodeIn.ChildNodes.FindNode( childNodeIdentifierIn );
 
                     if NOT( Assigned(childNodeOut) ) then
@@ -305,16 +308,6 @@ implementation
 
                     //create the new child now
                         newChildNodeOut := parentNodeIn.AddChild( childNodeIdentifierIn );
-
-                    result := True;
-                end;
-
-            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, nodeTypeIn : string; out newChildNodeOut : IXMLNode) : boolean;
-                begin
-                    if NOT( tryCreateNewXMLChildNode( parentNodeIn, childNodeIdentifierIn, newChildNodeOut ) ) then
-                        exit( False );
-
-                    setXMLNodeDataType( newChildNodeOut, nodeTypeIn );
 
                     result := True;
                 end;

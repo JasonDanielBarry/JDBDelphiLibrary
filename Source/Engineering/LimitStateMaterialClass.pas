@@ -81,9 +81,6 @@ implementation
         var
             successfulRead : boolean;
         begin
-            if NOT( Assigned( XMLNodeIn ) ) then
-                exit( False );
-
             if NOT( XMLNodeIsDataType( XMLNodeIn, DT_LIMIT_STATE_MATERIAL ) ) then
                 exit( False );
 
