@@ -21,8 +21,8 @@ interface
             function designValue() : double; virtual;
             procedure setValues(const averageValueIn, variationCoefficientIn, downgradeFactorIn, partialFactorIn : double); virtual;
             procedure copyOther(const otherMaterialIn: TLimitStateMaterial); virtual;
-            function tryReadFromXMLNode(const XMLNodeIn : IXMLNode) : boolean;
-            procedure writeToXMLNode(var XMLNodeInOut : IXMLNode);
+            function tryReadFromXMLNode(const XMLNodeIn : IXMLNode; const identifierIn : string) : boolean;
+            procedure writeToXMLNode(var XMLNodeInOut : IXMLNode; const identifierIn : string);
         end;
 
 implementation
@@ -76,30 +76,33 @@ implementation
         PARTIAL_FACTOR          : string = 'PartialFactor';
         DT_LIMIT_STATE_MATERIAL : string = 'TLimitStateMaterial';
 
-
-    function TLimitStateMaterial.tryReadFromXMLNode(const XMLNodeIn : IXMLNode) : boolean;
+    function TLimitStateMaterial.tryReadFromXMLNode(const XMLNodeIn : IXMLNode; const identifierIn : string) : boolean;
         var
             successfulRead : boolean;
+            limitStateNode : IXMLNode;
         begin
-            if NOT( XMLNodeIsDataType( XMLNodeIn, DT_LIMIT_STATE_MATERIAL ) ) then
+            if NOT( tryGetXMLChildNode(XMLNodeIn, identifierIn, DT_LIMIT_STATE_MATERIAL, limitStateNode ) ) then
                 exit( False );
 
-            successfulRead := tryReadDoubleFromXMLNode( XMLNodeIn, AVERAGE_VALUE, self.averageValue );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, VARIATION_COEFFICIENT, self.variationCoefficient );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, DOWNGRADE_FACTOR,      self.downgradeFactor      );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( XMLNodeIn, PARTIAL_FACTOR,        self.partialFactor, 1     );
+            successfulRead := tryReadDoubleFromXMLNode( limitStateNode, AVERAGE_VALUE, self.averageValue );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, VARIATION_COEFFICIENT, self.variationCoefficient );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, DOWNGRADE_FACTOR,      self.downgradeFactor      );
+            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, PARTIAL_FACTOR,        self.partialFactor, 1     );
 
             result := successfulRead;
         end;
 
-    procedure TLimitStateMaterial.writeToXMLNode(var XMLNodeInOut : IXMLNode);
+    procedure TLimitStateMaterial.writeToXMLNode(var XMLNodeInOut : IXMLNode; const identifierIn : string);
+        var
+            limitStateNode : IXMLNode;
         begin
-            setXMLNodeDataType( XMLNodeInOut, DT_LIMIT_STATE_MATERIAL );
+            if NOT( tryCreateNewXMLChildNode( XMLNodeInOut, identifierIn, DT_LIMIT_STATE_MATERIAL, limitStateNode ) ) then
+                exit();
 
-            writeDoubleToXMLNode( XMLNodeInOut, AVERAGE_VALUE,          self.averageValue         );
-            writeDoubleToXMLNode( XMLNodeInOut, VARIATION_COEFFICIENT,  self.variationCoefficient );
-            writeDoubleToXMLNode( XMLNodeInOut, DOWNGRADE_FACTOR,       self.downgradeFactor      );
-            writeDoubleToXMLNode( XMLNodeInOut, PARTIAL_FACTOR,         self.partialFactor        );
+            writeDoubleToXMLNode( limitStateNode, AVERAGE_VALUE,          averageValue          );
+            writeDoubleToXMLNode( limitStateNode, VARIATION_COEFFICIENT,  variationCoefficient  );
+            writeDoubleToXMLNode( limitStateNode, DOWNGRADE_FACTOR,       downgradeFactor       );
+            writeDoubleToXMLNode( limitStateNode, PARTIAL_FACTOR,         partialFactor         );
         end;
 
 end.

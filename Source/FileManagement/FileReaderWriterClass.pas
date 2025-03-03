@@ -13,19 +13,18 @@ interface
             private
                 const
                     ARRAY_ELEMENT_DELIMITER : string = ';';
-                    ITEM_PREFIX             : string = 'Item_';
                     ROOT_STRING             : string = 'Root';
                     VALUE_STRING            : string = 'Value';
                 var
                     fileName        : string;
-                    rootNode        : IXMLNode;
                     XMLFileDocument : IXMLDocument;
             protected
-                //made a new document
+                var
+                    rootNode : IXMLNode;
+                //reset the document
                     procedure resetXMLDocument();
                 //create a new node belonging to the root node
-                    function tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
-                    function tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean; overload;
+                    function tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 //check that a node with the identifier exists
                     function checkNodeExists(const nodeIdentifierIn : string) : boolean; overload;
                     function tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean; overload;
@@ -66,7 +65,7 @@ interface
 implementation
 
     //protected
-        //made a new document
+        //reset the document
             procedure TFileReaderWriter.resetXMLDocument();
                 begin
                     XMLFileDocument         := NewXMLDocument();
@@ -79,18 +78,8 @@ implementation
             function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn : string; out newXMLNodeOut : IXMLNode) : boolean;
                 begin
                     //check if the node already exists
-                        if NOT( tryCreateNewXMLChildNode( rootNode, ITEM_PREFIX + nodeIdentifierIn, newXMLNodeOut ) ) then
+                        if NOT( tryCreateNewXMLChildNode( rootNode, nodeIdentifierIn, newXMLNodeOut ) ) then
                             exit( False );
-
-                    result := True;
-                end;
-
-            function TFileReaderWriter.tryCreateNewNode(const nodeIdentifierIn, nodeDataTypeIn : string; out newXMLNodeOut : IXMLNode) : boolean;
-                begin
-                    if NOT( tryCreateNewNode( nodeIdentifierIn, newXMLNodeOut ) ) then
-                        exit( False );
-
-                    setXMLNodeDataType( newXMLNodeOut, nodeDataTypeIn );
 
                     result := True;
                 end;
@@ -106,7 +95,7 @@ implementation
             function TFileReaderWriter.tryGetNode(const nodeIdentifierIn : string; out XMLNodeOut : IXMLNode) : boolean;
                 begin
                     //get the node
-                        XMLNodeOut := rootNode.ChildNodes.FindNode( ITEM_PREFIX + nodeIdentifierIn );
+                        XMLNodeOut := rootNode.ChildNodes.FindNode( nodeIdentifierIn );
 
                     //if item node = nil then the node does not exist
                         result := Assigned( XMLNodeOut );
@@ -173,133 +162,77 @@ implementation
         //read methods
             //single values
                 function TFileReaderWriter.tryReadBool(const identifierIn : string; out valueOut : boolean; const defaultValueIn : boolean = False) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := tryReadBooleanFromXMLNode( itemNode, VALUE_STRING, valueOut, defaultValueIn );
+                        result := tryReadBooleanFromXMLNode( rootNode, identifierIn, valueOut, defaultValueIn );
                     end;
 
                 function TFileReaderWriter.tryReadInteger(const identifierIn : string; out valueOut : integer; const defaultValueIn : integer = 0) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := tryReadIntegerFromXMLNode( itemNode, VALUE_STRING, valueOut, defaultValueIn );
+                        result := tryReadIntegerFromXMLNode( rootNode, identifierIn, valueOut, defaultValueIn );
                     end;
 
                 function TFileReaderWriter.tryReadDouble(const identifierIn : string; out valueOut : double; const defaultValueIn : double = 0) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := tryReadDoubleFromXMLNode( itemNode, VALUE_STRING, valueOut, defaultValueIn );
+                        result := tryReadDoubleFromXMLNode( rootNode, identifierIn, valueOut, defaultValueIn );
                     end;
 
                 function TFileReaderWriter.tryReadString(const identifierIn : string; out valueOut : string; const defaultValueIn : string = '') : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := tryReadStringFromXMLNode( itemNode, VALUE_STRING, valueOut, defaultValueIn );
+                        result := tryReadStringFromXMLNode( rootNode, identifierIn, valueOut, defaultValueIn );
                     end;
 
             //arrays
                 function TFileReaderWriter.tryReadIntegerArray(const identifierIn : string; out arrayOut : TArray<integer>) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := TryReadIntegerArrayFromXMLNode( itemNode, VALUE_STRING, arrayOut );
+                        result := TryReadIntegerArrayFromXMLNode( rootNode, identifierIn, arrayOut );
                     end;
 
                 function TFileReaderWriter.tryReadDoubleArray(const identifierIn : string; out arrayOut : TArray<double>) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := TryReadDoubleArrayFromXMLNode( itemNode, VALUE_STRING, arrayOut );
+                        result := TryReadDoubleArrayFromXMLNode( rootNode, identifierIn, arrayOut );
                     end;
 
                 function TFileReaderWriter.tryReadStringArray(const identifierIn : string; out arrayOut : TArray<string>) : boolean;
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryGetNode( identifierIn, itemNode );
-
-                        result := TryReadStringArrayFromXMLNode( itemNode, VALUE_STRING, arrayOut );
+                        result := TryReadStringArrayFromXMLNode( rootNode, identifierIn, arrayOut );
                     end;
 
         //write methods
             //single values
                 procedure TFileReaderWriter.writeBool(const identifierIn : string; const valueIn : boolean);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_BOOL, itemNode );
-
-                        writeBooleanToXMLNode( itemNode, VALUE_STRING, valueIn );
+                        writeBooleanToXMLNode( rootNode, identifierIn, valueIn );
                     end;
 
                 procedure TFileReaderWriter.writeInteger(const identifierIn : string; const valueIn : integer);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_INT, itemNode );
-
-                        writeIntegerToXMLNode( itemNode, VALUE_STRING, valueIn );
+                        writeIntegerToXMLNode( rootNode, identifierIn, valueIn );
                     end;
 
                 procedure TFileReaderWriter.writeDouble(const identifierIn : string; const valueIn : double);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_DOUBLE, itemNode );
-
-                        writeDoubleToXMLNode( itemNode, VALUE_STRING, valueIn );
+                        writeDoubleToXMLNode( rootNode, identifierIn, valueIn );
                     end;
 
                 procedure TFileReaderWriter.writeString(const identifierIn, valueIn : string);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_STRING, itemNode );
-
-                        writeStringToXMLNode( itemNode, VALUE_STRING, valueIn );
+                        writeStringToXMLNode( rootNode, identifierIn, valueIn );
                     end;
 
             //arrays
                 procedure TFileReaderWriter.writeIntegerArray(const identifierIn : string; const arrayIn : TArray<integer>);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_INT_ARRAY, itemNode );
-
-                        writeIntegerArrayToXMLNode( itemNode, VALUE_STRING, arrayIn );
+                        writeIntegerArrayToXMLNode( rootNode, identifierIn, arrayIn );
                     end;
 
                 procedure TFileReaderWriter.writeDoubleArray(const identifierIn : string; const arrayIn : TArray<double>);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_DOUBLE_ARRAY, itemNode );
-
-                        writeDoubleArrayToXMLNode( itemNode, VALUE_STRING, arrayIn );
+                        writeDoubleArrayToXMLNode( rootNode, identifierIn, arrayIn );
                     end;
 
                 procedure TFileReaderWriter.writeStringArray(const identifierIn : string; const arrayIn : TArray<string>);
-                    var
-                        itemNode : IXMLNode;
                     begin
-                        tryCreateNewNode( identifierIn, DT_STRING_ARRAY, itemNode );
-
-                        writeStringArrayToXMLNode( itemNode, VALUE_STRING, arrayIn );
+                        writeStringArrayToXMLNode( rootNode, identifierIn, arrayIn );
                     end;
 
 end.

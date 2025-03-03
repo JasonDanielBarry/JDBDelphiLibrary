@@ -8,20 +8,10 @@ interface
         ArrayConversionMethods
         ;
 
-    const
-        //data type strings
-            DT_NONE         : string = 'none';
-            DT_BOOL         : string = 'boolean';
-            DT_INT          : string = 'integer';
-            DT_INT_ARRAY    : string = 'integer_array';
-            DT_DOUBLE       : string = 'double';
-            DT_DOUBLE_ARRAY : string = 'double_array';
-            DT_STRING       : string = 'string';
-            DT_STRING_ARRAY : string = 'string_array';
-
     //read data from XML node
         //try get a parent node's child node
-            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean;
+            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out childNodeOut : IXMLNode) : boolean; overload;
+            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, childNodeDataTypeIn : string; out childNodeOut : IXMLNode) : boolean; overload;
 
         //data type
             function XMLNodeIsDataType(const XMLNodeIn : IXMLNode; const nodeDataTypeIn : string) : boolean;
@@ -51,7 +41,8 @@ interface
 
     //write data to XML node
         //create new child node
-            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean;
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, childNodeDataTypeIn : string; out newChildNodeOut : IXMLNode) : boolean; overload;
 
         //data type
             procedure setXMLNodeDataType(var XMLNodeInOut : IXMLNode; const nodeTypeIn : string);
@@ -85,6 +76,15 @@ implementation
             ARRAY_ELEMENT_DELIMITER : string = ';';
             NODE_DATA_TYPE_STRING   : string = 'NodeDataType';
             VALUE_TYPE_STRING       : string = 'ValueType';
+        //data type strings
+            DT_NONE         : string = 'none';
+            DT_BOOL         : string = 'boolean';
+            DT_INT          : string = 'integer';
+            DT_INT_ARRAY    : string = 'integer_array';
+            DT_DOUBLE       : string = 'double';
+            DT_DOUBLE_ARRAY : string = 'double_array';
+            DT_STRING       : string = 'string';
+            DT_STRING_ARRAY : string = 'string_array';
 
     //read data from XML node
         //try get a parent node's child node
@@ -99,6 +99,14 @@ implementation
                         exit( False );
 
                     result := True;
+                end;
+
+            function tryGetXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, childNodeDataTypeIn : string; out childNodeOut : IXMLNode) : boolean;
+                begin
+                    if NOT( tryGetXMLChildNode( parentNodeIn, childNodeIdentifierIn, childNodeOut ) ) then
+                        exit( False );
+
+                    result := XMLNodeIsDataType( childNodeOut, childNodeDataTypeIn );
                 end;
 
         function tryReadValueFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, valueTypeIn : string; out valueOut : string) : boolean;
@@ -308,6 +316,16 @@ implementation
 
                     //create the new child now
                         newChildNodeOut := parentNodeIn.AddChild( childNodeIdentifierIn );
+
+                    result := True;
+                end;
+
+            function tryCreateNewXMLChildNode(const parentNodeIn : IXMLNode; const childNodeIdentifierIn, childNodeDataTypeIn : string; out newChildNodeOut : IXMLNode) : boolean;
+                begin
+                    if NOT( tryCreateNewXMLChildNode( parentNodeIn, childNodeIdentifierIn, newChildNodeOut ) ) then
+                        exit( False );
+
+                    setXMLNodeDataType( newChildNodeOut, childNodeDataTypeIn );
 
                     result := True;
                 end;
