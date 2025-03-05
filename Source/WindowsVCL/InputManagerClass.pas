@@ -13,8 +13,6 @@ interface
                 var
                     errorList       : TList<string>;
                     ListBoxErrors   : TListBox;
-                //send errors to error list box
-                    procedure populateErrorListBox();
             protected
                 const
                     CONTROL_LEFT : integer = 5; //the VCL controls must have left = 5
@@ -22,11 +20,16 @@ interface
                     procedure addError(const errorMessageIn : string); inline;
                 //check for input errors
                     function checkForInputErrors() : boolean; virtual;
+                //send errors to error list box
+                    procedure populateErrorListBox();
+
             public
                 //constructor
                     constructor create(const errorListBoxIn : TListBox);
                 //destructor
                     destructor destroy(); override;
+                //setup input controls
+                    procedure setupInputControls(); virtual;
                 //process input
                     //read input
                         function readFromInputControls() : boolean; virtual;
@@ -42,6 +45,22 @@ interface
 implementation
 
     //private
+
+    //protected
+        //add an error
+            procedure TInputManager.addError(const errorMessageIn : string);
+                begin
+                    errorList.Add( errorMessageIn );
+                end;
+
+        //check for input errors
+            function TInputManager.checkForInputErrors() : boolean;
+                begin
+                    errorList.Clear();
+
+                    result := false;
+                end;
+
         //send errors to error list box
             procedure TInputManager.populateErrorListBox();
                 var
@@ -68,36 +87,13 @@ implementation
                         ListBoxErrors.Visible := True;
                 end;
 
-    //protected
-        //add an error
-            procedure TInputManager.addError(const errorMessageIn : string);
-                begin
-                    errorList.Add( errorMessageIn );
-                end;
-
-        //check for input errors
-            function TInputManager.checkForInputErrors() : boolean;
-                begin
-                    errorList.Clear();
-
-                    result := false;
-                end;
-
-    //public
-        //constructor
-            constructor TInputManager.create(const errorListBoxIn : TListBox);
+        //setup input controls
+            procedure TInputManager.setupInputControls();
                 var
                     boxEdgeSpace    : integer;
                     VCL_ScaleFactor : double;
                 begin
-                    inherited create();
-
-                    //create error list
-                        errorList := TList<string>.create();
-                        errorList.Clear();
-
-                    //store error list (***this is a >>>POINTER/REFERENCE<<< on the heap - changes here take effect everywhere***)
-                        ListBoxErrors := errorListBoxIn;
+                    //set list box initially to non visible
                         ListBoxErrors.Visible := False;
 
                     //place the error box in its position
@@ -109,6 +105,23 @@ implementation
 
                         ListBoxErrors.Left  := boxEdgeSpace;
                         ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
+                end;
+
+    //public
+        //constructor
+            constructor TInputManager.create(const errorListBoxIn : TListBox);
+
+                begin
+                    inherited create();
+
+                    //create error list
+                        errorList := TList<string>.create();
+                        errorList.Clear();
+
+                    //store error list (***this is a >>>POINTER/REFERENCE<<< on the heap - changes here take effect everywhere***)
+                        ListBoxErrors := errorListBoxIn;
+
+                    setupInputControls();
                 end;
 
         //destructor
