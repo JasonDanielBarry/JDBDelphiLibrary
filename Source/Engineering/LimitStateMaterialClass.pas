@@ -85,9 +85,9 @@ implementation
                 exit( False );
 
             successfulRead := tryReadDoubleFromXMLNode( limitStateNode, AVERAGE_VALUE, self.averageValue );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, VARIATION_COEFFICIENT, self.variationCoefficient );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, DOWNGRADE_FACTOR,      self.downgradeFactor      );
-            successfulRead := successfulRead AND tryReadDoubleFromXMLNode( limitStateNode, PARTIAL_FACTOR,        self.partialFactor, 1     );
+            successfulRead := tryReadDoubleFromXMLNode( limitStateNode, VARIATION_COEFFICIENT, self.variationCoefficient ) AND successfulRead;
+            successfulRead := tryReadDoubleFromXMLNode( limitStateNode, DOWNGRADE_FACTOR,      self.downgradeFactor      ) AND successfulRead;
+            successfulRead := tryReadDoubleFromXMLNode( limitStateNode, PARTIAL_FACTOR,        self.partialFactor, 1     ) AND successfulRead;
 
             result := successfulRead;
         end;

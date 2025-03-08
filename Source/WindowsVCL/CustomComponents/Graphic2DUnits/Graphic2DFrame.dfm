@@ -168,7 +168,7 @@ object CustomGraphic2D: TCustomGraphic2D
     ParentColor = True
     TabOrder = 1
     object SpeedButtonUpdateGeometry: TSpeedButton
-      Left = 1157
+      Left = 1158
       Top = 0
       Width = 23
       Height = 23
@@ -179,7 +179,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 1155
     end
     object SpeedButtonZoomExtents: TSpeedButton
-      Left = 1134
+      Left = 1135
       Top = 0
       Width = 23
       Height = 23
@@ -190,7 +190,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 1132
     end
     object SpeedButtonZoomOut: TSpeedButton
-      Left = 1111
+      Left = 1112
       Top = 0
       Width = 23
       Height = 23
@@ -201,7 +201,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 1109
     end
     object SpeedButtonZoomIn: TSpeedButton
-      Left = 1088
+      Left = 1089
       Top = 0
       Width = 23
       Height = 23
@@ -212,7 +212,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitLeft = 1084
     end
     object SpeedButtonAxisSettings: TSpeedButton
-      Left = 1065
+      Left = 1066
       Top = 0
       Width = 23
       Height = 23
@@ -225,7 +225,7 @@ object CustomGraphic2D: TCustomGraphic2D
       ExplicitTop = -6
     end
     object SpeedButtonLayerTable: TSpeedButton
-      Left = 1042
+      Left = 1043
       Top = 0
       Width = 23
       Height = 23
@@ -239,14 +239,14 @@ object CustomGraphic2D: TCustomGraphic2D
     end
     object ComboBoxZoomPercent: TComboBox
       AlignWithMargins = True
-      Left = 1180
+      Left = 1181
       Top = 0
       Width = 50
       Height = 23
       Hint = 'Set zoom'
       Margins.Left = 0
       Margins.Top = 0
-      Margins.Right = 1
+      Margins.Right = 0
       Margins.Bottom = 0
       Align = alRight
       TabOrder = 0
@@ -268,6 +268,7 @@ object CustomGraphic2D: TCustomGraphic2D
         '750'
         '1000'
         '1500')
+      ExplicitLeft = 1180
     end
   end
   object GridPanelAxisOptions: TGridPanel
@@ -353,8 +354,8 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 0
-      Width = 37
-      Height = 15
+      Width = 141
+      Height = 24
       Margins.Left = 5
       Margins.Top = 0
       Margins.Right = 0
@@ -362,6 +363,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'X-Axis:'
       Layout = tlCenter
+      ExplicitWidth = 36
+      ExplicitHeight = 15
     end
     object EditXMin: TEdit
       Left = 0
@@ -377,12 +380,14 @@ object CustomGraphic2D: TCustomGraphic2D
     object LabelXBounds: TLabel
       Left = 56
       Top = 24
-      Width = 28
-      Height = 15
+      Width = 35
+      Height = 24
       Align = alClient
       Alignment = taCenter
       Caption = '< x <'
       Layout = tlCenter
+      ExplicitWidth = 27
+      ExplicitHeight = 15
     end
     object EditXMax: TEdit
       Left = 91
@@ -399,8 +404,8 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 48
-      Width = 37
-      Height = 15
+      Width = 141
+      Height = 24
       Margins.Left = 5
       Margins.Top = 0
       Margins.Right = 0
@@ -408,6 +413,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'Y-Axis:'
       Layout = tlCenter
+      ExplicitWidth = 36
+      ExplicitHeight = 15
     end
     object EditYMin: TEdit
       Left = 0
@@ -423,12 +430,14 @@ object CustomGraphic2D: TCustomGraphic2D
     object LabelYBounds: TLabel
       Left = 56
       Top = 72
-      Width = 28
-      Height = 15
+      Width = 35
+      Height = 24
       Align = alClient
       Alignment = taCenter
       Caption = '< y <'
       Layout = tlCenter
+      ExplicitWidth = 28
+      ExplicitHeight = 15
     end
     object EditYMax: TEdit
       Left = 91
@@ -450,7 +459,7 @@ object CustomGraphic2D: TCustomGraphic2D
     BevelInner = bvNone
     BevelOuter = bvNone
     Color = clWhite
-    ItemHeight = 17
+    ItemHeight = 15
     Items.Strings = (
       'Layer1'
       'Layer2'

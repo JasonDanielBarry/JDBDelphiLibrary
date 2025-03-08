@@ -11,18 +11,17 @@ interface
         TInputManager = class
             private
                 var
-                    errorList       : TList<string>;
+                    errorList       : TStringList;
                     ListBoxErrors   : TListBox;
+                //send errors to error list box
+                    procedure populateErrorListBox();
             protected
                 const
-                    CONTROL_LEFT : integer = 5; //the VCL controls must have left = 5
+                    CONTROL_EDGE_SPACE : integer = 5; //the VCL controls must have and edge space = 5
                 //add an error
                     procedure addError(const errorMessageIn : string); inline;
                 //check for input errors
-                    function checkForInputErrors() : boolean; virtual;
-                //send errors to error list box
-                    procedure populateErrorListBox();
-
+                    procedure checkForInputErrors(); virtual;
             public
                 //constructor
                     constructor create(const errorListBoxIn : TListBox);
@@ -34,7 +33,9 @@ interface
                     //read input
                         function readFromInputControls() : boolean; virtual;
                     //write to input controls
-                        procedure writeToInputControls(); virtual;
+                        procedure writeToInputControls(const updateEmptyControlsIn : boolean = False); virtual;
+                //count errors
+                    function errorCount() : integer;
                 //file management
                     //read to file
                         function readFromFile(const fileNameIn : string) : boolean; virtual; abstract;
@@ -45,6 +46,32 @@ interface
 implementation
 
     //private
+        //send errors to error list box
+            procedure TInputManager.populateErrorListBox();
+                var
+                    i : integer;
+                begin
+                    //perform error checking
+                        checkForInputErrors();
+
+                    //initialise list box for error posting
+                        ListBoxErrors.Clear();
+
+                    //exit if there are not errors
+                        if ( errorCount() < 1 ) then
+                            begin
+                                ListBoxErrors.Visible := False;
+                                exit();
+                            end;
+
+                    //add the error message to the list box and show
+                        ListBoxErrors.Items.Add( 'ERRORS:' );
+
+                        for i := 0 to (errorCount - 1) do
+                            ListBoxErrors.Items.Add( errorList[i] );
+
+                        ListBoxErrors.Visible := True;
+                end;
 
     //protected
         //add an error
@@ -54,37 +81,9 @@ implementation
                 end;
 
         //check for input errors
-            function TInputManager.checkForInputErrors() : boolean;
+            procedure TInputManager.checkForInputErrors();
                 begin
                     errorList.Clear();
-
-                    result := false;
-                end;
-
-        //send errors to error list box
-            procedure TInputManager.populateErrorListBox();
-                var
-                    i, errorCount : integer;
-                begin
-                    //count the errors and clear the list box
-                        errorCount := errorList.Count;
-
-                        ListBoxErrors.Clear();
-
-                    //exit if there are not errors
-                        if (errorCount < 1) then
-                            begin
-                                ListBoxErrors.Visible := False;
-                                exit();
-                            end;
-
-                    //add the error message to the list box and show
-                        errorList.Add('Errors:');
-
-                        for i := 0 to (errorCount - 1) do
-                            ListBoxErrors.Items.Add( errorList[i] );
-
-                        ListBoxErrors.Visible := True;
                 end;
 
         //setup input controls
@@ -101,7 +100,7 @@ implementation
 
                         ListBoxErrors.Anchors := [ TAnchorKind.akLeft, TAnchorKind.akBottom ];
 
-                        boxEdgeSpace := round( VCL_ScaleFactor * CONTROL_LEFT );
+                        boxEdgeSpace := round( VCL_ScaleFactor * CONTROL_EDGE_SPACE );
 
                         ListBoxErrors.Left  := boxEdgeSpace;
                         ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
@@ -115,7 +114,7 @@ implementation
                     inherited create();
 
                     //create error list
-                        errorList := TList<string>.create();
+                        errorList := TStringList.create();
                         errorList.Clear();
 
                     //store error list (***this is a >>>POINTER/REFERENCE<<< on the heap - changes here take effect everywhere***)
@@ -140,11 +139,15 @@ implementation
                     end;
 
             //write to input controls
-                procedure TInputManager.writeToInputControls();
+                procedure TInputManager.writeToInputControls(const updateEmptyControlsIn : boolean = False);
                     begin
-                        checkForInputErrors();
+                        populateErrorListBox();
                     end;
 
-
+        //count errors
+            function TInputManager.errorCount() : integer;
+                begin
+                    result := errorList.Count;
+                end;
 
 end.

@@ -20,45 +20,39 @@ interface
                                             var borderPanelInOut    : TPanel    ); overload;
                 //border adjustment used for sizing the grid
                     function borderAdjustment() : integer;
-                //test if a cell's value is a double
-                    function checkCellIsDouble(colIn, rowIn : integer) : boolean;
                 //test if a row is empty
-                    function rowIsEmpty(rowIndexIn : integer) : boolean;
+                    function rowIsEmpty(const rowIndexIn : integer) : boolean;
             public
                 //check cell is empty string
-                    function cellIsEmpty(colIn, rowIn : integer) : boolean;
+                    function cellIsEmpty(const colIn, rowIn : integer) : boolean;
                 //clear a grid of its contents
                     //clear a cell
-                        procedure clearCell(colIn, rowIn : integer);
+                        procedure clearCell(const colIn, rowIn : integer);
                     //clear column
                         procedure clearColumn(const colIndexIn : integer);
-                        procedure clearColumns(const startColIndexIn : integer);
+                        procedure clearColumns(const startColIndexIn : integer = 0);
                     //clear row
-                        procedure clearRow(rowIndexIn : integer);
-                        procedure clearRows(const startRowIndexIn : integer);
-                    procedure clearCells(const startColIndexIn, startRowIndexIn : integer);
-                    procedure clearAllCells();
+                        procedure clearRow(const rowIndexIn : integer);
+                        procedure clearRows(const startRowIndexIn : integer = 0);
+                    procedure clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
                 //create border
                     procedure createBorder( const edgeWidthIn   : integer;
                                             const colourIn      : TColor    );
-
                     procedure editBorder(   const edgeWidthIn   : integer;
                                             const colourIn      : TColor    ); overload;
                 //row deletion
-
                     //delete a grid row
-                        procedure deleteRow(rowIndexIn : integer);
+                        procedure deleteRow(const rowIndexIn : integer);
                     //delete an empty row
-                        procedure deleteEmptyRow(rowIndexIn : integer);
+                        procedure deleteEmptyRow(const rowIndexIn : integer);
                     //delete all empty rows
                         procedure deleteAllEmptyRows();
-                //row insertion
-                    //add row
-                        procedure addRow();
-                //test if a cell's value is a double and clear it if it is not
-                    function isCellDouble(colIn, rowIn : integer) : boolean;
+                //add columns and rows
+                    procedure addColumn();
+                    procedure addRow();
                 //get the value of a cell as a double
-                    function cellToDouble(colIn, rowIn : integer) : double;
+                    function tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
+                    function cellToDouble(const colIn, rowIn : integer) : double;
                 //resize the grid to its minimum extents
                     procedure minHeight();
                     procedure minWidth();
@@ -123,19 +117,8 @@ implementation
                     self.BringToFront();
                 end;
 
-        //test if a cell's value is a double
-            function TStringGridHelper.checkCellIsDouble(colIn, rowIn : integer) : boolean;
-                var
-                    cellIsDoubleOut : boolean;
-                    dummy           : double;
-                begin
-                    cellIsDoubleOut := TryStrToFloat(Cells[colIn, rowIn], dummy);
-
-                    result := cellIsDoubleOut;
-                end;
-
         //test if a row is empty
-            function TStringGridHelper.rowIsEmpty(rowIndexIn : integer) : boolean;
+            function TStringGridHelper.rowIsEmpty(const rowIndexIn : integer) : boolean;
                 var
                     colIndex : integer;
                 begin
@@ -150,14 +133,14 @@ implementation
 
     //public
         //check cell is empty string
-            function TStringGridHelper.cellIsEmpty(colIn, rowIn : integer) : boolean;
+            function TStringGridHelper.cellIsEmpty(const colIn, rowIn : integer) : boolean;
                 begin
                     result := (cells[colIn, rowIn] = '');
                 end;
 
         //clear a grid of its contents
             //clear a cell
-                procedure TStringGridHelper.clearCell(colIn, rowIn : integer);
+                procedure TStringGridHelper.clearCell(const colIn, rowIn : integer);
                     begin
                         cells[colIn, rowIn] := '';
                     end;
@@ -171,7 +154,7 @@ implementation
                             clearCell( colIndexIn, rowIndex );
                     end;
 
-                procedure TStringGridHelper.clearColumns(const startColIndexIn : integer);
+                procedure TStringGridHelper.clearColumns(const startColIndexIn : integer = 0);
                     var
                         colIndex : integer;
                     begin
@@ -180,7 +163,7 @@ implementation
                     end;
 
             //clear a row's content
-                procedure TStringGridHelper.clearRow(rowIndexIn : integer);
+                procedure TStringGridHelper.clearRow(const rowIndexIn : integer);
                     var
                         colIndex : integer;
                     begin
@@ -188,7 +171,7 @@ implementation
                             clearCell( colIndex, rowIndexIn );
                     end;
 
-                procedure TStringGridHelper.clearRows(const startRowIndexIn : integer);
+                procedure TStringGridHelper.clearRows(const startRowIndexIn : integer = 0);
                     var
                         rowIndex : integer;
                     begin
@@ -196,18 +179,13 @@ implementation
                             clearRow(rowIndex);
                     end;
 
-            procedure TStringGridHelper.clearCells(const startColIndexIn, startRowIndexIn : integer);
+            procedure TStringGridHelper.clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
                 var
                     c, r : integer;
                 begin
                     for c := startColIndexIn to (ColCount - 1) do
                         for r := startRowIndexIn to (RowCount - 1) do
                             clearCell(c, r);
-                end;
-
-            procedure TStringGridHelper.clearAllCells();
-                begin
-                    clearCells(0, 0);
                 end;
 
         //create border
@@ -255,7 +233,7 @@ implementation
 
         //row deletion
             //delete a grid row
-                procedure TStringGridHelper.deleteRow(rowIndexIn : integer);
+                procedure TStringGridHelper.deleteRow(const rowIndexIn : integer);
                     var
                         row, col : integer;
                     begin
@@ -278,7 +256,7 @@ implementation
                     end;
     
             //delete an empty row
-                procedure TStringGridHelper.deleteEmptyRow(rowIndexIn : integer);
+                procedure TStringGridHelper.deleteEmptyRow(const rowIndexIn : integer);
                     begin
                         if (rowIsEmpty(rowIndexIn)) then
                             deleteRow(rowIndexIn);
@@ -295,37 +273,35 @@ implementation
                     end;
 
         //row insertion
-            //add row
-                procedure TStringGridHelper.addRow();
-                    begin
-                        RowCount := RowCount + 1;
-                    end;
-
-        //test if a cell's value is a double and clear it if it is not
-            function TStringGridHelper.isCellDouble(colIn, rowIn : integer) : boolean;
-                var
-                    cellIsDoubleOut : boolean;
+            procedure TStringGridHelper.addColumn();
                 begin
-                    cellIsDoubleOut := checkCellIsDouble(colIn, rowIn);
+                    ColCount := ColCount + 1;
+                end;
 
-                    if ( (cellIsDoubleOut = False) AND (Cells[colIn, rowIn] <> '') ) then
-                        begin
-                            //if conversion to double fails return error message
-                                Application.MessageBox('Value entered is not real number', 'Invalid Input', MB_OK);
-                                cellIsDoubleOut := False;
-                                cells[colIn, rowIn] := '';
-                        end;
-
-                    result := cellIsDoubleOut;
+            procedure TStringGridHelper.addRow();
+                begin
+                    RowCount := RowCount + 1;
                 end;
 
         //get the value of a cell as a double
-            function TStringGridHelper.cellToDouble(colIn, rowIn : integer) : double;
+            function TStringGridHelper.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
                 begin
-                    if (checkCellIsDouble(colIn, rowIn) = True) then
-                        result := cells[colIn, rowIn].ToDouble()
-                    else
-                        result := 0;
+                    if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
+                        begin
+                            valueOut := 0;
+                            exit( False );
+                        end;
+
+                    result := True;
+                end;
+
+            function TStringGridHelper.cellToDouble(const colIn, rowIn : integer) : double;
+                var
+                    valueOut : double;
+                begin
+                    tryCellToDouble( colIn, rowIn, valueOut );
+
+                    result := valueOut;
                 end;
 
         //resize the grid to its minimum extents
