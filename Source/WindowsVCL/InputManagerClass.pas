@@ -17,11 +17,13 @@ interface
                     procedure populateErrorListBox();
             protected
                 const
-                    CONTROL_EDGE_SPACE : integer = 5; //the VCL controls must have and edge space = 5
+                    CONTROL_MARGIN : integer = 5; //the VCL controls must have and edge space = 5
                 //add an error
-                    procedure addError(const errorMessageIn : string); inline;
+                    procedure addError(const errorMessageIn : string);
                 //check for input errors
                     procedure checkForInputErrors(); virtual;
+                //set error list box width
+                    procedure setListBoxErrorsWidth(const widthIn : integer);
             public
                 //constructor
                     constructor create(const errorListBoxIn : TListBox);
@@ -36,6 +38,7 @@ interface
                         procedure writeToInputControls(const updateEmptyControlsIn : boolean = False); virtual;
                 //count errors
                     function errorCount() : integer;
+                    class function countInputErrors( const arrInputManagerIn : TArray<TInputManager>) : integer; static;
                 //file management
                     //read to file
                         function readFromFile(const fileNameIn : string) : boolean; virtual; abstract;
@@ -86,24 +89,10 @@ implementation
                     errorList.Clear();
                 end;
 
-        //setup input controls
-            procedure TInputManager.setupInputControls();
-                var
-                    boxEdgeSpace    : integer;
-                    VCL_ScaleFactor : double;
+        //set error list box width
+            procedure TInputManager.setListBoxErrorsWidth(const widthIn : integer);
                 begin
-                    //set list box initially to non visible
-                        ListBoxErrors.Visible := False;
-
-                    //place the error box in its position
-                        VCL_ScaleFactor := ListBoxErrors.ScaleFactor;
-
-                        ListBoxErrors.Anchors := [ TAnchorKind.akLeft, TAnchorKind.akBottom ];
-
-                        boxEdgeSpace := round( VCL_ScaleFactor * CONTROL_EDGE_SPACE );
-
-                        ListBoxErrors.Left  := boxEdgeSpace;
-                        ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
+                    ListBoxErrors.Width := widthIn;
                 end;
 
     //public
@@ -131,6 +120,26 @@ implementation
                     inherited destroy();
                 end;
 
+        //setup input controls
+            procedure TInputManager.setupInputControls();
+                var
+                    boxEdgeSpace    : integer;
+                    VCL_ScaleFactor : double;
+                begin
+                    //set list box initially to non visible
+                        ListBoxErrors.Visible := False;
+
+                    //place the error box in its position
+                        VCL_ScaleFactor := ListBoxErrors.ScaleFactor;
+
+                        ListBoxErrors.Anchors := [ TAnchorKind.akLeft, TAnchorKind.akBottom ];
+
+                        boxEdgeSpace := round( VCL_ScaleFactor * CONTROL_MARGIN );
+
+                        ListBoxErrors.Left  := boxEdgeSpace;
+                        ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
+                end;
+
         //process input
             //read input
                 function TInputManager.readFromInputControls() : boolean;
@@ -148,6 +157,20 @@ implementation
             function TInputManager.errorCount() : integer;
                 begin
                     result := errorList.Count;
+                end;
+
+            class function TInputManager.countInputErrors( const arrInputManagerIn : TArray<TInputManager>) : integer;
+                var
+                    i, arrLen, totalErrorCount : integer;
+                begin
+                    totalErrorCount := 0;
+
+                    arrLen := length( arrInputManagerIn );
+
+                    for i := 0 to ( arrLen - 1 ) do
+                        totalErrorCount := totalErrorCount + arrInputManagerIn[i].errorCount();
+
+                    result := totalErrorCount;
                 end;
 
 end.

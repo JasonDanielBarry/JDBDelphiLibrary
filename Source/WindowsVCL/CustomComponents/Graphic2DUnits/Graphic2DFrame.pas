@@ -598,8 +598,8 @@ implementation
                             labelCoords.top := PanelGraphicControls.Height + PaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
 
                         //direction pan
-                            GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width - 1;
-                            GridPanelDirectionalPan.top := PanelGraphicControls.Height + 1;
+                            GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width;
+                            GridPanelDirectionalPan.top := PanelGraphicControls.Height;
                             GridPanelDirectionalPan.BringToFront();
 
                         //axis settings

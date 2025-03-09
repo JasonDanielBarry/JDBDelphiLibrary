@@ -268,7 +268,6 @@ object CustomGraphic2D: TCustomGraphic2D
         '750'
         '1000'
         '1500')
-      ExplicitLeft = 1180
     end
   end
   object GridPanelAxisOptions: TGridPanel

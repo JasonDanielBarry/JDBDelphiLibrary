@@ -21,6 +21,8 @@ interface
             function designValue() : double; virtual;
             procedure setValues(const averageValueIn, variationCoefficientIn, downgradeFactorIn, partialFactorIn : double); virtual;
             procedure copyOther(const otherMaterialIn: TLimitStateMaterial); virtual;
+            procedure useAverageValue();
+            procedure useLimitStateValue(const variationCoefficientIn, downgradeFactorIn, partialFactorIn : double);
             function tryReadFromXMLNode(const XMLNodeIn : IXMLNode; const identifierIn : string) : boolean;
             procedure writeToXMLNode(var XMLNodeInOut : IXMLNode; const identifierIn : string);
         end;
@@ -67,6 +69,16 @@ implementation
                         otherMaterialIn.variationCoefficient,
                         otherMaterialIn.downgradeFactor,
                         otherMaterialIn.partialFactor        );
+        end;
+
+    procedure TLimitStateMaterial.useAverageValue();
+        begin
+            setValues( self.averageValue, 0, 0, 1 );
+        end;
+
+    procedure TLimitStateMaterial.useLimitStateValue(const variationCoefficientIn, downgradeFactorIn, partialFactorIn : double);
+        begin
+            setValues( self.averageValue, variationCoefficientIn, downgradeFactorIn, partialFactorIn );
         end;
 
     const
