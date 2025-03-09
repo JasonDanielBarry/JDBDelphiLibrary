@@ -31,6 +31,9 @@ interface
                     destructor destroy(); override;
                 //setup input controls
                     procedure setupInputControls(); virtual;
+                //reset controls
+                    procedure resetInputControls(); overload; virtual; abstract;
+                    class procedure resetInputControls(const arrInputManagerIn : TArray<TInputManager>); static;
                 //process input
                     //read input
                         function readFromInputControls() : boolean; virtual;
@@ -38,7 +41,7 @@ interface
                         procedure writeToInputControls(const updateEmptyControlsIn : boolean = False); virtual;
                 //count errors
                     function errorCount() : integer;
-                    class function countInputErrors( const arrInputManagerIn : TArray<TInputManager>) : integer; static;
+                    class function countInputErrors(const arrInputManagerIn : TArray<TInputManager>) : integer; static;
                 //file management
                     //read to file
                         function readFromFile(const fileNameIn : string) : boolean; virtual; abstract;
@@ -138,6 +141,17 @@ implementation
 
                         ListBoxErrors.Left  := boxEdgeSpace;
                         ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
+                end;
+
+        //reset controls
+            class procedure TInputManager.resetInputControls(const arrInputManagerIn : TArray<TInputManager>);
+                var
+                    i, arrLen : integer;
+                begin
+                    arrLen := length( arrInputManagerIn );
+
+                    for i := 0 to ( arrLen - 1 ) do
+                        arrInputManagerIn[i].resetInputControls();
                 end;
 
         //process input
