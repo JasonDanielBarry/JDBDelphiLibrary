@@ -125,22 +125,9 @@ implementation
 
         //setup input controls
             procedure TInputManager.setupInputControls();
-                var
-                    boxEdgeSpace    : integer;
-                    VCL_ScaleFactor : double;
                 begin
                     //set list box initially to non visible
                         ListBoxErrors.Visible := False;
-
-                    //place the error box in its position
-                        VCL_ScaleFactor := ListBoxErrors.ScaleFactor;
-
-                        ListBoxErrors.Anchors := [ TAnchorKind.akLeft, TAnchorKind.akBottom ];
-
-                        boxEdgeSpace := round( VCL_ScaleFactor * CONTROL_MARGIN );
-
-                        ListBoxErrors.Left  := boxEdgeSpace;
-                        ListBoxErrors.top   := ListBoxErrors.Parent.Height - ListBoxErrors.Height - boxEdgeSpace;
                 end;
 
         //reset controls
