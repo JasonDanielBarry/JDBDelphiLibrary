@@ -33,7 +33,7 @@ interface
                     procedure setupInputControls(); virtual;
                 //reset controls
                     procedure resetInputControls(); overload; virtual; abstract;
-                    class procedure resetInputControls(const arrInputManagerIn : TArray<TInputManager>); static;
+                    class procedure resetInputControls(const arrInputManagerIn : TArray<TInputManager>); overload; static;
                 //process input
                     //read input
                         function readFromInputControls() : boolean; virtual;

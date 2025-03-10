@@ -68,7 +68,7 @@ implementation
         //border panel name
             function TStringGridHelper.borderPanelName() : string;
                 begin
-                    result := self.Name + 'BorderPanel';
+                    result := self.Name + BORDER_PANEL;
                 end;
 
         //free border panel
