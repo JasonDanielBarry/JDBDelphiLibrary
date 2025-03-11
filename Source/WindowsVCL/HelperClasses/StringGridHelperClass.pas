@@ -4,14 +4,14 @@ interface
 
     uses
         Winapi.Windows,
-        System.SysUtils, system.Math, system.Types, system.UITypes,
+        System.SysUtils, system.Math, system.Types, system.UITypes, system.Generics.Collections,
         vcl.Controls, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids;
 
     type
         TStringGridHelper = class helper for TStringGrid
             private
                 //border panel name
-                    function borderPanelName() : string;
+                    function getBorderPanelName() : string;
                 //get border panel
                     function getBorderPanel() : TPanel;
                 //edit a border's properties
@@ -64,9 +64,12 @@ implementation
     const
         BORDER_PANEL : string = 'BorderPanel';
 
+    var
+        gridBorderPanelMap : TDictionary<string, TPanel>;
+
     //private
         //border panel name
-            function TStringGridHelper.borderPanelName() : string;
+            function TStringGridHelper.getBorderPanelName() : string;
                 begin
                     result := self.Name + BORDER_PANEL;
                 end;
@@ -74,15 +77,15 @@ implementation
         //free border panel
             function TStringGridHelper.getBorderPanel() : TPanel;
                 var
-                    i : integer;
+                    panelName   : string;
+                    borderPanel : TPanel;
                 begin
-                    for i := 0 to (self.Parent.ComponentCount - 1) do
-                        if ( Components[i].Name = borderPanelName() ) then
-                            begin
-                                result := TPanel(Components[i]);
+                    panelName := getBorderPanelName();
 
-                                exit();
-                            end;
+                    if NOT( gridBorderPanelMap.TryGetValue( panelName, borderPanel ) ) then
+                        exit( nil );
+
+                    result := borderPanel;
                 end;
 
         //border adjustment used for sizing the grid
@@ -99,6 +102,9 @@ implementation
                                                     const colourIn          : TColor;
                                                     var borderPanelInOut    : TPanel    );
                 begin
+                    if NOT( Assigned( borderPanelInOut ) ) then
+                        exit();
+
                     //resize the grid for border
                         self.minSize();
 
@@ -194,25 +200,31 @@ implementation
                 var
                     borderPanel : TPanel;
                 begin
-                    //get rid of grid border
-                        self.BevelInner := TBevelCut.bvNone;
-                        self.BevelKind := TBevelKind.bkNone;
-                        self.BevelOuter := TBevelCut.bvNone;
-                        self.BorderStyle := bsNone;
+                    if ( getBorderPanel() = nil ) then
+                        begin
+                            //get rid of grid border
+                                self.BevelInner := TBevelCut.bvNone;
+                                self.BevelKind := TBevelKind.bkNone;
+                                self.BevelOuter := TBevelCut.bvNone;
+                                self.BorderStyle := bsNone;
 
-                    //create the grid for border
-                        borderPanel := TPanel.Create(self);
-                        borderPanel.Parent := self.Parent;
-                        borderPanel.Name := borderPanelName();
-                        borderpanel.StyleElements := [seFont, {seClient, }seBorder];
+                            //create the grid for border
+                                borderPanel := TPanel.Create(self);
+                                borderPanel.Parent := self.Parent;
+                                borderPanel.Name := getBorderPanelName();
+                                borderpanel.StyleElements := [seFont, {seClient, }seBorder];
 
-                    //prime panel to be a border
-                        borderPanel.ParentBackground := False;
-                        borderPanel.ParentColor := False;
-                        borderPanel.BevelInner := TBevelCut.bvNone;
-                        borderPanel.BevelOuter := TBevelCut.bvNone;
-                        borderPanel.BevelKind := TBevelKind.bkNone;
-                        borderPanel.BorderStyle := bsNone;
+                            //prime panel to be a border
+                                borderPanel.ParentBackground := False;
+                                borderPanel.ParentColor := False;
+                                borderPanel.BevelInner := TBevelCut.bvNone;
+                                borderPanel.BevelOuter := TBevelCut.bvNone;
+                                borderPanel.BevelKind := TBevelKind.bkNone;
+                                borderPanel.BorderStyle := bsNone;
+
+                            //place border panel in map
+                                gridBorderPanelMap.TryAdd( borderPanel.Name, borderPanel );
+                        end;
 
                     editBorder( edgeWidthIn,
                                 colourIn,
@@ -348,5 +360,13 @@ implementation
                     minHeight();
                     minWidth();
                 end;
+
+initialization
+
+    gridBorderPanelMap := TDictionary<string, TPanel>.Create();
+
+finalization
+
+    FreeAndNil( gridBorderPanelMap );
 
 end.
