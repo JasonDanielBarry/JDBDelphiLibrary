@@ -50,9 +50,13 @@ interface
                 //add columns and rows
                     procedure addColumn();
                     procedure addRow();
-                //get the value of a cell as a double
-                    function tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
-                    function cellToDouble(const colIn, rowIn : integer) : double;
+                //get the value of a cell
+                    //as an integer
+                        function tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
+                        function cellToInteger(const colIn, rowIn : integer) : integer;
+                    //as a double
+                        function tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
+                        function cellToDouble(const colIn, rowIn : integer) : double;
                 //resize the grid to its minimum extents
                     procedure minHeight();
                     procedure minWidth();
@@ -295,26 +299,48 @@ implementation
                     RowCount := RowCount + 1;
                 end;
 
-        //get the value of a cell as a double
-            function TStringGridHelper.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
-                begin
-                    if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
-                        begin
-                            valueOut := 0;
-                            exit( False );
-                        end;
+        //get the value of a cell
+            //as an integer
+                function TStringGridHelper.tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
+                    begin
+                        if NOT( TryStrToInt( cells[colIn, rowIn], valueOut ) ) then
+                            begin
+                                valueOut := 0;
+                                exit( False );
+                            end;
 
-                    result := True;
-                end;
+                        result := True;
+                    end;
 
-            function TStringGridHelper.cellToDouble(const colIn, rowIn : integer) : double;
-                var
-                    valueOut : double;
-                begin
-                    tryCellToDouble( colIn, rowIn, valueOut );
+                function TStringGridHelper.cellToInteger(const colIn, rowIn : integer) : integer;
+                    var
+                        valueOut : integer;
+                    begin
+                        tryCellToInteger( colIn, rowIn, valueOut );
 
-                    result := valueOut;
-                end;
+                        result := valueOut;
+                    end;
+
+            //as a double
+                function TStringGridHelper.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
+                    begin
+                        if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
+                            begin
+                                valueOut := 0;
+                                exit( False );
+                            end;
+
+                        result := True;
+                    end;
+
+                function TStringGridHelper.cellToDouble(const colIn, rowIn : integer) : double;
+                    var
+                        valueOut : double;
+                    begin
+                        tryCellToDouble( colIn, rowIn, valueOut );
+
+                        result := valueOut;
+                    end;
 
         //resize the grid to its minimum extents
             procedure TStringGridHelper.minHeight();

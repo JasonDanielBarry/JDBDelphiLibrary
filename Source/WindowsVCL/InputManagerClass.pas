@@ -37,8 +37,10 @@ interface
                 //process input
                     //read input
                         function readFromInputControls() : boolean; virtual;
+                        class function readFromAllControls(const arrInputManagerIn : TArray<TInputManager>) : boolean; static;
                     //write to input controls
                         procedure writeToInputControls(const updateEmptyControlsIn : boolean = False); virtual;
+                        class procedure writeToAllControls(const arrInputManagerIn : TArray<TInputManager>; const updateEmptyControlsIn : boolean = False); static;
                 //count errors
                     function errorCount() : integer;
                     class function countInputErrors(const arrInputManagerIn : TArray<TInputManager>) : integer; static;
@@ -133,12 +135,10 @@ implementation
         //reset controls
             class procedure TInputManager.resetInputControls(const arrInputManagerIn : TArray<TInputManager>);
                 var
-                    i, arrLen : integer;
+                    inputManager : TInputManager;
                 begin
-                    arrLen := length( arrInputManagerIn );
-
-                    for i := 0 to ( arrLen - 1 ) do
-                        arrInputManagerIn[i].resetInputControls();
+                    for inputManager in arrInputManagerIn do
+                        inputManager.resetInputControls();
                 end;
 
         //process input
@@ -148,10 +148,28 @@ implementation
                         //nothing here for now
                     end;
 
+                class function TInputManager.readFromAllControls(const arrInputManagerIn : TArray<TInputManager>) : boolean;
+                    var
+                        inputManager : TInputManager;
+                    begin
+                        result := True;
+
+                        for inputManager in arrInputManagerIn do
+                            result := inputManager.readFromInputControls() AND result;
+                    end;
+
             //write to input controls
                 procedure TInputManager.writeToInputControls(const updateEmptyControlsIn : boolean = False);
                     begin
                         populateErrorListBox();
+                    end;
+
+                class procedure TInputManager.writeToAllControls(const arrInputManagerIn : TArray<TInputManager>; const updateEmptyControlsIn : boolean = False);
+                    var
+                        inputManager : TInputManager;
+                    begin
+                        for inputManager in arrInputManagerIn do
+                            inputManager.writeToInputControls( updateEmptyControlsIn );
                     end;
 
         //count errors
@@ -162,14 +180,13 @@ implementation
 
             class function TInputManager.countInputErrors( const arrInputManagerIn : TArray<TInputManager>) : integer;
                 var
-                    i, arrLen, totalErrorCount : integer;
+                    totalErrorCount : integer;
+                    inputManager : TInputManager;
                 begin
                     totalErrorCount := 0;
 
-                    arrLen := length( arrInputManagerIn );
-
-                    for i := 0 to ( arrLen - 1 ) do
-                        totalErrorCount := totalErrorCount + arrInputManagerIn[i].errorCount();
+                    for inputManager in arrInputManagerIn do
+                        totalErrorCount := totalErrorCount + inputManager.errorCount();
 
                     result := totalErrorCount;
                 end;
