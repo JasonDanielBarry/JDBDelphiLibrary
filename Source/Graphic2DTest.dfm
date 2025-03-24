@@ -24,7 +24,9 @@ object Form1: TForm1
     BevelOuter = bvNone
     Caption = 'JDBGraphic2D1'
     ParentColor = True
+    ParentShowHint = False
     ShowCaption = False
+    ShowHint = True
     TabOrder = 0
     OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
   end

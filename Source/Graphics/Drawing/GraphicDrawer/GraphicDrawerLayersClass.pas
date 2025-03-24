@@ -18,8 +18,7 @@ interface
         TGraphicDrawerLayers = class(TGraphicDrawerObjectAdder)
             strict private
                 type
-                    TLayerGeometryPair  = TPair<string, TArray<TGraphicObject>>;
-                    TLayerGeometryMap   = TDictionary<string, TArray<TGraphicObject>>;
+                    TLayerGeometryMap = TDictionary<string, TArray<TGraphicObject>>;
                 var
                     currentDrawingLayer     : string;
                     orderedLayerKeys        : TList<string>;

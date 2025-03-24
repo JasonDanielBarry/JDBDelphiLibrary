@@ -160,6 +160,8 @@ implementation
 
                     GraphicDrawerInOut.addLine(line);
 
+                    GraphicDrawerInOut.addText( X_MAX, 1, 'X', 15 );
+
                     FreeAndNil( line );
 
                 //y-axis
@@ -168,6 +170,8 @@ implementation
                                             );
 
                     GraphicDrawerInOut.addLine(line);
+
+                    GraphicDrawerInOut.addText( 0, Y_MAX, 'Y', 15 );
 
                     FreeAndNil( line );
 
@@ -189,6 +193,8 @@ implementation
 
                     GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
 
+                    GraphicDrawerInOut.addText( x, y, 'y = x'#178 );
+
                     FreeAndNil( polyLine );
 
                 //Trig curve
@@ -208,6 +214,8 @@ implementation
                         end;
 
                     GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
+
+                    GraphicDrawerInOut.addText( x, y, 'y = sin(x) + x'#178 );
 
                     FreeAndNil( polyLine );
             end;
