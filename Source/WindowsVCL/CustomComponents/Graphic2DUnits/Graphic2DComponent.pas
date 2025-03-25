@@ -18,7 +18,7 @@ interface
                 function getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
             public
                 constructor Create(AOwner: TComponent); override;
-                destructor Destroy; override;
+                destructor Destroy(); override;
                 procedure redrawGraphic();
                 procedure updateGeometry();
                 procedure zoomAll();

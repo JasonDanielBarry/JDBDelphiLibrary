@@ -455,10 +455,11 @@ object CustomGraphic2D: TCustomGraphic2D
     Top = 32
     Width = 125
     Height = 63
+    Anchors = [akTop, akRight]
     BevelInner = bvNone
     BevelOuter = bvNone
     Color = clWhite
-    ItemHeight = 15
+    ItemHeight = 17
     Items.Strings = (
       'Layer1'
       'Layer2'

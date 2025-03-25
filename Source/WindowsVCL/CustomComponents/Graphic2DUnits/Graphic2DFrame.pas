@@ -184,8 +184,6 @@ implementation
 
         procedure TCustomGraphic2D.FrameResize(Sender: TObject);
             begin
-                positionComponents();
-
                 redrawGraphic();
             end;
 
