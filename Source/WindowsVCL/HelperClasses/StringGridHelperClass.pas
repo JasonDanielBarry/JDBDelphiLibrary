@@ -132,6 +132,8 @@ implementation
                 var
                     colIndex : integer;
                 begin
+                    result := True;
+
                     for colIndex := 0 to (ColCount - 1) do
                         begin
                             result := cellIsEmpty(colIndex, rowIndexIn);

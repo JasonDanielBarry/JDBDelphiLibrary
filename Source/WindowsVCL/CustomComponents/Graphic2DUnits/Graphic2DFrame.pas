@@ -132,6 +132,7 @@ interface
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 //redraw the graphic
                     procedure redrawGraphic();
+                    procedure updateBackgroundColour();
                     procedure updateGeometry();
                 //zooming methods
                     procedure zoomAll();
@@ -648,6 +649,12 @@ implementation
                 begin
                     //this message is sent to wndProc where the graphic is updated and redrawn
                         PostMessage( self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
+                end;
+
+            procedure TCustomGraphic2D.updateBackgroundColour();
+                begin
+                    setGraphicBackgroundColour();
+                    redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();

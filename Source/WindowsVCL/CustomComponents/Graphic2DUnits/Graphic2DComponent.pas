@@ -20,6 +20,7 @@ interface
                 constructor Create(AOwner: TComponent); override;
                 destructor Destroy(); override;
                 procedure redrawGraphic();
+                procedure updateBackgroundColour();
                 procedure updateGeometry();
                 procedure zoomAll();
             published
@@ -60,6 +61,11 @@ implementation
         procedure TJDBGraphic2D.redrawGraphic();
             begin
                 customGraphic.redrawGraphic();
+            end;
+
+        procedure TJDBGraphic2D.updateBackgroundColour();
+            begin
+                customGraphic.updateBackgroundColour();
             end;
 
         procedure TJDBGraphic2D.updateGeometry();

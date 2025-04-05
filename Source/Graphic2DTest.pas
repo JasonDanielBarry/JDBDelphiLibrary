@@ -181,6 +181,7 @@ implementation
                     polyLine := TGeomPolyLine.create();
 
                     x := 0;
+                    y := 0;
 
                     while (x < X_MAX) do
                         begin

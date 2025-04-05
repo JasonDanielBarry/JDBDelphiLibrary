@@ -98,10 +98,10 @@ implementation
         //drawing-to-canvas
             function TDrawingAxisConvertionCalculator.XY_to_LT(const X_In, Y_In : double) : TPointF;
                 begin
-                    result.SetLocation(
-                                            X_to_L(X_In),
-                                            Y_to_T(Y_In)
-                                      );
+                    result := PointF(
+                                        X_to_L(X_In),
+                                        Y_to_T(Y_In)
+                                    );
                 end;
 
     //public

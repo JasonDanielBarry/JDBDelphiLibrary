@@ -38,3 +38,4 @@ contains
   CustomComponentRegistrationUnit in 'Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas';
 
 end.
+

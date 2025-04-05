@@ -252,7 +252,7 @@ implementation
                     gaussElimMatrix := matrixGaussElimination(gaussSuccessful, matrixIn);
 
                     if ( NOT(gaussSuccessful) ) then
-                        exit();
+                        exit( 0 );
 
                     size := Length(matrixIn);
 

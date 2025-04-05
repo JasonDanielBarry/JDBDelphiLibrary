@@ -154,7 +154,7 @@ implementation
             begin
                 //dot product can only occur if the vectors have the same size
                     if ( NOT(vectorsAreSameSize( vector1In, vector2In )) ) then
-                        exit();
+                        exit( 0 );
 
                 //multiply each element of V1 and V2 and add
                     dotProductSum := 0;

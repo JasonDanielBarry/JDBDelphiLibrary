@@ -146,6 +146,7 @@ implementation
                 function TInputManager.readFromInputControls() : boolean;
                     begin
                         //nothing here for now
+                        result := True;
                     end;
 
                 class function TInputManager.readFromAllControls(const arrInputManagerIn : TArray<TInputManager>) : boolean;
