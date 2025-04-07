@@ -26,9 +26,9 @@ interface
                     function getVertex(indexIn : integer) : TGeomPoint;
                 //modifiers
                     //add a new vertex and line
-                        function addVertex(xIn, yIn : double) : boolean; overload;
-                        function addVertex(xIn, yIn, zIn : double) : boolean; overload;
-                        function addVertex(newVertexIn : TGeomPoint) : boolean; overload;
+                        function addVertex(const xIn, yIn : double) : boolean; overload;
+                        function addVertex(const xIn, yIn, zIn : double) : boolean; overload;
+                        function addVertex(const newVertexIn : TGeomPoint) : boolean; overload;
                     //edit a currently selected vertex
                         procedure editVertex(   indexIn         : integer;
                                                 xIn, yIn, zIn   : double    ); overload;
@@ -75,19 +75,19 @@ implementation
                 end;
 
         //add a line to the array of lines
-            function TGeomPolyLine.addVertex(xIn, yIn : double) : boolean;
+            function TGeomPolyLine.addVertex(const xIn, yIn : double) : boolean;
                 begin
                     result := addVertex(xIn, yIn, 0);
                 end;
 
-            function TGeomPolyLine.addVertex(xIn, yIn, zIn : double) : boolean;
+            function TGeomPolyLine.addVertex(const xIn, yIn, zIn : double) : boolean;
                 begin
                     result := addVertex(
                                             TGeomPoint.create(xIn, yIn, zIn)
                                        );
                 end;
 
-            function TGeomPolyLine.addVertex(newVertexIn : TGeomPoint) : boolean;
+            function TGeomPolyLine.addVertex(const newVertexIn : TGeomPoint) : boolean;
                 var
                     samePointTest   : boolean;
                     i               : integer;
@@ -107,11 +107,7 @@ implementation
                                 samePointTest := (dp < 1e-6);
 
                                 if (samePointTest = True) then
-                                    begin
-                                        result := false;
-
-                                        exit;
-                                    end;
+                                    exit( False );
                             end;
 
                     //increment vertex array
