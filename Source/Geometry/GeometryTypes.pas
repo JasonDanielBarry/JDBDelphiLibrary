@@ -53,6 +53,11 @@ interface
                 //scale point distance from other point
                     procedure scalePoint(   const scaleFactorIn     : double;
                                             const referencePointIn  : TGeomPoint    );
+                    class procedure scalePoints(const scaleFactorIn     : double;
+                                                const referencePointIn  : TGeomPoint;
+                                                var arrGeomPointsIn     : TArray<TGeomPoint>); overload; static;
+                    class procedure scalePoints(const scaleFactorIn     : double;
+                                                var arrGeomPointsIn     : TArray<TGeomPoint>); overload; static;
                 //rotation
                     procedure rotatePoint(  const rotationAngleIn           : double;
                                             const rotationReferencePointIn  : TGeomPoint    ); overload;
@@ -279,6 +284,26 @@ implementation
                     //scale the z value
                         scaleLinear(referencePointIn.z, self.z,
                                     scaleFactorIn,      self.z  );
+                end;
+
+            class procedure TGeomPoint.scalePoints( const scaleFactorIn     : double;
+                                                    const referencePointIn  : TGeomPoint;
+                                                    var arrGeomPointsIn     : TArray<TGeomPoint> );
+                var
+                    i : integer;
+                begin
+                    for i := 0 to ( length( arrGeomPointsIn ) - 1 ) do
+                        arrGeomPointsIn[i].scalePoint( scaleFactorIn, referencePointIn );
+                end;
+
+            class procedure TGeomPoint.scalePoints( const scaleFactorIn     : double;
+                                                    var arrGeomPointsIn     : TArray<TGeomPoint> );
+                var
+                    groupCentrePoint : TGeomPoint;
+                begin
+                    groupCentrePoint := calculateCentrePoint( arrGeomPointsIn );
+
+                    scalePoints( scaleFactorIn, groupCentrePoint, arrGeomPointsIn );
                 end;
 
         //rotation

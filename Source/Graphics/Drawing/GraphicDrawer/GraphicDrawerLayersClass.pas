@@ -151,17 +151,11 @@ implementation
             //draw all geometry
                 procedure TGraphicDrawerLayers.drawAll( const canvasWidthIn, canvasHeightIn : integer;
                                                         const drawingBackgroundColourIn     : TColor    );
-                    var
-                        i, graphicObjectsCount  : integer;
-                        arrDrawingGeometry      : TArray<TGraphicObject>;
                     begin
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        graphicObjectsCount := length(arrActiveGraphicObjects);
-
-                        for i := 0 to ( graphicObjectsCount - 1 ) do
-                            arrActiveGraphicObjects[i].drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+                        TGraphicObject.drawAllToCanvas( arrActiveGraphicObjects, axisConverter, Direct2DDrawingCanvas );
                     end;
 
     //public

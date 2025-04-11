@@ -12,7 +12,7 @@ interface
             DrawingAxisConversionClass,
             GraphicObjectBaseClass,
             GraphicEllipseClass, GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass,
-            GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass,
+            GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
             GraphicDrawerBaseClass,
             GeometryTypes,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass
@@ -67,6 +67,18 @@ interface
                                             const   textSizeIn          : integer = 9;
                                             const   textColourIn        : TColor = TColors.Black;
                                             const   textFontStylesIn    : TFontStyles = []          );
+                    //groups
+                        //arrow
+                            procedure addArrow( const   arrowLengthIn,
+                                                        directionAngleIn    : double;
+                                                const   arrowOriginPointIn  : TGeomPoint;
+                                                const   arrowOriginIn       : EArrowOrigin = EArrowOrigin.aoTail;
+                                                const   filledIn            : boolean = True;
+                                                const   lineThicknessIn     : integer = 3;
+                                                const   fillColourIn        : TColor = TColors.Null;
+                                                const   lineColourIn        : TColor = TColors.Black;
+                                                const   lineStyleIn         : TPenStyle = TPenStyle.psSolid         );
+
                 //modifiers
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); virtual; abstract;
         end;
@@ -215,5 +227,32 @@ implementation
 
                         addGraphicObject( newGraphicText );
                     end;
+
+            //groups
+                //arrow
+                    procedure TGraphicDrawerObjectAdder.addArrow(   const   arrowLengthIn,
+                                                                            directionAngleIn    : double;
+                                                                    const   arrowOriginPointIn  : TGeomPoint;
+                                                                    const   arrowOriginIn       : EArrowOrigin = EArrowOrigin.aoTail;
+                                                                    const   filledIn            : boolean = True;
+                                                                    const   lineThicknessIn     : integer = 3;
+                                                                    const   fillColourIn        : TColor = TColors.Null;
+                                                                    const   lineColourIn        : TColor = TColors.Black;
+                                                                    const   lineStyleIn         : TPenStyle = TPenStyle.psSolid         );
+                        var
+                            newGraphicArrow : TGraphicArrow;
+                        begin
+                            newGraphicArrow := TGraphicArrow.create(    filledIn,
+                                                                        lineThicknessIn,
+                                                                        arrowLengthIn,
+                                                                        directionAngleIn,
+                                                                        fillColourIn,
+                                                                        lineColourIn,
+                                                                        lineStyleIn,
+                                                                        arrowOriginIn,
+                                                                        arrowOriginPointIn  );
+
+                            addGraphicObject( newGraphicArrow );
+                        end;
 
 end.

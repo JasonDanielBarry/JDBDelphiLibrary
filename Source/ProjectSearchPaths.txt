@@ -11,6 +11,7 @@
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawer;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawer\Direct2D;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses;
+..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses;
 ..\JDBDelphiLibrary\Source\WindowsVCL;
 ..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;
 ..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;

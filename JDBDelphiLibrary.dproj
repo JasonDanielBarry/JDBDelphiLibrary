@@ -185,7 +185,8 @@
         <DCCReference Include="Source\FileManagement\TEST_FileReaderWriterClass.pas"/>
         <DCCReference Include="Source\FileManagement\ArrayConversionMethods.pas"/>
         <DCCReference Include="Source\FileManagement\XMLDocumentMethods.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicObjectGroupClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

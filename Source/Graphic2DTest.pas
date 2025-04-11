@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, system.UITypes, system.Math,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, vcl.Styles, vcl.Themes,
-  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawerObjectAdderClass,
+  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawerObjectAdderClass, GraphicArrowClass,
   GeometryTypes,
   GeomLineClass, GeomPolyLineClass, GeomPolygonClass, Vcl.StdCtrls;
 
@@ -101,6 +101,8 @@ implementation
 
                     polyline.rotate(30);
 
+                    polyline.scale( 1.25 );
+
                     GraphicDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
 
                     FreeAndNil( line );
@@ -140,6 +142,14 @@ implementation
                                                 [TFontStyle.fsBold, TFontStyle.fsItalic, TFontStyle.fsUnderline] );
 
                     GraphicDrawerInOut.addText(150, -50, 'This is a short'#13'sentence of'#13'3 lines');
+
+                //arrow
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Arrow Layer');
+
+                    var arrowOriginPoint : TGeomPoint := TGeomPoint.create( -50, 150 );
+
+                    for var angle : double in [0, 30, 60, 90, 120, 150, 180] do
+                        GraphicDrawerInOut.addArrow( 25, angle, arrowOriginPoint );
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
@@ -154,26 +164,14 @@ implementation
                 GraphicDrawerInOut.setCurrentDrawingLayer('XY - Axes');
 
                 //x-axis
-                    line := TGeomLine.create(
-                                                TGeomPoint.create(0, 0), TGeomPoint.create(X_MAX, 0)
-                                            );
+                    GraphicDrawerInOut.addText( X_MAX, 10, 'X', 15 );
 
-                    GraphicDrawerInOut.addLine(line);
-
-                    GraphicDrawerInOut.addText( X_MAX, 1, 'X', 15 );
-
-                    FreeAndNil( line );
+                    GraphicDrawerInOut.addArrow( X_MAX, 0, TGeomPoint.create(0, 0) );
 
                 //y-axis
-                    line := TGeomLine.create(
-                                                TGeomPoint.create(0, 0), TGeomPoint.create(0, Y_MAX)
-                                            );
+                    GraphicDrawerInOut.addText( 10, Y_MAX, 'Y', 15 );
 
-                    GraphicDrawerInOut.addLine(line);
-
-                    GraphicDrawerInOut.addText( 0, Y_MAX, 'Y', 15 );
-
-                    FreeAndNil( line );
+                    GraphicDrawerInOut.addArrow( Y_MAX, 90, TGeomPoint.create(0, 0) );
 
                 //quadratic curve
                     GraphicDrawerInOut.setCurrentDrawingLayer('Quadratic curve');
@@ -378,6 +376,19 @@ implementation
 
 
 
+            GraphicDrawerInOut.setCurrentDrawingLayer('Load');
+
+            var x : double := 0;
+
+            while (x <= 20) do
+                begin
+                    GraphicDrawerInOut.addArrow( 1.5, -90, TGeomPoint.create( x, 15.1 ), EArrowOrigin.aoHead );
+
+                    x := x + 1.5;
+                end;
+
+
+
             GraphicDrawerInOut.setCurrentDrawingLayer('Soil Nails');
 
             begin
@@ -405,8 +416,6 @@ implementation
 
                 FreeAndNil( line );
             end;
-
-
 
             GraphicDrawerInOut.setCurrentDrawingLayer('Wall');
 

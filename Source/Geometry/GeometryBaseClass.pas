@@ -36,6 +36,10 @@ interface
                     procedure rotate(   const rotationAngleIn           : double;
                                         const rotationReferencePointIn  : TGeomPoint    ); overload;
                     procedure rotate(const rotationAngleIn : double); overload;
+                //scaling
+                    procedure scale(const scaleFactorIn         : double;
+                                    const scaleReferencePointIn : TGeomPoint); overload;
+                    procedure scale(const scaleFactorIn : double); overload;
                 //shift the geometry
                     procedure shift(const deltaXIn, deltaYIn, deltaZIn : double); overload;
                     procedure shift(const deltaXIn, deltaYIn : double); overload;
@@ -133,6 +137,18 @@ implementation
                                                     rotationAngleIn,
                                                     arrGeomPoints
                                               );
+                end;
+
+        //scaling
+            procedure TGeomBase.scale(  const scaleFactorIn         : double;
+                                        const scaleReferencePointIn : TGeomPoint    );
+                begin
+                    TGeomPoint.scalePoints( scaleFactorIn, scaleReferencePointIn, arrGeomPoints );
+                end;
+
+            procedure TGeomBase.scale(const scaleFactorIn : double);
+                begin
+                    TGeomPoint.scalePoints( scaleFactorIn, arrGeomPoints );
                 end;
 
         //shift the geometry

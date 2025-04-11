@@ -40,7 +40,10 @@ interface
                     destructor destroy(); override;
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
-                                            var canvasInOut         : TDirect2DCanvas       ); virtual; abstract;
+                                            var canvasInOut         : TDirect2DCanvas       ); overload; virtual; abstract;
+                    class procedure drawAllToCanvas(const arrGraphicObjectsIn   : TArray<TGraphicObject>;
+                                                    const axisConverterIn       : TDrawingAxisConverter;
+                                                    var canvasInOut             : TDirect2DCanvas       ); inline; static;
                 //bounding box
                     function determineBoundingBox() : TGeomBox; overload; virtual; abstract;
                     class function determineBoundingBox(const arrGraphicObjectsIn : TArray<TGraphicObject>) : TGeomBox; overload; static;
@@ -103,6 +106,19 @@ implementation
             destructor TGraphicObject.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //draw to canvas
+            class procedure TGraphicObject.drawAllToCanvas( const arrGraphicObjectsIn   : TArray<TGraphicObject>;
+                                                            const axisConverterIn       : TDrawingAxisConverter;
+                                                            var canvasInOut             : TDirect2DCanvas           );
+                var
+                    i, arrLen : integer;
+                begin
+                    arrLen := length( arrGraphicObjectsIn );
+
+                    for i := 0 to ( arrLen - 1 ) do
+                        arrGraphicObjectsIn[i].drawToCanvas( axisConverterIn, canvasInOut );
                 end;
 
         //bounding box
