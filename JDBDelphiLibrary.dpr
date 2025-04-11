@@ -68,7 +68,8 @@ uses
   FileReaderWriterClass in 'Source\FileManagement\FileReaderWriterClass.pas',
   TEST_FileReaderWriterClass in 'Source\FileManagement\TEST_FileReaderWriterClass.pas',
   ArrayConversionMethods in 'Source\FileManagement\ArrayConversionMethods.pas',
-  XMLDocumentMethods in 'Source\FileManagement\XMLDocumentMethods.pas';
+  XMLDocumentMethods in 'Source\FileManagement\XMLDocumentMethods.pas',
+  GraphicObjectGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
