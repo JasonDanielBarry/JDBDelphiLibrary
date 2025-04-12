@@ -4,7 +4,8 @@ interface
 
     type
         {$SCOPEDENUMS ON}
-            EGraphicObjectType = (gdEllipse = 0, gdLine = 1, gdPolygon = 2, gdPolyline = 3, gdSpaceVector = 4, gdRectangle = 5, gdText = 6, gdGroup = 7);
+            EGraphicObjectType  = (gdEllipse = 0, gdLine = 1, gdPolygon = 2, gdPolyline = 3, gdSpaceVector = 4, gdRectangle = 5, gdText = 6, gdGroup = 7);
+            EArrowOrigin        = (aoHead = 0, aoTail = 1);
         {$SCOPEDENUMS OFF}
 
 implementation

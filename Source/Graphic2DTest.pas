@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, system.UITypes, system.Math,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, vcl.Styles, vcl.Themes,
-  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawerObjectAdderClass, GraphicArrowClass,
+  CustomComponentPanelClass, Graphic2DComponent, GraphicDrawingTypes,
+  GraphicDrawerObjectAdderClass, GraphicArrowClass,
   GeometryTypes,
   GeomLineClass, GeomPolyLineClass, GeomPolygonClass, Vcl.StdCtrls;
 
@@ -158,7 +159,6 @@ implementation
                 Y_MAX = 250;
             var
                 x, y        : double;
-                line        : TGeomLine;
                 polyLine    : TGeomPolyLine;
             begin
                 GraphicDrawerInOut.setCurrentDrawingLayer('XY - Axes');

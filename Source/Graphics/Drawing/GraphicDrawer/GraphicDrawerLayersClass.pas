@@ -8,22 +8,21 @@ interface
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
-            GraphicObjectBaseClass,
-            GraphicGeometryClass,
+            GraphicObjectBaseClass, GraphicObjectGroupClass,
             GeometryTypes, GeomBox,
             GraphicDrawerObjectAdderClass
             ;
 
     type
         TGraphicDrawerLayers = class(TGraphicDrawerObjectAdder)
-            strict private
+            private
                 type
                     TLayerGeometryMap = TDictionary<string, TArray<TGraphicObject>>;
                 var
                     currentDrawingLayer     : string;
                     orderedLayerKeys        : TList<string>;
                     arrActiveDrawingLayers  : TArray<string>;
-                    arrActiveGraphicObjects : Tarray<TGraphicObject>;
+                    activeGraphicObjects    : TGraphicObjectGroup;
                     layerGeometryMap        : TLayerGeometryMap;
                 //add graphic drawing object to the drawing object container
                     procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); override;
@@ -37,7 +36,7 @@ interface
                         function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
                     //calculate the net bounding box for active layers
                         procedure calculateNetBoundingBox();
-            strict protected
+            protected
                 //draw all geometry
                     procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
                                         const drawingBackgroundColourIn     : TColor    );
@@ -95,32 +94,20 @@ implementation
             //collect all active graphic objects into one array in order
                 procedure TGraphicDrawerLayers.collectActiveGraphicObjectsIntoArray();
                     var
-                        i,
-                        startIndex,
-                        graphicObjectsCount             : integer;
                         layer                           : string;
                         arrCurrentLayerGraphicObjects   : TArray<TGraphicObject>;
                     begin
-                        startIndex          := 0;
-                        graphicObjectsCount := 0;
+                        //clear the active group - DO NOT FREE THE OBJECTS
+                            activeGraphicObjects.clearGraphicObjectsGroup( False );
 
-                        //loop through the layers and splice all layers' graphic object arrays together
+                        //loop through the active layers and place their graphic objects in the group
                             for layer in arrActiveDrawingLayers do
                                 begin
                                     //get the graphic objects for the specified layer
                                         arrCurrentLayerGraphicObjects := getArrGraphicObjects( layer );
 
-                                        graphicObjectsCount := graphicObjectsCount + length( arrCurrentLayerGraphicObjects );
-
-                                    //resize the array
-                                        SetLength( arrActiveGraphicObjects, graphicObjectsCount );
-
-                                    //add the graphic objects from the current layer to the array
-                                        for i := 0 to (length(arrCurrentLayerGraphicObjects) - 1) do
-                                            arrActiveGraphicObjects[ i + startIndex ] := arrCurrentLayerGraphicObjects[i];
-
-                                    //reset start index
-                                        startIndex := graphicObjectsCount;
+                                    //add the graphic objects to the active graphic objects group
+                                        activeGraphicObjects.addGraphicObjectsToGroup( arrCurrentLayerGraphicObjects );
                                 end;
                     end;
 
@@ -141,7 +128,7 @@ implementation
                     var
                         netBoundingBox : TGeomBox;
                     begin
-                        netBoundingBox := TGraphicObject.determineBoundingBox( arrActiveGraphicObjects );
+                        netBoundingBox := activeGraphicObjects.determineBoundingBox();
 
                         axisConverter.setGeometryBoundary( netBoundingBox );
                     end;
@@ -155,7 +142,7 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        TGraphicObject.drawAllToCanvas( arrActiveGraphicObjects, axisConverter, Direct2DDrawingCanvas );
+                        activeGraphicObjects.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                     end;
 
     //public
@@ -164,11 +151,10 @@ implementation
                 begin
                     inherited create();
 
-                    orderedLayerKeys := TList<string>.Create();
-
-                    layerGeometryMap := TLayerGeometryMap.Create();
-
-                    currentDrawingLayer := '';
+                    orderedLayerKeys        := TList<string>.Create();
+                    layerGeometryMap        := TLayerGeometryMap.Create();
+                    activeGraphicObjects    := TGraphicObjectGroup.create();
+                    currentDrawingLayer     := '';
                 end;
 
         //destructor
@@ -177,8 +163,12 @@ implementation
                     resetDrawingGeometry();
 
                     FreeAndNil( orderedLayerKeys );
-
                     FreeAndNil( layerGeometryMap );
+
+                    //the graphic object group is cleared (without freeing objects) before freeing
+                    //as all graphic objects are freed in resetDrawingGeometry()
+                        activeGraphicObjects.clearGraphicObjectsGroup( False );
+                        FreeAndNil( activeGraphicObjects );
 
                     inherited destroy();
                 end;

@@ -13,6 +13,7 @@ interface
             GraphicObjectBaseClass,
             GraphicEllipseClass, GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass,
             GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
+            GraphicDrawingTypes,
             GraphicDrawerBaseClass,
             GeometryTypes,
             GeomLineClass, GeomPolyLineClass, GeomPolygonClass

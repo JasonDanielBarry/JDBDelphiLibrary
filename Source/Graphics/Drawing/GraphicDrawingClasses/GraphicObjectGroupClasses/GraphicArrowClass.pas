@@ -15,8 +15,6 @@ interface
         ;
 
     type
-        EArrowOrigin = (aoHead = 0, aoTail = 1);
-
         TGraphicArrow = class(TGraphicObjectGroup)
             private
                 var
@@ -42,6 +40,9 @@ interface
                                         const   arrowOriginPointIn  : TGeomPoint    );
                 //destructor
                     destructor destroy(); override;
+                //get geometry
+                    function getArrowHeadPoint() : TGeomPoint;
+                    function getArrowTailPoint() : TGeomPoint;
         end;
 
 implementation
@@ -134,18 +135,31 @@ implementation
                         //arrow head
                             headGraphic := TGraphicPolygon.create( filledIn, lineThicknessIn, fillColourIn, lineColourIn, lineStyleIn, arrowHead );
                             addGraphicObjectToGroup( headGraphic );
-                            FreeAndNil( arrowHead );
 
                         //arrow tail
                             tailGraphic := TGraphicLine.create( lineThicknessIn, lineColourIn, lineStyleIn, arrowTail );
                             addGraphicObjectToGroup( tailGraphic );
-                            FreeAndNil( arrowTail );
                 end;
 
         //destructor
             destructor TGraphicArrow.destroy();
                 begin
+                    FreeAndNil( arrowHead );
+                    FreeAndNil( arrowTail );
+
                     inherited destroy();
                 end;
+
+        //get geometry
+            function TGraphicArrow.getArrowHeadPoint() : TGeomPoint;
+                begin
+                    result := arrowHead.getDrawingPoints()[0];
+                end;
+
+            function TGraphicArrow.getArrowTailPoint() : TGeomPoint;
+                begin
+                    result := arrowTail.getStartPoint();
+                end;
+
 
 end.
