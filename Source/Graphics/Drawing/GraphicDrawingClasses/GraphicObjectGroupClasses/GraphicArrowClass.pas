@@ -132,13 +132,10 @@ implementation
                         createArrowGeometry( arrowLengthIn, directionAngleIn, arrowOriginIn, arrowOriginPointIn );
 
                     //create graphic objects
-                        //arrow head
-                            headGraphic := TGraphicPolygon.create( filledIn, lineThicknessIn, fillColourIn, lineColourIn, lineStyleIn, arrowHead );
-                            addGraphicObjectToGroup( headGraphic );
+                        headGraphic := TGraphicPolygon.create( filledIn, lineThicknessIn, fillColourIn, lineColourIn, lineStyleIn, arrowHead );
+                        tailGraphic := TGraphicLine.create( lineThicknessIn, lineColourIn, lineStyleIn, arrowTail );
 
-                        //arrow tail
-                            tailGraphic := TGraphicLine.create( lineThicknessIn, lineColourIn, lineStyleIn, arrowTail );
-                            addGraphicObjectToGroup( tailGraphic );
+                        addGraphicObjectsToGroup( [headGraphic, tailGraphic] );
                 end;
 
         //destructor
