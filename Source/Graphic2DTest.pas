@@ -27,6 +27,7 @@ type
         procedure XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
         procedure FinPlateGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
         procedure SoilNailWallGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure BendingBeamSection(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -151,6 +152,18 @@ implementation
 
                     for var angle : double in [0, 30, 60, 90, 120, 150, 180] do
                         GraphicDrawerInOut.addArrow( 25, angle, arrowOriginPoint );
+
+                //arrow group
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Arrow Group Layer');
+
+                    line := TGeomLine.create();
+
+                    line.setStartPoint( -300, 0 );
+                    line.setEndPoint( -150, 150 );
+
+                    GraphicDrawerInOut.addArrowGroup( 25, line );
+
+                    FreeAndNil( line );
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
@@ -378,14 +391,14 @@ implementation
 
             GraphicDrawerInOut.setCurrentDrawingLayer('Load');
 
-            var x : double := 0;
+            line := TGeomLine.create();
 
-            while (x <= 20) do
-                begin
-                    GraphicDrawerInOut.addArrow( 1.5, -90, TGeomPoint.create( x, 15.1 ), EArrowOrigin.aoHead );
+            line.setStartPoint(0, 15.15);
+            line.setEndPoint(20, 15.15);
 
-                    x := x + 1.5;
-                end;
+            GraphicDrawerInOut.addArrowGroup( 1.5, line, EArrowOrigin.aoHead );
+
+            FreeAndNil( line );
 
 
 
@@ -431,6 +444,30 @@ implementation
             FreeAndNil( polygon );
         end;
 
+    procedure TForm1.BendingBeamSection(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        var
+            line : TGeomLine;
+        begin
+            //concrete
+                GraphicDrawerInOut.addRectangle( 450, 450, -450, 0, True, 2, 0, TColors.Lightgreen );
+
+            //rebar
+                GraphicDrawerInOut.addRectangle( 500, 16, -450, 75-8, True, 2, 0, TColors.Dodgerblue );
+
+            //compressing stress
+                line := TGeomLine.create();
+
+                line.setStartPoint( 5, 450 );
+                line.setEndPoint( 5, 275 );
+
+                GraphicDrawerInOut.addArrowGroup( 33, line, EArrowOrigin.aoHead );
+
+                FreeAndNil( line );
+
+            //rebar force
+                GraphicDrawerInOut.addArrow( 200, 0, TGeomPoint.create( 55, 75 ) );
+        end;
+
     constructor TForm1.create(AOwner: TComponent);
         begin
             inherited create(nil);
@@ -470,6 +507,8 @@ implementation
                     FinPlateGraphic( AGeomDrawer );
                 3:
                     SoilNailWallGraphic( AGeomDrawer );
+                4:
+                    BendingBeamSection( AGeomDrawer );
             end;
         end;
 

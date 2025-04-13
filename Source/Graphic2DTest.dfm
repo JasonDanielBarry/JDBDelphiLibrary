@@ -68,7 +68,8 @@ object Form1: TForm1
         'Blue Box'
         'XY Graphs'
         'Fin Plate'
-        'Soil Nail Wall')
+        'Soil Nail Wall'
+        'Bending Beam')
     end
   end
 end

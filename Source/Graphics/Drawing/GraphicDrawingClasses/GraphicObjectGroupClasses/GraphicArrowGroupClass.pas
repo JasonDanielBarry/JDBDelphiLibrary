@@ -10,6 +10,7 @@ interface
         GeomLineClass, GeomPolygonClass,
         GraphicDrawingTypes,
         DrawingAxisConversionClass,
+        GraphicObjectBaseClass,
         GraphicLineClass, GraphicPolygonClass,
         GraphicObjectGroupClass, GraphicArrowClass
         ;
@@ -17,23 +18,32 @@ interface
     type
         TGraphicArrowGroup = class(TGraphicObjectGroup)
             private
+                //arrow group count
+                    function calculateArrowGroupCount(const arrowLengthIn, lineLengthIn : double) : integer;
                 //arrow spacing
-                    function calculateArrowSpacing(const arrowLengthIn, lineLengthIn : double) : double;
+                    function calculateArrowSpacing( const arrowGroupCountIn : integer;
+                                                    const lineLengthIn      : double ) : double;
+                //determine the arrow group angle
+                    function determineArrowGroupDirectionAngle( const   userDirectionAngleIn    : double;
+                                                                const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                                                const   arrowGroupLineIn        : TGeomLine             ) : double;
                 //calculate group arrow points
                     function calculateArrowPoints(  const arrowCountIn      : integer;
                                                     const arrowSpacingIn    : double;
                                                     const lineIn            : TGeomLine) : TArray<TGeomPoint>;
+
             public
                 //constructor
-                    constructor create( const   filledIn            : boolean;
-                                        const   lineThicknessIn     : integer;
+                    constructor create( const   filledIn                : boolean;
+                                        const   lineThicknessIn         : integer;
                                         const   arrowLengthIn,
-                                                directionAngleIn    : double;
+                                                userDirectionAngleIn    : double;
                                         const   fillColourIn,
-                                                lineColourIn        : TColor;
-                                        const   lineStyleIn         : TPenStyle;
-                                        const   arrowOriginIn       : EArrowOrigin;
-                                        const   arrowGroupLineIn    : TGeomLine     );
+                                                lineColourIn            : TColor;
+                                        const   lineStyleIn             : TPenStyle;
+                                        const   arrowOriginIn           : EArrowOrigin;
+                                        const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                        const   arrowGroupLineIn        : TGeomLine             );
                 //destructor
                     destructor destroy(); override;
 
@@ -43,21 +53,72 @@ interface
 implementation
 
     //private
-        //arrow spacing
-            function TGraphicArrowGroup.calculateArrowSpacing(const arrowLengthIn, lineLengthIn : double) : double;
+        //arrow group count
+            function TGraphicArrowGroup.calculateArrowGroupCount(const arrowLengthIn, lineLengthIn : double) : integer;
                 var
-                    arrowGroupCount : integer;
-                    arrowSpacingOut : double;
+                    arrowGroupCountOut : integer;
                 begin
                     //determine how many arrows to draw in the group
-                        arrowGroupCount := round( lineLengthIn / (arrowLengthIn / 3) );
+                        arrowGroupCountOut := round( lineLengthIn / (arrowLengthIn / 4) );
 
-                        arrowGroupCount := max( arrowGroupCount, 3 );
+                        arrowGroupCountOut := max( arrowGroupCountOut, 3 );
 
-                    //calculate the required spacing
-                        arrowSpacingOut := lineLengthIn / (arrowGroupCount - 1);
+                    result := arrowGroupCountOut;
+                end;
 
-                    result := arrowLengthIn
+        //arrow spacing
+            function TGraphicArrowGroup.calculateArrowSpacing(  const arrowGroupCountIn : integer;
+                                                                const lineLengthIn      : double) : double;
+                begin
+                    result := lineLengthIn / (arrowGroupCountIn - 1);
+                end;
+
+        //determine the arrow group angle
+            function TGraphicArrowGroup.determineArrowGroupDirectionAngle(  const   userDirectionAngleIn    : double;
+                                                                            const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                                                            const   arrowGroupLineIn        : TGeomLine             ) : double;
+                begin
+                    result := 0;
+
+                    case ( arrowGroupDirectionIn ) of
+                        EArrowGroupDirection.agdRight:
+                            exit( 0 );
+
+                        EArrowGroupDirection.agdUp:
+                            exit( 90 );
+
+                        EArrowGroupDirection.agdLeft:
+                            exit( 180 );
+
+                        EArrowGroupDirection.agdDown:
+                            exit( 270 );
+
+                        EArrowGroupDirection.agdNormal:
+                            begin
+                                var dx, dy,
+                                    lineAngleRad,
+                                    normalAngleDeg  : double;
+                                var lineVector      : TGeomSpaceVector;
+
+                                //get the line vector components
+                                    lineVector := arrowGroupLineIn.unitVector();
+
+                                    dx := lineVector[0];
+                                    dy := lineVector[1];
+
+                                    FreeAndNil( lineVector );
+
+                                //calculate the angle of the line and the normal angle
+                                    lineAngleRad := ArcTan2( dy, dx );
+
+                                    normalAngleDeg := RadToDeg( lineAngleRad ) - 90;
+
+                                exit( normalAngleDeg );
+                            end;
+
+                        EArrowGroupDirection.agdUserDefined:
+                            exit( userDirectionAngleIn );
+                    end;
                 end;
 
         //calculate group arrow point
@@ -96,21 +157,56 @@ implementation
                     result := arrArrowPointsOut;
                 end;
 
+
     //public
         //constructor
-            constructor TGraphicArrowGroup.create(  const   filledIn            : boolean;
-                                                    const   lineThicknessIn     : integer;
+            constructor TGraphicArrowGroup.create(  const   filledIn                : boolean;
+                                                    const   lineThicknessIn         : integer;
                                                     const   arrowLengthIn,
-                                                            directionAngleIn    : double;
+                                                            userDirectionAngleIn    : double;
                                                     const   fillColourIn,
-                                                            lineColourIn        : TColor;
-                                                    const   lineStyleIn         : TPenStyle;
-                                                    const   arrowOriginIn       : EArrowOrigin;
-                                                    const   arrowGroupLineIn    : TGeomLine     );
-//                var
-
+                                                            lineColourIn            : TColor;
+                                                    const   lineStyleIn             : TPenStyle;
+                                                    const   arrowOriginIn           : EArrowOrigin;
+                                                    const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                                    const   arrowGroupLineIn        : TGeomLine             );
+                var
+                    i, arrowGroupCount          : integer;
+                    arrowGroupAngle,
+                    arrowSpacing, lineLength    : double;
+                    arrArrowPoints              : TArray<TGeomPoint>;
+                    arrGraphicArrows            : TArray<TGraphicObject>;
                 begin
+                    lineLength := arrowGroupLineIn.calculateLength();
 
+                    //calculate number of arrows needed
+                        arrowGroupCount := calculateArrowGroupCount( arrowLengthIn, lineLength );
+
+                    //calculate spacing
+                        arrowSpacing := calculateArrowSpacing( arrowGroupCount, lineLength );
+
+                    //calculate arrow group angle
+                        arrowGroupAngle := determineArrowGroupDirectionAngle( userDirectionAngleIn, arrowGroupDirectionIn, arrowGroupLineIn );
+
+                    //calculate the arrow points
+                        arrArrowPoints := calculateArrowPoints( arrowGroupCount, arrowSpacing, arrowGroupLineIn );
+
+                    //create each arrow
+                        clearGraphicObjectsGroup( False );
+
+                        SetLength( arrGraphicArrows, arrowGroupCount );
+
+                        for i := 0 to ( arrowGroupCount - 1 ) do
+                                arrGraphicArrows[i] := TGraphicArrow.create(
+                                                                                filledIn,
+                                                                                lineThicknessIn, arrowLengthIn, arrowGroupAngle,
+                                                                                fillColourIn, lineColourIn,
+                                                                                lineStyleIn,
+                                                                                arrowOriginIn,
+                                                                                arrArrowPoints[i]
+                                                                           );
+
+                    addGraphicObjectsToGroup( arrGraphicArrows );
                 end;
 
         //destructor

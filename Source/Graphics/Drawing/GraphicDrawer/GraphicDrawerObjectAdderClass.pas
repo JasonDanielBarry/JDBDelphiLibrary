@@ -13,6 +13,7 @@ interface
             GraphicObjectBaseClass,
             GraphicEllipseClass, GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass,
             GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
+            GraphicArrowGroupClass,
             GraphicDrawingTypes,
             GraphicDrawerBaseClass,
             GeometryTypes,
@@ -79,6 +80,20 @@ interface
                                                 const   fillColourIn        : TColor = TColors.Null;
                                                 const   lineColourIn        : TColor = TColors.Black;
                                                 const   lineStyleIn         : TPenStyle = TPenStyle.psSolid         );
+                        //arrow group
+                            procedure addArrowGroup(const   arrowLengthIn           : double;
+                                                    const   arrowGroupLineIn        : TGeomLine;
+                                                    const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
+                                                    const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
+                                                    const   userDirectionAngleIn    : double = 0;
+                                                    const   filledIn                : boolean = True;
+                                                    const   lineThicknessIn         : integer = 3;
+                                                    const   fillColourIn            : TColor = TColors.Null;
+                                                    const   lineColourIn            : TColor = TColors.Black;
+                                                    const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         );
+
+
+
 
                 //modifiers
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); virtual; abstract;
@@ -254,6 +269,34 @@ implementation
                                                                         arrowOriginPointIn  );
 
                             addGraphicObject( newGraphicArrow );
+                        end;
+
+                //arrow group
+                    procedure TGraphicDrawerObjectAdder.addArrowGroup(  const   arrowLengthIn           : double;
+                                                                        const   arrowGroupLineIn        : TGeomLine;
+                                                                        const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
+                                                                        const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
+                                                                        const   userDirectionAngleIn    : double = 0;
+                                                                        const   filledIn                : boolean = True;
+                                                                        const   lineThicknessIn         : integer = 3;
+                                                                        const   fillColourIn            : TColor = TColors.Null;
+                                                                        const   lineColourIn            : TColor = TColors.Black;
+                                                                        const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                             );
+                        var
+                            newGraphicArrowGroup : TGraphicArrowGroup;
+                        begin
+                            newGraphicArrowGroup := TGraphicArrowGroup.create(  filledIn,
+                                                                                lineThicknessIn,
+                                                                                arrowLengthIn,
+                                                                                userDirectionAngleIn,
+                                                                                fillColourIn,
+                                                                                lineColourIn,
+                                                                                lineStyleIn,
+                                                                                arrowOriginIn,
+                                                                                arrowGroupDirectionIn,
+                                                                                arrowGroupLineIn        );
+
+                            addGraphicObject( newGraphicArrowGroup );
                         end;
 
 end.

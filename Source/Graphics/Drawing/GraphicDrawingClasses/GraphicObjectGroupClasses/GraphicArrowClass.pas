@@ -18,8 +18,9 @@ interface
         TGraphicArrow = class(TGraphicObjectGroup)
             private
                 var
-                    arrowHead : TGeomPolygon;
-                    arrowTail : TGeomLine;
+                    arrowHeadPoint, arrowTailPoint  : TGeomPoint;
+                    arrowHead                       : TGeomPolygon;
+                    arrowTail                       : TGeomLine;
                 //create arrow geometry
                     function createArrowHead() : TGeomPolygon;
                     function createArrowTail() : TGeomLine;
@@ -109,6 +110,10 @@ implementation
                     //shift the arrow
                         arrowHead.shift( arrowOriginPointIn.x, arrowOriginPointIn.y );
                         arrowTail.shift( arrowOriginPointIn.x, arrowOriginPointIn.y );
+
+                    //get the head and tail points
+                        arrowHeadPoint := arrowHead.getDrawingPoints()[0];
+                        arrowTailPoint := arrowTail.getStartPoint();
                 end;
 
     //public
@@ -136,26 +141,27 @@ implementation
                         tailGraphic := TGraphicLine.create( lineThicknessIn, lineColourIn, lineStyleIn, arrowTail );
 
                         addGraphicObjectsToGroup( [headGraphic, tailGraphic] );
+
+                    //free geometry objects
+                        FreeAndNil( arrowHead );
+                        FreeAndNil( arrowTail );
                 end;
 
         //destructor
             destructor TGraphicArrow.destroy();
                 begin
-                    FreeAndNil( arrowHead );
-                    FreeAndNil( arrowTail );
-
                     inherited destroy();
                 end;
 
         //get geometry
             function TGraphicArrow.getArrowHeadPoint() : TGeomPoint;
                 begin
-                    result := arrowHead.getDrawingPoints()[0];
+                    result := arrowHeadPoint;
                 end;
 
             function TGraphicArrow.getArrowTailPoint() : TGeomPoint;
                 begin
-                    result := arrowTail.getStartPoint();
+                    result := arrowTailPoint;
                 end;
 
 
