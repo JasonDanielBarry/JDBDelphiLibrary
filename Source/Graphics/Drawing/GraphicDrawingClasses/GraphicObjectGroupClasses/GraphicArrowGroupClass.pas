@@ -7,7 +7,7 @@ interface
         system.SysUtils, system.Math, system.UITypes,
         Vcl.Direct2D, vcl.Graphics,
         GeomBox, GeometryTypes, GeomSpaceVectorClass,
-        GeomLineClass, GeomPolygonClass,
+        GeomLineClass, GeomPolyLineClass,
         GraphicDrawingTypes,
         DrawingAxisConversionClass,
         GraphicObjectBaseClass,
@@ -43,7 +43,17 @@ interface
                                         const   lineStyleIn             : TPenStyle;
                                         const   arrowOriginIn           : EArrowOrigin;
                                         const   arrowGroupDirectionIn   : EArrowGroupDirection;
-                                        const   arrowGroupLineIn        : TGeomLine             );
+                                        const   arrowGroupLineIn        : TGeomLine             ); overload;
+                    constructor create( const   filledIn                : boolean;
+                                        const   lineThicknessIn         : integer;
+                                        const   arrowLengthIn,
+                                                userDirectionAngleIn    : double;
+                                        const   fillColourIn,
+                                                lineColourIn            : TColor;
+                                        const   lineStyleIn             : TPenStyle;
+                                        const   arrowOriginIn           : EArrowOrigin;
+                                        const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                        const   arrowGroupPolylineIn    : TGeomPolyLine         ); overload;
                 //destructor
                     destructor destroy(); override;
 
@@ -207,6 +217,50 @@ implementation
                                                                            );
 
                     addGraphicObjectsToGroup( arrGraphicArrows );
+                end;
+
+            constructor TGraphicArrowGroup.create(  const   filledIn                : boolean;
+                                                    const   lineThicknessIn         : integer;
+                                                    const   arrowLengthIn,
+                                                            userDirectionAngleIn    : double;
+                                                    const   fillColourIn,
+                                                            lineColourIn            : TColor;
+                                                    const   lineStyleIn             : TPenStyle;
+                                                    const   arrowOriginIn           : EArrowOrigin;
+                                                    const   arrowGroupDirectionIn   : EArrowGroupDirection;
+                                                    const   arrowGroupPolylineIn    : TGeomPolyLine         );
+                var
+                    i                       : integer;
+                    line                    : TGeomLine;
+                    arrPolylinPoints        : TArray<TGeomPoint>;
+                    singleLineArrowGroup    : TGraphicArrowGroup;
+                begin
+                    //this constructer creates an instance of its own class type for each line in the polyline
+
+                    line := TGeomLine.create();
+
+                    arrPolylinPoints := arrowGroupPolylineIn.getDrawingPoints();
+
+                    for i := 0 to ( length( arrPolylinPoints ) - 2 ) do
+                        begin
+                            line.setStartPoint( arrPolylinPoints[i] );
+                            line.setEndPoint( arrPolylinPoints[i+1] );
+
+                            singleLineArrowGroup := TGraphicArrowGroup.create(
+                                                                                filledIn,
+                                                                                lineThicknessIn,
+                                                                                arrowLengthIn,
+                                                                                userDirectionAngleIn,
+                                                                                fillColourIn,
+                                                                                lineColourIn,
+                                                                                lineStyleIn,
+                                                                                arrowOriginIn,
+                                                                                arrowGroupDirectionIn,
+                                                                                line
+                                                                             );
+
+                            addGraphicObjectToGroup( singleLineArrowGroup );
+                        end;
                 end;
 
         //destructor

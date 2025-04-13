@@ -81,16 +81,28 @@ interface
                                                 const   lineColourIn        : TColor = TColors.Black;
                                                 const   lineStyleIn         : TPenStyle = TPenStyle.psSolid         );
                         //arrow group
-                            procedure addArrowGroup(const   arrowLengthIn           : double;
-                                                    const   arrowGroupLineIn        : TGeomLine;
-                                                    const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
-                                                    const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
-                                                    const   userDirectionAngleIn    : double = 0;
-                                                    const   filledIn                : boolean = True;
-                                                    const   lineThicknessIn         : integer = 3;
-                                                    const   fillColourIn            : TColor = TColors.Null;
-                                                    const   lineColourIn            : TColor = TColors.Black;
-                                                    const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         );
+                            //single line
+                                procedure addArrowGroup(const   arrowLengthIn           : double;
+                                                        const   arrowGroupLineIn        : TGeomLine;
+                                                        const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
+                                                        const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
+                                                        const   userDirectionAngleIn    : double = 0;
+                                                        const   filledIn                : boolean = True;
+                                                        const   lineThicknessIn         : integer = 3;
+                                                        const   fillColourIn            : TColor = TColors.Null;
+                                                        const   lineColourIn            : TColor = TColors.Black;
+                                                        const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         ); overload;
+                            //polyline
+                                procedure addArrowGroup(const   arrowLengthIn           : double;
+                                                        const   arrowGroupPolylineIn    : TGeomPolyLine;
+                                                        const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
+                                                        const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
+                                                        const   userDirectionAngleIn    : double = 0;
+                                                        const   filledIn                : boolean = True;
+                                                        const   lineThicknessIn         : integer = 3;
+                                                        const   fillColourIn            : TColor = TColors.Null;
+                                                        const   lineColourIn            : TColor = TColors.Black;
+                                                        const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         ); overload;
 
 
 
@@ -295,6 +307,33 @@ implementation
                                                                                 arrowOriginIn,
                                                                                 arrowGroupDirectionIn,
                                                                                 arrowGroupLineIn        );
+
+                            addGraphicObject( newGraphicArrowGroup );
+                        end;
+
+                    procedure TGraphicDrawerObjectAdder.addArrowGroup(  const   arrowLengthIn           : double;
+                                                                        const   arrowGroupPolylineIn    : TGeomPolyLine;
+                                                                        const   arrowOriginIn           : EArrowOrigin = EArrowOrigin.aoTail;
+                                                                        const   arrowGroupDirectionIn   : EArrowGroupDirection = EArrowGroupDirection.agdNormal;
+                                                                        const   userDirectionAngleIn    : double = 0;
+                                                                        const   filledIn                : boolean = True;
+                                                                        const   lineThicknessIn         : integer = 3;
+                                                                        const   fillColourIn            : TColor = TColors.Null;
+                                                                        const   lineColourIn            : TColor = TColors.Black;
+                                                                        const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         );
+                        var
+                            newGraphicArrowGroup : TGraphicArrowGroup;
+                        begin
+                            newGraphicArrowGroup := TGraphicArrowGroup.create(  filledIn,
+                                                                                lineThicknessIn,
+                                                                                arrowLengthIn,
+                                                                                userDirectionAngleIn,
+                                                                                fillColourIn,
+                                                                                lineColourIn,
+                                                                                lineStyleIn,
+                                                                                arrowOriginIn,
+                                                                                arrowGroupDirectionIn,
+                                                                                arrowGroupPolylineIn    );
 
                             addGraphicObject( newGraphicArrowGroup );
                         end;

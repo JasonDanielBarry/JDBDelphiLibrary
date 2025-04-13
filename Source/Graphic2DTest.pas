@@ -156,14 +156,16 @@ implementation
                 //arrow group
                     GraphicDrawerInOut.setCurrentDrawingLayer('Arrow Group Layer');
 
-                    line := TGeomLine.create();
+                    polyline := TGeomPolyLine.create();
 
-                    line.setStartPoint( -300, 0 );
-                    line.setEndPoint( -150, 150 );
+                    polyline.addVertex( -300, 0 );
+                    polyline.addVertex( -300, 100 );
+                    polyline.addVertex( -200, 200 );
+                    polyline.addVertex( -100, 200 );
 
-                    GraphicDrawerInOut.addArrowGroup( 25, line );
+                    GraphicDrawerInOut.addArrowGroup( 25, polyline, EArrowOrigin.aoHead );
 
-                    FreeAndNil( line );
+                    FreeAndNil( polyline );
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
