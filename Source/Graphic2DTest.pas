@@ -158,10 +158,10 @@ implementation
 
                     polyline := TGeomPolyLine.create();
 
-                    polyline.addVertex( -300, 0 );
-                    polyline.addVertex( -300, 100 );
-                    polyline.addVertex( -200, 200 );
+                    polyline.addVertex( -200, 0 );
+                    polyline.addVertex( -200, 100 );
                     polyline.addVertex( -100, 200 );
+                    polyline.addVertex( 0, 200 );
 
                     GraphicDrawerInOut.addArrowGroup( 25, polyline, EArrowOrigin.aoHead );
 

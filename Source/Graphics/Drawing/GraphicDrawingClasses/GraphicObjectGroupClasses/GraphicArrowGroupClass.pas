@@ -44,6 +44,7 @@ interface
                                         const   arrowOriginIn           : EArrowOrigin;
                                         const   arrowGroupDirectionIn   : EArrowGroupDirection;
                                         const   arrowGroupLineIn        : TGeomLine             ); overload;
+
                     constructor create( const   filledIn                : boolean;
                                         const   lineThicknessIn         : integer;
                                         const   arrowLengthIn,
@@ -56,7 +57,6 @@ interface
                                         const   arrowGroupPolylineIn    : TGeomPolyLine         ); overload;
                 //destructor
                     destructor destroy(); override;
-
         end;
 
 
