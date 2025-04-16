@@ -67,6 +67,7 @@ interface
                         procedure addText(  const   textXIn, textYIn    : double;
                                             const   textStringIn        : string;
                                             const   textSizeIn          : integer = 9;
+                                            const   textRotationAngleIn : double = 0;
                                             const   textColourIn        : TColor = TColors.Black;
                                             const   textFontStylesIn    : TFontStyles = []          );
                     //groups
@@ -236,6 +237,7 @@ implementation
                 procedure TGraphicDrawerObjectAdder.addText(const   textXIn, textYIn    : double;
                                                             const   textStringIn        : string;
                                                             const   textSizeIn          : integer = 9;
+                                                            const   textRotationAngleIn : double = 0;
                                                             const   textColourIn        : TColor = TColors.Black;
                                                             const   textFontStylesIn    : TFontStyles = []      );
                     var
@@ -248,6 +250,7 @@ implementation
                         textTopLeftPoint := TGeomPoint.create( textXIn, textYIn );
 
                         newGraphicText := TGraphicText.create(  textSizeIn,
+                                                                textRotationAngleIn,
                                                                 trim( textStringIn ),
                                                                 textColourIn,
                                                                 textFontStylesIn,

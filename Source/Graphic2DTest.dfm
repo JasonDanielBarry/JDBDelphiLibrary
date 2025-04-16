@@ -29,8 +29,6 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 0
     OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
-    ExplicitWidth = 1725
-    ExplicitHeight = 776
   end
   object PanelTop: TPanel
     Left = 0
@@ -41,7 +39,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
-    ExplicitWidth = 1725
     object LabelSelectGraphic: TLabel
       AlignWithMargins = True
       Left = 5

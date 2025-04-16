@@ -71,7 +71,8 @@ uses
   XMLDocumentMethods in 'Source\FileManagement\XMLDocumentMethods.pas',
   GraphicObjectGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicObjectGroupClass.pas',
   GraphicArrowClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowClass.pas',
-  GraphicArrowGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowGroupClass.pas';
+  GraphicArrowGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowGroupClass.pas',
+  GraphicArcClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicArcClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

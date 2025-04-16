@@ -20,6 +20,7 @@ interface
             private
                 var
                     textSize            : integer;
+                    textRotationAngle   : double;
                     textString          : string;
                     textColour          : TColor;
                     textFontStyles      : TFontStyles;
@@ -28,6 +29,7 @@ interface
             public
                 //constructor
                     constructor create( const   textSizeIn          : integer;
+                                        const   textRotationAngleIn : double;
                                         const   textStringIn        : string;
                                         const   textColourIn        : TColor;
                                         const   textFontStylesIn    : TFontStyles;
@@ -57,6 +59,7 @@ implementation
     //public
         //constructor
             constructor TGraphicText.create(const   textSizeIn          : integer;
+                                            const   textRotationAngleIn : double;
                                             const   textStringIn        : string;
                                             const   textColourIn        : TColor;
                                             const   textFontStylesIn    : TFontStyles;
@@ -65,6 +68,7 @@ implementation
                     inherited create();
 
                     textSize            := textSizeIn;
+                    textRotationAngle   := textRotationAngleIn;
                     textString          := textStringIn;
                     textColour          := textColourIn;
                     textFontStyles      := textFontStylesIn;
@@ -81,7 +85,8 @@ implementation
             procedure TGraphicText.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
                 var
-                    textDrawingPointLT : TPointF;
+                    textDrawingPointLT  : TPointF;
+                    transformMatrix     : TD2DMatrix3x2F;
                 begin
                     //set the canvas dont properties
                         setFontProperties( canvasInOut );
@@ -89,8 +94,16 @@ implementation
                     //get text position on canvas
                         textDrawingPointLT := axisConverterIn.XY_to_LT( textHandlePointXY );
 
-                    //draw text
+                    //get transformation matrix - positive angles result in clockwise rotation
+                        transformMatrix := TD2DMatrix3x2F.Rotation( -textRotationAngle, textDrawingPointLT.x, textDrawingPointLT.y );
+
+                    //draw text with rotation
+                        canvasInOut.RenderTarget.SetTransform( transformMatrix );
+
                         canvasInOut.TextOut( round(textDrawingPointLT.X), round(textDrawingPointLT.Y), textString );
+
+                    //set canvas roations back to 0
+                        canvasInOut.RenderTarget.SetTransform( TD2DMatrix3x2F.Identity );
                 end;
 
         //bounding box

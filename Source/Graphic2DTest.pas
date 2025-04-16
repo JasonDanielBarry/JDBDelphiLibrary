@@ -140,6 +140,7 @@ implementation
                     GraphicDrawerInOut.addText( 150, 200,
                                                 'This is a short'#13'sentence of'#13'3 lines',
                                                 18,
+                                                35,
                                                 Tcolors.Darkred,
                                                 [TFontStyle.fsBold, TFontStyle.fsItalic, TFontStyle.fsUnderline] );
 
