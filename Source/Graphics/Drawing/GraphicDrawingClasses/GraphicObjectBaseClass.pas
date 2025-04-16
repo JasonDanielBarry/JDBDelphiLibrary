@@ -65,7 +65,7 @@ implementation
                             if ( NOT(filled) ) then
                                 begin
                                     canvasInOut.Brush.Style := TBrushStyle.bsClear;
-                                    exit();
+                                    exit( False );
                                 end;
 
                         canvasInOut.Brush.Color := fillColour;

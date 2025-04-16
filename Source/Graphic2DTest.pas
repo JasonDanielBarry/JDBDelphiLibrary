@@ -167,6 +167,14 @@ implementation
                     GraphicDrawerInOut.addArrowGroup( 25, polyline, EArrowOrigin.aoHead );
 
                     FreeAndNil( polyline );
+
+                //arc
+                    GraphicDrawerInOut.setCurrentDrawingLayer('Arc Layer');
+
+                    GraphicDrawerInOut.addArc( -100, -125, 25, 25, 90, -90, 5 );
+                    GraphicDrawerInOut.addArc( 0, -125, 20, 20, 45, 360-45, 5 );
+                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 0, -90, 5 );
+
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);

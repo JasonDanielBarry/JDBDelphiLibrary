@@ -11,8 +11,9 @@ interface
             ColourMethods,
             DrawingAxisConversionClass,
             GraphicObjectBaseClass,
-            GraphicEllipseClass, GraphicGeometryClass, GraphicLineClass, GraphicPolylineClass,
-            GraphicPolygonClass, GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
+            GraphicArcClass, GraphicEllipseClass, GraphicGeometryClass,
+            GraphicLineClass, GraphicPolylineClass, GraphicPolygonClass,
+            GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
             GraphicArrowGroupClass,
             GraphicDrawingTypes,
             GraphicDrawerBaseClass,
@@ -28,6 +29,16 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //add different drawing graphic objects
+                    //arc
+                        procedure addArc(   const   arcCentreXIn,
+                                                    arcCentreYIn,
+                                                    arcXRadiusIn,
+                                                    arcYRadiusIn,
+                                                    startAngleIn,
+                                                    endAngleIn      : double;
+                                            const   lineThicknessIn : integer = 2;
+                                            const   lineColourIn    : TColor = TColors.Black;
+                                            const   lineStyleIn     : TPenStyle = TPenStyle.psSolid );
                     //ellipse
                         procedure addEllipse(   const   diameterXIn,  diameterYIn,
                                                         centreXIn,    centreYIn     : double;
@@ -128,6 +139,32 @@ implementation
                 end;
 
         //add different drawing graphic objects
+            //arc
+                procedure TGraphicDrawerObjectAdder.addArc( const   arcCentreXIn,
+                                                                    arcCentreYIn,
+                                                                    arcXRadiusIn,
+                                                                    arcYRadiusIn,
+                                                                    startAngleIn,
+                                                                    endAngleIn      : double;
+                                                            const   lineThicknessIn : integer = 2;
+                                                            const   lineColourIn    : TColor = TColors.Black;
+                                                            const   lineStyleIn     : TPenStyle = TPenStyle.psSolid );
+                    var
+                        centrePoint     : TGeomPoint;
+                        newGraphicArc   : TGraphicArc;
+                    begin
+                        centrePoint := TGeomPoint.create( arcCentreXIn, arcCentreYIn );
+
+                        newGraphicArc := TGraphicArc.create(    lineThicknessIn,
+                                                                arcXRadiusIn, arcYRadiusIn,
+                                                                startAngleIn, endAngleIn,
+                                                                lineColourIn,
+                                                                lineStyleIn,
+                                                                centrePoint                 );
+
+                        addGraphicObject( newGraphicArc );
+                    end;
+
             //ellipse
                 procedure TGraphicDrawerObjectAdder.addEllipse( const   diameterXIn,  diameterYIn,
                                                                         centreXIn,    centreYIn     : double;

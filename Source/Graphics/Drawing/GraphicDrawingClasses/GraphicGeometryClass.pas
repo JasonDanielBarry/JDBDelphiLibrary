@@ -81,9 +81,10 @@ implementation
                                             geometrySink.AddLine( D2D1PointF( drawingPoints[i].x, drawingPoints[i].y ) );
                                     end;
 
-                        geometrySink.EndFigure( figureEndIn );
+                        //end geometry
+                            geometrySink.EndFigure( figureEndIn );
 
-                        geometrySink.Close();
+                            geometrySink.Close();
 
                     result := pathGeometryOut;
                 end;
