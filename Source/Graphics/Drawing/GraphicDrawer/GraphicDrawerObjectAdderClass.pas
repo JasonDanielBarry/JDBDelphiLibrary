@@ -30,15 +30,14 @@ interface
                     destructor destroy(); override;
                 //add different drawing graphic objects
                     //arc
-                        procedure addArc(   const   arcCentreXIn,
-                                                    arcCentreYIn,
-                                                    arcXRadiusIn,
-                                                    arcYRadiusIn,
-                                                    startAngleIn,
-                                                    endAngleIn      : double;
-                                            const   lineThicknessIn : integer = 2;
-                                            const   lineColourIn    : TColor = TColors.Black;
-                                            const   lineStyleIn     : TPenStyle = TPenStyle.psSolid );
+                        procedure addArc(   const   arcCentreXIn, arcCentreYIn,
+                                                    arcXRadiusIn, arcYRadiusIn,
+                                                    startAngleIn, endAngleIn    : double;
+                                            const   filledIn                    : boolean = False;
+                                            const   lineThicknessIn             : integer = 2;
+                                            const   fillColourIn                : TColor = TColors.Null;
+                                            const   lineColourIn                : TColor = TColors.Black;
+                                            const   lineStyleIn                 : TPenStyle = TPenStyle.psSolid );
                     //ellipse
                         procedure addEllipse(   const   diameterXIn,  diameterYIn,
                                                         centreXIn,    centreYIn     : double;
@@ -140,25 +139,29 @@ implementation
 
         //add different drawing graphic objects
             //arc
-                procedure TGraphicDrawerObjectAdder.addArc( const   arcCentreXIn,
-                                                                    arcCentreYIn,
-                                                                    arcXRadiusIn,
-                                                                    arcYRadiusIn,
-                                                                    startAngleIn,
-                                                                    endAngleIn      : double;
-                                                            const   lineThicknessIn : integer = 2;
-                                                            const   lineColourIn    : TColor = TColors.Black;
-                                                            const   lineStyleIn     : TPenStyle = TPenStyle.psSolid );
+                procedure TGraphicDrawerObjectAdder.addArc( const   arcCentreXIn, arcCentreYIn,
+                                                                    arcXRadiusIn, arcYRadiusIn,
+                                                                    startAngleIn, endAngleIn    : double;
+                                                            const   filledIn                    : boolean = False;
+                                                            const   lineThicknessIn             : integer = 2;
+                                                            const   fillColourIn                : TColor = TColors.Null;
+                                                            const   lineColourIn                : TColor = TColors.Black;
+                                                            const   lineStyleIn                 : TPenStyle = TPenStyle.psSolid );
                     var
                         centrePoint     : TGeomPoint;
                         newGraphicArc   : TGraphicArc;
                     begin
+                        //check if the arc angles are a valid combination
+                            if NOT( TGraphicArc.validArcAngles( startAngleIn, endAngleIn ) ) then
+                                exit();
+
                         centrePoint := TGeomPoint.create( arcCentreXIn, arcCentreYIn );
 
-                        newGraphicArc := TGraphicArc.create(    lineThicknessIn,
+                        newGraphicArc := TGraphicArc.create(    filledIn,
+                                                                lineThicknessIn,
                                                                 arcXRadiusIn, arcYRadiusIn,
                                                                 startAngleIn, endAngleIn,
-                                                                lineColourIn,
+                                                                fillColourIn, lineColourIn,
                                                                 lineStyleIn,
                                                                 centrePoint                 );
 

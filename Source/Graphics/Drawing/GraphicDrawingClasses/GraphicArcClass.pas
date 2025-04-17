@@ -17,29 +17,29 @@ interface
 
     type
         TGraphicArc = class(TGraphicObject)
-            private
+            strict private
                 var
-                    startAngle, endAngle    : double;
-                    arcRadii                : TRectF;
-                    centrePoint,
-                    startPoint,
-                    endPoint                : TGeomPoint;
-                //normalise angle
-                    function normaliseAngle(const degAngleIn : double) : double;
-                //calculate startPoint
-                    procedure calculateStartAndEndPoint();
+                    startAngle, endAngle        : double;
+                    arcRadii                    : TRectF;
+                    centrePointXY,
+                    startPointXY, endPointXY    : TGeomPoint;
+                //calculate startPointXY
+                    procedure calculateArcStartAndEndPoints();
                 //create arc segment
                     function createArcSegment(const axisConverterIn : TDrawingAxisConverter) : TD2D1ArcSegment;
                 //create arc geometry
-                    function createArcGeometry(const axisConverterIn : TDrawingAxisConverter) : ID2D1PathGeometry;
+                    function createArcGeometry( const filledIn          : boolean;
+                                                const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
             public
                 //constructor
-                    constructor create( const   lineThicknessIn : integer;
+                    constructor create( const   filledIn        : boolean;
+                                        const   lineThicknessIn : integer;
                                         const   arcXRadiusIn,
                                                 arcYRadiusIn,
                                                 startAngleIn,
                                                 endAngleIn      : double;
-                                        const   lineColourIn    : TColor;
+                                        const   fillColourIn,
+                                                lineColourIn    : TColor;
                                         const   lineStyleIn     : TPenStyle;
                                         const   centrePointIn   : TGeomPoint );
                 //destructor
@@ -49,49 +49,51 @@ interface
                                             var canvasInOut         : TDirect2DCanvas       ); override;
                 //bounding box
                     function determineBoundingBox() : TGeomBox; override;
+                //test for valid input angles
+                    class function validArcAngles(const startAngleIn, endAngleIn : double) : boolean;
         end;
 
 implementation
 
-    //private
-        //normalise angle
-            function TGraphicArc.normaliseAngle(const degAngleIn : double) : double;
-                const
-                    CIRLCE_ROTATION : double = 360;
-                var
-                    angleOut        : double;
-                    angleStartSign  : TValueSign;
-                function _validAngle(const angleIn : double) : boolean;
-                    begin
-                        result := ( -360 < angleIn ) AND ( angleIn < 360 );
-                    end;
+    //normalise angle
+        function normaliseAngle(const degAngleIn : double) : double;
+            const
+                CIRLCE_ROTATION : double = 360;
+            var
+                angleOut        : double;
+                angleStartSign  : TValueSign;
+            function _validAngle(const angleIn : double) : boolean;
                 begin
-                    angleStartSign := sign( degAngleIn );
-
-                    angleOut := degAngleIn;
-
-                    while NOT( _validAngle( angleOut ) ) do
-                        angleOut := angleOut - ( angleStartSign * CIRLCE_ROTATION );
-
-                    result := angleOut;
+                    _validAngle := ( -360 < angleIn ) AND ( angleIn < 360 );
                 end;
+            begin
+                angleStartSign := sign( degAngleIn );
 
-        //calculate startPoint
-            procedure TGraphicArc.calculateStartAndEndPoint();
+                angleOut := degAngleIn;
+
+                while NOT( _validAngle( angleOut ) ) do
+                    angleOut := angleOut - ( angleStartSign * CIRLCE_ROTATION );
+
+                result := angleOut;
+            end;
+
+    //private
+        //calculate startPointXY
+            procedure TGraphicArc.calculateArcStartAndEndPoints();
                 var
                     sinComponent, cosComponent : double;
                 begin
                     //find start point
                         SinCos( DegToRad( startAngle ), sinComponent, cosComponent );
 
-                        startPoint.x := centrePoint.x + (cosComponent * arcRadii.Width);
-                        startPoint.y := centrePoint.y + (sinComponent * arcRadii.Height);
+                        startPointXY.x := centrePointXY.x + (cosComponent * arcRadii.Width);
+                        startPointXY.y := centrePointXY.y + (sinComponent * arcRadii.Height);
 
                     //find end point
                         SinCos( DegToRad( endAngle ), sinComponent, cosComponent );
 
-                        endPoint.x := centrePoint.x + (cosComponent * arcRadii.Width);
-                        endPoint.y := centrePoint.y + (sinComponent * arcRadii.Height);
+                        endPointXY.x := centrePointXY.x + (cosComponent * arcRadii.Width);
+                        endPointXY.y := centrePointXY.y + (sinComponent * arcRadii.Height);
                 end;
 
         //create arc segment
@@ -103,7 +105,7 @@ implementation
                     arcSegmentOut       : TD2D1ArcSegment;
                 begin
                     //centre point
-                        endPointLT := axisConverterIn.XY_to_LT( endPoint );
+                        endPointLT := axisConverterIn.XY_to_LT( endPointXY );
 
                         arcSegmentOut.point := D2D1PointF( endPointLT.X, endPointLT.Y );
 
@@ -133,13 +135,14 @@ implementation
                 end;
 
         //create arc geometry
-            function TGraphicArc.createArcGeometry(const axisConverterIn : TDrawingAxisConverter) : ID2D1PathGeometry;
+            function TGraphicArc.createArcGeometry( const filledIn          : boolean;
+                                                    const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
                 var
-
+                    figureEnd       : D2D1_FIGURE_END;
                     geometrySink    : ID2D1GeometrySink;
                     pathGeometryOut : ID2D1PathGeometry;
                     arcSegment      : TD2D1ArcSegment;
-                    startPointLT      : TPointF;
+                    arcStartPointLT : TPointF;
                 begin
                     //create path geometry
                         D2DFactory( D2D1_FACTORY_TYPE.D2D1_FACTORY_TYPE_MULTI_THREADED ).CreatePathGeometry( pathGeometryOut );
@@ -149,16 +152,30 @@ implementation
 
                     //create geometry sink
                         //calculate start point
-                            startPointLT := axisConverterIn.XY_to_LT( startPoint );
+                            arcStartPointLT := axisConverterIn.XY_to_LT( startPointXY );
 
                         //create arc segment
                             arcSegment := createArcSegment( axisConverterIn );
 
-                        geometrySink.BeginFigure( D2D1PointF( startPointLT.x, startPointLT.y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW );
+                        if ( filledIn ) then
+                            begin
+                                var centrePointLT := axisConverterIn.XY_to_LT( centrePointXY );
+
+                                figureEnd := D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED;
+
+                                geometrySink.BeginFigure( D2D1PointF( centrePointLT.x, centrePointLT.y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED );
+                                geometrySink.AddLine( D2D1PointF( arcStartPointLT.X, arcStartPointLT.Y ) );
+                            end
+                        else
+                            begin
+                                figureEnd := D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN;
+
+                                geometrySink.BeginFigure( D2D1PointF( arcStartPointLT.x, arcStartPointLT.y ), D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW );
+                            end;
 
                         geometrySink.AddArc( arcSegment );
 
-                        geometrySink.EndFigure( D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN );
+                        geometrySink.EndFigure( figureEnd );
 
                         geometrySink.Close();
 
@@ -167,18 +184,20 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicArc.create( const   lineThicknessIn : integer;
+            constructor TGraphicArc.create( const   filledIn        : boolean;
+                                            const   lineThicknessIn : integer;
                                             const   arcXRadiusIn,
                                                     arcYRadiusIn,
                                                     startAngleIn,
                                                     endAngleIn      : double;
-                                            const   lineColourIn    : TColor;
+                                            const   fillColourIn,
+                                                    lineColourIn    : TColor;
                                             const   lineStyleIn     : TPenStyle;
                                             const   centrePointIn   : TGeomPoint );
                 begin
-                    inherited create(   false,
+                    inherited create(   filledIn,
                                         lineThicknessIn,
-                                        TColors.Null,
+                                        fillColourIn,
                                         lineColourIn,
                                         lineStyleIn     );
 
@@ -188,9 +207,9 @@ implementation
                     arcRadii.Width  := arcXRadiusIn;
                     arcRadii.Height := arcYRadiusIn;
 
-                    centrePoint.copyPoint( centrePointIn );
+                    centrePointXY.copyPoint( centrePointIn );
 
-                    calculateStartAndEndPoint();
+                    calculateArcStartAndEndPoints();
                 end;
 
         //destructor
@@ -203,13 +222,20 @@ implementation
             procedure TGraphicArc.drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
                 var
-                    pathGeometry : ID2D1PathGeometry;
+                    filled          : boolean;
+                    pathGeometry    : ID2D1PathGeometry;
                 begin
-                    pathGeometry := createArcGeometry( axisConverterIn );
+                    filled := setFillProperties( canvasInOut );
 
-                    setLineProperties( canvasInOut );
+                    pathGeometry := createArcGeometry( filled, axisConverterIn );
 
-                    canvasInOut.DrawGeometry( pathGeometry );
+                    //fill arc shape
+                        if ( filled ) then
+                            canvasInOut.FillGeometry( pathGeometry );
+
+                    //draw arc line
+                        setLineProperties( canvasInOut );
+                        canvasInOut.DrawGeometry( pathGeometry );
                 end;
 
         //bounding box
@@ -217,12 +243,26 @@ implementation
                 var
                     boxOut : TGeomBox;
                 begin
-                    boxOut.setCentrePoint( centrePoint );
+                    boxOut.setCentrePoint( centrePointXY );
 
                     boxOut.setDimensions( 2 * arcRadii.Width, 2 * arcRadii.Height );
 
                     result := boxOut;
                 end;
+
+        //test for valid input angles
+            class function TGraphicArc.validArcAngles(const startAngleIn, endAngleIn : double) : boolean;
+                var
+                    startAngleNorm, endAngleNorm : double;
+                begin
+                    startAngleNorm  := normaliseAngle( startAngleIn );
+                    endAngleNorm    := normaliseAngle( endAngleIn );
+
+                    result := NOT(      SameValue( startAngleNorm, endAngleNorm, 1e-3 )
+                                    OR  SameValue( startAngleNorm, endAngleNorm + 360, 1e-3 )
+                                    OR  SameValue( startAngleNorm + 360, endAngleNorm, 1e-3 )   );
+                end;
+
 
 
 end.

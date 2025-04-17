@@ -171,10 +171,14 @@ implementation
                 //arc
                     GraphicDrawerInOut.setCurrentDrawingLayer('Arc Layer');
 
-                    GraphicDrawerInOut.addArc( -100, -125, 25, 25, 90, -90, 5 );
-                    GraphicDrawerInOut.addArc( 0, -125, 20, 20, 45, 360-45, 5 );
-                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 0, -90, 5 );
+                    GraphicDrawerInOut.addArc( -100, -125, 25, 25, 90, -90, True, 5, TColors.Red );
 
+                    GraphicDrawerInOut.addArc( 0, -125, 20, 20, 45, 360-45, True, 5, TColors.Yellow );
+                    GraphicDrawerInOut.addEllipse( 8, 8, 0, -114, True, 1, tcolors.Black );
+
+
+                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 0, -90, False, 5 );
+                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 350, -10 );
             end;
 
         procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
@@ -460,12 +464,18 @@ implementation
             line : TGeomLine;
         begin
             //concrete
+                GraphicDrawerInOut.setCurrentDrawingLayer('Concrete');
+
                 GraphicDrawerInOut.addRectangle( 450, 450, -450, 0, True, 2, 0, TColors.Lightgreen );
 
             //rebar
+                GraphicDrawerInOut.setCurrentDrawingLayer('Rebar');
+
                 GraphicDrawerInOut.addRectangle( 500, 16, -450, 75-8, True, 2, 0, TColors.Dodgerblue );
 
             //compressing stress
+                GraphicDrawerInOut.setCurrentDrawingLayer('Compression Stress');
+
                 line := TGeomLine.create();
 
                 line.setStartPoint( 5, 450 );
@@ -476,6 +486,8 @@ implementation
                 FreeAndNil( line );
 
             //rebar force
+                GraphicDrawerInOut.setCurrentDrawingLayer('Tension Force');
+
                 GraphicDrawerInOut.addArrow( 200, 0, TGeomPoint.create( 55, 75 ) );
         end;
 
