@@ -20,8 +20,7 @@ interface
                                             var borderPanelInOut    : TPanel    ); overload;
                 //border adjustment used for sizing the grid
                     function borderAdjustment() : integer;
-                //test if a row is empty
-                    function rowIsEmpty(const rowIndexIn : integer) : boolean;
+
             public
                 //check cell is empty string
                     function cellIsEmpty(const colIn, rowIn : integer) : boolean;
@@ -57,6 +56,9 @@ interface
                     //as a double
                         function tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
                         function cellToDouble(const colIn, rowIn : integer) : double;
+                //test if a col/row is empty
+                    function colIsEmpty(const colIndexIn : integer) : boolean;
+                    function rowIsEmpty(const rowIndexIn : integer) : boolean;
                 //resize the grid to its minimum extents
                     procedure minHeight();
                     procedure minWidth();
@@ -125,22 +127,6 @@ implementation
 
                     borderPanelInOut.BringToFront();
                     self.BringToFront();
-                end;
-
-        //test if a row is empty
-            function TStringGridHelper.rowIsEmpty(const rowIndexIn : integer) : boolean;
-                var
-                    colIndex : integer;
-                begin
-                    result := True;
-
-                    for colIndex := 0 to (ColCount - 1) do
-                        begin
-                            result := cellIsEmpty(colIndex, rowIndexIn);
-
-                            if (result = false) then
-                                break;
-                        end;
                 end;
 
     //public
@@ -343,6 +329,38 @@ implementation
 
                         result := valueOut;
                     end;
+
+        //test if a row is empty
+            function TStringGridHelper.colIsEmpty(const colIndexIn : integer) : boolean;
+                var
+                    rowIndex : integer;
+                begin
+                    result := True;
+
+                    for rowIndex := 0 to (ColCount - 1) do
+                        begin
+                            result := cellIsEmpty(colIndexIn, rowIndex);
+
+                            if (result = false) then
+                                break;
+                        end;
+                end;
+
+            function TStringGridHelper.rowIsEmpty(const rowIndexIn : integer) : boolean;
+                var
+                    colIndex : integer;
+                begin
+                    result := True;
+
+                    for colIndex := 0 to (ColCount - 1) do
+                        begin
+                            result := cellIsEmpty(colIndex, rowIndexIn);
+
+                            if (result = false) then
+                                break;
+                        end;
+                end;
+
 
         //resize the grid to its minimum extents
             procedure TStringGridHelper.minHeight();
