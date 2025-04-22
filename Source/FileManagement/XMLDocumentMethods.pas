@@ -229,12 +229,19 @@ implementation
                 begin
                     readSuccessful := tryReadValueFromXMLNode( XMLNodeIn, dataIdentifierIn, arrayTypeIn, readDataValue );
 
-                    dataIsArray := Pos( ARRAY_ELEMENT_DELIMITER, readDataValue ) > 1;
-
-                    if NOT( readSuccessful AND dataIsArray ) then
+                    if ( NOT( readSuccessful ) OR ( readDataValue = '' ) ) then
                         begin
                             SetLength( stringArrayOut, 0 );
                             exit( False );
+                        end;
+
+                    dataIsArray := Pos( ARRAY_ELEMENT_DELIMITER, readDataValue ) > 1;
+
+                    if NOT( dataIsArray ) then
+                        begin
+                            SetLength( stringArrayOut, 1 );
+                            stringArrayOut[0] := readDataValue;
+                            exit(True);
                         end;
 
                     stringArrayOut := SplitString( readDataValue, ARRAY_ELEMENT_DELIMITER );
