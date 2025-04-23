@@ -111,8 +111,7 @@ implementation
 
         function tryReadValueFromXMLNode(const XMLNodeIn : IXMLNode; const dataIdentifierIn, valueTypeIn : string; out valueOut : string) : boolean;
             var
-                nodeType        : string;
-                childDataNode   : IXMLNode;
+                childDataNode : IXMLNode;
             begin
                 //initialise value
                     valueOut := '';

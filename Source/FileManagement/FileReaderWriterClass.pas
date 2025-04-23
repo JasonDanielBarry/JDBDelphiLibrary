@@ -104,8 +104,7 @@ implementation
         //get an identifier's data type
             function TFileReaderWriter.getNodeType(const nodeIdentifierIn : string) : string;
                 var
-                    identifierExists    : boolean;
-                    itemNode            : IXMLNode;
+                    itemNode : IXMLNode;
                 begin
                     tryGetNode( nodeIdentifierIn, itemNode );
 

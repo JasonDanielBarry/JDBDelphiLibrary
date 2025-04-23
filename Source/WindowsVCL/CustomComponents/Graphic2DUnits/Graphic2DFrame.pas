@@ -423,7 +423,6 @@ implementation
                     CheckListBoxLayerTable.Items.Clear();
 
                     itemIndex := 0;
-                    tableHeight := 0;
 
                     for layer in arrDrawingLayers do
                         begin

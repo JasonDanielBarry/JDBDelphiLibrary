@@ -32,8 +32,8 @@ interface
                 //setup input controls
                     procedure setupInputControls(); virtual;
                 //reset controls
-                    procedure resetInputControls(); overload; virtual; abstract;
-                    class procedure resetInputControls(const arrInputManagerIn : TArray<TInputManager>); overload; static;
+                    procedure resetInputControls(); virtual;
+                    class procedure resetAllInputControls(const arrInputManagerIn : TArray<TInputManager>);  static;
                 //process input
                     //read input
                         function readFromInputControls() : boolean; virtual;
@@ -44,11 +44,6 @@ interface
                 //count errors
                     function errorCount() : integer;
                     class function countInputErrors(const arrInputManagerIn : TArray<TInputManager>) : integer; static;
-                //file management
-                    //read to file
-                        function readFromFile(const fileNameIn : string) : boolean; virtual; abstract;
-                    //save to file
-                        procedure saveToFile(const fileNameIn : string); virtual; abstract;
         end;
 
 implementation
@@ -133,7 +128,12 @@ implementation
                 end;
 
         //reset controls
-            class procedure TInputManager.resetInputControls(const arrInputManagerIn : TArray<TInputManager>);
+            procedure TInputManager.resetInputControls();
+                begin
+                    //do nothing
+                end;
+
+            class procedure TInputManager.resetAllInputControls(const arrInputManagerIn : TArray<TInputManager>);
                 var
                     inputManager : TInputManager;
                 begin
