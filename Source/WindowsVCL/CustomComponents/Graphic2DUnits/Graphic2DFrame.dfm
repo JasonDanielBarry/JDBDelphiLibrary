@@ -353,8 +353,8 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 0
-      Width = 36
-      Height = 15
+      Width = 141
+      Height = 24
       Margins.Left = 5
       Margins.Top = 0
       Margins.Right = 0
@@ -362,6 +362,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'X-Axis:'
       Layout = tlCenter
+      ExplicitWidth = 36
+      ExplicitHeight = 15
     end
     object EditXMin: TEdit
       Left = 0
@@ -377,12 +379,14 @@ object CustomGraphic2D: TCustomGraphic2D
     object LabelXBounds: TLabel
       Left = 56
       Top = 24
-      Width = 27
-      Height = 15
+      Width = 35
+      Height = 24
       Align = alClient
       Alignment = taCenter
       Caption = '< x <'
       Layout = tlCenter
+      ExplicitWidth = 27
+      ExplicitHeight = 15
     end
     object EditXMax: TEdit
       Left = 91
@@ -399,8 +403,8 @@ object CustomGraphic2D: TCustomGraphic2D
       AlignWithMargins = True
       Left = 5
       Top = 48
-      Width = 36
-      Height = 15
+      Width = 141
+      Height = 24
       Margins.Left = 5
       Margins.Top = 0
       Margins.Right = 0
@@ -408,6 +412,8 @@ object CustomGraphic2D: TCustomGraphic2D
       Align = alClient
       Caption = 'Y-Axis:'
       Layout = tlCenter
+      ExplicitWidth = 36
+      ExplicitHeight = 15
     end
     object EditYMin: TEdit
       Left = 0
@@ -423,12 +429,14 @@ object CustomGraphic2D: TCustomGraphic2D
     object LabelYBounds: TLabel
       Left = 56
       Top = 72
-      Width = 28
-      Height = 15
+      Width = 35
+      Height = 24
       Align = alClient
       Alignment = taCenter
       Caption = '< y <'
       Layout = tlCenter
+      ExplicitWidth = 28
+      ExplicitHeight = 15
     end
     object EditYMax: TEdit
       Left = 91

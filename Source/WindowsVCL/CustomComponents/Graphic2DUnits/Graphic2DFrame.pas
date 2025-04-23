@@ -352,8 +352,8 @@ implementation
         //background colour
             procedure TCustomGraphic2D.setGraphicBackgroundColour();
                 begin
-                    //get the colour of the parent according to theme
-                        graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor(TStyleColor.scPanel);
+                    //set the background colour according to the application theme
+                        graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
                 end;
 
         //components positions

@@ -5,7 +5,7 @@ interface
     uses
         Winapi.D2D1,
         system.UITypes,
-        Vcl.Direct2D, vcl.Graphics,
+        Vcl.Direct2D, vcl.Graphics, vcl.Themes,
         GeomBox,
         GraphicDrawingTypes,
         DrawingAxisConversionClass
@@ -68,14 +68,14 @@ implementation
                                     exit( False );
                                 end;
 
-                        canvasInOut.Brush.Color := fillColour;
+                        canvasInOut.Brush.Color := TStyleManager.ActiveStyle.GetSystemColor( fillColour );
                         canvasInOut.Brush.Style := TBrushStyle.bsSolid;
                     end;
 
             //line
                 procedure TGraphicObject.setLineProperties(var canvasInOut : TDirect2DCanvas);
                     begin
-                        canvasInOut.Pen.Color := lineColour;
+                        canvasInOut.Pen.Color := TStyleManager.ActiveStyle.GetSystemColor( lineColour );
                         canvasInOut.Pen.Style := lineStyle;
                         canvasInOut.Pen.Width := lineThickness;
                     end;

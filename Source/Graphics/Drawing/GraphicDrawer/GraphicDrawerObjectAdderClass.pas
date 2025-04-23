@@ -78,8 +78,8 @@ interface
                                             const   textStringIn        : string;
                                             const   textSizeIn          : integer = 9;
                                             const   textRotationAngleIn : double = 0;
-                                            const   textColourIn        : TColor = TColors.Black;
-                                            const   textFontStylesIn    : TFontStyles = []          );
+                                            const   textColourIn        : TColor = TColors.SysWindowText;
+                                            const   textFontStylesIn    : TFontStyles = []                  );
                     //groups
                         //arrow
                             procedure addArrow( const   arrowLengthIn,
@@ -278,8 +278,8 @@ implementation
                                                             const   textStringIn        : string;
                                                             const   textSizeIn          : integer = 9;
                                                             const   textRotationAngleIn : double = 0;
-                                                            const   textColourIn        : TColor = TColors.Black;
-                                                            const   textFontStylesIn    : TFontStyles = []      );
+                                                            const   textColourIn        : TColor = TColors.SysWindowText;
+                                                            const   textFontStylesIn    : TFontStyles = []              );
                     var
                         textTopLeftPoint    : TGeomPoint;
                         newGraphicText      : TGraphicText;

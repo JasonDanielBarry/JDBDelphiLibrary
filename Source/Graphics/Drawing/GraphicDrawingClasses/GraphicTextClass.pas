@@ -5,9 +5,7 @@ interface
     uses
         Winapi.D2D1,
         system.SysUtils, system.Types,
-
-        Vcl.Direct2D,
-        vcl.Graphics,
+        Vcl.Direct2D, vcl.Graphics, vcl.Themes,
         GeometryTypes,
         GeomBox,
         GraphicDrawingTypes,
@@ -50,7 +48,7 @@ implementation
             begin
                 //set font properties
                     canvasInOut.Font.size   := textSize;
-                    canvasInOut.Font.Color  := textColour;
+                    canvasInOut.Font.Color  := TStyleManager.ActiveStyle.GetSystemColor( textColour );
                     canvasInOut.Font.Name   := 'Segoe UI';
                     canvasInOut.Font.Style  := textFontStyles;
                     canvasInOut.Brush.Style := TBrushStyle.bsClear;
