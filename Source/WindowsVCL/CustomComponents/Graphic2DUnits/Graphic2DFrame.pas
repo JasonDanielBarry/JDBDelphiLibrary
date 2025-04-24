@@ -550,16 +550,16 @@ implementation
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
-                    mouseInputRequiresRedraw    : boolean;
-                    currentMousePosition        : TPoint;
+                    mouseInputRequiresRedraw        : boolean;
+                    currentMousePositionOnPaintbox  : TPoint;
                 begin
                     //drawing graphic-----------------------------------------------------------------------------------------------
                         //update the mouse position
                             if (messageInOut.Msg = WM_MOUSEMOVE) then
-                                currentMousePosition := PaintBoxGraphic.ScreenToClient( mouse.CursorPos );
+                                currentMousePositionOnPaintbox := PaintBoxGraphic.ScreenToClient( mouse.CursorPos );
 
                         //process windows message in axis converter
-                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePosition );
+                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePositionOnPaintbox );
 
                         //render image off screen
                             if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then
