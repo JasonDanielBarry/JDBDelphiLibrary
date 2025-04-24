@@ -1,4 +1,4 @@
-unit Graphic2DTypes;
+unit Drawer2DTypes;
 
 interface
 

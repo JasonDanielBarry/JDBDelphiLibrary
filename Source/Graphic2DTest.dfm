@@ -28,7 +28,6 @@ object Form1: TForm1
     ShowCaption = False
     ShowHint = True
     TabOrder = 0
-    OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
   end
   object PanelTop: TPanel
     Left = 0

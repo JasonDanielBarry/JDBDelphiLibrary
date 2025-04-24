@@ -15,4 +15,5 @@
 ..\JDBDelphiLibrary\Source\WindowsVCL;
 ..\JDBDelphiLibrary\Source\WindowsVCL\HelperClasses;
 ..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents;
+..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Drawer2DUnits;
 ..\JDBDelphiLibrary\Source\WindowsVCL\CustomComponents\Graphic2DUnits;

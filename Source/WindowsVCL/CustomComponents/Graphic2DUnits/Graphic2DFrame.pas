@@ -8,12 +8,12 @@ interface
         System.SysUtils, System.Variants, System.Classes, system.Types, system.UITypes,
         system.UIConsts, system.Threading, system.Math, system.Diagnostics, System.Actions,
         Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Skia,
-        Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes,
+        Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes, Vcl.CheckLst,
         GeneralComponentHelperMethods,
-        ColourMethods,
         GeometryTypes, GeomBox,
         GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
-        Graphic2DTypes, Vcl.CheckLst
+        Drawer2DTypes,
+        Drawer2DFrame
         ;
 
     type
@@ -99,6 +99,9 @@ interface
                     currentGraphicBuffer            : TBitmap;
                     D2DGraphicDrawer                : TDirect2DGraphicDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
+
+                    drawer2D                        : TCustomDrawer2D;
+
                 //axis Settings
                     procedure updateAxisSettingsValues();
                     procedure writeAxisSettingsValuesToAxisConverter();
@@ -584,7 +587,10 @@ implementation
         //constructor
             constructor TCustomGraphic2D.create(AOwner : TComponent);
                 begin
-                    inherited create(AOwner);
+                    inherited create( AOwner );
+
+                    drawer2D := TCustomDrawer2D.Create( self );
+                    drawer2D.Visible := False;
 
                     //create required classes
                         currentGraphicBuffer    := TBitmap.create();

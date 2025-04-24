@@ -42,7 +42,7 @@ uses
   CustomComponentRegistrationUnit in 'Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas',
   Graphic2DComponent in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DComponent.pas',
   Graphic2DFrame in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DFrame.pas' {CustomGraphic2D: TFrame},
-  Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
+  Drawer2DTypes in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   StringGridHelperClass in 'Source\WindowsVCL\HelperClasses\StringGridHelperClass.pas',
   ColourMethods in 'Source\Graphics\ColourMethods.pas',
