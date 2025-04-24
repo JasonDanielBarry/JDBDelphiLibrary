@@ -13,7 +13,7 @@ interface
         GeometryTypes, GeomBox,
         GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
         Drawer2DTypes,
-        Drawer2DFrame
+        Drawer2DPaintBoxClass
         ;
 
     type
@@ -70,12 +70,12 @@ interface
             ActionEditLayerTable: TAction;
             SpeedButtonLayerTable: TSpeedButton;
             EditLayerTable1: TMenuItem;
-            PaintBoxGraphic: TPaintBox;
+            PBDrawer2D: TPaintBox;
+            N4: TMenuItem;
+            ActionShowHideControls: TAction;
+            ShowToolbar1: TMenuItem;
             //events
-                procedure PaintBoxGraphicPaint(Sender: TObject);
                 procedure ComboBoxZoomPercentChange(Sender: TObject);
-                procedure PaintBoxGraphicMouseEnter(Sender: TObject);
-                procedure PaintBoxGraphicMouseLeave(Sender: TObject);
                 procedure FrameResize(Sender: TObject);
                 procedure ActionRecentreExecute(Sender: TObject);
                 procedure ActionZoomExtentsExecute(Sender: TObject);
@@ -90,23 +90,15 @@ interface
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
                 procedure ActionEditLayerTableExecute(Sender: TObject);
                 procedure CheckListBoxLayerTableClick(Sender: TObject);
+    procedure ActionShowHideControlsExecute(Sender: TObject);
             private
                 var
                     axisSettingsVisible,
                     layerTableVisible,
-                    mustRedrawGraphic               : boolean;
-                    graphicBackgroundColour         : TColor;
-                    currentGraphicBuffer            : TBitmap;
-                    D2DGraphicDrawer                : TDirect2DGraphicDrawer;
-                    onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
-
-                    drawer2D                        : TCustomDrawer2D;
-
+                    toolbarVisible      : boolean;
                 //axis Settings
                     procedure updateAxisSettingsValues();
                     procedure writeAxisSettingsValuesToAxisConverter();
-                //background colour
-                    procedure setGraphicBackgroundColour();
                 //components positions
                     procedure positionComponents();
                 //layer table
@@ -114,14 +106,9 @@ interface
                     procedure updateLayerTable();
                 //mouse methods
                     procedure updateMouseCoordinatesLabel();
-                    procedure setMouseCursor(const messageIn : TMessage);
                 //zooming methods
                     procedure updateZoomPercentage();
             protected
-                //drawing procedures
-                    procedure preDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
-                    procedure postDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
-                    procedure updateGraphicBuffer();
                 //process windows messages
                     procedure wndProc(var messageInOut : TMessage); override;
             public
@@ -146,24 +133,6 @@ implementation
 {$R *.dfm}
 
     //events
-        procedure TCustomGraphic2D.PaintBoxGraphicPaint(Sender: TObject);
-            begin
-                //draw buffer to screen
-                    PaintBoxGraphic.Canvas.Draw( 0, 0, currentGraphicBuffer );
-
-                mustRedrawGraphic := False;
-            end;
-
-        procedure TCustomGraphic2D.PaintBoxGraphicMouseEnter(Sender: TObject);
-            begin
-                D2DGraphicDrawer.activateMouseControl();
-            end;
-
-        procedure TCustomGraphic2D.PaintBoxGraphicMouseLeave(Sender: TObject);
-            begin
-                D2DGraphicDrawer.deactivateMouseControl();
-            end;
-
         procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
             begin
                 sendActiveLayersToGraphicDrawer();
@@ -181,7 +150,7 @@ implementation
                     newZoomPercent := 1;
                 end;
 
-                D2DGraphicDrawer.setZoom( newZoomPercent );
+                PBDrawer2D.GraphicDrawer.setZoom( newZoomPercent );
 
                 redrawGraphic();
             end;
@@ -246,37 +215,46 @@ implementation
 
         procedure TCustomGraphic2D.ActionPanDownExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.shiftRange( 10 );
+                PBDrawer2D.GraphicDrawer.shiftRange( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanLeftExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.shiftDomain( 10 );
+                PBDrawer2D.GraphicDrawer.shiftDomain( 10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanRightExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.shiftDomain( -10 );
+                PBDrawer2D.GraphicDrawer.shiftDomain( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionPanUpExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.shiftRange( -10 );
+                PBDrawer2D.GraphicDrawer.shiftRange( -10 );
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionRecentreExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.recentre();
+                PBDrawer2D.GraphicDrawer.recentre();
 
                 redrawGraphic();
+            end;
+
+        procedure TCustomGraphic2D.ActionShowHideControlsExecute(Sender: TObject);
+            begin
+                toolbarVisible := NOT( toolbarVisible );
+
+                PanelGraphicControls.Visible    := toolbarVisible;
+                ShowToolbar1.Checked            := toolbarVisible;
+                GridPanelDirectionalPan.Visible := toolbarVisible;
             end;
 
         procedure TCustomGraphic2D.ActionUpdateGeometryExecute(Sender: TObject);
@@ -291,14 +269,14 @@ implementation
 
         procedure TCustomGraphic2D.ActionZoomInExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.zoomIn(10);
+                PBDrawer2D.GraphicDrawer.zoomIn(10);
 
                 redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionZoomOutExecute(Sender: TObject);
             begin
-                D2DGraphicDrawer.zoomOut(10);
+                PBDrawer2D.GraphicDrawer.zoomOut(10);
 
                 redrawGraphic();
             end;
@@ -316,7 +294,7 @@ implementation
                 var
                     drawingRegion : TGeomBox;
                 begin
-                    drawingRegion := D2DGraphicDrawer.getDrawingRegion();
+                    drawingRegion := PBDrawer2D.GraphicDrawer.getDrawingRegion();
 
                     EditXMin.Text := FloatToStrF( drawingRegion.xMin, ffFixed, 5, 2 );
                     EditXMax.Text := FloatToStrF( drawingRegion.xMax, ffFixed, 5, 2 );
@@ -347,26 +325,20 @@ implementation
                         newDrawingRegion.minPoint.z := 0;
                         newDrawingRegion.maxPoint.z := 0;
 
-                        D2DGraphicDrawer.setDrawingRegion( 0, newDrawingRegion );
+                        PBDrawer2D.GraphicDrawer.setDrawingRegion( 0, newDrawingRegion );
 
                     redrawGraphic();
-                end;
-
-        //background colour
-            procedure TCustomGraphic2D.setGraphicBackgroundColour();
-                begin
-                    //set the background colour according to the application theme
-                        graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
                 end;
 
         //components positions
             procedure TCustomGraphic2D.positionComponents();
                 begin
-                    //axisSettings
+                    //axis settings
                         if (axisSettingsVisible) then
                             begin
                                 GridPanelAxisOptions.Left   := SpeedButtonAxisSettings.Left;
-                                GridPanelAxisOptions.Top    := PaintBoxGraphic.top + 1;
+                                GridPanelAxisOptions.Top    := PBDrawer2D.top + 1;
+                                GridPanelAxisOptions.BringToFront();
                                 GridPanelAxisOptions.Refresh();
                             end;
 
@@ -374,7 +346,8 @@ implementation
                         if (layerTableVisible) then
                             begin
                                 CheckListBoxLayerTable.Left := SpeedButtonLayerTable.left;
-                                CheckListBoxLayerTable.Top  := PanelGraphicControls.Height + 1;
+                                CheckListBoxLayerTable.Top  := PBDrawer2D.top + 1;
+                                CheckListBoxLayerTable.BringToFront();
                                 CheckListBoxLayerTable.Refresh();
                             end;
                 end;
@@ -411,7 +384,7 @@ implementation
                                 CheckListBoxLayerTable.Checked[0] := True;
                             end;
 
-                    D2DGraphicDrawer.setActiveDrawingLayers( arrActiveLayers );
+                    PBDrawer2D.GraphicDrawer.setActiveDrawingLayers( arrActiveLayers );
                 end;
 
             procedure TCustomGraphic2D.updateLayerTable();
@@ -421,7 +394,7 @@ implementation
                     layer               : string;
                     arrDrawingLayers    : TArray<string>;
                 begin
-                    arrDrawingLayers := D2DGraphicDrawer.getAllDrawingLayers();
+                    arrDrawingLayers := PBDrawer2D.GraphicDrawer.getAllDrawingLayers();
 
                     CheckListBoxLayerTable.Items.Clear();
 
@@ -450,37 +423,17 @@ implementation
                     mouseCoordStr   : string;
                     mousePointXY    : TGeomPoint;
                 begin
-                    if (NOT( D2DGraphicDrawer.getMouseControlActive() )) then
+                    if (NOT( PBDrawer2D.GraphicDrawer.getMouseControlActive() )) then
                         exit();
 
                     //convert mouse position to XY coordinate
-                        mousePointXY := D2DGraphicDrawer.getMouseCoordinatesXY();
+                        mousePointXY := PBDrawer2D.GraphicDrawer.getMouseCoordinatesXY();
 
                         mouseCoordStr := '(' + FloatToStrF(mousePointXY.x, ffFixed, 5, 2) + ', ' + FloatToStrF(mousePointXY.y, ffFixed, 5, 2) + ')';
 
                     //write to label
+                        labelCoords.BringToFront();
                         labelCoords.Caption := mouseCoordStr;
-                end;
-
-            procedure TCustomGraphic2D.setMouseCursor(const messageIn : TMessage);
-                begin
-                    //if the graphic drawer is nil then nothing can happen
-                        if ( NOT(Assigned(D2DGraphicDrawer)) ) then
-                            exit();
-
-                    //set the cursor based on the user input
-                        if ( NOT(D2DGraphicDrawer.getMouseControlActive()) ) then
-                            begin
-                                PaintBoxGraphic.Cursor := crDefault;
-                                exit();
-                            end;
-
-                        case (messageIn.Msg) of
-                            WM_MBUTTONDOWN:
-                                PaintBoxGraphic.Cursor := crSizeAll;
-                            WM_MBUTTONUP:
-                                PaintBoxGraphic.Cursor := crDefault;
-                        end;
                 end;
 
         //zooming methods
@@ -488,97 +441,31 @@ implementation
                 var
                     currentZoomPercentage : double;
                 begin
-                    currentZoomPercentage := D2DGraphicDrawer.getCurrentZoomPercentage();
+                    currentZoomPercentage := PBDrawer2D.GraphicDrawer.getCurrentZoomPercentage();
                     ComboBoxZoomPercent.Text := FloatToStrF( currentZoomPercentage, ffNumber, 5, 0 );
                 end;
 
     //protected
-        //drawing procedures
-            procedure TCustomGraphic2D.preDrawGraphic(const canvasIn : TDirect2DCanvas);
-                begin
-                    //nothing here
-                end;
-
-            procedure TCustomGraphic2D.postDrawGraphic(const canvasIn : TDirect2DCanvas);
-                begin
-                    //draw a border around the paintbox edge
-                        canvasIn.brush.Color := TColors.Silver;
-                        canvasIn.brush.Style := TBrushStyle.bsSolid;
-
-                        canvasIn.FrameRect(
-                                                Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height)
-                                          );
-                end;
-
-            procedure TCustomGraphic2D.updateGraphicBuffer();
-                var
-                    D2DBufferCanvas : TDirect2DCanvas;
-                begin
-                    //create new D2D canvas for new drawing
-                        currentGraphicBuffer.SetSize( PaintBoxGraphic.Width, PaintBoxGraphic.Height );
-
-                        D2DBufferCanvas := TDirect2DCanvas.Create( currentGraphicBuffer.Canvas, Rect(0, 0, PaintBoxGraphic.Width, PaintBoxGraphic.Height) );
-
-                        D2DBufferCanvas.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
-
-                        D2DBufferCanvas.RenderTarget.SetTextAntialiasMode( TD2D1TextAntiAliasMode.D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE );
-
-                    //draw to the D2D canvas
-                        D2DBufferCanvas.BeginDraw();
-
-                            //preDrawGraphic( D2DBufferCanvas );
-
-                            D2DGraphicDrawer.drawAll(
-                                                        PaintBoxGraphic.Width,
-                                                        PaintBoxGraphic.Height,
-                                                        graphicBackgroundColour,
-                                                        D2DBufferCanvas
-                                                    );
-
-                            //postDrawGraphic( D2DBufferCanvas );
-
-                        D2DBufferCanvas.EndDraw();
-
-                    //update relevate properties
-                        updateZoomPercentage();
-
-                        updateAxisSettingsValues();
-
-                        mustRedrawGraphic := True;
-
-                    //free the D2D canvas
-                        FreeAndNil( D2DBufferCanvas );
-                end;
-
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
                     mouseInputRequiresRedraw        : boolean;
                     currentMousePositionOnPaintbox  : TPoint;
                 begin
-                    //drawing graphic-----------------------------------------------------------------------------------------------
-                        //update the mouse position
-                            if (messageInOut.Msg = WM_MOUSEMOVE) then
-                                currentMousePositionOnPaintbox := PaintBoxGraphic.ScreenToClient( mouse.CursorPos );
+                    if ( Assigned( PBDrawer2D ) ) then
+                        begin
+                            //drawing messages
+                                PBDrawer2D.processWindowsMessages( messageInOut );
 
-                        //process windows message in axis converter
-                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePositionOnPaintbox );
+                            //update mouse XY coordinates
+                                if (messageInOut.Msg = WM_MOUSEMOVE) then
+                                    updateMouseCoordinatesLabel();
 
-                        //render image off screen
-                            if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then
-                                updateGraphicBuffer();
+                            //update relevate properties
+                                updateZoomPercentage();
 
-                        //paint rendered image to screen
-                            if (mustRedrawGraphic) then
-                                PaintBoxGraphic.Repaint();
-                    //--------------------------------------------------------------------------------------------------------------
-
-                    //set the cursor to drag or default
-                        setMouseCursor( messageInOut );
-
-                    //update mouse XY coordinates
-                        if (messageInOut.Msg = WM_MOUSEMOVE) then
-                            updateMouseCoordinatesLabel();
+                                updateAxisSettingsValues();
+                        end;
 
                     inherited wndProc(messageInOut);
                 end;
@@ -589,17 +476,17 @@ implementation
                 begin
                     inherited create( AOwner );
 
-                    drawer2D := TCustomDrawer2D.Create( self );
-                    drawer2D.Visible := False;
 
-                    //create required classes
-                        currentGraphicBuffer    := TBitmap.create();
-                        D2DGraphicDrawer        := TDirect2DGraphicDrawer.create();
 
                     //set up graphic controls
+                        //tool bar
+                            toolbarVisible := True;
+                            PanelGraphicControls.Visible := toolbarVisible;
+                            ShowToolbar1.Checked := toolbarVisible;
+
                         //coordinates label
                             labelCoords.Left := labelCoords.Height div 2;
-                            labelCoords.top := PanelGraphicControls.Height + PaintBoxGraphic.Height - 3 * labelCoords.Height div 2;
+                            labelCoords.top := PanelGraphicControls.Height + PBDrawer2D.Height - 3 * labelCoords.Height div 2;
 
                         //direction pan
                             GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width;
@@ -617,67 +504,40 @@ implementation
                             CheckListBoxLayerTable.Visible  := layerTableVisible;
                             SpeedButtonLayerTable.down      := layerTableVisible;
                             CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
-
-                        //paint box
-                            PaintBoxGraphic.SendToBack();
-
-                        //mouse coodinates label
-                            labelCoords.BringToFront();
-
-                    //for design time to ensure the colour is not black on the form builder
-                        setGraphicBackgroundColour();
                 end;
 
         //destructor
             destructor TCustomGraphic2D.destroy();
                 begin
-                    FreeAndNil( currentGraphicBuffer );
-                    FreeAndNil( D2DGraphicDrawer );
-
                     inherited destroy();
                 end;
 
         //accessors
             function TCustomGraphic2D.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 begin
-                    result := onGraphicUpdateGeometryEvent;
+                    result := PBDrawer2D.getOnGraphicUpdateGeometryEvent();
                 end;
 
         //modifiers
             procedure TCustomGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 begin
-                    onGraphicUpdateGeometryEvent := graphicDrawEventIn;
+                    PBDrawer2D.setOnGraphicUpdateGeometryEvent( graphicDrawEventIn );
                 end;
 
         //redraw the graphic
             procedure TCustomGraphic2D.redrawGraphic();
                 begin
-                    //this message is sent to wndProc where the graphic is updated and redrawn
-                        PostMessage( self.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
+                    PBDrawer2D.redrawGraphic();
                 end;
 
             procedure TCustomGraphic2D.updateBackgroundColour();
                 begin
-                    setGraphicBackgroundColour();
-                    redrawGraphic();
+                    PBDrawer2D.updateBackgroundColour();
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
                 begin
-                    setGraphicBackgroundColour();
-
-                    //reset the stored geometry
-                        D2DGraphicDrawer.resetDrawingGeometry();
-
-                    //update the D2DGraphicDrawer geometry
-                        if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
-                            onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
-
-                    //activate all drawing layers
-                        D2DGraphicDrawer.activateAllDrawingLayers();
-
-                    //send message to redraw
-                        redrawGraphic();
+                    PBDrawer2D.updateGeometry();
 
                     //do layer table
                         updateLayerTable();
@@ -687,7 +547,7 @@ implementation
             procedure TCustomGraphic2D.zoomAll();
                 begin
                     //make the drawing boundary the drawing region
-                        D2DGraphicDrawer.zoomAll();
+                        PBDrawer2D.GraphicDrawer.zoomAll();
 
                     redrawGraphic();
                 end;

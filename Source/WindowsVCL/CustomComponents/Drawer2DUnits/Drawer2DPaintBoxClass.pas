@@ -10,12 +10,13 @@ interface
 
         GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
         Drawer2DTypes
-
         ;
 
     type
-        TJDBDrawer2DPaintBox = class(TPaintBox)
+        TPaintBox = class(Vcl.ExtCtrls.TPaintBox)
             private
+                const
+                    WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
                     mustRedrawGraphic               : boolean;
                     graphicBackgroundColour         : TColor;
@@ -58,7 +59,7 @@ interface
 implementation
 
     //events
-        procedure TJDBDrawer2DPaintBox.PaintBoxDrawer2DPaint(Sender: TObject);
+        procedure TPaintBox.PaintBoxDrawer2DPaint(Sender: TObject);
             begin
                 //draw buffer to screen
                     self.Canvas.Draw( 0, 0, currentGraphicBuffer );
@@ -66,26 +67,26 @@ implementation
                 mustRedrawGraphic := False;
             end;
 
-        procedure TJDBDrawer2DPaintBox.PaintBoxGraphicMouseEnter(Sender: TObject);
+        procedure TPaintBox.PaintBoxGraphicMouseEnter(Sender: TObject);
             begin
                 D2DGraphicDrawer.activateMouseControl();
             end;
 
-        procedure TJDBDrawer2DPaintBox.PaintBoxGraphicMouseLeave(Sender: TObject);
+        procedure TPaintBox.PaintBoxGraphicMouseLeave(Sender: TObject);
             begin
                 D2DGraphicDrawer.deactivateMouseControl();
             end;
 
     //private
         //background colour
-            procedure TJDBDrawer2DPaintBox.setGraphicBackgroundColour();
+            procedure TPaintBox.setGraphicBackgroundColour();
                 begin
                     //set the background colour according to the application theme
                         graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
                 end;
 
         //mouse cursor
-            procedure TJDBDrawer2DPaintBox.setMouseCursor(const messageIn : TMessage);
+            procedure TPaintBox.setMouseCursor(const messageIn : TMessage);
                 begin
                     //if the graphic drawer is nil then nothing can happen
                         if ( NOT(Assigned(D2DGraphicDrawer)) ) then
@@ -107,7 +108,7 @@ implementation
                 end;
 
         //update buffer
-            procedure TJDBDrawer2DPaintBox.updateGraphicBuffer();
+            procedure TPaintBox.updateGraphicBuffer();
                 var
                     D2DBufferCanvas : TDirect2DCanvas;
                 begin
@@ -144,19 +145,19 @@ implementation
 
     //protected
         //drawing procedures
-            procedure TJDBDrawer2DPaintBox.preDrawGraphic(const canvasIn : TDirect2DCanvas);
+            procedure TPaintBox.preDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
                     //nothing here
                 end;
 
-            procedure TJDBDrawer2DPaintBox.postDrawGraphic(const canvasIn : TDirect2DCanvas);
+            procedure TPaintBox.postDrawGraphic(const canvasIn : TDirect2DCanvas);
                 begin
                     //nothing here
                 end;
 
     //public
         //constructor
-            constructor TJDBDrawer2DPaintBox.create(AOwner : TComponent);
+            constructor TPaintBox.create(AOwner : TComponent);
                 begin
                     inherited Create( AOwner );
 
@@ -168,10 +169,13 @@ implementation
                         self.OnPaint        := PaintBoxDrawer2DPaint;
                         self.OnMouseEnter   := PaintBoxGraphicMouseEnter;
                         self.OnMouseLeave   := PaintBoxGraphicMouseLeave;
+
+                    //for design time to ensure the colour is not black on the form builder
+                        setGraphicBackgroundColour();
                 end;
 
         //destructor
-            destructor TJDBDrawer2DPaintBox.destroy();
+            destructor TPaintBox.destroy();
                 begin
                     //free classes
                         FreeAndNil( currentGraphicBuffer );
@@ -181,33 +185,34 @@ implementation
                 end;
 
         //accessors
-            function TJDBDrawer2DPaintBox.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
+            function TPaintBox.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 begin
                     result := onGraphicUpdateGeometryEvent;
                 end;
 
         //modifiers
-            procedure TJDBDrawer2DPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+            procedure TPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 begin
                     onGraphicUpdateGeometryEvent := graphicDrawEventIn;
                 end;
 
         //redraw the graphic
-            procedure TJDBDrawer2DPaintBox.redrawGraphic();
+            procedure TPaintBox.redrawGraphic();
                 begin
                     //this message is sent to wndProc where the graphic is updated and redrawn
                         PostMessage( parent.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
                 end;
 
-            procedure TJDBDrawer2DPaintBox.updateBackgroundColour();
+            procedure TPaintBox.updateBackgroundColour();
                 begin
                     setGraphicBackgroundColour();
                     redrawGraphic();
                 end;
 
-            procedure TJDBDrawer2DPaintBox.updateGeometry();
+            procedure TPaintBox.updateGeometry();
                 begin
-                    setGraphicBackgroundColour();
+                    //set background to match theme
+                        setGraphicBackgroundColour();
 
                     //reset the stored geometry
                         D2DGraphicDrawer.resetDrawingGeometry();
@@ -224,7 +229,7 @@ implementation
                 end;
 
         //process windows messages
-            procedure TJDBDrawer2DPaintBox.processWindowsMessages(var messageInOut : TMessage);
+            procedure TPaintBox.processWindowsMessages(var messageInOut : TMessage);
                 var
                     mouseInputRequiresRedraw        : boolean;
                     currentMousePositionOnPaintbox  : TPoint;

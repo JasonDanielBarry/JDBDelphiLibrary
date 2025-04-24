@@ -8,21 +8,6 @@ object CustomGraphic2D: TCustomGraphic2D
   DesignSize = (
     1231
     736)
-  object PaintBoxGraphic: TPaintBox
-    Left = 0
-    Top = 23
-    Width = 1231
-    Height = 713
-    Align = alClient
-    PopupMenu = PopupMenuGraphicControls
-    OnMouseEnter = PaintBoxGraphicMouseEnter
-    OnMouseLeave = PaintBoxGraphicMouseLeave
-    OnPaint = PaintBoxGraphicPaint
-    ExplicitLeft = 464
-    ExplicitTop = 576
-    ExplicitWidth = 105
-    ExplicitHeight = 105
-  end
   object labelCoords: TLabel
     Left = 80
     Top = 576
@@ -31,9 +16,19 @@ object CustomGraphic2D: TCustomGraphic2D
     Anchors = [akLeft, akBottom]
     Caption = 'X, Y'
   end
+  object PBDrawer2D: TPaintBox
+    Left = 0
+    Top = 23
+    Width = 1231
+    Height = 713
+    Align = alClient
+    PopupMenu = PopupMenuGraphicControls
+    ExplicitLeft = 3
+    ExplicitTop = 26
+  end
   object GridPanelDirectionalPan: TGridPanel
-    Left = 1153
-    Top = 29
+    Left = 1158
+    Top = 26
     Width = 70
     Height = 70
     Anchors = [akTop, akRight]
@@ -539,6 +534,10 @@ object CustomGraphic2D: TCustomGraphic2D
       Hint = 'Toggle layers visible/hidden'
       OnExecute = ActionEditLayerTableExecute
     end
+    object ActionShowHideControls: TAction
+      Caption = 'Show Toolbar'
+      OnExecute = ActionShowHideControlsExecute
+    end
   end
   object PopupMenuGraphicControls: TPopupMenu
     Left = 400
@@ -584,6 +583,12 @@ object CustomGraphic2D: TCustomGraphic2D
     end
     object EditLayerTable1: TMenuItem
       Action = ActionEditLayerTable
+    end
+    object N4: TMenuItem
+      Caption = '-'
+    end
+    object ShowToolbar1: TMenuItem
+      Action = ActionShowHideControls
     end
   end
 end

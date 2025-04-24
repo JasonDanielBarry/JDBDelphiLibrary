@@ -73,7 +73,6 @@ uses
   GraphicArrowClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowClass.pas',
   GraphicArrowGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowGroupClass.pas',
   GraphicArcClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicArcClass.pas',
-  Drawer2DFrame in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DFrame.pas' {CustomDrawer2D: TFrame},
   Drawer2DPaintBoxClass in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DPaintBoxClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
