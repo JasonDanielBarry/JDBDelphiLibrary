@@ -102,6 +102,7 @@ implementation
                         case (messageIn.Msg) of
                             WM_MBUTTONDOWN:
                                 self.Cursor := crSizeAll;
+
                             WM_MBUTTONUP:
                                 self.Cursor := crDefault;
                         end;
