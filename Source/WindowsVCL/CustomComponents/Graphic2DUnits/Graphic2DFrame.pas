@@ -679,9 +679,6 @@ implementation
                     //send message to redraw
                         redrawGraphic();
 
-                    //must ensure that geometry is updated to draw
-                        Application.ProcessMessages();
-
                     //do layer table
                         updateLayerTable();
                 end;

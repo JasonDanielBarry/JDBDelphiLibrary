@@ -1,0 +1,253 @@
+unit Drawer2DPaintBoxClass;
+
+interface
+
+    uses
+        Vcl.Direct2D, Winapi.D2D1,
+        Winapi.Windows, Winapi.Messages,
+        System.SysUtils, System.Classes,
+        Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Themes,
+
+        GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
+        Drawer2DTypes
+
+        ;
+
+    type
+        TJDBDrawer2DPaintBox = class(TPaintBox)
+            private
+                var
+                    mustRedrawGraphic               : boolean;
+                    graphicBackgroundColour         : TColor;
+                    currentGraphicBuffer            : TBitmap;
+                    D2DGraphicDrawer                : TDirect2DGraphicDrawer;
+                    onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
+                //events
+                    procedure PaintBoxDrawer2DPaint(Sender: TObject);
+                    procedure PaintBoxGraphicMouseEnter(Sender: TObject);
+                    procedure PaintBoxGraphicMouseLeave(Sender: TObject);
+                //background colour
+                    procedure setGraphicBackgroundColour();
+                //mouse cursor
+                    procedure setMouseCursor(const messageIn : TMessage);
+                //update buffer
+                    procedure updateGraphicBuffer();
+            protected
+                //drawing procedures
+                    procedure preDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
+                    procedure postDrawGraphic(const canvasIn : TDirect2DCanvas); virtual;
+            public
+                //constructor
+                    constructor create(AOwner : TComponent); override;
+                //destructor
+                    destructor destroy(); override;
+                //accessors
+                    function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
+                //modifiers
+                    procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+                //redraw the graphic
+                    procedure redrawGraphic();
+                    procedure updateBackgroundColour();
+                    procedure updateGeometry();
+                //process windows messages
+                    procedure processWindowsMessages(var messageInOut : TMessage);
+                //access graphic drawer
+                    property GraphicDrawer : TDirect2DGraphicDrawer read D2DGraphicDrawer;
+        end;
+
+implementation
+
+    //events
+        procedure TJDBDrawer2DPaintBox.PaintBoxDrawer2DPaint(Sender: TObject);
+            begin
+                //draw buffer to screen
+                    self.Canvas.Draw( 0, 0, currentGraphicBuffer );
+
+                mustRedrawGraphic := False;
+            end;
+
+        procedure TJDBDrawer2DPaintBox.PaintBoxGraphicMouseEnter(Sender: TObject);
+            begin
+                D2DGraphicDrawer.activateMouseControl();
+            end;
+
+        procedure TJDBDrawer2DPaintBox.PaintBoxGraphicMouseLeave(Sender: TObject);
+            begin
+                D2DGraphicDrawer.deactivateMouseControl();
+            end;
+
+    //private
+        //background colour
+            procedure TJDBDrawer2DPaintBox.setGraphicBackgroundColour();
+                begin
+                    //set the background colour according to the application theme
+                        graphicBackgroundColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
+                end;
+
+        //mouse cursor
+            procedure TJDBDrawer2DPaintBox.setMouseCursor(const messageIn : TMessage);
+                begin
+                    //if the graphic drawer is nil then nothing can happen
+                        if ( NOT(Assigned(D2DGraphicDrawer)) ) then
+                            exit();
+
+                    //set the cursor based on the user input
+                        if ( NOT(D2DGraphicDrawer.getMouseControlActive()) ) then
+                            begin
+                                self.Cursor := crDefault;
+                                exit();
+                            end;
+
+                        case (messageIn.Msg) of
+                            WM_MBUTTONDOWN:
+                                self.Cursor := crSizeAll;
+                            WM_MBUTTONUP:
+                                self.Cursor := crDefault;
+                        end;
+                end;
+
+        //update buffer
+            procedure TJDBDrawer2DPaintBox.updateGraphicBuffer();
+                var
+                    D2DBufferCanvas : TDirect2DCanvas;
+                begin
+                    //create new D2D canvas for new drawing
+                        currentGraphicBuffer.SetSize( self.Width, self.Height );
+
+                        D2DBufferCanvas := TDirect2DCanvas.Create( currentGraphicBuffer.Canvas, Rect(0, 0, self.Width, self.Height) );
+
+                        D2DBufferCanvas.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
+
+                        D2DBufferCanvas.RenderTarget.SetTextAntialiasMode( TD2D1TextAntiAliasMode.D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE );
+
+                    //draw to the D2D canvas
+                        D2DBufferCanvas.BeginDraw();
+
+                            //preDrawGraphic( D2DBufferCanvas );
+
+                            D2DGraphicDrawer.drawAll(
+                                                        self.Width,
+                                                        self.Height,
+                                                        graphicBackgroundColour,
+                                                        D2DBufferCanvas
+                                                    );
+
+                            //postDrawGraphic( D2DBufferCanvas );
+
+                        D2DBufferCanvas.EndDraw();
+
+                        mustRedrawGraphic := True;
+
+                    //free the D2D canvas
+                        FreeAndNil( D2DBufferCanvas );
+                end;
+
+    //protected
+        //drawing procedures
+            procedure TJDBDrawer2DPaintBox.preDrawGraphic(const canvasIn : TDirect2DCanvas);
+                begin
+                    //nothing here
+                end;
+
+            procedure TJDBDrawer2DPaintBox.postDrawGraphic(const canvasIn : TDirect2DCanvas);
+                begin
+                    //nothing here
+                end;
+
+    //public
+        //constructor
+            constructor TJDBDrawer2DPaintBox.create(AOwner : TComponent);
+                begin
+                    inherited Create( AOwner );
+
+                    //create required classes
+                        currentGraphicBuffer    := TBitmap.create();
+                        D2DGraphicDrawer        := TDirect2DGraphicDrawer.create();
+
+                    //assign events
+                        self.OnPaint        := PaintBoxDrawer2DPaint;
+                        self.OnMouseEnter   := PaintBoxGraphicMouseEnter;
+                        self.OnMouseLeave   := PaintBoxGraphicMouseLeave;
+                end;
+
+        //destructor
+            destructor TJDBDrawer2DPaintBox.destroy();
+                begin
+                    //free classes
+                        FreeAndNil( currentGraphicBuffer );
+                        FreeAndNil( D2DGraphicDrawer );
+
+                    inherited destroy();
+                end;
+
+        //accessors
+            function TJDBDrawer2DPaintBox.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
+                begin
+                    result := onGraphicUpdateGeometryEvent;
+                end;
+
+        //modifiers
+            procedure TJDBDrawer2DPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+                begin
+                    onGraphicUpdateGeometryEvent := graphicDrawEventIn;
+                end;
+
+        //redraw the graphic
+            procedure TJDBDrawer2DPaintBox.redrawGraphic();
+                begin
+                    //this message is sent to wndProc where the graphic is updated and redrawn
+                        PostMessage( parent.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
+                end;
+
+            procedure TJDBDrawer2DPaintBox.updateBackgroundColour();
+                begin
+                    setGraphicBackgroundColour();
+                    redrawGraphic();
+                end;
+
+            procedure TJDBDrawer2DPaintBox.updateGeometry();
+                begin
+                    setGraphicBackgroundColour();
+
+                    //reset the stored geometry
+                        D2DGraphicDrawer.resetDrawingGeometry();
+
+                    //update the D2DGraphicDrawer geometry
+                        if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
+                            onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
+
+                    //activate all drawing layers
+                        D2DGraphicDrawer.activateAllDrawingLayers();
+
+                    //send message to redraw
+                        redrawGraphic();
+                end;
+
+        //process windows messages
+            procedure TJDBDrawer2DPaintBox.processWindowsMessages(var messageInOut : TMessage);
+                var
+                    mouseInputRequiresRedraw        : boolean;
+                    currentMousePositionOnPaintbox  : TPoint;
+                begin
+                    //drawing graphic-----------------------------------------------------------------------------------------------
+                        //update the mouse position
+                            if (messageInOut.Msg = WM_MOUSEMOVE) then
+                                currentMousePositionOnPaintbox := self.ScreenToClient( mouse.CursorPos );
+
+                        //process windows message in axis converter
+                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePositionOnPaintbox );
+
+                        //render image off screen
+                            if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then
+                                updateGraphicBuffer();
+
+                        //paint rendered image to screen
+                            if (mustRedrawGraphic) then
+                                self.Repaint();
+                    //--------------------------------------------------------------------------------------------------------------
+
+                    //set the cursor to drag or default
+                        setMouseCursor( messageInOut );
+                end;
+
+end.
