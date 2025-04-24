@@ -21,6 +21,7 @@ type
                                             var AGeomDrawer : TGraphicDrawerObjectAdder );
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     //different graphics
         procedure BlueBoxGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
@@ -512,6 +513,11 @@ implementation
             self.UnlockDrawing();
         end;
 
+    procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+        begin
+            Action := TCloseAction.caFree;
+        end;
+
     procedure TForm1.FormShow(Sender: TObject);
         begin
             JDBGraphic2D1.updateGeometry();
@@ -536,3 +542,4 @@ implementation
         end;
 
 end.
+

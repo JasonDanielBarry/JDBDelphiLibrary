@@ -50,6 +50,7 @@ interface
                 //modifiers
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); override;
                     procedure setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
+                    procedure activateAllDrawingLayers();
                 //reset
                     procedure resetDrawingGeometry();
         end;
@@ -217,6 +218,15 @@ implementation
 
                     //calculate the bounding box for the reset zoom function
                         calculateNetBoundingBox();
+                end;
+
+            procedure TGraphicDrawerLayers.activateAllDrawingLayers();
+                var
+                    arrDrawingLayers : TArray<string>;
+                begin
+                    arrDrawingLayers := getAllDrawingLayers();
+
+                    setActiveDrawingLayers( arrDrawingLayers );
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects

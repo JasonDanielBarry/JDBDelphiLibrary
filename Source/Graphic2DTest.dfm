@@ -12,6 +12,7 @@ object Form1: TForm1
   Font.Name = 'Segoe UI'
   Font.Style = []
   ShowHint = True
+  OnClose = FormClose
   OnShow = FormShow
   TextHeight = 15
   object JDBGraphic2D1: TJDBGraphic2D

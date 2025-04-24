@@ -113,7 +113,7 @@ interface
                     procedure sendActiveLayersToGraphicDrawer();
                     procedure updateLayerTable();
                 //mouse methods
-                    procedure updateMouseCoordinates();
+                    procedure updateMouseCoordinatesLabel();
                     procedure setMouseCursor(const messageIn : TMessage);
                 //zooming methods
                     procedure updateZoomPercentage();
@@ -347,7 +347,7 @@ implementation
                         newDrawingRegion.minPoint.z := 0;
                         newDrawingRegion.maxPoint.z := 0;
 
-                        D2DGraphicDrawer.setDrawingRegion(0, newDrawingRegion);
+                        D2DGraphicDrawer.setDrawingRegion( 0, newDrawingRegion );
 
                     redrawGraphic();
                 end;
@@ -445,7 +445,7 @@ implementation
                 end;
 
         //mouse methods
-            procedure TCustomGraphic2D.updateMouseCoordinates();
+            procedure TCustomGraphic2D.updateMouseCoordinatesLabel();
                 var
                     mouseCoordStr   : string;
                     mousePointXY    : TGeomPoint;
@@ -578,7 +578,7 @@ implementation
 
                     //update mouse XY coordinates
                         if (messageInOut.Msg = WM_MOUSEMOVE) then
-                            updateMouseCoordinates();
+                            updateMouseCoordinatesLabel();
 
                     inherited wndProc(messageInOut);
                 end;
@@ -670,18 +670,20 @@ implementation
                         D2DGraphicDrawer.resetDrawingGeometry();
 
                     //update the D2DGraphicDrawer geometry
-                        if ( Assigned(onGraphicUpdateGeometryEvent) ) then
+                        if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
                             onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
 
-                    //do layer table
-                        updateLayerTable();
-                        sendActiveLayersToGraphicDrawer();
+                    //activate all drawing layers
+                        D2DGraphicDrawer.activateAllDrawingLayers();
 
                     //send message to redraw
                         redrawGraphic();
 
                     //must ensure that geometry is updated to draw
                         Application.ProcessMessages();
+
+                    //do layer table
+                        updateLayerTable();
                 end;
 
         //zooming methods

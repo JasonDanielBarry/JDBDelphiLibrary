@@ -10,6 +10,9 @@ object CustomDrawer2D: TCustomDrawer2D
     Width = 1524
     Height = 838
     Align = alClient
+    OnMouseEnter = PaintBoxGraphicMouseEnter
+    OnMouseLeave = PaintBoxGraphicMouseLeave
+    OnPaint = PaintBoxDrawer2DPaint
     ExplicitLeft = 448
     ExplicitTop = 408
     ExplicitWidth = 105
