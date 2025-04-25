@@ -174,7 +174,7 @@ implementation
                             exit();
 
                     //procedure must only run if mouse control is activated
-                        if ( NOT(mouseControlIsActive) ) then
+                        if NOT( mouseControlIsActive ) then
                             exit();
 
                     case (messageIn.Msg) of
@@ -192,7 +192,7 @@ implementation
 
                         WM_MOUSEWHEEL:
                             begin
-                                zoomRelativeToMouse(messageIn);
+                                zoomRelativeToMouse( messageIn );
                                 result := True;
                             end;
 

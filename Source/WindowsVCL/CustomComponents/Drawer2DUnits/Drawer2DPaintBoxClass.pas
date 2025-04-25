@@ -23,6 +23,7 @@ interface
                     currentGraphicBuffer            : TBitmap;
                     D2DGraphicDrawer                : TDirect2DGraphicDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
+                    callingControl                  : TWinControl;
                 //events
                     procedure PaintBoxDrawer2DPaint(Sender: TObject);
                     procedure PaintBoxGraphicMouseEnter(Sender: TObject);
@@ -46,6 +47,7 @@ interface
                     function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 //modifiers
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+                    procedure setCallingControl(const controlIn : TWinControl);
                 //redraw the graphic
                     procedure redrawGraphic();
                     procedure updateBackgroundColour();
@@ -58,26 +60,26 @@ interface
 
 implementation
 
-    //events
-        procedure TPaintBox.PaintBoxDrawer2DPaint(Sender: TObject);
-            begin
-                //draw buffer to screen
-                    self.Canvas.Draw( 0, 0, currentGraphicBuffer );
-
-                mustRedrawGraphic := False;
-            end;
-
-        procedure TPaintBox.PaintBoxGraphicMouseEnter(Sender: TObject);
-            begin
-                D2DGraphicDrawer.activateMouseControl();
-            end;
-
-        procedure TPaintBox.PaintBoxGraphicMouseLeave(Sender: TObject);
-            begin
-                D2DGraphicDrawer.deactivateMouseControl();
-            end;
-
     //private
+        //events
+            procedure TPaintBox.PaintBoxDrawer2DPaint(Sender: TObject);
+                begin
+                    //draw buffer to screen
+                        self.Canvas.Draw( 0, 0, currentGraphicBuffer );
+
+                    mustRedrawGraphic := False;
+                end;
+
+            procedure TPaintBox.PaintBoxGraphicMouseEnter(Sender: TObject);
+                begin
+                    D2DGraphicDrawer.activateMouseControl();
+                end;
+
+            procedure TPaintBox.PaintBoxGraphicMouseLeave(Sender: TObject);
+                begin
+                    D2DGraphicDrawer.deactivateMouseControl();
+                end;
+
         //background colour
             procedure TPaintBox.setGraphicBackgroundColour();
                 begin
@@ -197,11 +199,17 @@ implementation
                     onGraphicUpdateGeometryEvent := graphicDrawEventIn;
                 end;
 
+            procedure TPaintBox.setCallingControl(const controlIn : TWinControl);
+                begin
+                    callingControl := controlIn;
+                end;
+
         //redraw the graphic
             procedure TPaintBox.redrawGraphic();
                 begin
-                    //this message is sent to wndProc where the graphic is updated and redrawn
-                        PostMessage( parent.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
+                    //this message is sent to callingControl.wndProc where the graphic is updated and redrawn
+                    //callingControl must be set during creation
+                        PostMessage( callingControl.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
                 end;
 
             procedure TPaintBox.updateBackgroundColour();

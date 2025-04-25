@@ -90,7 +90,7 @@ interface
                 procedure EditAxisValueKeyPress(Sender: TObject; var Key: Char);
                 procedure ActionEditLayerTableExecute(Sender: TObject);
                 procedure CheckListBoxLayerTableClick(Sender: TObject);
-    procedure ActionShowHideControlsExecute(Sender: TObject);
+                procedure ActionShowHideControlsExecute(Sender: TObject);
             private
                 var
                     axisSettingsVisible,
@@ -476,21 +476,19 @@ implementation
                 begin
                     inherited create( AOwner );
 
-
-
                     //set up graphic controls
                         //tool bar
-                            toolbarVisible := True;
-                            PanelGraphicControls.Visible := toolbarVisible;
-                            ShowToolbar1.Checked := toolbarVisible;
+                            toolbarVisible                  := True;
+                            PanelGraphicControls.Visible    := toolbarVisible;
+                            ShowToolbar1.Checked            := toolbarVisible;
 
                         //coordinates label
-                            labelCoords.Left := labelCoords.Height div 2;
-                            labelCoords.top := PanelGraphicControls.Height + PBDrawer2D.Height - 3 * labelCoords.Height div 2;
+                            labelCoords.Left    := labelCoords.Height div 2;
+                            labelCoords.top     := PanelGraphicControls.Height + PBDrawer2D.Height - 3 * labelCoords.Height div 2;
 
                         //direction pan
-                            GridPanelDirectionalPan.Left := PanelGraphicControls.Width - GridPanelDirectionalPan.Width;
-                            GridPanelDirectionalPan.top := PanelGraphicControls.Height;
+                            GridPanelDirectionalPan.Left    := PanelGraphicControls.Width - GridPanelDirectionalPan.Width;
+                            GridPanelDirectionalPan.top     := PanelGraphicControls.Height;
                             GridPanelDirectionalPan.BringToFront();
 
                         //axis settings
@@ -504,6 +502,8 @@ implementation
                             CheckListBoxLayerTable.Visible  := layerTableVisible;
                             SpeedButtonLayerTable.down      := layerTableVisible;
                             CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
+
+                        PBDrawer2D.setCallingControl( self );
                 end;
 
         //destructor
