@@ -24,13 +24,13 @@ interface
                     procedure checkForInputErrors(); virtual;
                 //set error list box width
                     procedure setListBoxErrorsWidth(const widthIn : integer);
+                //setup input controls
+                    procedure setupInputControls(); virtual;
             public
                 //constructor
                     constructor create(const errorListBoxIn : TListBox);
                 //destructor
                     destructor destroy(); override;
-                //setup input controls
-                    procedure setupInputControls(); virtual;
                 //reset controls
                     procedure resetInputControls(); virtual;
                     class procedure resetAllInputControls(const arrInputManagerIn : TArray<TInputManager>);  static;
@@ -95,6 +95,13 @@ implementation
                     ListBoxErrors.Width := widthIn;
                 end;
 
+        //setup input controls
+            procedure TInputManager.setupInputControls();
+                begin
+                    //set list box initially to non visible
+                        ListBoxErrors.Visible := False;
+                end;
+
     //public
         //constructor
             constructor TInputManager.create(const errorListBoxIn : TListBox);
@@ -118,13 +125,6 @@ implementation
                     FreeAndNil( errorList );
 
                     inherited destroy();
-                end;
-
-        //setup input controls
-            procedure TInputManager.setupInputControls();
-                begin
-                    //set list box initially to non visible
-                        ListBoxErrors.Visible := False;
                 end;
 
         //reset controls

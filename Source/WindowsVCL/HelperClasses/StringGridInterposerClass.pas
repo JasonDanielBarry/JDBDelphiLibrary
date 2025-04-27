@@ -1,27 +1,31 @@
-unit StringGridHelperClass;
+unit StringGridInterposerClass;
 
 interface
 
     uses
         Winapi.Windows,
-        System.SysUtils, system.Math, system.Types, system.UITypes, system.Generics.Collections,
+        System.SysUtils, system.Math, system.Types, system.UITypes, system.Generics.Collections, System.Classes,
         vcl.Controls, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids;
 
     type
-        TStringGridHelper = class helper for TStringGrid
+        TStringGrid = class(Vcl.grids.TStringGrid)
             private
+                var
+                    borderPanel : TPanel;
                 //border panel name
                     function getBorderPanelName() : string;
-                //get border panel
-                    function getBorderPanel() : TPanel;
                 //edit a border's properties
                     procedure editBorder(   const edgeWidthIn       : integer;
                                             const colourIn          : TColor;
-                                            var borderPanelInOut    : TPanel    ); overload;
+                                            var borderPanelInOut    : TPanel    );
                 //border adjustment used for sizing the grid
                     function borderAdjustment() : integer;
 
             public
+                //constructor
+                    constructor create(AOwner: TComponent); override;
+                //destructor
+                    destructor destroy(); override;
                 //check cell is empty string
                     function cellIsEmpty(const colIn, rowIn : integer) : boolean;
                 //clear a grid of its contents
@@ -35,10 +39,8 @@ interface
                         procedure clearRows(const startRowIndexIn : integer = 0);
                     procedure clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
                 //create border
-                    procedure createBorder( const edgeWidthIn   : integer;
-                                            const colourIn      : TColor    );
-                    procedure editBorder(   const edgeWidthIn   : integer;
-                                            const colourIn      : TColor    ); overload;
+                    procedure setBorderProperties(  const edgeWidthIn   : integer;
+                                                    const colourIn      : TColor    );
                 //row deletion
                     //delete a grid row
                         procedure deleteRow(const rowIndexIn : integer);
@@ -70,32 +72,15 @@ implementation
     const
         BORDER_PANEL : string = 'BorderPanel';
 
-    var
-        gridBorderPanelMap : TDictionary<string, TPanel>;
-
     //private
         //border panel name
-            function TStringGridHelper.getBorderPanelName() : string;
+            function TStringGrid.getBorderPanelName() : string;
                 begin
                     result := self.Name + BORDER_PANEL;
                 end;
 
-        //free border panel
-            function TStringGridHelper.getBorderPanel() : TPanel;
-                var
-                    panelName   : string;
-                    borderPanel : TPanel;
-                begin
-                    panelName := getBorderPanelName();
-
-                    if NOT( gridBorderPanelMap.TryGetValue( panelName, borderPanel ) ) then
-                        exit( nil );
-
-                    result := borderPanel;
-                end;
-
         //border adjustment used for sizing the grid
-            function TStringGridHelper.borderAdjustment() : integer;
+            function TStringGrid.borderAdjustment() : integer;
                 begin
                     if Self.BorderStyle = bsSingle then
                         result := 2
@@ -104,47 +89,48 @@ implementation
                 end;
 
         //edit a border's properties
-            procedure TStringGridHelper.editBorder( const edgeWidthIn       : integer;
-                                                    const colourIn          : TColor;
-                                                    var borderPanelInOut    : TPanel    );
+            procedure TStringGrid.editBorder(   const edgeWidthIn       : integer;
+                                                const colourIn          : TColor;
+                                                var borderPanelInOut    : TPanel    );
                 begin
                     if NOT( Assigned( borderPanelInOut ) ) then
                         exit();
 
-                    //resize the grid for border
-                        self.minSize();
 
-                        self.Height := self.Height - 2;
-                        self.Width  := self.Width - 2;
-
-                    borderPanelInOut.Color := colourIn;
-
-                    borderPanelInOut.Height  := self.Height + (2 * edgeWidthIn);
-                    borderPanelInOut.Width   := self.Width + (2 * edgeWidthIn);
-
-                    borderPanelInOut.Left    := self.Left - edgeWidthIn;
-                    borderPanelInOut.Top     := self.Top - edgeWidthIn;
-
-                    borderPanelInOut.BringToFront();
-                    self.BringToFront();
                 end;
 
     //public
+        //constructor
+            constructor TStringGrid.create(AOwner: TComponent);
+                begin
+                    inherited Create( AOwner );
+
+                    borderPanel := TPanel.Create( self );
+                end;
+
+        //destructor
+            destructor TStringGrid.destroy();
+                begin
+                    FreeAndNil( borderPanel );
+
+                    inherited destroy();
+                end;
+
         //check cell is empty string
-            function TStringGridHelper.cellIsEmpty(const colIn, rowIn : integer) : boolean;
+            function TStringGrid.cellIsEmpty(const colIn, rowIn : integer) : boolean;
                 begin
                     result := (cells[colIn, rowIn] = '');
                 end;
 
         //clear a grid of its contents
             //clear a cell
-                procedure TStringGridHelper.clearCell(const colIn, rowIn : integer);
+                procedure TStringGrid.clearCell(const colIn, rowIn : integer);
                     begin
                         cells[colIn, rowIn] := '';
                     end;
 
             //clear column
-                procedure TStringGridHelper.clearColumn(const colIndexIn : integer);
+                procedure TStringGrid.clearColumn(const colIndexIn : integer);
                     var
                         rowIndex : integer;
                     begin
@@ -152,7 +138,7 @@ implementation
                             clearCell( colIndexIn, rowIndex );
                     end;
 
-                procedure TStringGridHelper.clearColumns(const startColIndexIn : integer = 0);
+                procedure TStringGrid.clearColumns(const startColIndexIn : integer = 0);
                     var
                         colIndex : integer;
                     begin
@@ -161,7 +147,7 @@ implementation
                     end;
 
             //clear a row's content
-                procedure TStringGridHelper.clearRow(const rowIndexIn : integer);
+                procedure TStringGrid.clearRow(const rowIndexIn : integer);
                     var
                         colIndex : integer;
                     begin
@@ -169,7 +155,7 @@ implementation
                             clearCell( colIndex, rowIndexIn );
                     end;
 
-                procedure TStringGridHelper.clearRows(const startRowIndexIn : integer = 0);
+                procedure TStringGrid.clearRows(const startRowIndexIn : integer = 0);
                     var
                         rowIndex : integer;
                     begin
@@ -177,7 +163,7 @@ implementation
                             clearRow(rowIndex);
                     end;
 
-            procedure TStringGridHelper.clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
+            procedure TStringGrid.clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
                 var
                     c, r : integer;
                 begin
@@ -187,57 +173,53 @@ implementation
                 end;
 
         //create border
-            procedure TStringGridHelper.createBorder(   const edgeWidthIn   : integer;
+            procedure TStringGrid.setBorderProperties(  const edgeWidthIn   : integer;
                                                         const colourIn      : TColor    );
-                var
-                    borderPanel : TPanel;
                 begin
-                    if ( getBorderPanel() = nil ) then
-                        begin
-                            //get rid of grid border
-                                self.BevelInner := TBevelCut.bvNone;
-                                self.BevelKind := TBevelKind.bkNone;
-                                self.BevelOuter := TBevelCut.bvNone;
-                                self.BorderStyle := bsNone;
+                    //prime grid for border
+                        //get rid of grid border
+                            self.BevelInner := TBevelCut.bvNone;
+                            self.BevelKind := TBevelKind.bkNone;
+                            self.BevelOuter := TBevelCut.bvNone;
+                            self.BorderStyle := bsNone;
 
-                            //create the grid for border
-                                borderPanel := TPanel.Create(self);
-                                borderPanel.Parent := self.Parent;
-                                borderPanel.Name := getBorderPanelName();
-                                borderpanel.StyleElements := [seFont, {seClient, }seBorder];
+                        //size
+                            self.minSize();
+                            self.Height := self.Height - 2;
+                            self.Width  := self.Width - 2;
 
-                            //prime panel to be a border
-                                borderPanel.ParentBackground := False;
-                                borderPanel.ParentColor := False;
-                                borderPanel.BevelInner := TBevelCut.bvNone;
-                                borderPanel.BevelOuter := TBevelCut.bvNone;
-                                borderPanel.BevelKind := TBevelKind.bkNone;
-                                borderPanel.BorderStyle := bsNone;
+                        //create the grid for border
+                            borderPanel.Parent := self.Parent;
+                            borderPanel.Name := getBorderPanelName();
+                            borderpanel.StyleElements := [seFont, {seClient, }seBorder];
 
-                            //place border panel in map
-                                gridBorderPanelMap.TryAdd( borderPanel.Name, borderPanel );
-                        end;
+                    //prime panel to be a border
+                        //vcl properties
+                            borderPanel.ParentBackground := False;
+                            borderPanel.ParentColor := False;
+                            borderPanel.BevelInner := TBevelCut.bvNone;
+                            borderPanel.BevelOuter := TBevelCut.bvNone;
+                            borderPanel.BevelKind := TBevelKind.bkNone;
+                            borderPanel.BorderStyle := bsNone;
 
-                    editBorder( edgeWidthIn,
-                                colourIn,
-                                borderPanel );
-                end;
+                        //colour
+                            borderPanel.Color := colourIn;
 
-            procedure TStringGridHelper.editBorder( const edgeWidthIn   : integer;
-                                                    const colourIn      : TColor    );
-                var
-                    gridsBorderPanel : TPanel;
-                begin
-                    gridsBorderPanel := getBorderPanel();
+                        //size
+                            borderPanel.Height  := self.Height + (2 * edgeWidthIn);
+                            borderPanel.Width   := self.Width + (2 * edgeWidthIn);
 
-                    editBorder( edgeWidthIn,
-                                colourIn,
-                                gridsBorderPanel);
+                        //position
+                            borderPanel.Left    := self.Left - edgeWidthIn;
+                            borderPanel.Top     := self.Top - edgeWidthIn;
+
+                    borderPanel.BringToFront();
+                    self.BringToFront();
                 end;
 
         //row deletion
             //delete a grid row
-                procedure TStringGridHelper.deleteRow(const rowIndexIn : integer);
+                procedure TStringGrid.deleteRow(const rowIndexIn : integer);
                     var
                         row, col : integer;
                     begin
@@ -260,14 +242,14 @@ implementation
                     end;
     
             //delete an empty row
-                procedure TStringGridHelper.deleteEmptyRow(const rowIndexIn : integer);
+                procedure TStringGrid.deleteEmptyRow(const rowIndexIn : integer);
                     begin
                         if (rowIsEmpty(rowIndexIn)) then
                             deleteRow(rowIndexIn);
                     end;
 
             //delete all empty rows
-                procedure TStringGridHelper.deleteAllEmptyRows();
+                procedure TStringGrid.deleteAllEmptyRows();
                     var
                         rowIndex : integer;
                     begin
@@ -277,19 +259,19 @@ implementation
                     end;
 
         //row insertion
-            procedure TStringGridHelper.addColumn();
+            procedure TStringGrid.addColumn();
                 begin
                     ColCount := ColCount + 1;
                 end;
 
-            procedure TStringGridHelper.addRow();
+            procedure TStringGrid.addRow();
                 begin
                     RowCount := RowCount + 1;
                 end;
 
         //get the value of a cell
             //as an integer
-                function TStringGridHelper.tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
+                function TStringGrid.tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
                     begin
                         if NOT( TryStrToInt( cells[colIn, rowIn], valueOut ) ) then
                             begin
@@ -300,7 +282,7 @@ implementation
                         result := True;
                     end;
 
-                function TStringGridHelper.cellToInteger(const colIn, rowIn : integer) : integer;
+                function TStringGrid.cellToInteger(const colIn, rowIn : integer) : integer;
                     var
                         valueOut : integer;
                     begin
@@ -310,7 +292,7 @@ implementation
                     end;
 
             //as a double
-                function TStringGridHelper.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
+                function TStringGrid.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
                     begin
                         if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
                             begin
@@ -321,7 +303,7 @@ implementation
                         result := True;
                     end;
 
-                function TStringGridHelper.cellToDouble(const colIn, rowIn : integer) : double;
+                function TStringGrid.cellToDouble(const colIn, rowIn : integer) : double;
                     var
                         valueOut : double;
                     begin
@@ -331,7 +313,7 @@ implementation
                     end;
 
         //test if a row is empty
-            function TStringGridHelper.colIsEmpty(const colIndexIn : integer) : boolean;
+            function TStringGrid.colIsEmpty(const colIndexIn : integer) : boolean;
                 var
                     rowIndex : integer;
                 begin
@@ -346,7 +328,7 @@ implementation
                         end;
                 end;
 
-            function TStringGridHelper.rowIsEmpty(const rowIndexIn : integer) : boolean;
+            function TStringGrid.rowIsEmpty(const rowIndexIn : integer) : boolean;
                 var
                     colIndex : integer;
                 begin
@@ -363,7 +345,7 @@ implementation
 
 
         //resize the grid to its minimum extents
-            procedure TStringGridHelper.minHeight();
+            procedure TStringGrid.minHeight();
                 var
                     row, gridHeight, sumRowHeights : integer;
                 begin
@@ -382,7 +364,7 @@ implementation
                         Self.Height := gridHeight;
                 end;
 
-            procedure TStringGridHelper.minWidth();
+            procedure TStringGrid.minWidth();
                 var
                     col, gridWidth, sumColWidths : integer;
                 begin
@@ -401,18 +383,10 @@ implementation
                         Self.Width 	:= gridWidth;
                 end;
 
-            procedure TStringGridHelper.minSize();
+            procedure TStringGrid.minSize();
                 begin
                     minHeight();
                     minWidth();
                 end;
-
-initialization
-
-    gridBorderPanelMap := TDictionary<string, TPanel>.Create();
-
-finalization
-
-    FreeAndNil( gridBorderPanelMap );
 
 end.

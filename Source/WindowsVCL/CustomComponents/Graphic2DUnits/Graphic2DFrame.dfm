@@ -8,7 +8,7 @@ object CustomGraphic2D: TCustomGraphic2D
   DesignSize = (
     1231
     736)
-  object labelCoords: TLabel
+  object LabelCoords: TLabel
     Left = 80
     Top = 576
     Width = 20
@@ -24,7 +24,7 @@ object CustomGraphic2D: TCustomGraphic2D
     Align = alClient
     PopupMenu = PopupMenuGraphicControls
     ExplicitLeft = 3
-    ExplicitTop = 26
+    ExplicitTop = 29
   end
   object GridPanelDirectionalPan: TGridPanel
     Left = 1158

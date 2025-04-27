@@ -30,7 +30,7 @@ interface
             GridPanelDirectionalPan: TGridPanel;
             PanelGraphicControls: TPanel;
             SpeedButtonCentre: TSpeedButton;
-            labelCoords: TLabel;
+            LabelCoords: TLabel;
             ActionListControls: TActionList;
             ActionZoomIn: TAction;
             ActionZoomOut: TAction;
@@ -255,6 +255,8 @@ implementation
                 PanelGraphicControls.Visible    := toolbarVisible;
                 ShowToolbar1.Checked            := toolbarVisible;
                 GridPanelDirectionalPan.Visible := toolbarVisible;
+
+                redrawGraphic();
             end;
 
         procedure TCustomGraphic2D.ActionUpdateGeometryExecute(Sender: TObject);
@@ -504,6 +506,11 @@ implementation
                             CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
 
                         PBDrawer2D.setCallingControl( self );
+
+                    //hide components in design time
+                        for var tempComponent : TControl in [CheckListBoxLayerTable, GridPanelAxisOptions, GridPanelDirectionalPan, LabelCoords] do
+                            if csDesigning in tempComponent.ComponentState then
+                                tempComponent.left := -100;
                 end;
 
         //destructor
