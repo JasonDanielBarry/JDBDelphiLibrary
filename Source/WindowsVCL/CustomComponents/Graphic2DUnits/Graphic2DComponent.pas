@@ -3,8 +3,8 @@ unit Graphic2DComponent;
 interface
 
     uses
-        Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-        Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
+        System.SysUtils, System.Classes,
+        Vcl.Controls,
         CustomComponentPanelClass,
         Drawer2DTypes,
         Graphic2DFrame;
@@ -13,7 +13,7 @@ interface
         TJDBGraphic2D = class(TCustomComponentPanel)
             private
                 var
-                    customGraphic : TCustomGraphic2D;
+                    customGraphic2D : TCustomGraphic2D;
                 procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 function getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
             public
@@ -32,12 +32,12 @@ implementation
     //private
         procedure TJDBGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
             begin
-                customGraphic.setOnGraphicUpdateGeometryEvent(graphicDrawEventIn);
+                customGraphic2D.setOnGraphicUpdateGeometryEvent(graphicDrawEventIn);
             end;
 
         function TJDBGraphic2D.getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
             begin
-                result := customGraphic.getOnGraphicUpdateGeometryEvent();
+                result := customGraphic2D.getOnGraphicUpdateGeometryEvent();
             end;
 
     //public
@@ -45,37 +45,37 @@ implementation
             begin
                 inherited create( AOwner );
 
-                customGraphic := TCustomGraphic2D.create(Self);
-                customGraphic.parent := self;
-                customGraphic.Align := TAlign.alClient;
-                customGraphic.Visible := True;
+                customGraphic2D := TCustomGraphic2D.create(Self);
+                customGraphic2D.parent  := self;
+                customGraphic2D.Align   := TAlign.alClient;
+                customGraphic2D.Visible := True;
             end;
 
         destructor TJDBGraphic2D.Destroy();
             begin
-                FreeAndNil( customGraphic );
+                FreeAndNil( customGraphic2D );
 
                 inherited Destroy();
             end;
 
         procedure TJDBGraphic2D.redrawGraphic();
             begin
-                customGraphic.redrawGraphic();
+                customGraphic2D.redrawGraphic();
             end;
 
         procedure TJDBGraphic2D.updateBackgroundColour();
             begin
-                customGraphic.updateBackgroundColour();
+                customGraphic2D.updateBackgroundColour();
             end;
 
         procedure TJDBGraphic2D.updateGeometry();
             begin
-                customGraphic.updateGeometry();
+                customGraphic2D.updateGeometry();
             end;
 
         procedure TJDBGraphic2D.zoomAll();
             begin
-                customGraphic.zoomAll();
+                customGraphic2D.zoomAll();
             end;
 
 end.

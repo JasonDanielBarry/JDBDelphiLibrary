@@ -167,19 +167,13 @@
         <DCCReference Include="Source\Mathematics\LinearInterpolationMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingTypes.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicGeometryClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerAxisConversionInterfaceClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicLineClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolylineClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicEllipseClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\InputManagerClass.pas"/>
         <DCCReference Include="Source\FileManagement\FileReaderWriterClass.pas"/>
         <DCCReference Include="Source\FileManagement\TEST_FileReaderWriterClass.pas"/>
@@ -188,8 +182,20 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicObjectGroupClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowGroupClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicArcClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DPaintBoxClass.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYComponent.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYFrame.pas">
+            <Form>CustomGraphXY</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicArcClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicEllipseClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicGeometryClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicLineClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolygonClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolylineClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

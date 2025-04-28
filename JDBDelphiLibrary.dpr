@@ -51,19 +51,13 @@ uses
   LinearInterpolationMethods in 'Source\Mathematics\LinearInterpolationMethods.pas',
   DrawingAxisConversionAspectRatioClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionAspectRatioClass.pas',
   GraphicDrawingTypes in 'Source\Graphics\Drawing\GraphicDrawingTypes.pas',
-  GraphicGeometryClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicGeometryClass.pas',
   GraphicObjectBaseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectBaseClass.pas',
   GraphicDrawerAxisConversionInterfaceClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerAxisConversionInterfaceClass.pas',
   GraphicDrawerBaseClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas',
   GraphicDrawerLayersClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas',
   Direct2DGraphicDrawingClass in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas',
-  GraphicLineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicLineClass.pas',
-  GraphicPolylineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolylineClass.pas',
-  GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicPolygonClass.pas',
   GraphicDrawerObjectAdderClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas',
   GraphicTextClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas',
-  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicRectangleClass.pas',
-  GraphicEllipseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicEllipseClass.pas',
   InputManagerClass in 'Source\WindowsVCL\InputManagerClass.pas',
   FileReaderWriterClass in 'Source\FileManagement\FileReaderWriterClass.pas',
   TEST_FileReaderWriterClass in 'Source\FileManagement\TEST_FileReaderWriterClass.pas',
@@ -72,8 +66,16 @@ uses
   GraphicObjectGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicObjectGroupClass.pas',
   GraphicArrowClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowClass.pas',
   GraphicArrowGroupClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses\GraphicArrowGroupClass.pas',
-  GraphicArcClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicArcClass.pas',
-  Drawer2DPaintBoxClass in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DPaintBoxClass.pas';
+  Drawer2DPaintBoxClass in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DPaintBoxClass.pas',
+  GraphXYComponent in 'Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYComponent.pas',
+  GraphXYFrame in 'Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYFrame.pas' {CustomGraphXY: TFrame},
+  GraphicArcClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicArcClass.pas',
+  GraphicEllipseClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicEllipseClass.pas',
+  GraphicGeometryClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicGeometryClass.pas',
+  GraphicLineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicLineClass.pas',
+  GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolygonClass.pas',
+  GraphicPolylineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolylineClass.pas',
+  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
