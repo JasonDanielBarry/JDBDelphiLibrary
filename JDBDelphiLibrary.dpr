@@ -44,7 +44,7 @@ uses
   Graphic2DFrame in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DFrame.pas' {CustomGraphic2D: TFrame},
   Drawer2DTypes in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
-  StringGridInterposerClass in 'Source\WindowsVCL\HelperClasses\StringGridInterposerClass.pas',
+  CustomStringGridClass in 'Source\WindowsVCL\CustomComponents\CustomStringGridClass.pas',
   ColourMethods in 'Source\Graphics\ColourMethods.pas',
   DrawingAxisConversionMouseControlClass in 'Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas',
   GeomBox in 'Source\Geometry\GeomBox.pas',

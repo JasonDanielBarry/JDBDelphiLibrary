@@ -5,7 +5,7 @@ interface
     uses
         system.SysUtils, System.Classes,
 
-        Graphic2DComponent, GraphXYComponent
+        Graphic2DComponent, GraphXYComponent, CustomStringGridClass
         ;
 
     procedure register();
@@ -19,7 +19,8 @@ implementation
 
                                     [
                                         TJDBGraphic2D,
-                                        TJDBGraphXY
+                                        TJDBGraphXY,
+                                        TJDBStringGrid
                                     ]
                               );
         end;

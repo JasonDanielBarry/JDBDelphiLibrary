@@ -160,7 +160,7 @@
         </DCCReference>
         <DCCReference Include="Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DTypes.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
-        <DCCReference Include="Source\WindowsVCL\HelperClasses\StringGridInterposerClass.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\CustomStringGridClass.pas"/>
         <DCCReference Include="Source\Graphics\ColourMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\AxisConversion\DrawingAxisConversionMouseControlClass.pas"/>
         <DCCReference Include="Source\Geometry\GeomBox.pas"/>
