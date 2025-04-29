@@ -11,9 +11,10 @@ interface
         TJDBStringGrid = class(TStringGrid)
             private
                 var
-                    borderPanel         : TPanel;
-                    cellContentsMatrix  : TArray< TArray<string> >;
-                    onCellChangedEvent  : TNotifyEvent;
+                    onCellChangedEventAwake : boolean;
+                    borderPanel             : TPanel;
+                    cellContentsMatrix      : TArray< TArray< string > >;
+                    onCellChangedEvent      : TNotifyEvent;
                 //size cell contents
                     procedure sizeCellContents();
                     function cellContentsIdenticalToGrid() : boolean;
@@ -77,387 +78,394 @@ implementation
     const
         BORDER_PANEL : string = 'BorderPanel';
 
-    //TStringGrid
-        //private
-            //size cell contents
-                procedure TJDBStringGrid.sizeCellContents();
-                    var
-                        equalCols, equalRows            : boolean;
-                        c, arrayColCount, arrayRowCount : integer;
-                    begin
-                        //check the size of the cell contents matrix
-                            arrayColCount := length( cellContentsMatrix );
+    //private
+        //size cell contents
+            procedure TJDBStringGrid.sizeCellContents();
+                var
+                    equalCols, equalRows            : boolean;
+                    c, arrayColCount, arrayRowCount : integer;
+                begin
+                    //check the size of the cell contents matrix
+                        arrayColCount := length( cellContentsMatrix );
 
-                            if ( 0 < arrayColCount ) then
-                                arrayRowCount := length( cellContentsMatrix[0] )
-                            else
-                                arrayRowCount := 0;
-
-                        equalCols := arrayColCount = ColCount;
-                        equalRows := arrayRowCount = RowCount;
-
-                        if ( equalCols AND equalRows ) then
-                            exit();
-
-                        SetLength( cellContentsMatrix, ColCount );
-
-                        for c := 0 to (ColCount - 1) do
-                            SetLength( cellContentsMatrix[c], RowCount );
-                    end;
-
-                function TJDBStringGrid.cellContentsIdenticalToGrid() : boolean;
-                    var
-                        allStringsIdentical : boolean;
-                        c, r                : integer;
-                    begin
-                        allStringsIdentical := True;
-
-                        //make sure the cell contents array is identical to the grid
-                            sizeCellContents();
-
-                        //check if all the strings are equal
-                            for c := 0 to (ColCount - 1) do
-                                for r := 0 to (RowCount - 1) do
-                                    if ( cells[c, r] <> cellContentsMatrix[c, r] ) then
-                                        begin
-                                            allStringsIdentical := False;
-                                            break;
-                                        end;
-
-                        //update the cell contents if there are difference
-                            if NOT( allStringsIdentical ) then
-                                updateCellContentsMatrix( False );
-
-                        result := allStringsIdentical;
-                    end;
-
-            //border adjustment used for sizing the grid
-                function TJDBStringGrid.borderAdjustment() : integer;
-                    begin
-                        if Self.BorderStyle = bsSingle then
-                            result := 2
+                        if ( 0 < arrayColCount ) then
+                            arrayRowCount := length( cellContentsMatrix[0] )
                         else
-                            result := 0;
-                    end;
+                            arrayRowCount := 0;
 
-        //protected
-            //process windows messages
-                procedure TJDBStringGrid.wndProc(var messageInOut : TMessage);
-                    begin
-                        case ( messageInOut.Msg ) of
-                            WM_SETFOCUS:
-                                begin
-                                    var triggerOnCellChangedEvent : boolean;
+                    equalCols := arrayColCount = ColCount;
+                    equalRows := arrayRowCount = RowCount;
 
-                                    triggerOnCellChangedEvent := NOT( cellContentsIdenticalToGrid() ) AND Assigned( onCellChangedEvent );
+                    if ( equalCols AND equalRows ) then
+                        exit();
 
-                                    if ( triggerOnCellChangedEvent ) then
+                    SetLength( cellContentsMatrix, ColCount );
+
+                    for c := 0 to (ColCount - 1) do
+                        SetLength( cellContentsMatrix[c], RowCount );
+                end;
+
+            function TJDBStringGrid.cellContentsIdenticalToGrid() : boolean;
+                var
+                    allStringsIdentical : boolean;
+                    c, r                : integer;
+                begin
+                    allStringsIdentical := True;
+
+                    //make sure the cell contents array is identical to the grid
+                        sizeCellContents();
+
+                    //check if all the strings are equal
+                        for c := 0 to (ColCount - 1) do
+                            for r := 0 to (RowCount - 1) do
+                                if ( cells[c, r] <> cellContentsMatrix[c, r] ) then
+                                    begin
+                                        allStringsIdentical := False;
+                                        break;
+                                    end;
+
+                    //update the cell contents if there are difference
+                        if NOT( allStringsIdentical ) then
+                            updateCellContentsMatrix( False );
+
+                    result := allStringsIdentical;
+                end;
+
+        //border adjustment used for sizing the grid
+            function TJDBStringGrid.borderAdjustment() : integer;
+                begin
+                    if Self.BorderStyle = bsSingle then
+                        result := 2
+                    else
+                        result := 0;
+                end;
+
+    //protected
+        //process windows messages
+            procedure TJDBStringGrid.wndProc(var messageInOut : TMessage);
+                begin
+                    case ( messageInOut.Msg ) of
+                        WM_SETFOCUS:
+                            begin
+                                var triggerOnCellChangedEvent : boolean;
+
+                                triggerOnCellChangedEvent := NOT( cellContentsIdenticalToGrid() ) AND Assigned( onCellChangedEvent ) AND onCellChangedEventAwake;
+
+                                if ( triggerOnCellChangedEvent ) then
+                                    begin
                                         onCellChangedEvent( self );
-                                end;
-                        end;
+                                        onCellChangedEventAwake := False;
+                                    end;
+                            end;
 
-                        inherited wndProc( messageInOut );
+                        WM_MOUSEACTIVATE, WM_KEYDOWN:
+                            onCellChangedEventAwake := True;
                     end;
 
-        //public
-            //constructor
-                constructor TJDBStringGrid.create(AOwner: TComponent);
+                    inherited wndProc( messageInOut );
+                end;
+
+    //public
+        //constructor
+            constructor TJDBStringGrid.create(AOwner: TComponent);
+                begin
+                    inherited Create( AOwner );
+
+                    onCellChangedEventAwake := False;
+
+                    borderPanel := TPanel.Create( self );
+                end;
+
+        //destructor
+            destructor TJDBStringGrid.destroy();
+                begin
+                    FreeAndNil( borderPanel );
+
+                    inherited destroy();
+                end;
+
+        //check cell is empty string
+            function TJDBStringGrid.cellIsEmpty(const colIn, rowIn : integer) : boolean;
+                begin
+                    result := (cells[colIn, rowIn] = '');
+                end;
+
+        //clear a grid of its contents
+            //clear a cell
+                procedure TJDBStringGrid.clearCell(const colIn, rowIn : integer);
                     begin
-                        inherited Create( AOwner );
-
-                        borderPanel := TPanel.Create( self );
+                        cells[colIn, rowIn] := '';
                     end;
 
-            //destructor
-                destructor TJDBStringGrid.destroy();
-                    begin
-                        FreeAndNil( borderPanel );
-
-                        inherited destroy();
-                    end;
-
-            //check cell is empty string
-                function TJDBStringGrid.cellIsEmpty(const colIn, rowIn : integer) : boolean;
-                    begin
-                        result := (cells[colIn, rowIn] = '');
-                    end;
-
-            //clear a grid of its contents
-                //clear a cell
-                    procedure TJDBStringGrid.clearCell(const colIn, rowIn : integer);
-                        begin
-                            cells[colIn, rowIn] := '';
-                        end;
-
-                //clear column
-                    procedure TJDBStringGrid.clearColumn(const colIndexIn : integer);
-                        var
-                            rowIndex : integer;
-                        begin
-                            for rowIndex := 0 to (RowCount - 1) do
-                                clearCell( colIndexIn, rowIndex );
-                        end;
-
-                    procedure TJDBStringGrid.clearColumns(const startColIndexIn : integer = 0);
-                        var
-                            colIndex : integer;
-                        begin
-                            for colIndex := startColIndexIn to (ColCount - 1) do
-                                clearColumn(colIndex);
-                        end;
-
-                //clear a row's content
-                    procedure TJDBStringGrid.clearRow(const rowIndexIn : integer);
-                        var
-                            colIndex : integer;
-                        begin
-                            for colIndex := 0 to (ColCount - 1) do
-                                clearCell( colIndex, rowIndexIn );
-                        end;
-
-                    procedure TJDBStringGrid.clearRows(const startRowIndexIn : integer = 0);
-                        var
-                            rowIndex : integer;
-                        begin
-                            for rowIndex := startRowIndexIn to (RowCount - 1) do
-                                clearRow(rowIndex);
-                        end;
-
-                procedure TJDBStringGrid.clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
-                    var
-                        c, r : integer;
-                    begin
-                        for c := startColIndexIn to (ColCount - 1) do
-                            for r := startRowIndexIn to (RowCount - 1) do
-                                clearCell(c, r);
-                    end;
-
-            //create border
-                procedure TJDBStringGrid.setBorderProperties(  const edgeWidthIn   : integer;
-                                                            const colourIn      : TColor    );
-                    begin
-                        //prime grid for border
-                            //get rid of grid border
-                                self.BevelInner := TBevelCut.bvNone;
-                                self.BevelKind := TBevelKind.bkNone;
-                                self.BevelOuter := TBevelCut.bvNone;
-                                self.BorderStyle := bsNone;
-
-                            //size
-                                self.minSize();
-                                self.Height := self.Height - 2;
-                                self.Width  := self.Width - 2;
-
-                            //create the grid for border
-                                borderPanel.Parent := self.Parent;
-                                borderpanel.StyleElements := [seFont, {seClient, }seBorder];
-
-                        //prime panel to be a border
-                            //vcl properties
-                                borderPanel.ParentBackground := False;
-                                borderPanel.ParentColor := False;
-                                borderPanel.BevelInner := TBevelCut.bvNone;
-                                borderPanel.BevelOuter := TBevelCut.bvNone;
-                                borderPanel.BevelKind := TBevelKind.bkNone;
-                                borderPanel.BorderStyle := bsNone;
-
-                            //colour
-                                borderPanel.Color := colourIn;
-
-                            //size
-                                borderPanel.Height  := self.Height + (2 * edgeWidthIn);
-                                borderPanel.Width   := self.Width + (2 * edgeWidthIn);
-
-                            //position
-                                borderPanel.Left    := self.Left - edgeWidthIn;
-                                borderPanel.Top     := self.Top - edgeWidthIn;
-
-                        borderPanel.BringToFront();
-                        self.BringToFront();
-                    end;
-
-            //row deletion
-                //delete a grid row
-                    procedure TJDBStringGrid.deleteRow(const rowIndexIn : integer);
-                        var
-                            row, col : integer;
-                        begin
-                            if (rowIndexIn < rowCount) then
-                                begin
-                                    clearRow(rowIndexIn);
-
-                                    for row := rowIndexIn to (Self.RowCount - 2) do
-                                        for col := 0 to (Self.ColCount - 1) do
-                                            begin
-                                                //row above accepts row below's contents
-                                                    Self.cells[col, row] := Self.cells[col, row + 1];
-                                            end;
-
-                                    //shorten the row count by 1
-                                        Self.RowCount := Self.RowCount - 1;
-                                end;
-
-                            self.minSize();
-                        end;
-    
-                //delete an empty row
-                    procedure TJDBStringGrid.deleteEmptyRow(const rowIndexIn : integer);
-                        begin
-                            if (rowIsEmpty(rowIndexIn)) then
-                                deleteRow(rowIndexIn);
-                        end;
-
-                //delete all empty rows
-                    procedure TJDBStringGrid.deleteAllEmptyRows();
-                        var
-                            rowIndex : integer;
-                        begin
-                            for rowIndex := (RowCount - 1) downto 0 do
-                                if (rowIndex < rowCount) then
-                                    deleteEmptyRow(rowIndex);
-                        end;
-
-            //row insertion
-                procedure TJDBStringGrid.addColumn();
-                    begin
-                        ColCount := ColCount + 1;
-                    end;
-
-                procedure TJDBStringGrid.addRow();
-                    begin
-                        RowCount := RowCount + 1;
-                    end;
-
-            //get the value of a cell
-                //as an integer
-                    function TJDBStringGrid.tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
-                        begin
-                            if NOT( TryStrToInt( cells[colIn, rowIn], valueOut ) ) then
-                                begin
-                                    valueOut := 0;
-                                    exit( False );
-                                end;
-
-                            result := True;
-                        end;
-
-                    function TJDBStringGrid.cellToInteger(const colIn, rowIn : integer) : integer;
-                        var
-                            valueOut : integer;
-                        begin
-                            tryCellToInteger( colIn, rowIn, valueOut );
-
-                            result := valueOut;
-                        end;
-
-                //as a double
-                    function TJDBStringGrid.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
-                        begin
-                            if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
-                                begin
-                                    valueOut := 0;
-                                    exit( False );
-                                end;
-
-                            result := True;
-                        end;
-
-                    function TJDBStringGrid.cellToDouble(const colIn, rowIn : integer) : double;
-                        var
-                            valueOut : double;
-                        begin
-                            tryCellToDouble( colIn, rowIn, valueOut );
-
-                            result := valueOut;
-                        end;
-
-            //test if a row is empty
-                function TJDBStringGrid.colIsEmpty(const colIndexIn : integer) : boolean;
+            //clear column
+                procedure TJDBStringGrid.clearColumn(const colIndexIn : integer);
                     var
                         rowIndex : integer;
                     begin
-                        result := True;
-
-                        for rowIndex := 0 to (ColCount - 1) do
-                            begin
-                                result := cellIsEmpty(colIndexIn, rowIndex);
-
-                                if (result = false) then
-                                    break;
-                            end;
+                        for rowIndex := 0 to (RowCount - 1) do
+                            clearCell( colIndexIn, rowIndex );
                     end;
 
-                function TJDBStringGrid.rowIsEmpty(const rowIndexIn : integer) : boolean;
+                procedure TJDBStringGrid.clearColumns(const startColIndexIn : integer = 0);
                     var
                         colIndex : integer;
                     begin
-                        result := True;
+                        for colIndex := startColIndexIn to (ColCount - 1) do
+                            clearColumn(colIndex);
+                    end;
 
+            //clear a row's content
+                procedure TJDBStringGrid.clearRow(const rowIndexIn : integer);
+                    var
+                        colIndex : integer;
+                    begin
                         for colIndex := 0 to (ColCount - 1) do
+                            clearCell( colIndex, rowIndexIn );
+                    end;
+
+                procedure TJDBStringGrid.clearRows(const startRowIndexIn : integer = 0);
+                    var
+                        rowIndex : integer;
+                    begin
+                        for rowIndex := startRowIndexIn to (RowCount - 1) do
+                            clearRow(rowIndex);
+                    end;
+
+            procedure TJDBStringGrid.clearCells(const startColIndexIn : integer = 0; const startRowIndexIn : integer = 0);
+                var
+                    c, r : integer;
+                begin
+                    for c := startColIndexIn to (ColCount - 1) do
+                        for r := startRowIndexIn to (RowCount - 1) do
+                            clearCell(c, r);
+                end;
+
+        //create border
+            procedure TJDBStringGrid.setBorderProperties(   const edgeWidthIn   : integer;
+                                                            const colourIn      : TColor    );
+                begin
+                    //prime grid for border
+                        //get rid of grid border
+                            self.BevelInner     := TBevelCut.bvNone;
+                            self.BevelKind      := TBevelKind.bkNone;
+                            self.BevelOuter     := TBevelCut.bvNone;
+                            self.BorderStyle    := bsNone;
+
+                        //size
+                            self.minSize();
+                            self.Height := self.Height - 2;
+                            self.Width  := self.Width - 2;
+
+                        //create the grid for border
+                            borderPanel.Parent := self.Parent;
+                            borderpanel.StyleElements := [seFont, {seClient, }seBorder];
+
+                    //prime panel to be a border
+                        //vcl properties
+                            borderPanel.ParentBackground    := False;
+                            borderPanel.ParentColor         := False;
+                            borderPanel.BevelInner          := TBevelCut.bvNone;
+                            borderPanel.BevelOuter          := TBevelCut.bvNone;
+                            borderPanel.BevelKind           := TBevelKind.bkNone;
+                            borderPanel.BorderStyle         := bsNone;
+
+                        //colour
+                            borderPanel.Color := colourIn;
+
+                        //size
+                            borderPanel.Height  := self.Height + (2 * edgeWidthIn);
+                            borderPanel.Width   := self.Width + (2 * edgeWidthIn);
+
+                        //position
+                            borderPanel.Left    := self.Left - edgeWidthIn;
+                            borderPanel.Top     := self.Top - edgeWidthIn;
+
+                    borderPanel.BringToFront();
+                    self.BringToFront();
+                end;
+
+        //row deletion
+            //delete a grid row
+                procedure TJDBStringGrid.deleteRow(const rowIndexIn : integer);
+                    var
+                        row, col : integer;
+                    begin
+                        if (rowIndexIn < rowCount) then
                             begin
-                                result := cellIsEmpty(colIndex, rowIndexIn);
+                                clearRow(rowIndexIn);
 
-                                if (result = false) then
-                                    break;
+                                for row := rowIndexIn to (Self.RowCount - 2) do
+                                    for col := 0 to (Self.ColCount - 1) do
+                                        begin
+                                            //row above accepts row below's contents
+                                                Self.cells[col, row] := Self.cells[col, row + 1];
+                                        end;
+
+                                //shorten the row count by 1
+                                    Self.RowCount := Self.RowCount - 1;
                             end;
+
+                        self.minSize();
+                    end;
+    
+            //delete an empty row
+                procedure TJDBStringGrid.deleteEmptyRow(const rowIndexIn : integer);
+                    begin
+                        if (rowIsEmpty(rowIndexIn)) then
+                            deleteRow(rowIndexIn);
                     end;
 
-            //update cell contents matrix
-                procedure TJDBStringGrid.updateCellContentsMatrix(const resizeArray : boolean = True);
+            //delete all empty rows
+                procedure TJDBStringGrid.deleteAllEmptyRows();
                     var
-                        c, r : integer;
+                        rowIndex : integer;
                     begin
-                        if ( resizeArray ) then
-                            sizeCellContents();
-
-                        for c := 0 to (ColCount - 1) do
-                            for r := 0 to (RowCount - 1) do
-                                cellContentsMatrix[c, r] := cells[c, r];
+                        for rowIndex := (RowCount - 1) downto 0 do
+                            if (rowIndex < rowCount) then
+                                deleteEmptyRow(rowIndex);
                     end;
 
-            //resize the grid to its minimum extents
-                procedure TJDBStringGrid.minHeight();
+        //row insertion
+            procedure TJDBStringGrid.addColumn();
+                begin
+                    ColCount := ColCount + 1;
+                end;
+
+            procedure TJDBStringGrid.addRow();
+                begin
+                    RowCount := RowCount + 1;
+                end;
+
+        //get the value of a cell
+            //as an integer
+                function TJDBStringGrid.tryCellToInteger(const colIn, rowIn : integer; out valueOut : integer) : boolean;
+                    begin
+                        if NOT( TryStrToInt( cells[colIn, rowIn], valueOut ) ) then
+                            begin
+                                valueOut := 0;
+                                exit( False );
+                            end;
+
+                        result := True;
+                    end;
+
+                function TJDBStringGrid.cellToInteger(const colIn, rowIn : integer) : integer;
                     var
-                        row, gridHeight, sumRowHeights : integer;
+                        valueOut : integer;
                     begin
-                        //grid height
-                            //calculate the sum of the row heights
-                                sumRowHeights := 0;
-                                for	row := 0 to (Self.RowCount - 1) do
-                                    begin
-                                        sumRowHeights := sumRowHeights + Self.RowHeights[row];
-                                    end;
+                        tryCellToInteger( colIn, rowIn, valueOut );
 
-                            //add the number of rows + 1 to the row heights sum
-                                gridHeight := sumRowHeights + (Self.RowCount + 1 + borderAdjustment());
-
-                        //assign to grid
-                            Self.Height := gridHeight;
+                        result := valueOut;
                     end;
 
-                procedure TJDBStringGrid.minWidth();
+            //as a double
+                function TJDBStringGrid.tryCellToDouble(const colIn, rowIn : integer; out valueOut : double) : boolean;
+                    begin
+                        if NOT(TryStrToFloat( cells[colIn, rowIn], valueOut ) ) then
+                            begin
+                                valueOut := 0;
+                                exit( False );
+                            end;
+
+                        result := True;
+                    end;
+
+                function TJDBStringGrid.cellToDouble(const colIn, rowIn : integer) : double;
                     var
-                        col, gridWidth, sumColWidths : integer;
+                        valueOut : double;
                     begin
-                        //grid width
-                            //calculate the sum of the col widths
-                                sumColWidths := 0;
-                                for	col := 0 to (Self.ColCount - 1)	do
-                                    begin
-                                        sumColWidths := sumColWidths + Self.ColWidths[col];
-                                    end;
+                        tryCellToDouble( colIn, rowIn, valueOut );
 
-                            //add the number of cols + 1 to the col widths sum
-                                gridWidth := sumColWidths + (Self.ColCount + 1 + borderAdjustment);
-
-                        //assign to grid
-                            Self.Width 	:= gridWidth;
+                        result := valueOut;
                     end;
 
-                procedure TJDBStringGrid.minSize();
-                    begin
-                        minHeight();
-                        minWidth();
-                    end;
+        //test if a row is empty
+            function TJDBStringGrid.colIsEmpty(const colIndexIn : integer) : boolean;
+                var
+                    rowIndex : integer;
+                begin
+                    result := True;
+
+                    for rowIndex := 0 to (ColCount - 1) do
+                        begin
+                            result := cellIsEmpty(colIndexIn, rowIndex);
+
+                            if (result = false) then
+                                break;
+                        end;
+                end;
+
+            function TJDBStringGrid.rowIsEmpty(const rowIndexIn : integer) : boolean;
+                var
+                    colIndex : integer;
+                begin
+                    result := True;
+
+                    for colIndex := 0 to (ColCount - 1) do
+                        begin
+                            result := cellIsEmpty(colIndex, rowIndexIn);
+
+                            if (result = false) then
+                                break;
+                        end;
+                end;
+
+        //update cell contents matrix
+            procedure TJDBStringGrid.updateCellContentsMatrix(const resizeArray : boolean = True);
+                var
+                    c, r : integer;
+                begin
+                    if ( resizeArray ) then
+                        sizeCellContents();
+
+                    for c := 0 to (ColCount - 1) do
+                        for r := 0 to (RowCount - 1) do
+                            cellContentsMatrix[c, r] := cells[c, r];
+                end;
+
+        //resize the grid to its minimum extents
+            procedure TJDBStringGrid.minHeight();
+                var
+                    row, gridHeight, sumRowHeights : integer;
+                begin
+                    //grid height
+                        //calculate the sum of the row heights
+                            sumRowHeights := 0;
+                            for	row := 0 to (Self.RowCount - 1) do
+                                begin
+                                    sumRowHeights := sumRowHeights + Self.RowHeights[row];
+                                end;
+
+                        //add the number of rows + 1 to the row heights sum
+                            gridHeight := sumRowHeights + (Self.RowCount + 1 + borderAdjustment());
+
+                    //assign to grid
+                        Self.Height := gridHeight;
+                end;
+
+            procedure TJDBStringGrid.minWidth();
+                var
+                    col, gridWidth, sumColWidths : integer;
+                begin
+                    //grid width
+                        //calculate the sum of the col widths
+                            sumColWidths := 0;
+                            for	col := 0 to (Self.ColCount - 1)	do
+                                begin
+                                    sumColWidths := sumColWidths + Self.ColWidths[col];
+                                end;
+
+                        //add the number of cols + 1 to the col widths sum
+                            gridWidth := sumColWidths + (Self.ColCount + 1 + borderAdjustment);
+
+                    //assign to grid
+                        Self.Width 	:= gridWidth;
+                end;
+
+            procedure TJDBStringGrid.minSize();
+                begin
+                    minHeight();
+                    minWidth();
+                end;
 
 end.

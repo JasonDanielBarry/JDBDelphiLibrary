@@ -53,7 +53,7 @@ interface
                     procedure updateBackgroundColour();
                     procedure updateGeometry();
                 //process windows messages
-                    procedure processWindowsMessages(var messageInOut : TMessage);
+                    procedure processWindowsMessages(var messageInOut : TMessage; out graphicWasRedrawnOut : boolean);
                 //access graphic drawer
                     property GraphicDrawer : TDirect2DGraphicDrawer read D2DGraphicDrawer;
         end;
@@ -238,7 +238,7 @@ implementation
                 end;
 
         //process windows messages
-            procedure TPaintBox.processWindowsMessages(var messageInOut : TMessage);
+            procedure TPaintBox.processWindowsMessages(var messageInOut : TMessage; out graphicWasRedrawnOut : boolean);
                 var
                     mouseInputRequiresRedraw        : boolean;
                     currentMousePositionOnPaintbox  : TPoint;
@@ -257,7 +257,12 @@ implementation
 
                         //paint rendered image to screen
                             if (mustRedrawGraphic) then
-                                self.Repaint();
+                                begin
+                                    self.Repaint();
+                                    graphicWasRedrawnOut := True;
+                                end
+                            else
+                                graphicWasRedrawnOut := False;
                     //--------------------------------------------------------------------------------------------------------------
 
                     //set the cursor to drag or default

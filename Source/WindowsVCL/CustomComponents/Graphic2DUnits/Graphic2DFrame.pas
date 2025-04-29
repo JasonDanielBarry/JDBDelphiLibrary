@@ -451,20 +451,21 @@ implementation
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
-                    mouseInputRequiresRedraw        : boolean;
+                    graphicWasRedrawn               : boolean;
                     currentMousePositionOnPaintbox  : TPoint;
                 begin
                     if ( Assigned( PBDrawer2D ) ) then
                         begin
                             //drawing messages
-                                PBDrawer2D.processWindowsMessages( messageInOut );
+                                PBDrawer2D.processWindowsMessages( messageInOut, graphicWasRedrawn );
 
                             //update mouse XY coordinates
                                 if (messageInOut.Msg = WM_MOUSEMOVE) then
                                     updateMouseCoordinatesLabel();
 
                             //update relevate properties
-                                updateZoomPercentage();
+                                if ( graphicWasRedrawn ) then
+                                    updateZoomPercentage();
 
                                 updateAxisSettingsValues();
                         end;
