@@ -11,18 +11,12 @@ interface
         TJDBStringGrid = class(TStringGrid)
             private
                 var
-                    borderPanel             : TPanel;
-                    cellContentsMatrix      : TArray< TArray<string> >;
-                    onCellChangedEvent      : TNotifyEvent;
+                    borderPanel         : TPanel;
+                    cellContentsMatrix  : TArray< TArray<string> >;
+                    onCellChangedEvent  : TNotifyEvent;
                 //size cell contents
                     procedure sizeCellContents();
                     function cellContentsIdenticalToGrid() : boolean;
-                //border panel name
-                    function getBorderPanelName() : string;
-                //edit a border's properties
-                    procedure editBorder(   const edgeWidthIn       : integer;
-                                            const colourIn          : TColor;
-                                            var borderPanelInOut    : TPanel    );
                 //border adjustment used for sizing the grid
                     function borderAdjustment() : integer;
             protected
@@ -137,12 +131,6 @@ implementation
                         result := allStringsIdentical;
                     end;
 
-            //border panel name
-                function TJDBStringGrid.getBorderPanelName() : string;
-                    begin
-                        result := self.Name + BORDER_PANEL;
-                    end;
-
             //border adjustment used for sizing the grid
                 function TJDBStringGrid.borderAdjustment() : integer;
                     begin
@@ -152,17 +140,6 @@ implementation
                             result := 0;
                     end;
 
-            //edit a border's properties
-                procedure TJDBStringGrid.editBorder(   const edgeWidthIn       : integer;
-                                                    const colourIn          : TColor;
-                                                    var borderPanelInOut    : TPanel    );
-                    begin
-                        if NOT( Assigned( borderPanelInOut ) ) then
-                            exit();
-
-
-                    end;
-
         //protected
             //process windows messages
                 procedure TJDBStringGrid.wndProc(var messageInOut : TMessage);
@@ -170,8 +147,12 @@ implementation
                         case ( messageInOut.Msg ) of
                             WM_SETFOCUS:
                                 begin
-                                    if NOT( cellContentsIdenticalToGrid() ) then
-                                        var a := 2;
+                                    var triggerOnCellChangedEvent : boolean;
+
+                                    triggerOnCellChangedEvent := NOT( cellContentsIdenticalToGrid() ) AND Assigned( onCellChangedEvent );
+
+                                    if ( triggerOnCellChangedEvent ) then
+                                        onCellChangedEvent( self );
                                 end;
                         end;
 
@@ -269,7 +250,6 @@ implementation
 
                             //create the grid for border
                                 borderPanel.Parent := self.Parent;
-                                borderPanel.Name := getBorderPanelName();
                                 borderpanel.StyleElements := [seFont, {seClient, }seBorder];
 
                         //prime panel to be a border
