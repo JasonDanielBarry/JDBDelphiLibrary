@@ -18,7 +18,8 @@ interface
                 //
             public
                 //constructor
-                    constructor create();
+                    constructor create(); overload;
+                    constructor create(const arrPointsIn : TArray<TGeomPoint>); overload;
                 //destructor
                     destructor destroy(); override;
                 //accessors
@@ -39,6 +40,7 @@ interface
                     class function calculatePolylineLength(const arrPointsIn : TArray<TGeomPoint>) : double; overload; static;
                 //helper methods
                     function vertexCount() : integer;
+                    procedure clearVertices();
         end;
 
 implementation
@@ -55,6 +57,13 @@ implementation
                     inherited create();
 
                     SetLength(arrGeomPoints,  0);
+                end;
+
+            constructor TGeomPolyLine.create(const arrPointsIn : TArray<TGeomPoint>);
+                begin
+                    create();
+
+                    TGeomPoint.copyPoints( arrPointsIn, arrGeomPoints );
                 end;
 
         //destructor
@@ -153,6 +162,11 @@ implementation
             function TGeomPolyLine.vertexCount() : integer;
                 begin
                     result := Length(arrGeomPoints);
+                end;
+
+            procedure TGeomPolyLine.clearVertices();
+                begin
+                    SetLength( arrGeomPoints, 0 );
                 end;
 
 end.

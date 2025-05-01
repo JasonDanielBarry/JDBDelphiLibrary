@@ -11,6 +11,8 @@ interface
     type
         TDrawingAxisZoomingConverter = class(TDrawingAxisConvertionCalculator)
             private
+                //var
+                    geometryBorderPercentage : double;
                 //calculate the zoom scale factor
                     function calculateZoomScaleFactor(const newZoomPercentage : double) : double;
                 //zooming by percent
@@ -27,6 +29,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //modifiers
+                    procedure setGeometryBorderPercentage(const geometryBorderPercentageIn : double);
                     procedure setGeometryBoundary(const boundaryBoxIn : TGeomBox);
                     procedure resetDrawingRegionToGeometryBoundary();
                 //zooming methods
@@ -93,6 +96,8 @@ implementation
                 begin
                     inherited create();
 
+                    setGeometryBorderPercentage( 5 );
+
                     geometryBoundary.minPoint.setPoint( 0, 0, 0 );
                     geometryBoundary.maxPoint.setPoint( 0, 0, 0 );
                 end;
@@ -104,6 +109,15 @@ implementation
                 end;
 
         //modifiers
+            procedure TDrawingAxisZoomingConverter.setGeometryBorderPercentage(const geometryBorderPercentageIn : double);
+                const
+                    MIN_VALUE : double = 0;
+                    MAX_VALUE : double = 5;
+                begin
+                    geometryBorderPercentage := max( MIN_VALUE, geometryBorderPercentageIn );
+                    geometryBorderPercentage := min( geometryBorderPercentageIn, MAX_VALUE );
+                end;
+
             procedure TDrawingAxisZoomingConverter.setGeometryBoundary(const boundaryBoxIn : TGeomBox);
                 begin
                     geometryBoundary.copyBox( boundaryBoxIn );
@@ -122,18 +136,21 @@ implementation
 
             procedure TDrawingAxisZoomingConverter.resetDrawingRegionToGeometryBoundary();
                 begin
-                    setDrawingRegion( 5, geometryBoundary );
+                    setDrawingRegion( geometryBorderPercentage, geometryBoundary );
                 end;
 
         //zooming methods
             function TDrawingAxisZoomingConverter.calculateCurrentZoomPercentage() : double;
                 var
+                    borderBufferPercentage,
                     domainZoomPercentage, rangeZoomPercentage : double;
                 begin
+                    borderBufferPercentage := 100 + geometryBorderPercentage;
+
                     //zoom is the ratio of the geometry boundary to the drawing region
-                    //105 is for the 5% buffer on the drawing region when reset using the geometry boundary
-                        domainZoomPercentage    := 105 * geometryBoundary.calculateXDimension() / drawingRegion.calculateXDimension();
-                        rangeZoomPercentage     := 105 * geometryBoundary.calculateYDimension() / drawingRegion.calculateYDimension();
+                    //borderBufferPercentage is for the buffer on the drawing region when reset using the geometry boundary
+                        domainZoomPercentage    := borderBufferPercentage * geometryBoundary.calculateXDimension() / drawingRegion.calculateXDimension();
+                        rangeZoomPercentage     := borderBufferPercentage * geometryBoundary.calculateYDimension() / drawingRegion.calculateYDimension();
 
                     result := max(domainZoomPercentage, rangeZoomPercentage);
                 end;

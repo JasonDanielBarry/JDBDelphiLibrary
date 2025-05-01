@@ -30,7 +30,7 @@ interface
                     //return a specified layer's graphic objects array
                         function getArrGraphicObjects(const layerKeyIn : string) : TArray<TGraphicObject>;
                     //collect all active graphic objects into one array in order
-                        procedure collectActiveGraphicObjectsIntoArray();
+                        procedure collectAllActiveGraphicObjects();
                 //bounding box
                     //calculate the bounding box for a specific layer
                         function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
@@ -93,7 +93,7 @@ implementation
                     end;
 
             //collect all active graphic objects into one array in order
-                procedure TGraphicDrawerLayers.collectActiveGraphicObjectsIntoArray();
+                procedure TGraphicDrawerLayers.collectAllActiveGraphicObjects();
                     var
                         layer                           : string;
                         arrCurrentLayerGraphicObjects   : TArray<TGraphicObject>;
@@ -214,7 +214,7 @@ implementation
                         arrActiveDrawingLayers := arrActiveDrawingLayersIn;
 
                     //place all the active graphic object into a single array for drawing
-                        collectActiveGraphicObjectsIntoArray();
+                        collectAllActiveGraphicObjects();
 
                     //calculate the bounding box for the reset zoom function
                         calculateNetBoundingBox();
@@ -231,31 +231,14 @@ implementation
 
         //reset drawing geometry by freeing all drawing geometry objects
             procedure TGraphicDrawerLayers.resetDrawingGeometry();
-                var
-                    layer               : string;
-                    arrDrawingLayers    : TArray<string>;
-                procedure
-                    _freeArrGraphicObjects(const layerKeyIn : string);
-                        var
-                            i                   : integer;
-                            arrGraphicObjects   : TArray<TGraphicObject>;
-                        begin
-                            arrGraphicObjects := getArrGraphicObjects( layer );
-
-                            for i := 0 to ( length(arrGraphicObjects) - 1 ) do
-                                FreeAndNil( arrGraphicObjects[i] );
-
-                            SetLength( arrGraphicObjects, 0 );
-                        end;
                 begin
-                    arrDrawingLayers := getAllDrawingLayers();
+                    //by activating all drawing layers all graphic objects are collected into activeGraphicObjects
+                        activateAllDrawingLayers();
 
-                    for layer in arrDrawingLayers do
-                        begin
-                            _freeArrGraphicObjects( layer );
+                    //all graphic objects can now be freed by activeGraphicObjects clear procedure
+                        activeGraphicObjects.clearGraphicObjectsGroup( True );
 
-                            layerGeometryMap.Remove( layer );
-                        end;
+                    layerGeometryMap.clear();
 
                     orderedLayerKeys.Clear();
 

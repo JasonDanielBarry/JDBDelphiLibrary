@@ -39,11 +39,13 @@ interface
                     function lessThan(const pointIn : TGeomPoint) : boolean;
                     function lessThanOrEqual(const pointIn : TGeomPoint) : boolean;
                 //set point
-                    procedure copyPoint(const otherGeomPointIn : TGeomPoint);
                     procedure setPoint(const xIn, yIn, zIn : double); overload;
                     procedure setPoint(const xIn, yIn : double); overload;
                     procedure setPoint(const PointFIn : TPointF); overload;
                     procedure setPoint(const PointIn : TPoint); overload;
+                //copy
+                    procedure copyPoint(const otherGeomPointIn : TGeomPoint);
+                    class procedure copyPoints(const arrPointsIn : TArray<TGeomPoint>; out arrPointsOut : TArray<TGeomPoint>); static;
                 //shift point
                     procedure shiftX(const deltaXIn : double);
                     procedure shiftY(const deltaYIn : double);
@@ -207,17 +209,7 @@ implementation
                                 AND (self.z <= pointIn.z)
                 end;
 
-
         //set point
-            procedure TGeomPoint.copyPoint(const otherGeomPointIn : TGeomPoint);
-                begin
-                    setPoint(
-                                otherGeomPointIn.x,
-                                otherGeomPointIn.y,
-                                otherGeomPointIn.z
-                            );
-                end;
-
             procedure TGeomPoint.setPoint(const xIn, yIn, zIn : double);
                 begin
                     x := xIn;
@@ -238,6 +230,28 @@ implementation
             procedure TGeomPoint.setPoint(const PointIn : TPoint);
                 begin
                     setPoint( pointIn.X, PointIn.Y );
+                end;
+
+        //copy
+            procedure TGeomPoint.copyPoint(const otherGeomPointIn : TGeomPoint);
+                begin
+                    setPoint(
+                                otherGeomPointIn.x,
+                                otherGeomPointIn.y,
+                                otherGeomPointIn.z
+                            );
+                end;
+
+            class procedure TGeomPoint.copyPoints(const arrPointsIn : TArray<TGeomPoint>; out arrPointsOut : TArray<TGeomPoint>);
+                var
+                    i, arrLen : integer;
+                begin
+                    arrLen := length( arrPointsIn );
+
+                    SetLength( arrPointsOut, arrLen );
+
+                    for i := 0 to ( arrLen - 1 ) do
+                        arrPointsOut[i].copyPoint( arrPointsIn[i] );
                 end;
 
         //shift point

@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Graphic2D'
-  ClientHeight = 673
-  ClientWidth = 1556
+  ClientHeight = 719
+  ClientWidth = 1512
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -18,8 +18,8 @@ object Form1: TForm1
   object JDBGraphic2D1: TJDBGraphic2D
     Left = 0
     Top = 25
-    Width = 1556
-    Height = 648
+    Width = 1512
+    Height = 694
     Align = alClient
     BevelEdges = []
     BevelOuter = bvNone
@@ -30,16 +30,19 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 0
     OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
+    ExplicitWidth = 1556
+    ExplicitHeight = 648
   end
   object PanelTop: TPanel
     Left = 0
     Top = 0
-    Width = 1556
+    Width = 1512
     Height = 25
     Align = alTop
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
+    ExplicitWidth = 1556
     object LabelSelectGraphic: TLabel
       AlignWithMargins = True
       Left = 5

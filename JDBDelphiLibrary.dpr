@@ -75,7 +75,10 @@ uses
   GraphicLineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicLineClass.pas',
   GraphicPolygonClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolygonClass.pas',
   GraphicPolylineClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolylineClass.pas',
-  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas';
+  GraphicRectangleClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas',
+  GraphXYTypes in 'Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYTypes.pas',
+  GraphicScatterPlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicScatterPlotClass.pas',
+  GraphicFunctionPlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicFunctionPlotClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

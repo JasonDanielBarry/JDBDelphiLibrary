@@ -1,4 +1,4 @@
-unit GeomBox;
+ unit GeomBox;
 
 interface
 
@@ -353,14 +353,19 @@ implementation
     //determine bounding box from an array of boxes
         class function TGeomBox.determineBoundingBox(const arrGeomBoxesIn : TArray<TGeomBox>) : TGeomBox;
             var
-                i                               : integer;
+                i, arrLen                       : integer;
                 localMinPoint, localMaxPoint    : TGeomPoint;
                 boundingBoxOut                  : TGeomBox;
             begin
+                arrLen := length(arrGeomBoxesIn);
+
+                if ( arrLen < 1 ) then
+                    exit( boundingBoxOut );
+
                 localMinPoint.copyPoint( arrGeomBoxesIn[0].minPoint );
                 localMaxPoint.copyPoint( arrGeomBoxesIn[0].maxPoint );
 
-                for i := 1 to (length(arrGeomBoxesIn) - 1) do
+                for i := 1 to ( arrLen - 1 ) do
                     begin
                         //look for min x, y, z
                             localMinPoint.x := min( localMinPoint.x, arrGeomBoxesIn[i].xMin );
@@ -373,7 +378,7 @@ implementation
                             localMaxPoint.z := max( localMaxPoint.z, arrGeomBoxesIn[i].zMax );
                     end;
 
-                boundingBoxOut := TGeomBox.create(localMinPoint, localMaxPoint);
+                boundingBoxOut := TGeomBox.create( localMinPoint, localMaxPoint );
 
                 result := boundingBoxOut;
             end;

@@ -23,8 +23,11 @@ interface
                         function getDrawingRegion() : TGeomBox;
                         procedure setDrawingRegion( const bufferIn : double;
                                                     const regionIn : TGeomBox );
+                    //geometry boundary percentage
+                        procedure setGeometryBorderPercentage(const geometryBorderPercentageIn : double);
                     //draw space ratio
-                        procedure setDrawingSpaceRatio(const ratioIn : double);
+                        procedure setDrawingSpaceRatioEnabled(const drawingSpaceRatioEnabledIn : boolean);
+                        procedure setDrawingSpaceRatio(const drawingSpaceRatioIn : double);
                     //mouse coordinates
                         function getMouseCoordinatesXY() : TGeomPoint;
                     //panning
@@ -52,6 +55,8 @@ implementation
             constructor TGraphicDrawerAxisConversionInterface.create();
                 begin
                     inherited create();
+
+                    setDrawingSpaceRatio( 1 );
                 end;
 
         //destructor
@@ -73,10 +78,33 @@ implementation
                         axisConverter.setDrawingRegion(bufferIn, regionIn);
                     end;
 
-            //draw space ratio
-                procedure TGraphicDrawerAxisConversionInterface.setDrawingSpaceRatio(const ratioIn : double);
+            //geometry boundary percentage
+                procedure TGraphicDrawerAxisConversionInterface.setGeometryBorderPercentage(const geometryBorderPercentageIn : double);
                     begin
-                        axisConverter.setDrawingSpaceRatio( ratioIn );
+                        axisConverter.setGeometryBorderPercentage( geometryBorderPercentageIn );
+                    end;
+
+            //draw space ratio
+                procedure TGraphicDrawerAxisConversionInterface.setDrawingSpaceRatioEnabled(const drawingSpaceRatioEnabledIn : boolean);
+                    begin
+                        drawingSpaceRatioEnabled := drawingSpaceRatioEnabledIn;
+                    end;
+
+                procedure TGraphicDrawerAxisConversionInterface.setDrawingSpaceRatio(const drawingSpaceRatioIn : double);
+                    var
+                        drawingSpaceRatioIsInvalid : boolean;
+                    begin
+                        drawingSpaceRatioIsInvalid := IsZero( abs(drawingSpaceRatioIn), 1e-3 ) OR ( drawingSpaceRatioIn < 0 );
+
+                        if ( drawingSpaceRatioIsInvalid ) then
+                            begin
+                                setDrawingSpaceRatioEnabled( False );
+                                exit();
+                            end;
+
+                        drawingSpaceRatio := drawingSpaceRatioIn;
+
+                        setDrawingSpaceRatioEnabled( True );
                     end;
 
             //mouse coordinates

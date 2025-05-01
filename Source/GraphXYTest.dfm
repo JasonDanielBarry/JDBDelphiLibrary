@@ -10,6 +10,7 @@ object Form2: TForm2
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object JDBGraphXY1: TJDBGraphXY
     Left = 0
@@ -25,9 +26,5 @@ object Form2: TForm2
     ShowCaption = False
     ShowHint = True
     TabOrder = 0
-    ExplicitLeft = 320
-    ExplicitTop = 256
-    ExplicitWidth = 185
-    ExplicitHeight = 41
   end
 end

@@ -196,6 +196,9 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolygonClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicPolylineClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYTypes.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicScatterPlotClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicFunctionPlotClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

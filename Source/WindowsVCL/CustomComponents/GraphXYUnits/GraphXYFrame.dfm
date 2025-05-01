@@ -4,6 +4,7 @@ object CustomGraphXY: TCustomGraphXY
   Width = 1515
   Height = 780
   TabOrder = 0
+  OnResize = FrameResize
   object PBGraphXY: TPaintBox
     Left = 0
     Top = 0

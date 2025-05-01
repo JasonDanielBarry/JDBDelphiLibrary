@@ -114,10 +114,6 @@ interface
                                                         const   fillColourIn            : TColor = TColors.Null;
                                                         const   lineColourIn            : TColor = TColors.Black;
                                                         const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         ); overload;
-
-
-
-
                 //modifiers
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); virtual; abstract;
         end;

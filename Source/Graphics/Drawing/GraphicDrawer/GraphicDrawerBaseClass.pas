@@ -4,7 +4,7 @@ interface
 
     uses
         //Delphi
-            system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
+            system.SysUtils, System.Math, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
             vcl.Graphics,
             vcl.Direct2D, Winapi.D2D1,
         //custom
@@ -19,14 +19,20 @@ interface
         TGraphicDrawerBase = class
             strict protected
                 var
-                    axisConverter           : TDrawingAxisConverter;
-                    Direct2DDrawingCanvas   : TDirect2DCanvas;
+                    axisConverter               : TDrawingAxisConverter;
+                    Direct2DDrawingCanvas       : TDirect2DCanvas;
                 //add graphic drawing object to the drawing object container
                     procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); virtual; abstract;
                 //drawing procedures
                     //draw all geometry
                         procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
                                             const drawingBackgroundColourIn     : TColor    );
+            protected
+                var
+                    //these variables are declared here to be used in the drawAll procedure
+                    //but are set in GraphicDrawerAxisConversionInterfaceClass
+                        drawingSpaceRatioEnabled    : boolean;
+                        drawingSpaceRatio           : double;
             public
                 //constructor
                     constructor create(); virtual;
@@ -46,7 +52,8 @@ implementation
                             axisConverter.setCanvasDimensions( canvasWidthIn, canvasHeightIn );
 
                         //set the drawing space ratio
-                            axisConverter.setDrawingSpaceRatio( 1 );
+                            if ( drawingSpaceRatioEnabled ) then
+                                axisConverter.setDrawingSpaceRatio( drawingSpaceRatio );
 
                         //clear the canvas
                             Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColourIn;

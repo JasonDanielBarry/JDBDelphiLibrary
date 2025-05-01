@@ -3,8 +3,11 @@ unit GraphXYComponent;
 interface
 
     uses
-        System.SysUtils, System.Classes,
+        System.SysUtils, System.Classes, System.UITypes,
+        Vcl.Graphics,
         Vcl.Controls,
+
+        GeometryTypes,
         CustomComponentPanelClass,
         GraphXYFrame;
 
@@ -15,6 +18,14 @@ interface
             public
                 constructor Create(AOwner: TComponent); override;
                 destructor Destroy(); override;
+                procedure replot();
+                //add plots
+                    //line plot
+                        procedure addLinePlot(  const plotNameIn    : string;
+                                                const dataPointsIn  : TArray<TGeomPoint>;
+                                                const lineSizeIn    : integer = 2;
+                                                const lineColourIn  : TColor = clWindowText;
+                                                const lineStyleIn   : TPenStyle = TPenStyle.psSolid );
         end;
 
 implementation
@@ -36,6 +47,22 @@ implementation
 
                 inherited Destroy();
             end;
+
+        procedure TJDBGraphXY.replot();
+            begin
+                customGraphXY.replot();
+            end;
+
+        //add plots
+            //line plot
+                procedure TJDBGraphXY.addLinePlot(  const plotNameIn    : string;
+                                                    const dataPointsIn  : TArray<TGeomPoint>;
+                                                    const lineSizeIn    : integer = 2;
+                                                    const lineColourIn  : TColor = clWindowText;
+                                                    const lineStyleIn     : TPenStyle = TPenStyle.psSolid );
+                    begin
+                        customGraphXY.addLinePlot( lineSizeIn, plotNameIn, lineColourIn, lineStyleIn, dataPointsIn );
+                    end;
 
 
 end.
