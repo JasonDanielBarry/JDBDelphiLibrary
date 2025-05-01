@@ -34,13 +34,13 @@ implementation
         //process windows messages
             procedure TCustomGraphXY.wndProc(var messageInOut : TMessage);
                 var
-                    mouseInputRequiresRedraw        : boolean;
+                    graphWasRedrawn                 : boolean;
                     currentMousePositionOnPaintbox  : TPoint;
                 begin
                     if ( Assigned( PBGraphXY ) ) then
                         begin
                             //drawing messages
-                                PBGraphXY.processWindowsMessages( messageInOut );
+                                PBGraphXY.processWindowsMessages( messageInOut, graphWasRedrawn );
 
                             //more messages
                                 //
