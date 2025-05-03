@@ -18,12 +18,12 @@ interface
                 const
                     WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
+                    gridVisible,
                     mustRedrawGraphic               : boolean;
                     graphicBackgroundColour         : TColor;
                     currentGraphicBuffer            : TBitmap;
                     D2DGraphicDrawer                : TDirect2DGraphicDrawer;
                     onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
-                    callingControl                  : TWinControl;
                 //events
                     procedure PaintBoxDrawer2DPaint(Sender: TObject);
                     procedure PaintBoxGraphicMouseEnter(Sender: TObject);
@@ -46,12 +46,12 @@ interface
                 //accessors
                     function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 //modifiers
+                    procedure setGridVisible(const isVisibleIn : boolean);
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
-                    procedure setCallingControl(const controlIn : TWinControl);
                 //redraw the graphic
-                    procedure redrawGraphic();
-                    procedure updateBackgroundColour();
-                    procedure updateGeometry();
+                    procedure postRedrawGraphicMessage(const callingControlIn : TWinControl);
+                    procedure updateBackgroundColour(const callingControlIn : TWinControl);
+                    procedure updateGeometry(const callingControlIn : TWinControl);
                 //process windows messages
                     procedure processWindowsMessages(var messageInOut : TMessage; out graphicWasRedrawnOut : boolean);
                 //access graphic drawer
@@ -164,6 +164,9 @@ implementation
                 begin
                     inherited Create( AOwner );
 
+                    //grid is not visible by default
+                        setGridVisible( False );
+
                     //create required classes
                         currentGraphicBuffer    := TBitmap.create();
                         D2DGraphicDrawer        := TDirect2DGraphicDrawer.create();
@@ -194,31 +197,31 @@ implementation
                 end;
 
         //modifiers
+            procedure TPaintBox.setGridVisible(const isVisibleIn : boolean);
+                begin
+                    gridVisible := isVisibleIn;
+                end;
+
             procedure TPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 begin
                     onGraphicUpdateGeometryEvent := graphicDrawEventIn;
                 end;
 
-            procedure TPaintBox.setCallingControl(const controlIn : TWinControl);
-                begin
-                    callingControl := controlIn;
-                end;
-
         //redraw the graphic
-            procedure TPaintBox.redrawGraphic();
+            procedure TPaintBox.postRedrawGraphicMessage(const callingControlIn : TWinControl);
                 begin
-                    //this message is sent to callingControl.wndProc where the graphic is updated and redrawn
-                    //callingControl must be set during creation
-                        PostMessage( callingControl.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
+                    //this message is sent to callingControlIn.wndProc() where the graphic is updated and redrawn
+                    //the self.processWindowsMessages() method must be called in callingControlIn.wndProc()
+                        PostMessage( callingControlIn.Handle, WM_USER_REDRAWGRAPHIC, 0, 0 );
                 end;
 
-            procedure TPaintBox.updateBackgroundColour();
+            procedure TPaintBox.updateBackgroundColour(const callingControlIn : TWinControl);
                 begin
                     setGraphicBackgroundColour();
-                    redrawGraphic();
+                    postRedrawGraphicMessage(callingControlIn);
                 end;
 
-            procedure TPaintBox.updateGeometry();
+            procedure TPaintBox.updateGeometry(const callingControlIn : TWinControl);
                 begin
                     //set background to match theme
                         setGraphicBackgroundColour();
@@ -228,13 +231,17 @@ implementation
 
                     //update the D2DGraphicDrawer geometry
                         if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
-                            onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
+                            begin
+                                D2DGraphicDrawer.setGridVisible( gridVisible );
+
+                                onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
+                            end;
 
                     //activate all drawing layers
                         D2DGraphicDrawer.activateAllDrawingLayers();
 
                     //send message to redraw
-                        redrawGraphic();
+                        postRedrawGraphicMessage(callingControlIn);
                 end;
 
         //process windows messages

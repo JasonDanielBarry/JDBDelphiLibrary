@@ -70,7 +70,7 @@ implementation
                 begin
                     graphPlotsList.Add( graphPlotIn );
 
-                    PBGraphXY.updateGeometry();
+                    PBGraphXY.updateGeometry( self );
                 end;
 
         //send graph plot to geometry drawer
@@ -153,11 +153,10 @@ implementation
 
                     graphPlotsList := TList<TGraphXYPlot>.Create();
 
-                    PBGraphXY.setCallingControl( self );
-
                     PBGraphXY.GraphicDrawer.setDrawingSpaceRatioEnabled( False );
                     PBGraphXY.GraphicDrawer.setGeometryBorderPercentage( 0 );
 
+                    PBGraphXY.setGridVisible( True );
                     PBGraphXY.setOnGraphicUpdateGeometryEvent( updateGeometryEvent );
                 end;
 
@@ -172,13 +171,7 @@ implementation
         //replot graphs
             procedure TCustomGraphXY.replot();
                 begin
-//                    PBGraphXY.GraphicDrawer.resetDrawingGeometry();
-//
-//                    PBGraphXY.GraphicDrawer.addEllipse( 5, 5, 0, 0 );
-//
-//                    PBGraphXY.GraphicDrawer.activateAllDrawingLayers();
-
-                    PBGraphXY.redrawGraphic();
+                    PBGraphXY.postRedrawGraphicMessage( self );
                 end;
 
         //add plots

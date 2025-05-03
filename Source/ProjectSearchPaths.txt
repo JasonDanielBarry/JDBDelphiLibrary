@@ -11,7 +11,7 @@
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawer;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawer\Direct2D;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses;
-..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGraphPlottingClasses;
+..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectGroupClasses;
 ..\JDBDelphiLibrary\Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses;
 ..\JDBDelphiLibrary\Source\WindowsVCL;

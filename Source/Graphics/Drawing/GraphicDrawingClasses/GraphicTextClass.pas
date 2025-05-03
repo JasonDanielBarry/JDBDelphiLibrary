@@ -34,6 +34,9 @@ interface
                                         const   textHandlePointIn   : TGeomPoint    );
                 //destructor
                     destructor destroy(); override;
+                //modifiers
+                    procedure setTextString(const newTextIn : string);
+                    procedure setHandlePoint(const xIn, yIn : double);
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); override;
@@ -77,6 +80,17 @@ implementation
             destructor TGraphicText.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //modifiers
+            procedure TGraphicText.setTextString(const newTextIn : string);
+                begin
+                    textString := newTextIn;
+                end;
+
+            procedure TGraphicText.setHandlePoint(const xIn, yIn : double);
+                begin
+                    textHandlePointXY.setPoint( xIn, yIn );
                 end;
 
         //draw to canvas

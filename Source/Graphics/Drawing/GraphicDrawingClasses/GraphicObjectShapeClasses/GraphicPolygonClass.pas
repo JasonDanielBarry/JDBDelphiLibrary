@@ -65,11 +65,10 @@ implementation
                         exit();
 
                     //get path geometry
-                        pathGeometry := createPathGeometry(
-                                                                D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED,
-                                                                D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED,
-                                                                axisConverterIn
-                                                          );
+                        pathGeometry := createClosedPathGeometry(
+                                                                    geometryPoints,
+                                                                    axisConverterIn
+                                                                );
 
                     //draw fill
                         if ( setFillProperties( canvasInOut ) ) then

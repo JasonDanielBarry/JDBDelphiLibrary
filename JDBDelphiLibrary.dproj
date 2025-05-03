@@ -199,6 +199,9 @@
         <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYTypes.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicScatterPlotClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicFunctionPlotClass.pas"/>
+        <DCCReference Include="Source\Mathematics\RoundingMethods.pas"/>
+        <DCCReference Include="Source\Mathematics\TEST_RoundingMethods.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

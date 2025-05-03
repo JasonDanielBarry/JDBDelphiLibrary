@@ -17,13 +17,15 @@ interface
 
     type
         TGraphicGeometry = class(TGraphicObject)
+            private
+                //drawing helper methods
+                    class function createPathGeometry(  const figureBeginIn     : D2D1_FIGURE_BEGIN;
+                                                        const figureEndIn       : D2D1_FIGURE_END;
+                                                        const geometryPointsIn  : TArray<TGeomPoint>;
+                                                        const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry; static;
             protected
                 var
                     geometryPoints : TArray<TGeomPoint>;
-                //drawing helper methods
-                    function createPathGeometry(const figureBeginIn     : D2D1_FIGURE_BEGIN;
-                                                const figureEndIn       : D2D1_FIGURE_END;
-                                                const axisConverterIn   : TDrawingAxisConverter) : ID2D1PathGeometry;
             public
                 //constructor
                     constructor create( const   filledIn        : boolean;
@@ -38,17 +40,26 @@ interface
                                         const   geometryIn      : TGeomBase ); overload;
                 //destructor
                     destructor destroy(); override;
+
+                //create path geometry
+                    //closed
+                        class function createClosedPathGeometry(const geometryPointsIn  : TArray<TGeomPoint>;
+                                                                const axisConverterIn   : TDrawingAxisConverter) : ID2D1PathGeometry; static;
+                    //open
+                        class function createOpenPathGeometry(  const geometryPointsIn  : TArray<TGeomPoint>;
+                                                                const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry; static;
                 //bounding box
                     function determineBoundingBox() : TGeomBox; override;
         end;
 
 implementation
 
-    //protected
+    //private
         //drawing helper methods
-            function TGraphicGeometry.createPathGeometry(   const figureBeginIn     : D2D1_FIGURE_BEGIN;
-                                                            const figureEndIn       : D2D1_FIGURE_END;
-                                                            const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
+            class function TGraphicGeometry.createPathGeometry( const figureBeginIn     : D2D1_FIGURE_BEGIN;
+                                                                const figureEndIn       : D2D1_FIGURE_END;
+                                                                const geometryPointsIn  : TArray<TGeomPoint>;
+                                                                const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
                 var
                     geometrySink    : ID2D1GeometrySink;
                     pathGeometryOut : ID2D1PathGeometry;
@@ -56,7 +67,7 @@ implementation
                 begin
                     //convert geometry into canvas drawing points
                         drawingPoints := axisConverterIn.arrXY_to_arrLT(
-                                                                            geometryPoints
+                                                                            geometryPointsIn
                                                                        );
 
                     //create path geometry
@@ -139,6 +150,31 @@ implementation
                 begin
                     inherited destroy();
                 end;
+
+        //create path geometry
+            //closed
+                class function TGraphicGeometry.createClosedPathGeometry(   const geometryPointsIn  : TArray<TGeomPoint>;
+                                                                            const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
+                    begin
+                        result := createPathGeometry(
+                                                        D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_FILLED,
+                                                        D2D1_FIGURE_END.D2D1_FIGURE_END_CLOSED,
+                                                        geometryPointsIn,
+                                                        axisConverterIn
+                                                    );
+                    end;
+
+            //open
+                class function TGraphicGeometry.createOpenPathGeometry( const geometryPointsIn  : TArray<TGeomPoint>;
+                                                                        const axisConverterIn   : TDrawingAxisConverter ) : ID2D1PathGeometry;
+                    begin
+                        result := createPathGeometry(
+                                                        D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW,
+                                                        D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN,
+                                                        geometryPointsIn,
+                                                        axisConverterIn
+                                                    );
+                    end;
 
         //bounding box
             function TGraphicGeometry.determineBoundingBox() : TGeomBox;

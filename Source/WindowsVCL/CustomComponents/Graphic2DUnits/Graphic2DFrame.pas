@@ -506,8 +506,6 @@ implementation
                             SpeedButtonLayerTable.down      := layerTableVisible;
                             CheckListBoxLayerTable.Width    := self.Width - SpeedButtonLayerTable.Left - 2;
 
-                        PBDrawer2D.setCallingControl( self );
-
                     //hide components in design time
                         for var tempComponent : TControl in [CheckListBoxLayerTable, GridPanelAxisOptions, GridPanelDirectionalPan, LabelCoords] do
                             if csDesigning in tempComponent.ComponentState then
@@ -535,17 +533,17 @@ implementation
         //redraw the graphic
             procedure TCustomGraphic2D.redrawGraphic();
                 begin
-                    PBDrawer2D.redrawGraphic();
+                    PBDrawer2D.postRedrawGraphicMessage( self );
                 end;
 
             procedure TCustomGraphic2D.updateBackgroundColour();
                 begin
-                    PBDrawer2D.updateBackgroundColour();
+                    PBDrawer2D.updateBackgroundColour( self );
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
                 begin
-                    PBDrawer2D.updateGeometry();
+                    PBDrawer2D.updateGeometry( self );
 
                     //do layer table
                         updateLayerTable();

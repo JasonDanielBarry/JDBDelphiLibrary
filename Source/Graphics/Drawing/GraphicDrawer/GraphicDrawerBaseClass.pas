@@ -29,7 +29,7 @@ interface
                                             const drawingBackgroundColourIn     : TColor    );
             protected
                 var
-                    //these variables are declared here to be used in the drawAll procedure
+                    //these variables are declared here to be used in the drawAll() procedure
                     //but are set in GraphicDrawerAxisConversionInterfaceClass
                         drawingSpaceRatioEnabled    : boolean;
                         drawingSpaceRatio           : double;
@@ -57,7 +57,6 @@ implementation
 
                         //clear the canvas
                             Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColourIn;
-
                             Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
                     end;
 

@@ -24,6 +24,9 @@ interface
                                     const   geometryIn      : TGeomBase );
             //destructor
                 destructor destroy(); override;
+            //modifiers
+                procedure setStartPoint(const xIn, yIn : double);
+                procedure setEndPoint(const xIn, yIn : double);
             //draw to canvas
                 procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                         var canvasInOut         : TDirect2DCanvas       ); override;
@@ -50,6 +53,17 @@ implementation
                     inherited destroy();
                 end;
 
+        //modifiers
+            procedure TGraphicLine.setStartPoint(const xIn, yIn : double);
+                begin
+                    geometryPoints[0].setPoint( xIn, yIn );
+                end;
+
+            procedure TGraphicLine.setEndPoint(const xIn, yIn : double);
+                begin
+                    geometryPoints[1].setPoint( xIn, yIn );
+                end;
+
         //draw to canvas
             procedure TGraphicLine.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
@@ -59,11 +73,10 @@ implementation
                     if (length( geometryPoints ) < 2) then
                         exit();
 
-                    pathGeometry := createPathGeometry(
-                                                            D2D1_FIGURE_BEGIN.D2D1_FIGURE_BEGIN_HOLLOW,
-                                                            D2D1_FIGURE_END.D2D1_FIGURE_END_OPEN,
-                                                            axisConverterIn
-                                                      );
+                    pathGeometry := createOpenPathGeometry(
+                                                                geometryPoints,
+                                                                axisConverterIn
+                                                          );
 
                     setLineProperties( canvasInOut );
 

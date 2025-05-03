@@ -101,7 +101,4 @@ implementation
                             newStartValueOut,   newEndValueOut);
             end;
 
-
-
-
 end.

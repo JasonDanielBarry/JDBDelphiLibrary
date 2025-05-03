@@ -8,7 +8,7 @@ interface
         //custom
             ColourMethods,
             DrawingAxisConversionClass,
-            GraphicObjectBaseClass, GraphicObjectGroupClass,
+            GraphicObjectBaseClass, GraphicObjectGroupClass, GraphicGridClass,
             GeometryTypes, GeomBox,
             GraphicDrawerObjectAdderClass
             ;
@@ -19,7 +19,9 @@ interface
                 type
                     TLayerGeometryMap = TDictionary<string, TArray<TGraphicObject>>;
                 var
+                    gridVisible             : boolean;
                     currentDrawingLayer     : string;
+                    graphicGrid             : TGraphicGrid;
                     orderedLayerKeys        : TList<string>;
                     arrActiveDrawingLayers  : TArray<string>;
                     activeGraphicObjects    : TGraphicObjectGroup;
@@ -48,6 +50,7 @@ interface
                 //accessors
                     function getAllDrawingLayers() : TArray<string>;
                 //modifiers
+                    procedure setGridVisible(const isVisibleIn : boolean);
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); override;
                     procedure setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
                     procedure activateAllDrawingLayers();
@@ -143,6 +146,9 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
+                        if ( gridVisible ) then
+                            graphicGrid.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+
                         activeGraphicObjects.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
                     end;
 
@@ -152,6 +158,7 @@ implementation
                 begin
                     inherited create();
 
+                    graphicGrid             := TGraphicGrid.create();
                     orderedLayerKeys        := TList<string>.Create();
                     layerGeometryMap        := TLayerGeometryMap.Create();
                     activeGraphicObjects    := TGraphicObjectGroup.create();
@@ -163,13 +170,10 @@ implementation
                 begin
                     resetDrawingGeometry();
 
+                    FreeAndNil( graphicGrid );
                     FreeAndNil( orderedLayerKeys );
                     FreeAndNil( layerGeometryMap );
-
-                    //the graphic object group is cleared (without freeing objects) before freeing
-                    //as all graphic objects are freed in resetDrawingGeometry()
-                        activeGraphicObjects.clearGraphicObjectsGroup( False );
-                        FreeAndNil( activeGraphicObjects );
+                    FreeAndNil( activeGraphicObjects );
 
                     inherited destroy();
                 end;
@@ -181,6 +185,11 @@ implementation
                 end;
 
         //modifiers
+            procedure TGraphicDrawerLayers.setGridVisible(const isVisibleIn : boolean);
+                begin
+                    gridVisible := isVisibleIn;
+                end;
+
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);
                 var
                     existsInList,
