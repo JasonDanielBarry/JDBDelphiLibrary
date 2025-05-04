@@ -4,8 +4,8 @@ interface
 
     uses
         Winapi.D2D1,
-        system.SysUtils, system.Types,
-        Vcl.Direct2D, vcl.Graphics, vcl.Themes,
+        system.SysUtils, system.Types, system.Classes,
+        Vcl.Direct2D, vcl.Graphics, vcl.Themes, vcl.StdCtrls,
         GeometryTypes,
         GeomBox,
         GraphicDrawingTypes,
@@ -17,18 +17,30 @@ interface
         TGraphicText = class(TGraphicObject)
             private
                 var
+                    addUnderlay         : boolean;
                     textSize            : integer;
                     textRotationAngle   : double;
                     textString          : string;
+                    textAlignment       : TAlignment;
+                    textLayout          : TTextLayout;
                     textColour          : TColor;
                     textFontStyles      : TFontStyles;
                     textHandlePointXY   : TGeomPoint;
                 procedure setFontProperties(var canvasInOut : TDirect2DCanvas);
+                procedure calculateTextJustificationAndLayoutTranslation(   out xTranslationOut, yTranslationOut    : double;
+                                                                            out textExtentOut                       : Tsize;
+                                                                            var canvasInOut                         : TDirect2DCanvas   );
+                procedure drawTextUnderlay( const xIn, yIn      : integer;
+                                            const textExtentIn  : TSize;
+                                            var canvasInOut     : TDirect2DCanvas );
             public
                 //constructor
-                    constructor create( const   textSizeIn          : integer;
+                    constructor create( const   addUnderlayIn       : boolean;
+                                        const   textSizeIn          : integer;
                                         const   textRotationAngleIn : double;
                                         const   textStringIn        : string;
+                                        const   textAlignmentIn     : TAlignment;
+                                        const   textLayoutIn        : TTextLayout;
                                         const   textColourIn        : TColor;
                                         const   textFontStylesIn    : TFontStyles;
                                         const   textHandlePointIn   : TGeomPoint    );
@@ -37,6 +49,8 @@ interface
                 //modifiers
                     procedure setTextString(const newTextIn : string);
                     procedure setHandlePoint(const xIn, yIn : double);
+                //text rect on canvas
+                    function getTextExtent(var canvasInOut : TDirect2DCanvas) : TSize;
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); override;
@@ -57,20 +71,73 @@ implementation
                     canvasInOut.Brush.Style := TBrushStyle.bsClear;
             end;
 
+        procedure TGraphicText.calculateTextJustificationAndLayoutTranslation(  out xTranslationOut, yTranslationOut    : double;
+                                                                                out textExtentOut                       : Tsize;
+                                                                                var canvasInOut                         : TDirect2DCanvas   );
+            begin
+                textExtentOut := canvasInOut.TextExtent( textString );
+
+                //x - translation
+                    case ( textAlignment ) of
+                        TAlignment.taLeftJustify:
+                            xTranslationOut := 0;
+
+                        TAlignment.taCenter:
+                            xTranslationOut := textExtentOut.Width / 2;
+
+                        TAlignment.taRightJustify:
+                            xTranslationOut := textExtentOut.Width;
+                    end;
+
+                //y - translation
+                    case ( textLayout ) of
+                        TTextLayout.tlTop:
+                            yTranslationOut := 0;
+
+                        TTextLayout.tlCenter:
+                            yTranslationOut := textExtentOut.Height / 2;
+
+                        TTextLayout.tlBottom:
+                            yTranslationOut := textExtentOut.Height;
+                    end;
+            end;
+
+        procedure TGraphicText.drawTextUnderlay(const xIn, yIn      : integer;
+                                                const textExtentIn  : TSize;
+                                                var canvasInOut     : TDirect2DCanvas );
+            var
+                fillColour : TColor;
+            begin
+                if NOT( addUnderlay ) then
+                    exit();
+
+                fillColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
+
+                canvasInOut.Brush.Color := fillColour;
+
+                canvasInOut.FillRect( Rect( xIn, yIn, xIn + textExtentIn.Width, yIn + textExtentIn.Height ) );
+            end;
+
     //public
         //constructor
-            constructor TGraphicText.create(const   textSizeIn          : integer;
+            constructor TGraphicText.create(const   addUnderlayIn       : boolean;
+                                            const   textSizeIn          : integer;
                                             const   textRotationAngleIn : double;
                                             const   textStringIn        : string;
+                                            const   textAlignmentIn     : TAlignment;
+                                            const   textLayoutIn        : TTextLayout;
                                             const   textColourIn        : TColor;
                                             const   textFontStylesIn    : TFontStyles;
-                                            const   textHandlePointIn   : TGeomPoint );
+                                            const   textHandlePointIn   : TGeomPoint    );
                 begin
                     inherited create();
 
+                    addUnderlay         := addUnderlayIn;
                     textSize            := textSizeIn;
                     textRotationAngle   := textRotationAngleIn;
                     textString          := textStringIn;
+                    textAlignment       := textAlignmentIn;
+                    textLayout          := textLayoutIn;
                     textColour          := textColourIn;
                     textFontStyles      := textFontStylesIn;
                     textHandlePointXY   := textHandlePointIn;
@@ -93,12 +160,23 @@ implementation
                     textHandlePointXY.setPoint( xIn, yIn );
                 end;
 
+        //text rect on canvas
+            function TGraphicText.getTextExtent(var canvasInOut : TDirect2DCanvas) : TSize;
+                begin
+                    setFontProperties( canvasInOut );
+
+                    result := canvasInOut.TextExtent( textString );
+                end;
+
         //draw to canvas
             procedure TGraphicText.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
                 var
-                    textDrawingPointLT  : TPointF;
-                    transformMatrix     : TD2DMatrix3x2F;
+                    x, y                        : integer;
+                    xTranslation, yTranslation  : double;
+                    textExtent                  : Tsize;
+                    textDrawingPointLT          : TPointF;
+                    transformMatrix             : TD2DMatrix3x2F;
                 begin
                     //set the canvas dont properties
                         setFontProperties( canvasInOut );
@@ -109,12 +187,22 @@ implementation
                     //get transformation matrix - positive angles result in clockwise rotation
                         transformMatrix := TD2DMatrix3x2F.Rotation( -textRotationAngle, textDrawingPointLT.x, textDrawingPointLT.y );
 
-                    //draw text with rotation
+                    //calculate rotation matrix
                         canvasInOut.RenderTarget.SetTransform( transformMatrix );
 
-                        canvasInOut.TextOut( round(textDrawingPointLT.X), round(textDrawingPointLT.Y), textString );
+                    //calculate text translation
+                        calculateTextJustificationAndLayoutTranslation( xTranslation, yTranslation, textExtent, canvasInOut );
 
-                    //set canvas roations back to 0
+                        x := round(textDrawingPointLT.X - xTranslation);
+                        y := round(textDrawingPointLT.Y - yTranslation);
+
+                    //draw underlay (if required)
+                        drawTextUnderlay( x, y, textExtent, canvasInOut );
+
+                    //draw text to canvas
+                        canvasInOut.TextOut( round(textDrawingPointLT.X - xTranslation), round(textDrawingPointLT.Y - yTranslation), textString );
+
+                    //reset canvas roation
                         canvasInOut.RenderTarget.SetTransform( TD2DMatrix3x2F.Identity );
                 end;
 

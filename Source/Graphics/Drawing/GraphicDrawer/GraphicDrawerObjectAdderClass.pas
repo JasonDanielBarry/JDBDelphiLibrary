@@ -4,8 +4,8 @@ interface
 
     uses
         //Delphi
-            system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections,
-            vcl.Graphics,
+            system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections, System.Classes,
+            vcl.Graphics, vcl.StdCtrls,
             vcl.Direct2D, Winapi.D2D1,
         //custom
             ColourMethods,
@@ -76,10 +76,13 @@ interface
                     //text
                         procedure addText(  const   textXIn, textYIn    : double;
                                             const   textStringIn        : string;
+                                            const   addTextUnderlayIn   : boolean = False;
                                             const   textSizeIn          : integer = 9;
                                             const   textRotationAngleIn : double = 0;
+                                            const   textAlignmentIn     : TAlignment = TAlignment.taLeftJustify;
+                                            const   textLayoutIn        : TTextLayout = TTextLayout.tlTop;
                                             const   textColourIn        : TColor = TColors.SysWindowText;
-                                            const   textFontStylesIn    : TFontStyles = []                  );
+                                            const   textFontStylesIn    : TFontStyles = []                      );
                     //groups
                         //arrow
                             procedure addArrow( const   arrowLengthIn,
@@ -272,10 +275,13 @@ implementation
             //text
                 procedure TGraphicDrawerObjectAdder.addText(const   textXIn, textYIn    : double;
                                                             const   textStringIn        : string;
+                                                            const   addTextUnderlayIn   : boolean = False;
                                                             const   textSizeIn          : integer = 9;
                                                             const   textRotationAngleIn : double = 0;
+                                                            const   textAlignmentIn     : TAlignment = TAlignment.taLeftJustify;
+                                                            const   textLayoutIn        : TTextLayout = TTextLayout.tlTop;
                                                             const   textColourIn        : TColor = TColors.SysWindowText;
-                                                            const   textFontStylesIn    : TFontStyles = []              );
+                                                            const   textFontStylesIn    : TFontStyles = []                      );
                     var
                         textTopLeftPoint    : TGeomPoint;
                         newGraphicText      : TGraphicText;
@@ -285,9 +291,12 @@ implementation
 
                         textTopLeftPoint := TGeomPoint.create( textXIn, textYIn );
 
-                        newGraphicText := TGraphicText.create(  textSizeIn,
+                        newGraphicText := TGraphicText.create(  addTextUnderlayIn,
+                                                                textSizeIn,
                                                                 textRotationAngleIn,
                                                                 trim( textStringIn ),
+                                                                textAlignmentIn,
+                                                                textLayoutIn,
                                                                 textColourIn,
                                                                 textFontStylesIn,
                                                                 textTopLeftPoint    );

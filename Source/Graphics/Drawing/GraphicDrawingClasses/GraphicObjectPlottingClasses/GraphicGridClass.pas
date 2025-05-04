@@ -4,9 +4,9 @@ interface
 
     uses
         //Delphi
-            system.SysUtils, System.Math, system.types, system.UITypes, System.UIConsts,
+            system.SysUtils, System.Math, system.types, system.UITypes, System.UIConsts, System.Classes,
             Winapi.D2D1, Vcl.Direct2D,
-            vcl.Graphics,
+            vcl.Graphics, Vcl.StdCtrls,
         //custom
             RoundingMethods,
             GraphicObjectBaseClass,
@@ -252,7 +252,7 @@ implementation
                     inherited create();
 
                     createGridLines();
-                    graphicText := TGraphicText.create( 9, 0, '', TColors.Black, [], TGeomPoint.create(0, 0) );
+                    graphicText := TGraphicText.create( True, 9, 0, '', TAlignment.taLeftJustify, TTextLayout.tlTop, TColors.Black, [], TGeomPoint.create(0, 0) );
                 end;
 
         //destructor
