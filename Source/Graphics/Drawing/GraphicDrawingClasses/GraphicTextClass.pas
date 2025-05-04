@@ -26,13 +26,16 @@ interface
                     textColour          : TColor;
                     textFontStyles      : TFontStyles;
                     textHandlePointXY   : TGeomPoint;
-                procedure setFontProperties(var canvasInOut : TDirect2DCanvas);
-                procedure calculateTextJustificationAndLayoutTranslation(   out xTranslationOut, yTranslationOut    : double;
-                                                                            out textExtentOut                       : Tsize;
-                                                                            var canvasInOut                         : TDirect2DCanvas   );
-                procedure drawTextUnderlay( const xIn, yIn      : integer;
-                                            const textExtentIn  : TSize;
-                                            var canvasInOut     : TDirect2DCanvas );
+                //set font properties
+                    procedure setFontProperties(var canvasInOut : TDirect2DCanvas);
+                //calculate the translation of the text for the alignment settings
+                    procedure calculateTextJustificationAndLayoutTranslation(   out xTranslationOut, yTranslationOut    : double;
+                                                                                out textExtentOut                       : Tsize;
+                                                                                var canvasInOut                         : TDirect2DCanvas   );
+                //dray the text underlay
+                    procedure drawTextUnderlay( const xIn, yIn      : integer;
+                                                const textExtentIn  : TSize;
+                                                var canvasInOut     : TDirect2DCanvas );
             public
                 //constructor
                     constructor create( const   addUnderlayIn       : boolean;
@@ -48,9 +51,9 @@ interface
                     destructor destroy(); override;
                 //modifiers
                     procedure setTextString(const newTextIn : string);
-                    procedure setHandlePoint(const xIn, yIn : double);
-                //text rect on canvas
-                    function getTextExtent(var canvasInOut : TDirect2DCanvas) : TSize;
+                    procedure setHandlePoint(   const xIn, yIn : double);
+                    procedure setAlignmentAndLayout(const alignmentIn   : TAlignment;
+                                                    const layoutIn      : TTextLayout);
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); override;
@@ -61,63 +64,66 @@ interface
 implementation
 
     //private
-        procedure TGraphicText.setFontProperties(var canvasInOut : TDirect2DCanvas);
-            begin
-                //set font properties
-                    canvasInOut.Font.size   := textSize;
-                    canvasInOut.Font.Color  := TStyleManager.ActiveStyle.GetSystemColor( textColour );
-                    canvasInOut.Font.Name   := 'Segoe UI';
-                    canvasInOut.Font.Style  := textFontStyles;
-                    canvasInOut.Brush.Style := TBrushStyle.bsClear;
-            end;
+        //set font properties
+            procedure TGraphicText.setFontProperties(var canvasInOut : TDirect2DCanvas);
+                begin
+                    //set font properties
+                        canvasInOut.Font.size   := textSize;
+                        canvasInOut.Font.Color  := TStyleManager.ActiveStyle.GetSystemColor( textColour );
+                        canvasInOut.Font.Name   := 'Segoe UI';
+                        canvasInOut.Font.Style  := textFontStyles;
+                        canvasInOut.Brush.Style := TBrushStyle.bsClear;
+                end;
 
-        procedure TGraphicText.calculateTextJustificationAndLayoutTranslation(  out xTranslationOut, yTranslationOut    : double;
-                                                                                out textExtentOut                       : Tsize;
-                                                                                var canvasInOut                         : TDirect2DCanvas   );
-            begin
-                textExtentOut := canvasInOut.TextExtent( textString );
+        //calculate the translation of the text for the alignment settings
+            procedure TGraphicText.calculateTextJustificationAndLayoutTranslation(  out xTranslationOut, yTranslationOut    : double;
+                                                                                    out textExtentOut                       : Tsize;
+                                                                                    var canvasInOut                         : TDirect2DCanvas   );
+                begin
+                    textExtentOut := canvasInOut.TextExtent( textString );
 
-                //x - translation
-                    case ( textAlignment ) of
-                        TAlignment.taLeftJustify:
-                            xTranslationOut := 0;
+                    //x - translation
+                        case ( textAlignment ) of
+                            TAlignment.taLeftJustify:
+                                xTranslationOut := 0;
 
-                        TAlignment.taCenter:
-                            xTranslationOut := textExtentOut.Width / 2;
+                            TAlignment.taCenter:
+                                xTranslationOut := textExtentOut.Width / 2;
 
-                        TAlignment.taRightJustify:
-                            xTranslationOut := textExtentOut.Width;
-                    end;
+                            TAlignment.taRightJustify:
+                                xTranslationOut := textExtentOut.Width;
+                        end;
 
-                //y - translation
-                    case ( textLayout ) of
-                        TTextLayout.tlTop:
-                            yTranslationOut := 0;
+                    //y - translation
+                        case ( textLayout ) of
+                            TTextLayout.tlTop:
+                                yTranslationOut := 0;
 
-                        TTextLayout.tlCenter:
-                            yTranslationOut := textExtentOut.Height / 2;
+                            TTextLayout.tlCenter:
+                                yTranslationOut := textExtentOut.Height / 2;
 
-                        TTextLayout.tlBottom:
-                            yTranslationOut := textExtentOut.Height;
-                    end;
-            end;
+                            TTextLayout.tlBottom:
+                                yTranslationOut := textExtentOut.Height;
+                        end;
+                end;
 
-        procedure TGraphicText.drawTextUnderlay(const xIn, yIn      : integer;
-                                                const textExtentIn  : TSize;
-                                                var canvasInOut     : TDirect2DCanvas );
-            var
-                fillColour : TColor;
-            begin
-                if NOT( addUnderlay ) then
-                    exit();
+        //dray the text underlay
+            procedure TGraphicText.drawTextUnderlay(const xIn, yIn      : integer;
+                                                    const textExtentIn  : TSize;
+                                                    var canvasInOut     : TDirect2DCanvas );
+                var
+                    fillColour : TColor;
+                begin
+                    if NOT( addUnderlay ) then
+                        exit();
 
-                fillColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
+                    fillColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
 
-                canvasInOut.Brush.Color := fillColour;
-                canvasInOut.Brush.Style := TBrushStyle.bsSolid;
+                    canvasInOut.Brush.Color := fillColour;
+                    canvasInOut.Brush.Style := TBrushStyle.bsSolid;
 
-                canvasInOut.FillRect( Rect( xIn, yIn, xIn + textExtentIn.Width, yIn + textExtentIn.Height ) );
-            end;
+                    canvasInOut.FillRect( Rect( xIn, yIn, xIn + textExtentIn.Width, yIn + textExtentIn.Height ) );
+                end;
 
     //public
         //constructor
@@ -161,12 +167,11 @@ implementation
                     textHandlePointXY.setPoint( xIn, yIn );
                 end;
 
-        //text rect on canvas
-            function TGraphicText.getTextExtent(var canvasInOut : TDirect2DCanvas) : TSize;
+            procedure TGraphicText.setAlignmentAndLayout(   const alignmentIn   : TAlignment;
+                                                            const layoutIn      : TTextLayout   );
                 begin
-                    setFontProperties( canvasInOut );
-
-                    result := canvasInOut.TextExtent( textString );
+                    textAlignment   := alignmentIn;
+                    textLayout      := layoutIn;
                 end;
 
         //draw to canvas
