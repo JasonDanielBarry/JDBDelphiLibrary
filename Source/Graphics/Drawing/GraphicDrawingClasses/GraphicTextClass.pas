@@ -114,6 +114,7 @@ implementation
                 fillColour := TStyleManager.ActiveStyle.GetStyleColor( TStyleColor.scGenericBackground );
 
                 canvasInOut.Brush.Color := fillColour;
+                canvasInOut.Brush.Style := TBrushStyle.bsSolid;
 
                 canvasInOut.FillRect( Rect( xIn, yIn, xIn + textExtentIn.Width, yIn + textExtentIn.Height ) );
             end;

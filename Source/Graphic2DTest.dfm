@@ -62,7 +62,7 @@ object Form1: TForm1
       Left = 88
       Top = 0
       Width = 125
-      Height = 23
+      Height = 25
       Align = alLeft
       Style = csDropDownList
       Color = clWhite

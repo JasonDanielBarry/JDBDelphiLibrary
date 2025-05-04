@@ -71,7 +71,7 @@ implementation
 
                     FreeAndNil( polygon );
 
-                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon'#13'rotated 45'#176);
+                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon'#13'rotated 45'#176, True, 9, 45, taCenter, tlCenter);
 
                 //line 1
                     GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');
@@ -117,9 +117,9 @@ implementation
                 //rectangle
                     GraphicDrawerInOut.setCurrentDrawingLayer('Rectangle');
 
-                    GraphicDrawerInOut.addRectangle( 50, 75, 150, 10, True, 4, 10, TColors.Burlywood, TColors.Darkblue, TPenStyle.psDash );
+                    GraphicDrawerInOut.addRectangle( 50, 75, 250, 10, True, 4, 10, TColors.Burlywood, TColors.Darkblue, TPenStyle.psDash );
 
-                    GraphicDrawerInOut.addText(150, 10, 'This is a round rectangle');
+                    GraphicDrawerInOut.addText(250, 10, 'This is a round rectangle');
 
                 //ellipse
                     GraphicDrawerInOut.setCurrentDrawingLayer('Ellipse');
@@ -131,17 +131,22 @@ implementation
                 //text
                     GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 1');
 
-                    GraphicDrawerInOut.addText(0, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, -20)');
+                    GraphicDrawerInOut.addText(0, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, -30)');
 
-                    GraphicDrawerInOut.addText(200, -20, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, -20)');
+                    GraphicDrawerInOut.addText(100, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (100, -30)', False, 9, 0, taCenter, tlCenter);
+
+                    GraphicDrawerInOut.addText(200, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, -30)', False, 9, 0, taRightJustify, tlBottom);
 
                 //vertical boundary test
                     GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 2');
 
                     GraphicDrawerInOut.addText( 150, 200,
                                                 'This is a short'#13'sentence of'#13'3 lines',
+                                                False,
                                                 18,
                                                 35,
+                                                TAlignment.taLeftJustify,
+                                                TTextLayout.tlTop,
                                                 Tcolors.Darkred,
                                                 [TFontStyle.fsBold, TFontStyle.fsItalic, TFontStyle.fsUnderline] );
 
@@ -193,12 +198,12 @@ implementation
                 GraphicDrawerInOut.setCurrentDrawingLayer('XY - Axes');
 
                 //x-axis
-                    GraphicDrawerInOut.addText( X_MAX, 10, 'X', 15 );
+                    GraphicDrawerInOut.addText( X_MAX, 10, 'X', False, 15 );
 
                     GraphicDrawerInOut.addArrow( X_MAX, 0, TGeomPoint.create(0, 0) );
 
                 //y-axis
-                    GraphicDrawerInOut.addText( 10, Y_MAX, 'Y', 15 );
+                    GraphicDrawerInOut.addText( 10, Y_MAX, 'Y', False, 15 );
 
                     GraphicDrawerInOut.addArrow( Y_MAX, 90, TGeomPoint.create(0, 0) );
 
