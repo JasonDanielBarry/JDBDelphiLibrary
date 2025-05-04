@@ -5,7 +5,7 @@ interface
     uses
         Winapi.Windows, Winapi.Messages,
         System.SysUtils, system.Math, system.Types, system.UITypes, System.Classes,
-        vcl.Controls, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids;
+        vcl.Controls, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids, Vcl.Themes;
 
     type
         TJDBStringGrid = class(TStringGrid)
@@ -270,7 +270,7 @@ implementation
                             borderPanel.BorderStyle         := bsNone;
 
                         //colour
-                            borderPanel.Color := colourIn;
+                            borderPanel.Color := TStyleManager.ActiveStyle.GetSystemColor( colourIn );
 
                         //size
                             borderPanel.Height  := self.Height + (2 * edgeWidthIn);

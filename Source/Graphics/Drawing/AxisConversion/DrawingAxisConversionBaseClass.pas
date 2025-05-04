@@ -19,6 +19,7 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
+                    function getCanvasDimensions() : TSize;
                     function getDrawingRegion() : TGeomBox;
                 //modifiers
                     //canvas boundaries
@@ -56,6 +57,11 @@ implementation
                 end;
 
         //accessors
+            function TDrawingAxisConverterBase.getCanvasDimensions() : TSize;
+                begin
+                    result := canvasDimensions;
+                end;
+
             function TDrawingAxisConverterBase.getDrawingRegion() : TGeomBox;
                 begin
                     result := drawingRegion;
