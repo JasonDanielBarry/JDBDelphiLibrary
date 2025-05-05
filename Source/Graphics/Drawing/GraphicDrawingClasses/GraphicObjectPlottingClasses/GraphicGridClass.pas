@@ -52,21 +52,21 @@ interface
                                                         var canvasInOut         : TDirect2DCanvas       );
                 //draw axis labels
                     function determineLabelPosition(const axisMinIn, axisMaxIn : double) : double;
+                    function determineLabelValueString(const valueIn, incrementIn : double) : string;
                     //x-axis
                         procedure determineXAxisLabelPosition(  const yMinIn, yMaxIn    : double;
                                                                 out yOut                : double );
                         procedure drawXAxisLabels(  const   incrementIn,
-                                                            xValueIn, yValueIn    : double;
-                                                    const   axisConverterIn       : TDrawingAxisConverter;
+                                                            xValueIn, yValueIn  : double;
+                                                    const   axisConverterIn     : TDrawingAxisConverter;
                                                     var canvasInOut             : TDirect2DCanvas       );
                     //y-axis
                         procedure determineYAxisLabelPosition(  const xMinIn, xMaxIn    : double;
                                                                 out xOut                : double );
                         procedure drawYAxisLabels(  const   incrementIn,
-                                                            xValueIn, yValueIn    : double;
-                                                    const   axisConverterIn       : TDrawingAxisConverter;
-                                                    var canvasInOut             : TDirect2DCanvas       );
-
+                                                            xValueIn, yValueIn  : double;
+                                                    const   axisConverterIn     : TDrawingAxisConverter;
+                                                    var canvasInOut             : TDirect2DCanvas           );
             public
                 //constructor
                     constructor create();
@@ -100,15 +100,21 @@ implementation
             function TGraphicGrid.calculateMajorGridLineIncrement(  const divisionsIn       : integer;
                                                                     const regionDimensionIn : double    ) : double;
                 var
+                    OOMPower            : integer;
                     orderOfMagnitude,
                     roundingBase,
-                    majorIncrementOut  : double;
+                    majorIncrementOut   : double;
                 begin
                     //get the order of magnitude of the region dimension
-                        orderOfMagnitude := trunc( Log10( regionDimensionIn ) );
+                        orderOfMagnitude := Log10( regionDimensionIn );
 
-                    //calculate the rounding base using 1order of magnitude lower
-                        roundingBase := power( 10, orderOfMagnitude - 1 );
+                    //calculate the rounding base using 1 order of magnitude lower
+                        if ( orderOfMagnitude < 0 ) then
+                            OOMPower := Trunc( orderOfMagnitude ) - 2
+                        else
+                            OOMPower := Trunc( orderOfMagnitude ) - 1;
+
+                        roundingBase := power( 10, OOMPower );
 
                     //calculate major grid line increment for the largest dimension
                         majorIncrementOut := roundToBaseMultiple( regionDimensionIn / divisionsIn, roundingBase );
@@ -300,6 +306,19 @@ implementation
                         exit( axisMinIn );
                 end;
 
+            function TGraphicGrid.determineLabelValueString(const valueIn, incrementIn : double) : string;
+                var
+                    precision, digits,
+                    orderOfMagnitude    : integer;
+                begin
+                    orderOfMagnitude := Floor( Log10( abs( incrementIn ) ) );
+
+                    digits      := max( -orderOfMagnitude, 0 );
+                    precision   := 5 + digits;
+
+                    result := FloatToStrF( valueIn, ffFixed, precision, digits );
+                end;
+
             //x-axis
                 procedure TGraphicGrid.determineXAxisLabelPosition( const yMinIn, yMaxIn    : double;
                                                                     out yOut                : double );
@@ -322,16 +341,13 @@ implementation
                     end;
 
                 procedure TGraphicGrid.drawXAxisLabels( const   incrementIn,
-                                                                xValueIn, yValueIn    : double;
-                                                        const   axisConverterIn       : TDrawingAxisConverter;
+                                                                xValueIn, yValueIn  : double;
+                                                        const   axisConverterIn     : TDrawingAxisConverter;
                                                         var canvasInOut             : TDirect2DCanvas       );
                     var
-                        orderOfMagnitude : integer;
-                        xValueString     : string;
+                        xValueString : string;
                     begin
-                        orderOfMagnitude := Floor( Log10( abs(incrementIn) ) );
-
-                        xValueString := FloatToStrF( xValueIn, ffFixed, 5, max( -orderOfMagnitude, 0 ) );
+                        xValueString := determineLabelValueString( xValueIn, incrementIn );
 
                         axisValueText.setHandlePoint( xValueIn, yValueIn );
                         axisValueText.setTextString( xValueString );
@@ -361,16 +377,13 @@ implementation
                     end;
 
                 procedure TGraphicGrid.drawYAxisLabels( const   incrementIn,
-                                                                xValueIn, yValueIn    : double;
-                                                        const   axisConverterIn       : TDrawingAxisConverter;
+                                                                xValueIn, yValueIn  : double;
+                                                        const   axisConverterIn     : TDrawingAxisConverter;
                                                         var canvasInOut             : TDirect2DCanvas           );
                     var
-                        orderOfMagnitude : integer;
-                        yValueString     : string;
+                        yValueString : string;
                     begin
-                        orderOfMagnitude := Floor( Log10( abs(incrementIn) ) );
-
-                        yValueString := FloatToStrF( yValueIn, ffFixed, 5, max( -orderOfMagnitude, 0 ) );
+                        yValueString := determineLabelValueString( yValueIn, incrementIn );
 
                         axisValueText.setHandlePoint( xValueIn, yValueIn );
                         axisValueText.setTextString( yValueString );
