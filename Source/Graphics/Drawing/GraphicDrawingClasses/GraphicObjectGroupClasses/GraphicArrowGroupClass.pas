@@ -23,6 +23,8 @@ interface
                 //arrow spacing
                     function calculateArrowSpacing( const arrowGroupCountIn : integer;
                                                     const lineLengthIn      : double ) : double;
+                //calculate the angle normal to a group line
+                    function calculateAngleNormalToLine(const arrowGroupLineIn : TGeomline) : double;
                 //determine the arrow group angle
                     function determineArrowGroupDirectionAngle( const   userDirectionAngleIn    : double;
                                                                 const   arrowGroupDirectionIn   : EArrowGroupDirection;
@@ -83,51 +85,53 @@ implementation
                     result := lineLengthIn / (arrowGroupCountIn - 1);
                 end;
 
+        //calculate the angle normal to a group line
+            function TGraphicArrowGroup.calculateAngleNormalToLine(const arrowGroupLineIn : TGeomline) : double;
+                var
+                    dx, dy,
+                    lineAngleRad,
+                    normalAngleDegOut   : double;
+                    lineVector          : TGeomSpaceVector;
+                begin
+                    //get the line vector components
+                        lineVector := arrowGroupLineIn.unitVector();
+
+                        dx := lineVector[0];
+                        dy := lineVector[1];
+
+                        FreeAndNil( lineVector );
+
+                    //calculate the angle of the line and the normal angle
+                        lineAngleRad := ArcTan2( dy, dx );
+
+                        normalAngleDegOut := RadToDeg( lineAngleRad ) - 90;
+
+                    result := normalAngleDegOut;
+                end;
+
         //determine the arrow group angle
             function TGraphicArrowGroup.determineArrowGroupDirectionAngle(  const   userDirectionAngleIn    : double;
                                                                             const   arrowGroupDirectionIn   : EArrowGroupDirection;
                                                                             const   arrowGroupLineIn        : TGeomLine             ) : double;
                 begin
-                    result := 0;
-
                     case ( arrowGroupDirectionIn ) of
                         EArrowGroupDirection.agdRight:
-                            exit( 0 );
+                            result := 0;
 
                         EArrowGroupDirection.agdUp:
-                            exit( 90 );
+                            result := 90;
 
                         EArrowGroupDirection.agdLeft:
-                            exit( 180 );
+                            result := 180;
 
                         EArrowGroupDirection.agdDown:
-                            exit( 270 );
+                            result := 270;
 
                         EArrowGroupDirection.agdNormal:
-                            begin
-                                var dx, dy,
-                                    lineAngleRad,
-                                    normalAngleDeg  : double;
-                                var lineVector      : TGeomSpaceVector;
-
-                                //get the line vector components
-                                    lineVector := arrowGroupLineIn.unitVector();
-
-                                    dx := lineVector[0];
-                                    dy := lineVector[1];
-
-                                    FreeAndNil( lineVector );
-
-                                //calculate the angle of the line and the normal angle
-                                    lineAngleRad := ArcTan2( dy, dx );
-
-                                    normalAngleDeg := RadToDeg( lineAngleRad ) - 90;
-
-                                exit( normalAngleDeg );
-                            end;
+                            result := calculateAngleNormalToLine( arrowGroupLineIn );
 
                         EArrowGroupDirection.agdUserDefined:
-                            exit( userDirectionAngleIn );
+                            result := userDirectionAngleIn;
                     end;
                 end;
 
@@ -187,6 +191,8 @@ implementation
                     arrArrowPoints              : TArray<TGeomPoint>;
                     arrGraphicArrows            : TArray<TGraphicObject>;
                 begin
+                    inherited create();
+
                     lineLength := arrowGroupLineIn.calculateLength();
 
                     //calculate number of arrows needed
@@ -202,19 +208,17 @@ implementation
                         arrArrowPoints := calculateArrowPoints( arrowGroupCount, arrowSpacing, arrowGroupLineIn );
 
                     //create each arrow
-                        clearGraphicObjectsGroup( False );
-
                         SetLength( arrGraphicArrows, arrowGroupCount );
 
                         for i := 0 to ( arrowGroupCount - 1 ) do
-                                arrGraphicArrows[i] := TGraphicArrow.create(
-                                                                                filledIn,
-                                                                                lineThicknessIn, arrowLengthIn, arrowGroupAngle,
-                                                                                fillColourIn, lineColourIn,
-                                                                                lineStyleIn,
-                                                                                arrowOriginIn,
-                                                                                arrArrowPoints[i]
-                                                                           );
+                            arrGraphicArrows[i] := TGraphicArrow.create(
+                                                                            filledIn,
+                                                                            lineThicknessIn, arrowLengthIn, arrowGroupAngle,
+                                                                            fillColourIn, lineColourIn,
+                                                                            lineStyleIn,
+                                                                            arrowOriginIn,
+                                                                            arrArrowPoints[i]
+                                                                       );
 
                     addGraphicObjectsToGroup( arrGraphicArrows );
                 end;
@@ -236,6 +240,8 @@ implementation
                     singleLineArrowGroup    : TGraphicArrowGroup;
                 begin
                     //this constructer creates an instance of its own class type for each line in the polyline
+
+                    inherited create();
 
                     line := TGeomLine.create();
 
@@ -261,6 +267,8 @@ implementation
 
                             addGraphicObjectToGroup( singleLineArrowGroup );
                         end;
+
+                    FreeAndNil( line );
                 end;
 
         //destructor

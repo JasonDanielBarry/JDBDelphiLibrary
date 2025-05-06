@@ -30,8 +30,6 @@ object Form1: TForm1
     ShowHint = True
     TabOrder = 0
     OnUpdateGeometry = JDBGraphic2D1UpdateGeometry
-    ExplicitWidth = 1556
-    ExplicitHeight = 648
   end
   object PanelTop: TPanel
     Left = 0
@@ -42,7 +40,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
-    ExplicitWidth = 1556
     object LabelSelectGraphic: TLabel
       AlignWithMargins = True
       Left = 5
@@ -62,7 +59,7 @@ object Form1: TForm1
       Left = 88
       Top = 0
       Width = 125
-      Height = 25
+      Height = 23
       Align = alLeft
       Style = csDropDownList
       Color = clWhite

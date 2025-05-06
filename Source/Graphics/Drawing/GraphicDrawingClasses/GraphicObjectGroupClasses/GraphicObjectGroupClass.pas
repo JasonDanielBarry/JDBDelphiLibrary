@@ -44,7 +44,7 @@ implementation
                 begin
                     inherited create();
 
-                    SetLength( arrGraphicObjectsGroup, 0 );
+                    clearGraphicObjectsGroup( False );
                 end;
 
         //destructor
