@@ -420,11 +420,17 @@ implementation
                     //calculate line increments
                         calculateMajorGridLineIncrements( axisConverterIn, horizontalGridLineIncrement, verticalGridLineIncrement );
 
-                    //draw horizontal lines
-                        drawHorizontalGridLines( verticalGridLineIncrement, axisConverterIn, canvasInOut );
+                    //disable anti-aliasing for drawing lines
+                        canvasInOut.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_ALIASED );
 
-                    //draw vertical lines
-                        drawVerticalGridLines( horizontalGridLineIncrement, axisConverterIn, canvasInOut );
+                        //draw horizontal lines
+                            drawHorizontalGridLines( verticalGridLineIncrement, axisConverterIn, canvasInOut );
+
+                        //draw vertical lines
+                            drawVerticalGridLines( horizontalGridLineIncrement, axisConverterIn, canvasInOut );
+
+                    //reactivate anti-aliasing
+                        canvasInOut.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
                 end;
 
 end.
