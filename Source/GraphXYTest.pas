@@ -29,43 +29,35 @@ implementation
 
 procedure TForm2.FormCreate(Sender: TObject);
 const
-    POINT_COUNT : integer = 1000;
+    POINT_COUNT : integer = 2000;
 var
     i           : integer;
     x, y        : double;
-    arrPoints   : TArray<TGeomPoint>;
+    arrPoints1,
+    arrPoints2,
+    arrPoints3  : TArray<TGeomPoint>;
 begin
-    SetLength( arrPoints, POINT_COUNT );
+    SetLength( arrPoints1, POINT_COUNT + 1 );
+    SetLength( arrPoints2, POINT_COUNT + 1 );
+    SetLength( arrPoints3, POINT_COUNT + 1 );
 
-    for i := 0 to POINT_COUNT-1 do
+    for i := 0 to POINT_COUNT do
         begin
-            x := 0.1 * i;
-            y := 0.1 * power( x, 2 ) * sin( 0.5 * x );
+            x := pi() * 0.025 * (i - POINT_COUNT/2);
 
-            arrPoints[i].setPoint( x, y );
-        end;
+            y := 0.1 * power( x, 2 ) * cos( 0.5 * x );
+            arrPoints1[i].setPoint( x, y );
 
-    JDBGraphXY1.addLinePlot( 'Series 1', arrPoints, 3 );
-
-    for i := 0 to POINT_COUNT-1 do
-        begin
-            x := 0.1 * i;
             y := 0.1 * power( x, 2 );
+            arrPoints2[i].setPoint( x, y );
 
-            arrPoints[i].setPoint( x, y );
-        end;
-
-    JDBGraphXY1.addLinePlot( 'Series 1', arrPoints, 4, clBlue, TPenStyle.psDashDotDot );
-
-    for i := 0 to POINT_COUNT-1 do
-        begin
-            x := 0.1 * i;
             y := -0.1 * power( x, 2 );
-
-            arrPoints[i].setPoint( x, y );
+            arrPoints3[i].setPoint( x, y );
         end;
 
-    JDBGraphXY1.addLinePlot( 'Series 1', arrPoints, 5, clRed, TPenStyle.psDash );
+    JDBGraphXY1.addLinePlot( 'Series 1', arrPoints1, 3 );
+    JDBGraphXY1.addLinePlot( 'Series 2', arrPoints2, 4, clBlue, TPenStyle.psDashDotDot );
+    JDBGraphXY1.addLinePlot( 'Series 3', arrPoints3, 5, clRed, TPenStyle.psDash );
 end;
 
 

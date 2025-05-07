@@ -87,6 +87,11 @@ interface
                                                             verticalIncrementIn     : double;
                                                     const   axisConverterIn         : TDrawingAxisConverter;
                                                     var canvasInOut                 : TDirect2DCanvas       );
+                //axis lines
+                    procedure drawAxisLines(const   xStartIn, yStartIn,
+                                                    xEndIn, yEndIn      : double;
+                                            const   axisConverterIn     : TDrawingAxisConverter;
+                                                    var canvasInOut     : TDirect2DCanvas       );
                 //draw axis labels
                     function determineLabelPosition(const axisMinIn, axisMaxIn : double) : double;
                     function determineLabelValueString(const valueIn, incrementIn : double) : string;
@@ -142,7 +147,7 @@ implementation
                     tempLine.setStartPoint( 0, 0 );
                     tempLine.setEndPoint( 1, 1 );
 
-                    axisLine        := TGraphicLine.create( 1, clWindowText, TPenStyle.psSolid, tempLine );
+                    axisLine        := TGraphicLine.create( 2, clWindowText, TPenStyle.psSolid, tempLine );
                     majorGridLine   := TGraphicLine.create( 1, clGrayText, TPenStyle.psSolid, tempLine );
                     minorGridLine   := TGraphicLine.create( 1, clInactiveCaption, TPenStyle.psSolid, tempLine );
 
@@ -347,6 +352,12 @@ implementation
                         //draw the grid lines
                             while ( y < yEndIn ) do
                                 begin
+                                    if IsZero( y, 1e-9 ) then
+                                        begin
+                                            y := y + majorIncrementIn;
+                                            Continue;
+                                        end;
+
                                     majorGridLine.setStartPoint( xMinIn, y );
                                     majorGridLine.setEndPoint( xMaxIn, y );
 
@@ -375,6 +386,12 @@ implementation
                         //draw the grid lines
                             while ( x < xEndIn ) do
                                 begin
+                                    if IsZero( x, 1e-9 ) then
+                                        begin
+                                            x := x + majorIncrementIn;
+                                            Continue;
+                                        end;
+
                                     majorGridLine.setStartPoint( x, yMinIn );
                                     majorGridLine.setEndPoint( x, yMaxIn );
 
@@ -394,6 +411,23 @@ implementation
                     drawMajorHorizontalGridLines( yStartIn, yEndIn, xStartIn, xEndIn, verticalIncrementIn, axisConverterIn, canvasInOut );
 
                     drawMajorVerticalGridLines( xStartIn, xEndIn, yStartIn, yEndIn, horizontalIncrementIn, axisConverterIn, canvasInOut );
+                end;
+
+        //axis lines
+            procedure TGraphicGrid.drawAxisLines(   const   xStartIn, yStartIn,
+                                                            xEndIn, yEndIn      : double;
+                                                    const   axisConverterIn     : TDrawingAxisConverter;
+                                                    var canvasInOut             : TDirect2DCanvas           );
+                begin
+                    //x - axis
+                        axisLine.setStartPoint( xStartIn, 0 );
+                        axisLine.setEndPoint( xEndIn, 0 );
+                        axisLine.drawToCanvas( axisConverterIn, canvasInOut );
+
+                    //y - axis
+                        axisLine.setStartPoint( 0, yStartIn );
+                        axisLine.setEndPoint( 0, yEndIn );
+                        axisLine.drawToCanvas( axisConverterIn, canvasInOut );
                 end;
 
         //draw axis labels
@@ -611,6 +645,9 @@ implementation
 
                         //major grid lines
                             drawMajorGridLines( xStart, yStart, xEnd, yEnd, gridLineHorizontalIncrement, gridLineVerticalIncrement, axisConverterIn, canvasInOut );
+
+                        //axis lines
+                            drawAxisLines( xStart, yStart, xEnd, yEnd, axisConverterIn, canvasInOut );
 
                         //axis labels
                             drawAxisLabels( xStart, yStart, xEnd, yEnd, gridLineHorizontalIncrement, gridLineVerticalIncrement, axisConverterIn, canvasInOut );

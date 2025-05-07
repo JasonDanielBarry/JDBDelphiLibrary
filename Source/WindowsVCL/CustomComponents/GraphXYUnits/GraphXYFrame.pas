@@ -21,8 +21,10 @@ uses
             //events
                 procedure FrameResize(Sender: TObject);
             private
+                type
+                    TGraphPlotMap = TOrderedDictionary< string, TGraphXYPlot >;
                 var
-                    graphPlotsList : TList<TGraphXYPlot>;
+                    graphPlotsMap : TGraphPlotMap;
                 //add plots to list
                     procedure addPlotToList(const graphPlotIn : TGraphXYPlot);
                 //send graph plot to geometry drawer
@@ -49,9 +51,6 @@ uses
                                                 const lineColourIn  : TColor;
                                                 const lineStyle     : TPenStyle;
                                                 const dataPointsIn  : TArray<TGeomPoint> );
-
-
-
         end;
 
 implementation
@@ -68,7 +67,7 @@ implementation
         //add plots to list
             procedure TCustomGraphXY.addPlotToList(const graphPlotIn : TGraphXYPlot);
                 begin
-                    graphPlotsList.Add( graphPlotIn );
+                    graphPlotsMap.AddOrSetValue( graphPlotIn.plotName, graphPlotIn );
 
                     PBGraphXY.updateGeometry( self );
                 end;
@@ -105,13 +104,13 @@ implementation
         //update geometry event
             procedure TCustomGraphXY.updateGeometryEvent(ASender : TObject; var AGeomDrawer : TGraphicDrawerObjectAdder);
                 var
-                    tempGraphPlot : TGraphXYPlot;
+                    tempGraphPlotItem : TPair<string, TGraphXYPlot>;
                 begin
                     //grid - must be done first
 
                     //graph plots
-                        for tempGraphPlot in graphPlotsList do
-                            sendGraphPlotToGeometryDrawer( tempGraphPlot, AGeomDrawer );
+                        for tempGraphPlotItem in graphPlotsMap do
+                            sendGraphPlotToGeometryDrawer( tempGraphPlotItem.Value, AGeomDrawer );
                 end;
 
         //set graph boundaries
@@ -151,7 +150,7 @@ implementation
                 begin
                     inherited Create( AOwner );
 
-                    graphPlotsList := TList<TGraphXYPlot>.Create();
+                    graphPlotsMap := TGraphPlotMap.Create();
 
                     PBGraphXY.GraphicDrawer.setDrawingSpaceRatioEnabled( False );
                     PBGraphXY.GraphicDrawer.setGeometryBorderPercentage( 0 );
@@ -163,7 +162,7 @@ implementation
         //destructor
             destructor TCustomGraphXY.destroy();
                 begin
-                    FreeAndNil( graphPlotsList );
+                    FreeAndNil( graphPlotsMap );
 
                     inherited destroy();
                 end;
