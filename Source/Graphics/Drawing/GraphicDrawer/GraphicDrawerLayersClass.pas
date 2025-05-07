@@ -17,13 +17,11 @@ interface
         TGraphicDrawerLayers = class(TGraphicDrawerObjectAdder)
             private
                 type
-                    TLayerGeometryMap = TDictionary<string, TArray<TGraphicObject>>;
+                    TLayerGeometryMap = TOrderedDictionary<string, TArray<TGraphicObject>>;
                 var
                     gridVisible             : boolean;
                     currentDrawingLayer     : string;
                     graphicGrid             : TGraphicGrid;
-                    orderedLayerKeys        : TList<string>;
-                    arrActiveDrawingLayers  : TArray<string>;
                     activeGraphicObjects    : TGraphicObjectGroup;
                     layerGeometryMap        : TLayerGeometryMap;
                 //add graphic drawing object to the drawing object container
@@ -32,7 +30,7 @@ interface
                     //return a specified layer's graphic objects array
                         function getArrGraphicObjects(const layerKeyIn : string) : TArray<TGraphicObject>;
                     //collect all active graphic objects into one array in order
-                        procedure collectAllActiveGraphicObjects();
+                        procedure collectAllActiveGraphicObjects(const arrActiveDrawingLayersIn : TArray<string>);
                 //bounding box
                     //calculate the bounding box for a specific layer
                         function calculateLayerBoundingBox(const layerKeyIn : string) : TGeomBox;
@@ -96,7 +94,7 @@ implementation
                     end;
 
             //collect all active graphic objects into one array in order
-                procedure TGraphicDrawerLayers.collectAllActiveGraphicObjects();
+                procedure TGraphicDrawerLayers.collectAllActiveGraphicObjects(const arrActiveDrawingLayersIn : TArray<string>);
                     var
                         layer                           : string;
                         arrCurrentLayerGraphicObjects   : TArray<TGraphicObject>;
@@ -105,7 +103,7 @@ implementation
                             activeGraphicObjects.clearGraphicObjectsGroup( False );
 
                         //loop through the active layers and place their graphic objects in the group
-                            for layer in arrActiveDrawingLayers do
+                            for layer in arrActiveDrawingLayersIn do
                                 begin
                                     //get the graphic objects for the specified layer
                                         arrCurrentLayerGraphicObjects := getArrGraphicObjects( layer );
@@ -159,7 +157,6 @@ implementation
                     inherited create();
 
                     graphicGrid             := TGraphicGrid.create();
-                    orderedLayerKeys        := TList<string>.Create();
                     layerGeometryMap        := TLayerGeometryMap.Create();
                     activeGraphicObjects    := TGraphicObjectGroup.create();
                     currentDrawingLayer     := '';
@@ -171,7 +168,6 @@ implementation
                     resetDrawingGeometry();
 
                     FreeAndNil( graphicGrid );
-                    FreeAndNil( orderedLayerKeys );
                     FreeAndNil( layerGeometryMap );
                     FreeAndNil( activeGraphicObjects );
 
@@ -181,7 +177,7 @@ implementation
         //accessors
             function TGraphicDrawerLayers.getAllDrawingLayers() : TArray<string>;
                 begin
-                    result := orderedLayerKeys.ToArray();
+                    result := layerGeometryMap.Keys.ToArray();
                 end;
 
         //modifiers
@@ -191,39 +187,14 @@ implementation
                 end;
 
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);
-                var
-                    existsInList,
-                    existsInMap,
-                    layerKeyExists      : boolean;
-                    drawingGeomArray    : TArray<TGraphicObject>;
                 begin
                     currentDrawingLayer := layerKeyIn;
-
-                    //check to see if the layer key exists
-                        existsInMap     := layerGeometryMap.TryGetValue( layerKeyIn, drawingGeomArray );
-                        existsInList    := orderedLayerKeys.Contains( currentDrawingLayer );
-
-                        layerKeyExists := existsInMap AND existsInList ;
-
-                        if (layerKeyExists) then
-                            exit();
-
-                    //add the key to the keys list
-                        orderedLayerKeys.Add( currentDrawingLayer );
-
-                    //add a new array for the new key
-                        SetLength( drawingGeomArray, 0 );
-
-                        layerGeometryMap.AddOrSetValue( currentDrawingLayer, drawingGeomArray );
                 end;
 
             procedure TGraphicDrawerLayers.setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
                 begin
-                    //set active layers array
-                        arrActiveDrawingLayers := arrActiveDrawingLayersIn;
-
                     //place all the active graphic object into a single array for drawing
-                        collectAllActiveGraphicObjects();
+                        collectAllActiveGraphicObjects( arrActiveDrawingLayersIn );
 
                     //calculate the bounding box for the reset zoom function
                         calculateNetBoundingBox();
@@ -248,10 +219,6 @@ implementation
                         activeGraphicObjects.clearGraphicObjectsGroup( True );
 
                     layerGeometryMap.clear();
-
-                    orderedLayerKeys.Clear();
-
-                    SetLength( arrActiveDrawingLayers, 0 );
 
                     currentDrawingLayer := '';
                 end;
