@@ -21,35 +21,46 @@ interface
         TGraphicGrid = class(TGraphicObject)
             private
                 var
-                    axisValueText   : TGraphicText;
+                    gridLineHorizontalIncrement,
+                    gridLineVerticalIncrement       : double;
+                    axisValueText                   : TGraphicText;
                     axisLine,
-                    majorGridLine,
-                    minorGridLine   : TGraphicLine;
+                    majorGridLine, minorGridLine    : TGraphicLine;
                 //instantiate grid line classes
                     procedure createGridLines();
                 //calculate major grid line increments
                     function calculateMajorGridLineIncrement(   const divisionsIn       : integer;
                                                                 const regionDimensionIn : double    ) : double;
-                    procedure calculateMajorGridLineIncrements( const axisConverterIn       : TDrawingAxisConverter;
-                                                                out horizontalIncrementOut,
-                                                                    verticalIncrementOut    : double                );
-                //draw grid lines
+                    procedure calculateMajorGridLineIncrements(const axisConverterIn : TDrawingAxisConverter);
+                //calculate the drawing starting values
+                    procedure calculateDrawingStartingValues(   const axisConverterIn       : TDrawingAxisConverter;
+                                                                out xStartOut, yStartOut    : double                );
+                //draw minor grid lines
                     //horizontal
                         procedure drawMinorHorizontalGridLines( const   yStartIn, xMinIn, xMaxIn,
                                                                         minorIncrementIn            : double;
                                                                 const   axisConverterIn             : TDrawingAxisConverter;
                                                                 var canvasInOut                     : TDirect2DCanvas       );
-                        procedure drawHorizontalGridLines(  const lineIncrementIn   : double;
-                                                            const axisConverterIn   : TDrawingAxisConverter;
-                                                            var canvasInOut         : TDirect2DCanvas       );
+
+
+                //draw major grid lines
+
+                //draw axis labels
+
+                //draw grid lines
+                    //horizontal
+
+                        procedure drawHorizontalGridLines(  const yStartIn, lineIncrementIn : double;
+                                                            const axisConverterIn           : TDrawingAxisConverter;
+                                                            var canvasInOut                 : TDirect2DCanvas       );
                     //vertical
                         procedure drawMinorVerticalGridLines(   const   xStartIn, yMinIn, yMaxIn,
                                                                         minorIncrementIn            : double;
                                                                 const   axisConverterIn             : TDrawingAxisConverter;
                                                                 var canvasInOut                     : TDirect2DCanvas       );
-                        procedure drawVerticalGridLines(const lineIncrementIn   : double;
-                                                        const axisConverterIn   : TDrawingAxisConverter;
-                                                        var canvasInOut         : TDirect2DCanvas       );
+                        procedure drawVerticalGridLines(const xStartIn, lineIncrementIn : double;
+                                                        const axisConverterIn           : TDrawingAxisConverter;
+                                                        var canvasInOut                 : TDirect2DCanvas       );
                 //draw axis labels
                     function determineLabelPosition(const axisMinIn, axisMaxIn : double) : double;
                     function determineLabelValueString(const valueIn, incrementIn : double) : string;
@@ -122,9 +133,7 @@ implementation
                     result := majorIncrementOut;
                 end;
 
-            procedure TGraphicGrid.calculateMajorGridLineIncrements(const axisConverterIn       : TDrawingAxisConverter;
-                                                                    out horizontalIncrementOut,
-                                                                        verticalIncrementOut    : double                );
+            procedure TGraphicGrid.calculateMajorGridLineIncrements(const axisConverterIn : TDrawingAxisConverter);
                 var
                     divisions                       : integer;
                     regionDomain, regionRange,
@@ -145,16 +154,37 @@ implementation
                             begin
                                 divisions := round( 10 * (canvasSize.Height / canvasSize.Width) );
 
-                                horizontalIncrementOut  := calculateMajorGridLineIncrement( 10, regionDomain );
-                                verticalIncrementOut    := calculateMajorGridLineIncrement( divisions, regionRange );
+                                gridLineHorizontalIncrement := calculateMajorGridLineIncrement( 10, regionDomain );
+                                gridLineVerticalIncrement   := calculateMajorGridLineIncrement( divisions, regionRange );
                             end
                         else
                             begin
                                 divisions := round( 10 * (canvasSize.Width / canvasSize.Height) );
 
-                                horizontalIncrementOut  := calculateMajorGridLineIncrement( divisions, regionDomain );;
-                                verticalIncrementOut    := calculateMajorGridLineIncrement( 10, regionRange );
+                                gridLineHorizontalIncrement := calculateMajorGridLineIncrement( divisions, regionDomain );;
+                                gridLineVerticalIncrement   := calculateMajorGridLineIncrement( 10, regionRange );
                             end;
+                end;
+
+        //calculate the drawing starting values
+            function calculateStartValue(const regionMinIn, gridLineIncrementIn : double) : double;
+                begin
+                    result := roundToBaseMultiple( regionMinIn, gridLineIncrementIn, TRoundingMode.rmUp ) - gridLineIncrementIn;
+                end;
+
+            procedure TGraphicGrid.calculateDrawingStartingValues(  const axisConverterIn       : TDrawingAxisConverter;
+                                                                    out xStartOut, yStartOut    : double                );
+                var
+                    drawingRegion : TGeomBox;
+                begin
+                    //get the drawing region
+                        drawingRegion := axisConverterIn.getDrawingRegion();
+
+                    //initialise the starting x value
+                        xStartOut := calculateStartValue( drawingRegion.xMin, gridLineHorizontalIncrement );
+
+                    //initialise the starting y value
+                        yStartOut := calculateStartValue( drawingRegion.yMin, gridLineVerticalIncrement );
                 end;
 
         //draw grid lines
@@ -178,9 +208,9 @@ implementation
                             end;
                     end;
 
-                procedure TGraphicGrid.drawHorizontalGridLines( const lineIncrementIn   : double;
-                                                                const axisConverterIn   : TDrawingAxisConverter;
-                                                                var canvasInOut         : TDirect2DCanvas       );
+                procedure TGraphicGrid.drawHorizontalGridLines( const yStartIn, lineIncrementIn : double;
+                                                                const axisConverterIn           : TDrawingAxisConverter;
+                                                                var canvasInOut                 : TDirect2DCanvas       );
                     var
                         y, xMin, xMax   : double;
                         drawingRegion   : TGeomBox;
@@ -192,8 +222,8 @@ implementation
                         //get the drawing region
                             drawingRegion := axisConverterIn.getDrawingRegion();
 
-                        //initialise the starting x value
-                            y := roundToBaseMultiple( drawingRegion.yMin, lineIncrementIn, TRoundingMode.rmUp ) - lineIncrementIn;
+                        //initialise the starting y value
+                            y := yStartIn;
 
                         //cache the y-extents
                             xMin := drawingRegion.xMin;
@@ -239,9 +269,9 @@ implementation
                             end;
                     end;
 
-                procedure TGraphicGrid.drawVerticalGridLines(   const lineIncrementIn   : double;
-                                                                const axisConverterIn   : TDrawingAxisConverter;
-                                                                var canvasInOut         : TDirect2DCanvas       );
+                procedure TGraphicGrid.drawVerticalGridLines(   const xStartIn, lineIncrementIn : double;
+                                                                const axisConverterIn           : TDrawingAxisConverter;
+                                                                var canvasInOut                 : TDirect2DCanvas       );
                     var
                         x, yMin, yMax   : double;
                         drawingRegion   : TGeomBox;
@@ -254,7 +284,7 @@ implementation
                             drawingRegion := axisConverterIn.getDrawingRegion();
 
                         //initialise the starting x value
-                            x := roundToBaseMultiple( drawingRegion.xMin, lineIncrementIn, TRoundingMode.rmUp ) - lineIncrementIn;
+                            x := xStartIn;
 
                         //cache the y-extents
                             yMin := drawingRegion.yMin;
@@ -404,6 +434,7 @@ implementation
         //destructor
             destructor TGraphicGrid.destroy();
                 begin
+                    FreeAndNil( axisLine );
                     FreeAndNil( majorGridLine );
                     FreeAndNil( minorGridLine );
                     FreeAndNil( axisValueText );
@@ -415,19 +446,22 @@ implementation
             procedure TGraphicGrid.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
                 var
-                    horizontalGridLineIncrement, verticalGridLineIncrement : double;
+                    xStart, yStart : double;
                 begin
                     //calculate line increments
-                        calculateMajorGridLineIncrements( axisConverterIn, horizontalGridLineIncrement, verticalGridLineIncrement );
+                        calculateMajorGridLineIncrements( axisConverterIn );
+
+                    //calculate starting x and y values
+                        calculateDrawingStartingValues( axisConverterIn, xStart, yStart );
 
                     //disable anti-aliasing for drawing lines
                         canvasInOut.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_ALIASED );
 
                         //draw horizontal lines
-                            drawHorizontalGridLines( verticalGridLineIncrement, axisConverterIn, canvasInOut );
+                            drawHorizontalGridLines( yStart, gridLineVerticalIncrement, axisConverterIn, canvasInOut );
 
                         //draw vertical lines
-                            drawVerticalGridLines( horizontalGridLineIncrement, axisConverterIn, canvasInOut );
+                            drawVerticalGridLines( xStart, gridLineHorizontalIncrement, axisConverterIn, canvasInOut );
 
                     //reactivate anti-aliasing
                         canvasInOut.RenderTarget.SetAntialiasMode( TD2D1AntiAliasMode.D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );
