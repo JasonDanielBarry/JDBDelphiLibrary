@@ -8,6 +8,7 @@ interface
         System.SysUtils, System.Classes,
         Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Themes,
 
+        GraphicGridClass,
         GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
         Drawer2DTypes
         ;
@@ -18,8 +19,8 @@ interface
                 const
                     WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
-                    gridVisible,
                     mustRedrawGraphic               : boolean;
+                    gridVisibilitySettings          : TGridVisibilitySettings;
                     graphicBackgroundColour         : TColor;
                     currentGraphicBuffer            : TBitmap;
                     D2DGraphicDrawer                : TDirect2DGraphicDrawer;
@@ -46,7 +47,8 @@ interface
                 //accessors
                     function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 //modifiers
-                    procedure setGridVisible(const isVisibleIn : boolean);
+                    procedure setGridEnabled(const enabledIn : boolean);
+                    procedure setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
                     procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 //redraw the graphic
                     procedure postRedrawGraphicMessage(const callingControlIn : TWinControl);
@@ -164,9 +166,6 @@ implementation
                 begin
                     inherited Create( AOwner );
 
-                    //grid is not visible by default
-                        setGridVisible( False );
-
                     //create required classes
                         currentGraphicBuffer    := TBitmap.create();
                         D2DGraphicDrawer        := TDirect2DGraphicDrawer.create();
@@ -178,6 +177,9 @@ implementation
 
                     //for design time to ensure the colour is not black on the form builder
                         setGraphicBackgroundColour();
+
+                    //grid is not visible by default
+                        setGridEnabled( False );
                 end;
 
         //destructor
@@ -197,9 +199,14 @@ implementation
                 end;
 
         //modifiers
-            procedure TPaintBox.setGridVisible(const isVisibleIn : boolean);
+            procedure TPaintBox.setGridEnabled(const enabledIn : boolean);
                 begin
-                    gridVisible := isVisibleIn;
+                    GraphicDrawer.setGridEnabled( enabledIn );
+                end;
+
+            procedure TPaintBox.setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
+                begin
+                    gridVisibilitySettings.copyOther( gridVisibilitySettingsIn );
                 end;
 
             procedure TPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
@@ -232,7 +239,7 @@ implementation
                     //update the D2DGraphicDrawer geometry
                         if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
                             begin
-                                D2DGraphicDrawer.setGridVisible( gridVisible );
+                                D2DGraphicDrawer.setGridElementsVisiblity( gridVisibilitySettings );
 
                                 onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
                             end;
@@ -241,7 +248,7 @@ implementation
                         D2DGraphicDrawer.activateAllDrawingLayers();
 
                     //send message to redraw
-                        postRedrawGraphicMessage(callingControlIn);
+                        postRedrawGraphicMessage( callingControlIn );
                 end;
 
         //process windows messages

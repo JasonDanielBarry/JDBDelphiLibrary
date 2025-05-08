@@ -19,7 +19,7 @@ interface
                 type
                     TLayerGeometryMap = TOrderedDictionary<string, TArray<TGraphicObject>>;
                 var
-                    gridVisible             : boolean;
+                    gridEnabled             : boolean;
                     currentDrawingLayer     : string;
                     graphicGrid             : TGraphicGrid;
                     activeGraphicObjects    : TGraphicObjectGroup;
@@ -48,7 +48,8 @@ interface
                 //accessors
                     function getAllDrawingLayers() : TArray<string>;
                 //modifiers
-                    procedure setGridVisible(const isVisibleIn : boolean);
+                    procedure setGridEnabled(const enabledIn : boolean);
+                    procedure setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
                     procedure setCurrentDrawingLayer(const layerKeyIn : string); override;
                     procedure setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
                     procedure activateAllDrawingLayers();
@@ -144,10 +145,16 @@ implementation
                         inherited drawAll(  canvasWidthIn, canvasHeightIn,
                                             drawingBackgroundColourIn       );
 
-                        if ( gridVisible ) then
-                            graphicGrid.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+                        //draw the grid
+                            if ( gridEnabled ) then
+                                graphicGrid.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
 
-                        activeGraphicObjects.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+                        //draw graphic objects
+                            activeGraphicObjects.drawToCanvas( axisConverter, Direct2DDrawingCanvas );
+
+                        //draw the grid axis labels
+                            if ( gridEnabled ) then
+                                graphicGrid.drawAxisLabels( axisConverter, Direct2DDrawingCanvas );
                     end;
 
     //public
@@ -181,9 +188,14 @@ implementation
                 end;
 
         //modifiers
-            procedure TGraphicDrawerLayers.setGridVisible(const isVisibleIn : boolean);
+            procedure TGraphicDrawerLayers.setGridEnabled(const enabledIn : boolean);
                 begin
-                    gridVisible := isVisibleIn;
+                    gridEnabled := enabledIn;
+                end;
+
+            procedure TGraphicDrawerLayers.setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
+                begin
+                    graphicGrid.setGridElementsVisiblity( gridVisibilitySettingsIn );
                 end;
 
             procedure TGraphicDrawerLayers.setCurrentDrawingLayer(const layerKeyIn : string);

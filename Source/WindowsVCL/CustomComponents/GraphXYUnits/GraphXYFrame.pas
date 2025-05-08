@@ -10,6 +10,7 @@ uses
     GeometryTypes,
     GeomBox,
     GeomPolyLineClass,
+    GraphicGridClass,
     GraphicDrawerObjectAdderClass,
     Drawer2DPaintBoxClass,
     GraphXYTypes
@@ -24,9 +25,10 @@ uses
                 type
                     TGraphPlotMap = TOrderedDictionary< string, TGraphXYPlot >;
                 var
-                    graphPlotsMap : TGraphPlotMap;
+                    gridVisibilitySettings  : TGridVisibilitySettings;
+                    graphPlotsMap           : TGraphPlotMap;
                 //add plots to list
-                    procedure addPlotToList(const graphPlotIn : TGraphXYPlot);
+                    procedure addPlotToMap(const graphPlotIn : TGraphXYPlot);
                 //send graph plot to geometry drawer
                     procedure sendGraphPlotToGeometryDrawer(const graphPlotIn       : TGraphXYPlot;
                                                             var geometryDrawerInOut : TGraphicDrawerObjectAdder);
@@ -65,7 +67,7 @@ implementation
 
     //private
         //add plots to list
-            procedure TCustomGraphXY.addPlotToList(const graphPlotIn : TGraphXYPlot);
+            procedure TCustomGraphXY.addPlotToMap(const graphPlotIn : TGraphXYPlot);
                 begin
                     graphPlotsMap.AddOrSetValue( graphPlotIn.plotName, graphPlotIn );
 
@@ -107,6 +109,7 @@ implementation
                     tempGraphPlotItem : TPair<string, TGraphXYPlot>;
                 begin
                     //grid - must be done first
+                        PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
 
                     //graph plots
                         for tempGraphPlotItem in graphPlotsMap do
@@ -150,12 +153,15 @@ implementation
                 begin
                     inherited Create( AOwner );
 
+                    PBGraphXY.setGridEnabled( True );
+                    gridVisibilitySettings.setValues( True, True, True, True );
+
                     graphPlotsMap := TGraphPlotMap.Create();
 
                     PBGraphXY.GraphicDrawer.setDrawingSpaceRatioEnabled( False );
                     PBGraphXY.GraphicDrawer.setGeometryBorderPercentage( 0 );
 
-                    PBGraphXY.setGridVisible( True );
+                    PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
                     PBGraphXY.setOnGraphicUpdateGeometryEvent( updateGeometryEvent );
                 end;
 
@@ -189,7 +195,7 @@ implementation
                     newGraphPlot.lineStyle      := lineStyle;
                     TGeomPoint.copyPoints( dataPointsIn, newGraphPlot.arrDataPoints );
 
-                    addPlotToList( newGraphPlot );
+                    addPlotToMap( newGraphPlot );
                 end;
 
 end.
