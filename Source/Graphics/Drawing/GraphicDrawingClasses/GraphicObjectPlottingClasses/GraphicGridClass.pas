@@ -25,6 +25,7 @@ interface
             minorGridLinesVisible : boolean;
             procedure copyOther(const otherGridVisibilitySettingsIn : TGridVisibilitySettings);
             procedure setValues(const showAxisLabelsIn, showAxesIn, showMajorGridLinesIn, showMinorGridLinesIn : boolean);
+            function allElementsDisabled() : boolean;
         end;
 
         TGraphicGrid = class(TGraphicObject)
@@ -164,6 +165,15 @@ implementation
                 self.axesVisible            := showAxesIn;
                 self.majorGridLinesVisible  := showMajorGridLinesIn;
                 self.minorGridLinesVisible  := showMinorGridLinesIn;
+            end;
+
+        function TGridVisibilitySettings.allElementsDisabled() : boolean;
+            var
+                atLeastOneElementIsVisible : boolean;
+            begin
+                atLeastOneElementIsVisible := axisLabelsVisible OR axesVisible OR majorGridLinesVisible OR minorGridLinesVisible;
+
+                result := NOT( atLeastOneElementIsVisible );
             end;
 
     //private
@@ -662,6 +672,9 @@ implementation
             procedure TGraphicGrid.drawToCanvas(const axisConverterIn   : TDrawingAxisConverter;
                                                 var canvasInOut         : TDirect2DCanvas       );
                 begin
+                    if ( gridVisibilitySettings.allElementsDisabled() ) then
+                        exit();
+
                     //calculate line increments
                         calculateMajorGridLineIncrements( axisConverterIn, gridLineHorizontalIncrement, gridLineVerticalIncrement );
 

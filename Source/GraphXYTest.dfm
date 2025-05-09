@@ -2,8 +2,8 @@ object Form2: TForm2
   Left = 0
   Top = 0
   Caption = 'Form2'
-  ClientHeight = 557
-  ClientWidth = 1097
+  ClientHeight = 762
+  ClientWidth = 1506
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,8 +15,8 @@ object Form2: TForm2
   object JDBGraphXY1: TJDBGraphXY
     Left = 0
     Top = 0
-    Width = 1097
-    Height = 557
+    Width = 1506
+    Height = 762
     Align = alClient
     BevelEdges = []
     BevelOuter = bvNone
@@ -26,5 +26,9 @@ object Form2: TForm2
     ShowCaption = False
     ShowHint = True
     TabOrder = 0
+    ExplicitLeft = 272
+    ExplicitTop = 112
+    ExplicitWidth = 817
+    ExplicitHeight = 405
   end
 end

@@ -32,20 +32,23 @@ const
     POINT_COUNT : integer = 2000;
 var
     i           : integer;
+    pi_Value,
     x, y        : double;
     arrPoints1,
     arrPoints2,
     arrPoints3  : TArray<TGeomPoint>;
 begin
+    pi_Value := pi();
+
     SetLength( arrPoints1, POINT_COUNT + 1 );
     SetLength( arrPoints2, POINT_COUNT + 1 );
     SetLength( arrPoints3, POINT_COUNT + 1 );
 
     for i := 0 to POINT_COUNT do
         begin
-            x := pi() * 0.025 * (i - POINT_COUNT/2);
+            x := 0.025 * (i - POINT_COUNT/2);
 
-            y := 0.1 * power( x, 2 ) * cos( 0.5 * x );
+            y := 0.1 * power( x, 2 ) * cos( 0.5 * x * pi_Value );
             arrPoints1[i].setPoint( x, y );
 
             y := 0.1 * power( x, 2 );
