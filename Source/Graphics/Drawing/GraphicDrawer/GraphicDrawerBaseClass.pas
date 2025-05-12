@@ -19,14 +19,14 @@ interface
         TGraphicDrawerBase = class
             strict protected
                 var
-                    axisConverter               : TDrawingAxisConverter;
-                    Direct2DDrawingCanvas       : TDirect2DCanvas;
+                    axisConverter : TDrawingAxisConverter;
                 //add graphic drawing object to the drawing object container
-                    procedure addGraphicObject(const drawingGeometryIn : TGraphicObject); virtual; abstract;
+                    procedure addGraphicObject(const drawingObjectIn : TGraphicObject); virtual; abstract;
                 //drawing procedures
                     //draw all geometry
                         procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
-                                            const drawingBackgroundColourIn     : TColor    );
+                                            const drawingBackgroundColourIn     : TColor;
+                                            var D2DCanvasInOut                  : TDirect2DCanvas);
             protected
                 var
                     //these variables are declared here to be used in the drawAll() procedure
@@ -46,7 +46,8 @@ implementation
         //drawing procedures
             //draw all geometry
                 procedure TGraphicDrawerBase.drawAll(   const canvasWidthIn, canvasHeightIn : integer;
-                                                        const drawingBackgroundColourIn     : TColor    );
+                                                        const drawingBackgroundColourIn     : TColor;
+                                                        var D2DCanvasInOut                  : TDirect2DCanvas);
                     begin
                         //set axis converter canvas dimensions
                             axisConverter.setCanvasDimensions( canvasWidthIn, canvasHeightIn );
@@ -56,8 +57,8 @@ implementation
                                 axisConverter.setDrawingSpaceRatio( drawingSpaceRatio );
 
                         //clear the canvas
-                            Direct2DDrawingCanvas.Brush.Color := drawingBackgroundColourIn;
-                            Direct2DDrawingCanvas.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
+                            D2DCanvasInOut.Brush.Color := drawingBackgroundColourIn;
+                            D2DCanvasInOut.FillRect( Rect(0, 0, canvasWidthIn, canvasHeightIn) );
                     end;
 
     //public

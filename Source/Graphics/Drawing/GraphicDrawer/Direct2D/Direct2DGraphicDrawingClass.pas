@@ -23,7 +23,7 @@ interface
                 //draw all geometry
                     procedure drawAll(  const canvasWidthIn, canvasHeightIn : integer;
                                         const drawingBackgroundColourIn     : TColor;
-                                        const canvasIn                      : TDirect2DCanvas );
+                                        var D2DCanvasInOut                  : TDirect2DCanvas );
         end;
 
 implementation
@@ -44,13 +44,15 @@ implementation
         //draw all geometry
             procedure TDirect2DGraphicDrawer.drawAll(   const canvasWidthIn, canvasHeightIn : integer;
                                                         const drawingBackgroundColourIn     : TColor;
-                                                        const canvasIn                      : TDirect2DCanvas   );
+                                                        var D2DCanvasInOut                  : TDirect2DCanvas   );
                 begin
-                    //set the canvas
-                        Direct2DDrawingCanvas := canvasIn;
-
                     //draw all geometry
-                        inherited drawAll( canvasWidthIn, canvasHeightIn, drawingBackgroundColourIn );
+                        inherited drawAll(
+                                            canvasWidthIn,
+                                            canvasHeightIn,
+                                            drawingBackgroundColourIn,
+                                            D2DCanvasInOut
+                                         );
                 end;
 
 end.

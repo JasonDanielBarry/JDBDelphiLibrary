@@ -81,7 +81,8 @@ uses
   GraphicFunctionPlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicFunctionPlotClass.pas',
   RoundingMethods in 'Source\Mathematics\RoundingMethods.pas',
   TEST_RoundingMethods in 'Source\Mathematics\TEST_RoundingMethods.pas',
-  GraphicGridClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas';
+  GraphicGridClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas',
+  LayerGeometryMapClass in 'Source\Graphics\Drawing\GraphicDrawer\LayerGeometryMapClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}
