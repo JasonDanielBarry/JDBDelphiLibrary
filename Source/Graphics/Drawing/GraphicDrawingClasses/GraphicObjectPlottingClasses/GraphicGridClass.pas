@@ -6,7 +6,7 @@ interface
         //Delphi
             system.SysUtils, System.Math, system.types, system.UITypes, System.UIConsts, System.Classes,
             Winapi.D2D1, Vcl.Direct2D,
-            vcl.Graphics, Vcl.StdCtrls,
+            vcl.Graphics, Vcl.StdCtrls, Vcl.Themes,
         //custom
             RoundingMethods,
             GraphicObjectBaseClass,
@@ -648,7 +648,7 @@ implementation
                     inherited create();
 
                     createGridLines();
-                    axisValueText := TGraphicText.create( True, 9, 0, '', TAlignment.taLeftJustify, TTextLayout.tlTop, TColors.Black, [], TGeomPoint.create(0, 0) );
+                    axisValueText := TGraphicText.create( True, 9, 0, '', TAlignment.taLeftJustify, TTextLayout.tlTop, TColors.SysWindowText, [], TGeomPoint.create(0, 0) );
                 end;
 
         //destructor
