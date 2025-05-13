@@ -91,6 +91,7 @@ interface
                 procedure ActionEditLayerTableExecute(Sender: TObject);
                 procedure CheckListBoxLayerTableClick(Sender: TObject);
                 procedure ActionShowHideControlsExecute(Sender: TObject);
+                procedure CheckListBoxLayerTableDblClick(Sender: TObject);
             private
                 var
                     axisSettingsVisible,
@@ -102,6 +103,7 @@ interface
                 //components positions
                     procedure positionComponents();
                 //layer table
+                    procedure activeOnlySelectedLayer(const selectedLayerIndexIn : integer);
                     procedure sendActiveLayersToGraphicDrawer();
                     procedure updateLayerTable();
                 //mouse methods
@@ -136,8 +138,34 @@ implementation
         procedure TCustomGraphic2D.CheckListBoxLayerTableClick(Sender: TObject);
             begin
                 sendActiveLayersToGraphicDrawer();
+            end;
 
-                redrawGraphic();
+        procedure TCustomGraphic2D.CheckListBoxLayerTableDblClick(Sender: TObject);
+            var
+                mustShowAllLayers       : boolean;
+                checkedIndex,
+                selectedIndex,
+                i, checkedLayerCount    : integer;
+            begin
+                selectedIndex := CheckListBoxLayerTable.ItemIndex;
+
+                checkedLayerCount := 0;
+
+                for i := 0 to ( CheckListBoxLayerTable.Count - 1 ) do
+                    if ( CheckListBoxLayerTable.Checked[i] ) then
+                        begin
+                            checkedIndex := i;
+                            inc( checkedLayerCount );
+                        end;
+
+                if ( (1 < checkedLayerCount) OR (checkedIndex <> selectedIndex) ) then
+                    begin
+                        activeOnlySelectedLayer( selectedIndex );
+                        exit();
+                    end;
+
+                CheckListBoxLayerTable.CheckAll( TCheckBoxState.cbChecked, False, False );
+                sendActiveLayersToGraphicDrawer();
             end;
 
         procedure TCustomGraphic2D.ComboBoxZoomPercentChange(Sender: TObject);
@@ -355,38 +383,55 @@ implementation
                 end;
 
         //layer table
+            procedure TCustomGraphic2D.activeOnlySelectedLayer(const selectedLayerIndexIn : integer);
+                var
+                    mustShowLayer   : boolean;
+                    layerIndex      : integer;
+                begin
+                    for layerIndex := 0 to ( CheckListBoxLayerTable.Items.Count - 1 ) do
+                        begin
+                            mustShowLayer := ( layerIndex = selectedLayerIndexIn );
+
+                            CheckListBoxLayerTable.Checked[ layerIndex ] := mustShowLayer;
+                        end;
+
+                    sendActiveLayersToGraphicDrawer();
+                end;
+
             procedure TCustomGraphic2D.sendActiveLayersToGraphicDrawer();
                 var
-                    i, activeLayerCount : integer;
-                    arrActiveLayers     : TArray<string>;
+                    i               : integer;
+                    arrActiveLayers : TArray<string>;
+                    activeLayerList : TStringList;
                 begin
-                    activeLayerCount := 0;
-
-                    SetLength( arrActiveLayers, activeLayerCount );
+                    activeLayerList := TStringList.create();
+                    activeLayerList.Clear();
 
                     for i := 0 to (CheckListBoxLayerTable.Count - 1) do
                         begin
                             if ( NOT(CheckListBoxLayerTable.Checked[i]) ) then
                                 continue;
 
-                            inc( activeLayerCount );
-
-                            SetLength( arrActiveLayers, activeLayerCount );
-
-                            arrActiveLayers[ activeLayerCount - 1 ] := CheckListBoxLayerTable.Items[i];
+                            activeLayerList.add( CheckListBoxLayerTable.Items[i] );
                         end;
 
                     //catch error of no layers selected
-                        if (activeLayerCount < 1) then
+                        if ( activeLayerList.Count < 1 ) then
                             begin
                                 Application.MessageBox('Cannot disable all layers', 'Error');
 
-                                arrActiveLayers := [CheckListBoxLayerTable.Items[0]];
+                                activeLayerList.add( CheckListBoxLayerTable.Items[0] );
 
                                 CheckListBoxLayerTable.Checked[0] := True;
                             end;
 
+                    arrActiveLayers := activeLayerList.ToStringArray();
+
                     PBDrawer2D.GraphicDrawer.setActiveDrawingLayers( arrActiveLayers );
+
+                    redrawGraphic();
+
+                    FreeAndNil( activeLayerList );
                 end;
 
             procedure TCustomGraphic2D.updateLayerTable();
@@ -415,8 +460,6 @@ implementation
                     tableHeight := min( tableHeight, CheckListBoxLayerTable.ItemHeight * 10 + round(5 * self.ScaleFactor) );
 
                     CheckListBoxLayerTable.Height := tableHeight;
-
-                    CheckListBoxLayerTable.Invalidate();
                 end;
 
         //mouse methods
@@ -509,7 +552,7 @@ implementation
                     //hide components in design time
                         for var tempComponent : TControl in [CheckListBoxLayerTable, GridPanelAxisOptions, GridPanelDirectionalPan, LabelCoords] do
                             if csDesigning in tempComponent.ComponentState then
-                                tempComponent.left := -100;
+                                tempComponent.left := 3000;
                 end;
 
         //destructor
@@ -545,8 +588,7 @@ implementation
                 begin
                     PBDrawer2D.updateGeometry( self );
 
-                    //do layer table
-                        updateLayerTable();
+                    updateLayerTable();
                 end;
 
         //zooming methods

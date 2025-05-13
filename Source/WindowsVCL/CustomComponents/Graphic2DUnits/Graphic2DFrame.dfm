@@ -462,6 +462,7 @@ object CustomGraphic2D: TCustomGraphic2D
     TabOrder = 3
     Visible = False
     OnClick = CheckListBoxLayerTableClick
+    OnDblClick = CheckListBoxLayerTableDblClick
   end
   object ActionListControls: TActionList
     Left = 728

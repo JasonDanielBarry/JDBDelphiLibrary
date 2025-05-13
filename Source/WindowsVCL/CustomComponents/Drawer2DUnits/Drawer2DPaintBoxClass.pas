@@ -225,7 +225,7 @@ implementation
             procedure TPaintBox.updateBackgroundColour(const callingControlIn : TWinControl);
                 begin
                     setGraphicBackgroundColour();
-                    postRedrawGraphicMessage(callingControlIn);
+                    postRedrawGraphicMessage( callingControlIn );
                 end;
 
             procedure TPaintBox.updateGeometry(const callingControlIn : TWinControl);
