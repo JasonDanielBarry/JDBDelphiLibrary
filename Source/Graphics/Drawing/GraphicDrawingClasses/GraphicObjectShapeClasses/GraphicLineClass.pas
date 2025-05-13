@@ -41,10 +41,12 @@ implementation
                                             const   lineStyleIn     : TPenStyle;
                                             const   geometryIn      : TGeomBase );
                 begin
-                    inherited create(   lineThicknessIn,
+                    inherited create(   false,
+                                        lineThicknessIn,
+                                        TColors.Null,
                                         lineColourIn,
                                         lineStyleIn,
-                                        geometryIn          );
+                                        geometryIn.getDrawingPoints()   );
                 end;
 
         //destructor

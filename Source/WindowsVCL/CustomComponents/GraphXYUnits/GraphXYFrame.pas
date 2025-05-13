@@ -12,6 +12,7 @@ uses
     GeomPolyLineClass,
     GraphicGridClass,
     GraphicDrawerObjectAdderClass,
+    Direct2DGraphicDrawingClass,
     Drawer2DPaintBoxClass,
     GraphXYTypes
     ;
@@ -132,8 +133,7 @@ implementation
         //process windows messages
             procedure TCustomGraphXY.wndProc(var messageInOut : TMessage);
                 var
-                    graphWasRedrawn                 : boolean;
-                    currentMousePositionOnPaintbox  : TPoint;
+                    graphWasRedrawn : boolean;
                 begin
                     if ( Assigned( PBGraphXY ) ) then
                         begin
@@ -144,7 +144,7 @@ implementation
                                 //
                         end;
 
-                    inherited wndProc(messageInOut);
+                    inherited wndProc( messageInOut );
                 end;
 
     //public

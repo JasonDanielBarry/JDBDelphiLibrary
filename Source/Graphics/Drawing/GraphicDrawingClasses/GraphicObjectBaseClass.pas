@@ -15,14 +15,14 @@ interface
         TGraphicObject = class
             private
                 var
-                    filled              : boolean;
-                    lineThickness       : integer;
+                    filled          : boolean;
+                    lineThickness   : integer;
                     fillColour,
-                    lineColour          : TColor;
-                    lineStyle           : TPenStyle;
+                    lineColour      : TColor;
+                    lineStyle       : TPenStyle;
             protected
                 var
-                    objectDrawingType   : EGraphicObjectType;
+                    objectScaleType : EScaleType;
                 //set canvas properties for drawing
                     //fill
                         function setFillProperties(var canvasInOut : TDirect2DCanvas) : boolean;
@@ -35,9 +35,12 @@ interface
                                         const   lineThicknessIn : integer;
                                         const   fillColourIn,
                                                 lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle ); overload;
+                                        const   lineStyleIn     : TPenStyle;
+                                        const   scaleTypeIn     : EScaleType = EScaleType.scDrawing);overload;
                 //destructor
                     destructor destroy(); override;
+                //modifiers
+                    procedure setObjectScaleType(const scaleTypeIn : EScaleType);
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); overload; virtual; abstract;
@@ -91,7 +94,8 @@ implementation
                                                 const   lineThicknessIn : integer;
                                                 const   fillColourIn,
                                                         lineColourIn    : TColor;
-                                                const   lineStyleIn     : TPenStyle );
+                                                const   lineStyleIn     : TPenStyle;
+                                                const   scaleTypeIn     : EScaleType = EScaleType.scDrawing);
                 begin
                     inherited create();
 
@@ -100,12 +104,19 @@ implementation
                     fillColour      := fillColourIn;
                     lineColour      := lineColourIn;
                     lineStyle       := lineStyleIn;
+                    objectScaleType := scaleTypeIn;
                 end;
 
         //destructor
             destructor TGraphicObject.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //modifiers
+            procedure TGraphicObject.setObjectScaleType(const scaleTypeIn : EScaleType);
+                begin
+                    objectScaleType := scaleTypeIn;
                 end;
 
         //draw to canvas

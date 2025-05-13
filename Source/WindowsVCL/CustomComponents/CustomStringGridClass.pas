@@ -292,7 +292,7 @@ implementation
                     begin
                         if (rowIndexIn < rowCount) then
                             begin
-                                clearRow(rowIndexIn);
+                                clearRow( rowIndexIn );
 
                                 for row := rowIndexIn to (Self.RowCount - 2) do
                                     for col := 0 to (Self.ColCount - 1) do

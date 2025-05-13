@@ -21,8 +21,6 @@ interface
                     gridEnabled             : boolean;
                     graphicGrid             : TGraphicGrid;
                     layerGeometryMap        : TLayerGeometryMap;
-                //add graphic drawing object to the drawing object container
-                    procedure addGraphicObject(const drawingObjectIn : TGraphicObject); override;
                 //bounding box
                     procedure determineActiveBoundingBox();
             protected
@@ -35,6 +33,8 @@ interface
                     constructor create(); override;
                 //destructor
                     destructor destroy(); override;
+                //add graphic drawing object to the drawing object container
+                    procedure addGraphicObject(const drawingObjectIn : TGraphicObject); override;
                 //accessors
                     function getAllDrawingLayers() : TArray<string>;
                 //modifiers
@@ -50,12 +50,6 @@ interface
 implementation
 
     //private
-        //add geometry to the layer-geometry map
-            procedure TGraphicDrawerLayers.addGraphicObject(const drawingObjectIn : TGraphicObject);
-                begin
-                    layerGeometryMap.addGraphicObject( drawingObjectIn );
-                end;
-
         //bounding box
             procedure TGraphicDrawerLayers.determineActiveBoundingBox();
                 var
@@ -110,6 +104,12 @@ implementation
                     inherited destroy();
                 end;
 
+        //add geometry to the layer-geometry map
+            procedure TGraphicDrawerLayers.addGraphicObject(const drawingObjectIn : TGraphicObject);
+                begin
+                    layerGeometryMap.addGraphicObject( drawingObjectIn );
+                end;
+
         //accessors
             function TGraphicDrawerLayers.getAllDrawingLayers() : TArray<string>;
                 begin
@@ -133,8 +133,6 @@ implementation
                 end;
 
             procedure TGraphicDrawerLayers.setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
-                var
-                    activeBoundingBox : TGeomBox;
                 begin
                     layerGeometryMap.setActiveDrawingLayers( arrActiveDrawingLayersIn );
 

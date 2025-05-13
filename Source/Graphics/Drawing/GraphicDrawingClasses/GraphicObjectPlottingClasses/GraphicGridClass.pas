@@ -225,11 +225,10 @@ implementation
                 const
                     MAJOR_DIVISIONS : integer = 10;
                 var
-                    divisions                       : integer;
-                    regionDomain, regionRange,
-                    orderOfMagnitude, roundingBase  : double;
-                    drawingRegion                   : TGeomBox;
-                    canvasSize                      : TSize;
+                    divisions                   : integer;
+                    regionDomain, regionRange   : double;
+                    drawingRegion               : TGeomBox;
+                    canvasSize                  : TSize;
                 begin
                     //get the drawing region and canvas size
                         canvasSize      := axisConverterIn.getCanvasDimensions();

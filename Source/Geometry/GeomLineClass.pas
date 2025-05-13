@@ -35,7 +35,6 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingType() : EGraphicObjectType; override;
                     function getStartPoint() : TGeomPoint;
                     function getEndPoint() : TGeomPoint;
                 //modifiers
@@ -116,11 +115,6 @@ implementation
                 end;
 
         //accessors
-            function TGeomLine.getDrawingType() : EGraphicObjectType;
-                begin
-                    result := EGraphicObjectType.gdLine;
-                end;
-
             function TGeomLine.getStartPoint() : TGeomPoint;
                 begin
                     result := arrGeomPoints[0];

@@ -114,6 +114,8 @@ implementation
                                                                             const   arrowGroupDirectionIn   : EArrowGroupDirection;
                                                                             const   arrowGroupLineIn        : TGeomLine             ) : double;
                 begin
+                    result := 0;
+
                     case ( arrowGroupDirectionIn ) of
                         EArrowGroupDirection.agdRight:
                             result := 0;

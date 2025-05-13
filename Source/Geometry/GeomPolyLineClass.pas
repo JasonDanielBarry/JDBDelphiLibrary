@@ -23,7 +23,6 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getDrawingType() : EGraphicObjectType; override;
                     function getVertex(indexIn : integer) : TGeomPoint;
                 //modifiers
                     //add a new vertex and line
@@ -73,11 +72,6 @@ implementation
                 end;
 
         //accessors
-            function TGeomPolyLine.getDrawingType() : EGraphicObjectType;
-                begin
-                    result := EGraphicObjectType.gdPolyline;
-                end;
-
             function TGeomPolyLine.getVertex(indexIn : integer) : TGeomPoint;
                 begin
                     result := arrGeomPoints[indexIn];

@@ -28,19 +28,14 @@ interface
                     geometryPoints : TArray<TGeomPoint>;
             public
                 //constructor
-                    constructor create( const   filledIn        : boolean;
-                                        const   lineThicknessIn : integer;
+                    constructor create( const   filledIn            : boolean;
+                                        const   lineThicknessIn     : integer;
                                         const   fillColourIn,
-                                                lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle;
-                                        const   geometryIn      : TGeomBase ); overload;
-                    constructor create( const   lineThicknessIn : integer;
-                                        const   lineColourIn    : TColor;
-                                        const   lineStyleIn     : TPenStyle;
-                                        const   geometryIn      : TGeomBase ); overload;
+                                                lineColourIn        : TColor;
+                                        const   lineStyleIn         : TPenStyle;
+                                        const   geometryPointsIn    : TArray<TGeomPoint> );
                 //destructor
                     destructor destroy(); override;
-
                 //create path geometry
                     //closed
                         class function createClosedPathGeometry(const geometryPointsIn  : TArray<TGeomPoint>;
@@ -102,15 +97,12 @@ implementation
 
     //public
         //constructor
-            constructor TGraphicGeometry.create(const   filledIn        : boolean;
-                                                const   lineThicknessIn : integer;
+            constructor TGraphicGeometry.create(const   filledIn            : boolean;
+                                                const   lineThicknessIn     : integer;
                                                 const   fillColourIn,
-                                                        lineColourIn    : TColor;
-                                                const   lineStyleIn     : TPenStyle;
-                                                const   geometryIn      : TGeomBase );
-                var
-                    i, pointCount       : integer;
-                    localGeometryPoints : TArray<TGeomPoint>;
+                                                        lineColourIn        : TColor;
+                                                const   lineStyleIn         : TPenStyle;
+                                                const   geometryPointsIn    : TArray<TGeomPoint>);
                 begin
                     inherited create(   filledIn,
                                         lineThicknessIn,
@@ -118,31 +110,7 @@ implementation
                                         lineColourIn,
                                         lineStyleIn         );
 
-                    //drawing type
-                        objectDrawingType := geometryIn.getDrawingType();
-
-                    //copy in the drawing points
-                        localGeometryPoints := geometryIn.getDrawingPoints();
-
-                        pointCount := length( localGeometryPoints );
-
-                        SetLength( geometryPoints, pointCount );
-
-                        for i := 0 to (pointCount - 1) do
-                            geometryPoints[i].copyPoint( localGeometryPoints[i] );
-                end;
-
-            constructor TGraphicGeometry.create(const   lineThicknessIn : integer;
-                                                const   lineColourIn    : TColor;
-                                                const   lineStyleIn     : TPenStyle;
-                                                const   geometryIn      : TGeomBase );
-                begin
-                    create( False,
-                            lineThicknessIn,
-                            TColors.Null,
-                            lineColourIn,
-                            lineStyleIn,
-                            geometryIn          );
+                    TGeomPoint.copyPoints( geometryPointsIn, geometryPoints );
                 end;
 
         //destructor

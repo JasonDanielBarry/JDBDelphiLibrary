@@ -33,6 +33,9 @@ interface
                                         const   centrePointIn   : TGeomPoint    );
                 //destructor
                     destructor destroy(); override;
+                //modifiers
+                    procedure setCentrePoint(const xIn, yIn : double);
+                    procedure setEllipseDimensions(const widthIn, heightIn : double);
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); override;
@@ -57,8 +60,19 @@ implementation
                         ellipseOut.point.y := centrePointF.y;
 
                     //calculate the ellipse dimensions
-                        ellipseOut.radiusX := 0.5 * axisConverterIn.dX_To_dL( ellipseBox.calculateXDimension() );
-                        ellipseOut.radiusY := 0.5 * axisConverterIn.dY_To_dT( ellipseBox.calculateYDimension() );
+                        case ( objectScaleType ) of
+                            EScaleType.scDrawing:
+                                begin
+                                    ellipseOut.radiusX := 0.5 * axisConverterIn.dX_To_dL( ellipseBox.calculateXDimension() );
+                                    ellipseOut.radiusY := 0.5 * axisConverterIn.dY_To_dT( ellipseBox.calculateYDimension() );
+                                end;
+
+                            EScaleType.scCanvas:
+                                begin
+                                    ellipseOut.radiusX := 0.5 * ellipseBox.calculateXDimension();
+                                    ellipseOut.radiusY := 0.5 * ellipseBox.calculateYDimension();
+                                end;
+                        end;
 
                     result := ellipseOut;
                 end;
@@ -94,6 +108,17 @@ implementation
             destructor TGraphicEllipse.destroy();
                 begin
                     inherited destroy();
+                end;
+
+        //modifiers
+            procedure TGraphicEllipse.setCentrePoint(const xIn, yIn : double);
+                begin
+                    ellipseBox.setCentrePoint( xIn, yIn );
+                end;
+
+            procedure TGraphicEllipse.setEllipseDimensions(const widthIn, heightIn : double);
+                begin
+                    ellipseBox.setDimensions( widthIn, heightIn );
                 end;
 
         //draw to canvas

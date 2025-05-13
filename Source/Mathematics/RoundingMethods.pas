@@ -34,6 +34,8 @@ implementation
             valueSign := Sign( valueIn );
             abs_value := abs( valueIn );
 
+            roundedValue := 0;
+
             case ( roundingModeIn ) of
                 TRoundingMode.rmDown, TRoundingMode.rmTruncate:
                     roundedValue := roundDownToBaseMultiple( abs_value, roundingBaseIn );

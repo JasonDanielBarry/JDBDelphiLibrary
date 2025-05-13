@@ -198,7 +198,6 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectShapeClasses\GraphicRectangleClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphXYTypes.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicScatterPlotClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicFunctionPlotClass.pas"/>
         <DCCReference Include="Source\Mathematics\RoundingMethods.pas"/>
         <DCCReference Include="Source\Mathematics\TEST_RoundingMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas"/>
@@ -223,7 +222,10 @@
                 <Source>
                     <Source Name="MainSource">JDBDelphiLibrary.dpr</Source>
                 </Source>
-                <Excluded_Packages/>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">

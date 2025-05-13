@@ -46,7 +46,7 @@ implementation
                                         fillColourIn,
                                         lineColourIn,
                                         lineStyleIn,
-                                        geometryIn          );
+                                        geometryIn.getDrawingPoints()   );
                 end;
 
         //destructor

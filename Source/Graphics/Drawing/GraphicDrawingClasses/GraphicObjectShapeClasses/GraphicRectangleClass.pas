@@ -89,8 +89,6 @@ implementation
                                         lineColourIn,
                                         lineStyleIn     );
 
-                    objectDrawingType := EGraphicObjectType.gdRectangle;
-
                     cornerRadius := rectangleCornerRadiusIn;
 
                     rectangleBox := TGeomBox.newBox( rectangleWidthIn, rectangleHeightIn );

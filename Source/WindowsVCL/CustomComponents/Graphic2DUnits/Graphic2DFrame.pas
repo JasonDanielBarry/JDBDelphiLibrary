@@ -142,12 +142,12 @@ implementation
 
         procedure TCustomGraphic2D.CheckListBoxLayerTableDblClick(Sender: TObject);
             var
-                mustShowAllLayers       : boolean;
                 checkedIndex,
                 selectedIndex,
                 i, checkedLayerCount    : integer;
             begin
-                selectedIndex := CheckListBoxLayerTable.ItemIndex;
+                checkedIndex    := 0;
+                selectedIndex   := CheckListBoxLayerTable.ItemIndex;
 
                 checkedLayerCount := 0;
 
@@ -494,8 +494,7 @@ implementation
         //process windows messages
             procedure TCustomGraphic2D.wndProc(var messageInOut : TMessage);
                 var
-                    graphicWasRedrawn               : boolean;
-                    currentMousePositionOnPaintbox  : TPoint;
+                    graphicWasRedrawn : boolean;
                 begin
                     if ( Assigned( PBDrawer2D ) ) then
                         begin

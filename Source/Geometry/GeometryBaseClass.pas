@@ -20,8 +20,6 @@ interface
                     constructor create();
                 //destructor
                     destructor destroy(); override;
-                //get drawing type
-                    function getDrawingType() : EGraphicObjectType; virtual; abstract;
                 //bounding box
                     function boundingBox() : TGeomBox;
                     class function determineBoundingBox(arrGeomIn : TArray<TGeomBase>) : TGeomBox; static;

@@ -17,8 +17,6 @@ interface
                     constructor create();
                 //destructor
                     destructor destroy(); override;
-                //accessors
-                    function getDrawingType() : EGraphicObjectType; override;
                 //calculations
                     function calculatePerimeter() : double;
                     function calculatePolygonArea() : double; overload;
@@ -38,11 +36,6 @@ implementation
             destructor TGeomPolygon.destroy();
                 begin
                     inherited destroy();
-                end;
-        //accessors
-            function TGeomPolygon.getDrawingType() : EGraphicObjectType;
-                begin
-                    result := EGraphicObjectType.gdPolygon;
                 end;
 
         //calculations
