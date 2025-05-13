@@ -16,8 +16,8 @@ interface
         TGraphicScatterPlot = class(TGraphicObjectGroup)
             private
 
-
             public
+
         end;
 
 

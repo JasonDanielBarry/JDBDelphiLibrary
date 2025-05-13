@@ -263,7 +263,7 @@ implementation
                                 currentMousePositionOnPaintbox := self.ScreenToClient( mouse.CursorPos );
 
                         //process windows message in axis converter
-                            mouseInputRequiresRedraw := D2DGraphicDrawer.processWindowsMessages( messageInOut, currentMousePositionOnPaintbox );
+                            mouseInputRequiresRedraw := D2DGraphicDrawer.windowsMessageRequiredRedraw( messageInOut, currentMousePositionOnPaintbox );
 
                         //render image off screen
                             if ( mouseInputRequiresRedraw OR (messageInOut.Msg = WM_USER_REDRAWGRAPHIC) ) then

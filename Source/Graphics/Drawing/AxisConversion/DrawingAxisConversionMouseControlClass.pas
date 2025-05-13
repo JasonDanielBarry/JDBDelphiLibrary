@@ -14,10 +14,11 @@ interface
             private
                 var
                     mouseControlIsActive,
-                    mousePanningIsActive    : boolean;
+                    mousePanningIsActive,
+                    mousePointTrackingIsActive  : boolean;
                     currentMousePosition,
-                    mousePanningOrigin      : TPoint;
-                    regionPanningOrigin     : TGeomPoint;
+                    mousePanningOrigin          : TPoint;
+                    regionPanningOrigin         : TGeomPoint;
                 //modifiers
                     procedure setMousePositionLT(const newMousePositionIn : TPoint);
                 //activate/deactivate mouse panning
@@ -36,13 +37,16 @@ interface
                     destructor destroy(); override;
                 //accessors
                     property MouseControlActive : boolean read mouseControlIsActive;
+                    property MousePointTrackingActive : boolean read mousePointTrackingIsActive;
                     function getMouseCoordinatesXY() : TGeomPoint;
                 //activate/deactivate mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
+                //activate/deactivate mouse point tracking
+                    procedure setMousePointTrackingActive(const isActiveIn : boolean);
                 //process windows messages
-                    function processWindowsMessages(const messageIn             : Tmessage;
-                                                    const newMousePositionIn    : TPoint) : boolean;
+                    function windowsMessageRequiredRedraw(  const messageIn             : Tmessage;
+                                                            const newMousePositionIn    : TPoint) : boolean;
         end;
 
 implementation
@@ -58,7 +62,7 @@ implementation
             procedure TDrawingAxisMouseControlConverter.activateMousePanning();
                 begin
                     //this function must only
-                        if (NOT(mouseControlIsActive)) then
+                        if NOT( mouseControlIsActive ) then
                             begin
                                 deactivateMouseControl();
                                 exit();
@@ -163,19 +167,25 @@ implementation
                     mouseControlIsActive := False;
                 end;
 
+        //activate/deactivate mouse point tracking
+            procedure TDrawingAxisMouseControlConverter.setMousePointTrackingActive(const isActiveIn : boolean);
+                begin
+                    mousePointTrackingIsActive := isActiveIn;
+                end;
+
         //process windows messages
-            function TDrawingAxisMouseControlConverter.processWindowsMessages(  const messageIn             : Tmessage;
-                                                                                const newMousePositionIn    : TPoint    ) : boolean;
+            function TDrawingAxisMouseControlConverter.windowsMessageRequiredRedraw(const messageIn             : Tmessage;
+                                                                                    const newMousePositionIn    : TPoint    ) : boolean;
                 begin
                     result := false;
 
                     //ensure the axis convertsion class is created before processing any messages
                         if (self = nil) then
-                            exit();
+                            exit( False );
 
                     //procedure must only run if mouse control is activated
                         if NOT( mouseControlIsActive ) then
-                            exit();
+                            exit( False );
 
                     case (messageIn.Msg) of
                         WM_MBUTTONDOWN:

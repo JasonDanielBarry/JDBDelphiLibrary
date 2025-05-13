@@ -35,7 +35,6 @@ interface
                     destructor destroy(); override;
                 //modifiers
                     procedure setCentrePoint(const xIn, yIn : double);
-                    procedure setEllipseDimensions(const widthIn, heightIn : double);
                 //draw to canvas
                     procedure drawToCanvas( const axisConverterIn   : TDrawingAxisConverter;
                                             var canvasInOut         : TDirect2DCanvas       ); override;
@@ -114,11 +113,6 @@ implementation
             procedure TGraphicEllipse.setCentrePoint(const xIn, yIn : double);
                 begin
                     ellipseBox.setCentrePoint( xIn, yIn );
-                end;
-
-            procedure TGraphicEllipse.setEllipseDimensions(const widthIn, heightIn : double);
-                begin
-                    ellipseBox.setDimensions( widthIn, heightIn );
                 end;
 
         //draw to canvas

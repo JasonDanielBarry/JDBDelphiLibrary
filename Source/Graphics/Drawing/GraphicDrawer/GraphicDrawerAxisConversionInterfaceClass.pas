@@ -40,12 +40,14 @@ interface
                         procedure zoomIn(const percentageIn : double);
                         procedure zoomOut(const percentageIn : double);
                         procedure zoomAll();
-                //process windows messages
+                //general mouse control
                     procedure activateMouseControl();
                     procedure deactivateMouseControl();
                     function getMouseControlActive() : boolean;
-                    function processWindowsMessages(const messageIn             : Tmessage;
-                                                    const newMousePositionIn    : TPoint    ) : boolean;
+                    procedure setMousePointTrackingActive(const isActiveIn : boolean);
+                //process windows messages
+                    function windowsMessageRequiredRedraw(  const messageIn             : Tmessage;
+                                                            const newMousePositionIn    : TPoint    ) : boolean;
         end;
 
 implementation
@@ -167,7 +169,7 @@ implementation
                         axisConverter.resetDrawingRegionToGeometryBoundary();
                     end;
 
-        //process windows messages
+        //general mouse control
             procedure TGraphicDrawerAxisConversionInterface.activateMouseControl();
                 begin
                     axisConverter.activateMouseControl();
@@ -183,8 +185,14 @@ implementation
                     result := axisConverter.MouseControlActive;
                 end;
 
-            function TGraphicDrawerAxisConversionInterface.processWindowsMessages(  const messageIn             : Tmessage;
-                                                                                    const newMousePositionIn    : TPoint    ) : boolean;
+            procedure TGraphicDrawerAxisConversionInterface.setMousePointTrackingActive(const isActiveIn : boolean);
+                begin
+                    axisConverter.setMousePointTrackingActive( isActiveIn );
+                end;
+
+        //process windows messages
+            function TGraphicDrawerAxisConversionInterface.windowsMessageRequiredRedraw(const messageIn             : Tmessage;
+                                                                                        const newMousePositionIn    : TPoint    ) : boolean;
                 begin
                     if (self = nil) then
                         begin
@@ -192,7 +200,7 @@ implementation
                             exit();
                         end;
 
-                    result := axisConverter.processWindowsMessages( messageIn, newMousePositionIn );
+                    result := axisConverter.windowsMessageRequiredRedraw( messageIn, newMousePositionIn );
                 end;
 
 end.
