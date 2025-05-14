@@ -26,6 +26,11 @@ interface
                                                 const lineSizeIn    : integer = 2;
                                                 const lineColourIn  : TColor = clWindowText;
                                                 const lineStyleIn   : TPenStyle = TPenStyle.psSolid );
+                    //scatter plot
+                        procedure addScatterPlot(   const plotNameIn    : string;
+                                                    const dataPointsIn  : TArray<TGeomPoint>;
+                                                    const pointSizeIn   : integer = 5;
+                                                    const pointColourIn : TColor = TColors.Royalblue    );
         end;
 
 implementation
@@ -62,6 +67,15 @@ implementation
                                                     const lineStyleIn     : TPenStyle = TPenStyle.psSolid );
                     begin
                         customGraphXY.addLinePlot( lineSizeIn, plotNameIn, lineColourIn, lineStyleIn, dataPointsIn );
+                    end;
+
+            //scatter plot
+                procedure TJDBGraphXY.addScatterPlot(   const plotNameIn    : string;
+                                                        const dataPointsIn  : TArray<TGeomPoint>;
+                                                        const pointSizeIn   : integer = 5;
+                                                        const pointColourIn : TColor = TColors.Royalblue    );
+                    begin
+                        customGraphXY.addScatterPlot( pointSizeIn, plotNameIn, pointColourIn, dataPointsIn );
                     end;
 
 

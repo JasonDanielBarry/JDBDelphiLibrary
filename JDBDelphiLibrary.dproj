@@ -203,6 +203,7 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\LayerGeometryMapClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicMousePointTrackingClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicLinePlotClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

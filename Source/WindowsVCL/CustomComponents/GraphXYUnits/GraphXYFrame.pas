@@ -10,6 +10,8 @@ uses
     GeometryTypes,
     GeomBox,
     GeomPolyLineClass,
+    GraphicScatterPlotClass,
+    GraphicLinePlotClass,
     GraphicGridClass,
     GraphicDrawerObjectAdderClass,
     Direct2DGraphicDrawingClass,
@@ -54,6 +56,12 @@ uses
                                                 const lineColourIn  : TColor;
                                                 const lineStyle     : TPenStyle;
                                                 const dataPointsIn  : TArray<TGeomPoint> );
+                    //scatter plot
+                        procedure addScatterPlot(   const pointSizeIn   : integer;
+                                                    const plotNameIn    : string;
+                                                    const pointColourIn : TColor;
+                                                    const dataPointsIn  : TArray<TGeomPoint> );
+
         end;
 
 implementation
@@ -82,22 +90,22 @@ implementation
                     case ( graphPlotIn.graphPlotType ) of
                         EGraphPlotType.gpLine:
                             begin
-                                var tempPolyline := TGeomPolyLine.create( graphPlotIn.arrDataPoints );
+                                var graphicLinePlot := TGraphicLinePlot.create( graphPlotIn.plottingSize,
+                                                                                graphPlotIn.plotColour,
+                                                                                graphPlotIn.lineStyle,
+                                                                                graphPlotIn.arrDataPoints   );
 
-                                geometryDrawerInOut.setCurrentDrawingLayer( graphPlotIn.plotName );
-
-                                geometryDrawerInOut.addPolyline(
-                                                                    tempPolyline,
-                                                                    graphPlotIn.plottingSize,
-                                                                    graphPlotIn.plotColour,
-                                                                    graphPlotIn.lineStyle
-                                                                );
-
-                                FreeAndNil( tempPolyline );
+                                TDirect2DGraphicDrawer( geometryDrawerInOut ).addGraphicObject( graphicLinePlot );
                             end;
 
                         EGraphPlotType.gpScatter:
-                            ;
+                            begin
+                                var graphicScatterPlot : TGraphicScatterPlot := TGraphicScatterPlot.create( graphPlotIn.plottingSize,
+                                                                                                            graphPlotIn.plotColour,
+                                                                                                            graphPlotIn.arrDataPoints );
+
+                                TDirect2DGraphicDrawer( geometryDrawerInOut ).addGraphicObject( graphicScatterPlot );
+                            end;
 
                         EGraphPlotType.gpFuntion:
                             ;
@@ -180,22 +188,40 @@ implementation
                 end;
 
         //add plots
-            procedure TCustomGraphXY.addLinePlot(   const lineSizeIn    : integer;
-                                                    const plotNameIn    : string;
-                                                    const lineColourIn  : TColor;
-                                                    const lineStyle     : TPenStyle;
-                                                    const dataPointsIn  : TArray<TGeomPoint> );
-                var
-                    newGraphPlot : TGraphXYPlot;
-                begin
-                    newGraphPlot.plottingSize   := lineSizeIn;
-                    newGraphPlot.plotName       := plotNameIn;
-                    newGraphPlot.graphPlotType  := EGraphPlotType.gpLine;
-                    newGraphPlot.plotColour     := lineColourIn;
-                    newGraphPlot.lineStyle      := lineStyle;
-                    TGeomPoint.copyPoints( dataPointsIn, newGraphPlot.arrDataPoints );
+            //line plot
+                procedure TCustomGraphXY.addLinePlot(   const lineSizeIn    : integer;
+                                                        const plotNameIn    : string;
+                                                        const lineColourIn  : TColor;
+                                                        const lineStyle     : TPenStyle;
+                                                        const dataPointsIn  : TArray<TGeomPoint> );
+                    var
+                        newGraphPlot : TGraphXYPlot;
+                    begin
+                        newGraphPlot.plottingSize   := lineSizeIn;
+                        newGraphPlot.plotName       := plotNameIn;
+                        newGraphPlot.graphPlotType  := EGraphPlotType.gpLine;
+                        newGraphPlot.plotColour     := lineColourIn;
+                        newGraphPlot.lineStyle      := lineStyle;
+                        TGeomPoint.copyPoints( dataPointsIn, newGraphPlot.arrDataPoints );
 
-                    addPlotToMap( newGraphPlot );
-                end;
+                        addPlotToMap( newGraphPlot );
+                    end;
+
+            //scatter plot
+                procedure TCustomGraphXY.addScatterPlot(const pointSizeIn   : integer;
+                                                        const plotNameIn    : string;
+                                                        const pointColourIn : TColor;
+                                                        const dataPointsIn  : TArray<TGeomPoint>);
+                    var
+                        newGraphPlot : TGraphXYPlot;
+                    begin
+                        newGraphPlot.plottingSize   := pointSizeIn;
+                        newGraphPlot.plotName       := plotNameIn;
+                        newGraphPlot.graphPlotType  := EGraphPlotType.gpScatter;
+                        newGraphPlot.plotColour     := pointColourIn;
+                        TGeomPoint.copyPoints( dataPointsIn, newGraphPlot.arrDataPoints );
+
+                        addPlotToMap( newGraphPlot );
+                    end;
 
 end.

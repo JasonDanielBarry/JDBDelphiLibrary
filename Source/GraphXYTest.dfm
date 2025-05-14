@@ -26,9 +26,5 @@ object Form2: TForm2
     ShowCaption = False
     ShowHint = True
     TabOrder = 0
-    ExplicitLeft = 272
-    ExplicitTop = 112
-    ExplicitWidth = 817
-    ExplicitHeight = 405
   end
 end
