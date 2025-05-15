@@ -15,7 +15,8 @@ interface
                 constructor create(); overload;
                 constructor create(const x0In, x1In, y0In, y1In : double); overload;
                 destructor destroy(); override;
-                procedure setPoints(const x0In, x1In, y0In, y1In : double);
+                procedure setPoints(const x0In, x1In, y0In, y1In : double); overload;
+                procedure setPoints(const point0In, point1In : TPointF); overload;
                 function interpolateX(const xIn : double) : double;
                 function interpolateY(const yIn : double) : double;
                 function interpolate(const tIn : double) : TPointF;
@@ -49,6 +50,11 @@ implementation
                 x1 := x1In;
                 y0 := y0In;
                 y1 := y1In;
+            end;
+
+        procedure TInterpolator.setPoints(const point0In, point1In : TPointF);
+            begin
+                setPoints( point0In.X, point1In.x, point0In.y, point1In.y );
             end;
 
         function TInterpolator.interpolateX(const xIn : double): double;

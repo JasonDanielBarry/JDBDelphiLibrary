@@ -82,7 +82,7 @@ uses
   TEST_RoundingMethods in 'Source\Mathematics\TEST_RoundingMethods.pas',
   GraphicGridClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas',
   LayerGeometryMapClass in 'Source\Graphics\Drawing\GraphicDrawer\LayerGeometryMapClass.pas',
-  GraphicMousePointTrackingClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicMousePointTrackingClass.pas',
+  GraphicMousePointTrackerClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicMousePointTrackerClass.pas',
   GraphicLinePlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicLinePlotClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }

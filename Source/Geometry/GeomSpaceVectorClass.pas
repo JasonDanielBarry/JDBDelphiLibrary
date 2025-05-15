@@ -135,7 +135,7 @@ implementation
             //calculate vector length
                 function TGeomSpaceVector.normalise() : double;
                     begin
-                        result := vectorNormalise( components );
+                        result := Norm( components );
                     end;
 
             //stretch the vector by a factor

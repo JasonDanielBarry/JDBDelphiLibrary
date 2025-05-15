@@ -212,7 +212,7 @@ implementation
 
                                 panRegionWithMouse();
 
-                                result := mousePanningIsActive; // panRegionWithMouse only occurs if mouse panning is active
+                                result := mousePanningIsActive OR mousePointTrackingIsActive; // panRegionWithMouse only occurs if mouse panning is active
                             end;
                     end;
                 end;

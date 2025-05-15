@@ -3,7 +3,7 @@ unit VectorMethods;
 interface
 
     uses
-        system.SysUtils, system.Math, math.Vectors,
+        system.SysUtils, system.Math,
         LinearAlgebraTypes
         ;
 
@@ -12,7 +12,7 @@ interface
 
     //copy vector
         procedure copyVector(   const readVectorIn  : TLAVector;
-                                var writeVectorIn   : TLAVector     );
+                                out writeVectorIn   : TLAVector     );
 
     //equality test
         function vectorsEqual(const vector1In, vector2In : TLAVector) : boolean;
@@ -30,14 +30,18 @@ interface
     //vector dot product
         function vectorDotProduct(const vector1In, vector2In : TLAVector) : double;
 
-    //vector normalise
-        function vectorNormalise(const vectorIn : TLAVector) : double;
-
     //vector entries product
         function vectorEntriesProduct(const vectorIn : TLAVector) : double;
 
     //unit vector
         function vectorUnitVector(const vectorIn : TLAVector) : TLAVector;
+
+    //vector projections - vector 2 projects onto vector 1
+        //scalar
+            function scalarProjection(const vector1In, vector2In : TLAVector) : double;
+
+        //vector
+            function vectorProjection(const vector1In, vector2In : TLAVector) : TLAVector;
 
 implementation
 
@@ -54,7 +58,7 @@ implementation
 
     //copy vector
         procedure copyVector(   const readVectorIn  : TLAVector;
-                                var writeVectorIn   : TLAVector     );
+                                out writeVectorIn   : TLAVector     );
             var
                 i, arrLen : integer;
             begin
@@ -165,28 +169,6 @@ implementation
                 result := dotProductSum;
             end;
 
-    //vector normalise
-        function vectorNormalise(const vectorIn : TLAVector) : double;
-            var
-                i               : integer;
-                entrySquared,
-                normalOut,
-                normalSquared   : double;
-            begin
-                normalSquared := 0;
-
-                for i := 0 to (length(vectorIn) - 1) do
-                    begin
-                        entrySquared := Sqr(vectorIn[i]);
-
-                        normalSquared := normalSquared + entrySquared;
-                    end;
-
-                normalOut := Sqrt(normalSquared);
-
-                result := normalOut;
-            end;
-
     //vector entries product
         function vectorEntriesProduct(const vectorIn : TLAVector) : double;
             var
@@ -208,7 +190,7 @@ implementation
                 vectorLength    : double;
                 unitVectorOut   : TLAVector;
             begin
-                vectorLength := vectorNormalise( vectorIn );
+                vectorLength := Norm( vectorIn );
 
                 arrLen := length(vectorIn);
 
@@ -219,5 +201,30 @@ implementation
 
                 result := unitVectorOut;
             end;
+
+    //vector projections - vector 2 projects onto vector 1
+        //scalar
+            function scalarProjection(const vector1In, vector2In : TLAVector) : double;
+                var
+                    V1Norm,
+                    V1_dot_V2 : double;
+                begin
+                    V1Norm      := Norm( vector1In );
+                    V1_dot_V2   := vectorDotProduct( vector1In, vector2In );
+
+                    result := V1_dot_V2 / V1Norm;
+                end;
+
+        //vector
+            function vectorProjection(const vector1In, vector2In : TLAVector) : TLAVector;
+                var
+                    scalarProj  : double;
+                    unitV1      : TLAVector;
+                begin
+                    scalarProj  := scalarProjection( vector1In, vector2In );
+                    unitV1      := vectorUnitVector( vector1In );
+
+                    result := vectorScalarMultiplication( scalarProj, unitV1 );
+                end;
 
 end.

@@ -93,19 +93,17 @@ implementation
             function TGeomPolyLine.addVertex(const newVertexIn : TGeomPoint) : boolean;
                 var
                     samePointTest   : boolean;
-                    i               : integer;
+                    i, arrLen       : integer;
                     dx, dy, dz, dp  : double;
                 begin
                     result := true;
 
-                    //test to see if the new point already exists
-                        for i := 0 to (vertexCount() - 1) do
-                            begin
-                                dx := abs(newVertexIn.x - arrGeomPoints[i].x);
-                                dy := abs(newVertexIn.y - arrGeomPoints[i].y);
-                                dz := abs(newVertexIn.z - arrGeomPoints[i].z);
+                    arrLen := vertexCount();
 
-                                dp := sqrt( power(dx, 2) + power(dy, 2) + power(dz, 2) );
+                    //test to see if the new point already exists
+                        for i := 0 to (arrLen - 1) do
+                            begin
+                                dp := newVertexIn.calculateDistanceToPoint( arrGeomPoints[i] );
 
                                 samePointTest := (dp < 1e-6);
 
@@ -114,23 +112,23 @@ implementation
                             end;
 
                     //increment vertex array
-                        SetLength(arrGeomPoints, vertexCount() + 1);
+                        SetLength( arrGeomPoints, arrLen + 1 );
 
                     //add new vertex to array
-                        arrGeomPoints[vertexCount() - 1].copyPoint( newVertexIn );
+                        arrGeomPoints[ arrLen - 1 ].copyPoint( newVertexIn );
                 end;
 
             //edit a currently selected vertex
                 procedure TGeomPolyLine.editVertex( indexIn         : integer;
                                                     xIn, yIn, zIn   : double    );
                     begin
-                        arrGeomPoints[indexIn].setPoint( xIn, yIn, zIn );
+                        arrGeomPoints[ indexIn ].setPoint( xIn, yIn, zIn );
                     end;
 
                 procedure TGeomPolyLine.editVertex( indexIn     : integer;
                                                     newPointIn  : TGeomPoint);
                     begin
-                        arrGeomPoints[indexIn].copyPoint( newPointIn );
+                        arrGeomPoints[ indexIn ].copyPoint( newPointIn );
                     end;
 
         //calculations
@@ -155,7 +153,7 @@ implementation
         //helper methods
             function TGeomPolyLine.vertexCount() : integer;
                 begin
-                    result := Length(arrGeomPoints);
+                    result := Length( arrGeomPoints );
                 end;
 
             procedure TGeomPolyLine.clearVertices();

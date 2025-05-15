@@ -79,6 +79,9 @@ interface
                     class function calculateVector(const headPointIn, tailPointIn : TGeomPoint) : TLAVector; static;
                 //calculate centre point
                     class function calculateCentrePoint(const arrPointsIn : TArray<TGeomPoint>) : TGeomPoint; static;
+                //calculate distance
+                    class function calculateDistanceBetweenPoints(const point1In, point2In : TGeomPoint) : double; static;
+                    function calculateDistanceToPoint(const otherPointIn : TGeomPoint) : double;
         end;
 
         TGeomLineIntersectionData = record
@@ -427,6 +430,21 @@ implementation
                     centroidZ := sumPointMomentZ / pointCount;
 
                     result := TGeomPoint.create( centroidX, centroidY, centroidZ );
+                end;
+
+        //calculate distance
+            class function TGeomPoint.calculateDistanceBetweenPoints(const point1In, point2In : TGeomPoint) : double;
+                var
+                    pointsVector : TLAVector;
+                begin
+                    pointsVector := calculateVector( point1In, point2In );
+
+                    result := norm( pointsVector );
+                end;
+
+            function TGeomPoint.calculateDistanceToPoint(const otherPointIn : TGeomPoint) : double;
+                begin
+                    result := calculateDistanceBetweenPoints( self, otherPointIn );
                 end;
 
 end.

@@ -12,6 +12,7 @@ uses
     GeomPolyLineClass,
     GraphicScatterPlotClass,
     GraphicLinePlotClass,
+    GraphicMousePointTrackerClass,
     GraphicGridClass,
     GraphicDrawerObjectAdderClass,
     Direct2DGraphicDrawingClass,
@@ -116,6 +117,7 @@ implementation
             procedure TCustomGraphXY.updateGeometryEvent(ASender : TObject; var AGeomDrawer : TGraphicDrawerObjectAdder);
                 var
                     tempGraphPlotItem : TPair<string, TGraphXYPlot>;
+                    mousePointTracker : TGraphicMousePointTracker;
                 begin
                     //grid - must be done first
                         PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
@@ -123,6 +125,13 @@ implementation
                     //graph plots
                         for tempGraphPlotItem in graphPlotsMap do
                             sendGraphPlotToGeometryDrawer( tempGraphPlotItem.Value, AGeomDrawer );
+
+                    //mouse tracker
+                        mousePointTracker := TGraphicMousePointTracker.create( tempGraphPlotItem.Value );
+
+                        TDirect2DGraphicDrawer( AGeomDrawer ).addGraphicObject( mousePointTracker );
+
+                        TDirect2DGraphicDrawer( AGeomDrawer ).setMousePointTrackingActive( True );
                 end;
 
         //set graph boundaries

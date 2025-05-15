@@ -184,7 +184,7 @@ implementation
                     begin
                         localLineVector := TGeomPoint.calculateVector( endPointIn, startPointIn );
 
-                        result := vectorNormalise( localLineVector );
+                        result := Norm( localLineVector );
                     end;
 
             //unit vector
