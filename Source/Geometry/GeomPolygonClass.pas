@@ -57,7 +57,7 @@ implementation
                             closingLineEndPoint := arrGeomPoints[0];
 
                         //get the length
-                            closingLineLength := TGeomLine.calculateLength( closingLineStartPoint, closingLineEndPoint );
+                            closingLineLength := TGeomPoint.calculateDistanceBetweenPoints( closingLineStartPoint, closingLineEndPoint );
                     //---------------------------------------------------------------------------------------------------
 
                     //the polygon perimeter = polyline length + closing line length

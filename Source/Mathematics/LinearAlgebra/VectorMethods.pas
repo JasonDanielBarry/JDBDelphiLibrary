@@ -145,9 +145,9 @@ implementation
 
                 //the tail is subtracted from the head
                     //subtraction is the same as adding a negative vector
-                        negativeTailVector := vectorScalarMultiplication(-1, vectorTailIn);
+                        negativeTailVector := vectorScalarMultiplication( -1, vectorTailIn );
 
-                result := vectorAddition(vectorHeadIn, negativeTailVector);
+                result := vectorAddition( vectorHeadIn, negativeTailVector );
             end;
 
     //vector dot product

@@ -184,18 +184,16 @@ implementation
 
             function TGeomPoint.greaterThanOrEqual(const pointIn: TGeomPoint): Boolean;
                 begin
-                    result :=       (pointIn.x <= self.x)
-                                AND (pointIn.y <= self.y)
-                                AND (pointIn.z <= self.z)
+                    result := greaterThan( pointIn ) OR isEqual( pointIn );
                 end;
 
             function TGeomPoint.isEqual(const pointIn : TGeomPoint) : boolean;
                 const
                     EQUALITY_TOLERANCE : double = 1e-6;
                 begin
-                    result :=       SameValue(pointIn.x, self.x, EQUALITY_TOLERANCE)
-                                AND SameValue(pointIn.y, self.y, EQUALITY_TOLERANCE)
-                                AND SameValue(pointIn.z, self.z, EQUALITY_TOLERANCE)
+                    result :=       SameValue( pointIn.x, self.x, EQUALITY_TOLERANCE )
+                                AND SameValue( pointIn.y, self.y, EQUALITY_TOLERANCE )
+                                AND SameValue( pointIn.z, self.z, EQUALITY_TOLERANCE )
                 end;
 
             function TGeomPoint.lessThan(const pointIn: TGeomPoint): boolean;
@@ -207,9 +205,7 @@ implementation
 
             function TGeomPoint.lessThanOrEqual(const pointIn: TGeomPoint): Boolean;
                 begin
-                    result :=       (self.x <= pointIn.x)
-                                AND (self.y <= pointIn.y)
-                                AND (self.z <= pointIn.z)
+                    result := lessThan( pointIn ) OR isEqual( pointIn );
                 end;
 
         //set point

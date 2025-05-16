@@ -96,17 +96,17 @@ implementation
                             minLength       : double;
                             closestPointOut : TPointF;
                         procedure _interpolateAlongLine();
-                            const
-                                INTERP_COUNT : integer = 100;
                             var
-                                i                   : integer;
+                                i, interpCount      : integer;
                                 lineLength, t       : double;
                                 lineInterpPoint     : TPointF;
                                 mouseToLineVector   : TLAVector;
                             begin
-                                for i := 0 to INTERP_COUNT do
+                                interpCount := min(100, Ceil( lineInterpolator.calculateLineLength() ) );
+
+                                for i := 0 to interpCount do
                                     begin
-                                        t := i / 100;
+                                        t := i / interpCount;
 
                                         lineInterpPoint := lineInterpolator.interpolate( t );
 

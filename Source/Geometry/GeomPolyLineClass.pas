@@ -115,7 +115,7 @@ implementation
                         SetLength( arrGeomPoints, arrLen + 1 );
 
                     //add new vertex to array
-                        arrGeomPoints[ arrLen - 1 ].copyPoint( newVertexIn );
+                        arrGeomPoints[ arrLen ].copyPoint( newVertexIn );
                 end;
 
             //edit a currently selected vertex
@@ -145,7 +145,7 @@ implementation
                     lengthSum := 0;
 
                     for i := 0 to (length(arrPointsIn) - 2) do
-                        lengthSum := lengthSum + TGeomLine.calculateLength( arrPointsIn[i], arrPointsIn[i + 1] );
+                        lengthSum := lengthSum + TGeomPoint.calculateDistanceBetweenPoints( arrPointsIn[i], arrPointsIn[i + 1] );
 
                     result := lengthSum;
                 end;

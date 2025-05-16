@@ -50,7 +50,6 @@ interface
                 //calculattions
                     //line length
                         function calculateLength() : double; overload;
-                        class function calculateLength(const startPointIn, endPointIn : TGeomPoint) : double; overload; static;
                     //unit vector
                         function unitVector() : TGeomSpaceVector;
                     //parametric line equation point
@@ -175,16 +174,7 @@ implementation
             //line length
                 function TGeomLine.calculateLength() : double;
                     begin
-                        result := calculateLength( arrGeomPoints[0], arrGeomPoints[1] );
-                    end;
-
-                class function TGeomLine.calculateLength(const startPointIn, endPointIn : TGeomPoint) : double;
-                    var
-                        localLineVector : TLAVector;
-                    begin
-                        localLineVector := TGeomPoint.calculateVector( endPointIn, startPointIn );
-
-                        result := Norm( localLineVector );
+                        result := TGeomPoint.calculateDistanceBetweenPoints( arrGeomPoints[0], arrGeomPoints[1] );
                     end;
 
             //unit vector

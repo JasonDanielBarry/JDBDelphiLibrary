@@ -20,6 +20,7 @@ interface
                 function interpolateX(const xIn : double) : double;
                 function interpolateY(const yIn : double) : double;
                 function interpolate(const tIn : double) : TPointF;
+                function calculateLineLength() : double;
         end;
 
 implementation
@@ -75,6 +76,16 @@ implementation
                 pointOut.Y := lerp( tIn, y0, y1 );
 
                 result := pointOut;
+            end;
+
+        function TInterpolator.calculateLineLength() : double;
+            var
+                dx, dy : double;
+            begin
+                dx := x1 - x0;
+                dy := y1 - y0;
+
+                result := Norm( [dx, dy] );
             end;
 
 end.
