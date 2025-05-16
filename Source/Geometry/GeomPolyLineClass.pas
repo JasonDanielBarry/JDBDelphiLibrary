@@ -94,7 +94,7 @@ implementation
                 var
                     samePointTest   : boolean;
                     i, arrLen       : integer;
-                    dx, dy, dz, dp  : double;
+                    dp              : double;
                 begin
                     result := true;
 
@@ -103,7 +103,7 @@ implementation
                     //test to see if the new point already exists
                         for i := 0 to (arrLen - 1) do
                             begin
-                                dp := newVertexIn.calculateDistanceToPoint( arrGeomPoints[i] );
+                                dp := TGeomPoint.calculateDistanceBetweenPoints( newVertexIn, arrGeomPoints[i] );
 
                                 samePointTest := (dp < 1e-6);
 

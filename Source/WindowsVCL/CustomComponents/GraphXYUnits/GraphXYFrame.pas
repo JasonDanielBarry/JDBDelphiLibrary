@@ -90,7 +90,7 @@ implementation
                 begin
                     graphPlotsList := TGraphPlotsList.create();
 
-                    //grid - must be done first
+                    //grid
                         PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
 
                     //graph plots
@@ -103,6 +103,8 @@ implementation
                         graphPlotsList.addMousePointTracker( mousePointTracker );
 
                         PBGraphXY.GraphicDrawer.setMousePointTrackingActive( True );
+
+                    PBGraphXY.updateGraphics( self, graphPlotsList );
 
                     FreeAndNil( graphPlotsList );
                 end;

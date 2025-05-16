@@ -219,8 +219,8 @@ implementation
                     //set background to match theme
                         setGraphicBackgroundColour();
 
-                    //reset the stored geometry
-                        D2DGraphicDrawer.resetDrawingGeometry();
+                    //reset the stored graphics
+                        D2DGraphicDrawer.clearGraphicObjects();
 
                     //update the D2DGraphicDrawer graphics
                         D2DGraphicDrawer.setGridElementsVisiblity( gridVisibilitySettings );

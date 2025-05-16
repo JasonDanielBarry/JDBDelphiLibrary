@@ -36,7 +36,7 @@ interface
             ActionZoomOut: TAction;
             ActionZoomExtents: TAction;
             ActionRecentre: TAction;
-            ActionUpdateGeometry: TAction;
+    ActionUpdateGraphics: TAction;
             ActionPanLeft: TAction;
             ActionPanRight: TAction;
             ActionPanUp: TAction;
@@ -81,7 +81,7 @@ interface
                 procedure ActionZoomExtentsExecute(Sender: TObject);
                 procedure ActionZoomInExecute(Sender: TObject);
                 procedure ActionZoomOutExecute(Sender: TObject);
-                procedure ActionUpdateGeometryExecute(Sender: TObject);
+                procedure ActionUpdateGraphicsExecute(Sender: TObject);
                 procedure ActionPanLeftExecute(Sender: TObject);
                 procedure ActionPanRightExecute(Sender: TObject);
                 procedure ActionPanUpExecute(Sender: TObject);
@@ -126,7 +126,7 @@ interface
                 //redraw the graphic
                     procedure redrawGraphic();
                     procedure updateBackgroundColour();
-                    procedure updateGeometry();
+                    procedure updateGraphics();
                 //zooming methods
                     procedure zoomAll();
         end;
@@ -145,7 +145,7 @@ implementation
             var
                 checkedIndex,
                 selectedIndex,
-                i, checkedLayerCount    : integer;
+                i, checkedLayerCount : integer;
             begin
                 checkedIndex    := 0;
                 selectedIndex   := CheckListBoxLayerTable.ItemIndex;
@@ -288,9 +288,9 @@ implementation
                 redrawGraphic();
             end;
 
-        procedure TCustomGraphic2D.ActionUpdateGeometryExecute(Sender: TObject);
+        procedure TCustomGraphic2D.ActionUpdateGraphicsExecute(Sender: TObject);
             begin
-                updateGeometry();
+                updateGraphics();
             end;
 
         procedure TCustomGraphic2D.ActionZoomExtentsExecute(Sender: TObject);
@@ -584,7 +584,7 @@ implementation
                     PBDrawer2D.updateBackgroundColour( self );
                 end;
 
-            procedure TCustomGraphic2D.updateGeometry();
+            procedure TCustomGraphic2D.updateGraphics();
                 var
                     graphicsList : TGraphicsList;
                 begin

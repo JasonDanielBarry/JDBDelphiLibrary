@@ -430,12 +430,12 @@ implementation
 
         //calculate distance
             class function TGeomPoint.calculateDistanceBetweenPoints(const point1In, point2In : TGeomPoint) : double;
-                var
-                    pointsVector : TLAVector;
                 begin
-                    pointsVector := calculateVector( point1In, point2In );
-
-                    result := norm( pointsVector );
+                    result := norm( [
+                                        point1In.x - point2In.x,
+                                        point1In.y - point2In.y,
+                                        point1In.z - point2In.z
+                                    ] );
                 end;
 
             function TGeomPoint.calculateDistanceToPoint(const otherPointIn : TGeomPoint) : double;

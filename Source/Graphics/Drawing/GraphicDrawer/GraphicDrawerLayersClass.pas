@@ -44,7 +44,7 @@ interface
                     procedure setActiveDrawingLayers(const arrActiveDrawingLayersIn : TArray<string>);
                     procedure activateAllDrawingLayers();
                 //reset
-                    procedure resetDrawingGeometry();
+                    procedure clearGraphicObjects();
         end;
 
 implementation
@@ -90,13 +90,13 @@ implementation
                     inherited create();
 
                     graphicGrid             := TGraphicGrid.create();
-                    layerGraphicObjectMap        := TLayerGraphicObjectMap.Create();
+                    layerGraphicObjectMap   := TLayerGraphicObjectMap.Create();
                 end;
 
         //destructor
             destructor TGraphicDrawerLayers.destroy();
                 begin
-                    resetDrawingGeometry();
+                    clearGraphicObjects();
 
                     FreeAndNil( graphicGrid );
                     FreeAndNil( layerGraphicObjectMap );
@@ -142,7 +142,7 @@ implementation
                 end;
 
         //reset drawing geometry by freeing all drawing geometry objects
-            procedure TGraphicDrawerLayers.resetDrawingGeometry();
+            procedure TGraphicDrawerLayers.clearGraphicObjects();
                 begin
                     layerGraphicObjectMap.clear();
                 end;

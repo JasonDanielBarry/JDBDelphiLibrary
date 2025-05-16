@@ -7,15 +7,15 @@ interface
             system.SysUtils, system.types, system.UIConsts, system.UITypes, system.Generics.Collections, System.Classes,
             vcl.Graphics, vcl.StdCtrls,
         //custom
+            GeometryTypes,
+            GeomLineClass, GeomPolyLineClass, GeomPolygonClass,
             DrawingAxisConversionClass,
+            GraphicDrawingTypes,
             GraphicObjectBaseClass,
             GraphicArcClass, GraphicEllipseClass, GraphicGeometryClass,
             GraphicLineClass, GraphicPolylineClass, GraphicPolygonClass,
             GraphicRectangleClass, GraphicTextClass, GraphicArrowClass,
             GraphicArrowGroupClass,
-            GraphicDrawingTypes,
-            GeometryTypes,
-            GeomLineClass, GeomPolyLineClass, GeomPolygonClass,
             GraphicObjectListBaseClass
             ;
 
@@ -112,7 +112,6 @@ interface
                                                         const   lineColourIn            : TColor = TColors.Black;
                                                         const   lineStyleIn             : TPenStyle = TPenStyle.psSolid                         ); overload;
         end;
-
 
 implementation
 

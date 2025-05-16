@@ -510,7 +510,7 @@ implementation
         begin
             self.LockDrawing();
 
-            JDBGraphic2D1.updateGeometry();
+            JDBGraphic2D1.updateGraphics();
             JDBGraphic2D1.zoomAll();
 
             self.Refresh();
@@ -525,7 +525,7 @@ implementation
 
     procedure TForm1.FormShow(Sender: TObject);
         begin
-            JDBGraphic2D1.updateGeometry();
+            JDBGraphic2D1.updateGraphics();
             JDBGraphic2D1.zoomAll();
         end;
 

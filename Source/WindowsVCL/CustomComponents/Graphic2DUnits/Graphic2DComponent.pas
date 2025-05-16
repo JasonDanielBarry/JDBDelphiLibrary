@@ -21,7 +21,7 @@ interface
                 destructor Destroy(); override;
                 procedure redrawGraphic();
                 procedure updateBackgroundColour();
-                procedure updateGeometry();
+                procedure updateGraphics();
                 procedure zoomAll();
             published
                 property OnUpdateGraphics : TUpdateGraphicsEvent read getOnUpdateGraphicsEvent write setOnUpdateGraphicsEvent;
@@ -68,9 +68,9 @@ implementation
                 customGraphic2D.updateBackgroundColour();
             end;
 
-        procedure TJDBGraphic2D.updateGeometry();
+        procedure TJDBGraphic2D.updateGraphics();
             begin
-                customGraphic2D.updateGeometry();
+                customGraphic2D.updateGraphics();
             end;
 
         procedure TJDBGraphic2D.zoomAll();
