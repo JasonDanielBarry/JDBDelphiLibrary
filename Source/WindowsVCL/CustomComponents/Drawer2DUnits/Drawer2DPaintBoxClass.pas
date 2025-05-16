@@ -93,11 +93,11 @@ implementation
             procedure TPaintBox.setMouseCursor(const messageIn : TMessage);
                 begin
                     //if the graphic drawer is nil then nothing can happen
-                        if ( NOT(Assigned(D2DGraphicDrawer)) ) then
+                        if NOT( Assigned(D2DGraphicDrawer) ) then
                             exit();
 
                     //set the cursor based on the user input
-                        if ( NOT(D2DGraphicDrawer.getMouseControlActive()) ) then
+                        if NOT(D2DGraphicDrawer.getMouseControlActive() ) then
                             begin
                                 self.Cursor := crDefault;
                                 exit();
