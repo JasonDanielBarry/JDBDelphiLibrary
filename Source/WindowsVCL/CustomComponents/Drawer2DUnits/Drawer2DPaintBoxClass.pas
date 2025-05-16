@@ -9,8 +9,7 @@ interface
         Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Themes,
 
         GraphicGridClass,
-        GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
-        Drawer2DTypes
+        GraphicObjectListBaseClass, Direct2DGraphicDrawingClass
         ;
 
     type
@@ -19,12 +18,11 @@ interface
                 const
                     WM_USER_REDRAWGRAPHIC = WM_USER + 1;
                 var
-                    mustRedrawGraphic               : boolean;
-                    gridVisibilitySettings          : TGridVisibilitySettings;
-                    graphicBackgroundColour         : TColor;
-                    currentGraphicBuffer            : TBitmap;
-                    D2DGraphicDrawer                : TDirect2DGraphicDrawer;
-                    onGraphicUpdateGeometryEvent    : TGraphicUpdateGeometryEvent;
+                    mustRedrawGraphic       : boolean;
+                    gridVisibilitySettings  : TGridVisibilitySettings;
+                    graphicBackgroundColour : TColor;
+                    currentGraphicBuffer    : TBitmap;
+                    D2DGraphicDrawer        : TDirect2DGraphicDrawer;
                 //events
                     procedure PaintBoxDrawer2DPaint(Sender: TObject);
                     procedure PaintBoxGraphicMouseEnter(Sender: TObject);
@@ -44,16 +42,14 @@ interface
                     constructor create(AOwner : TComponent); override;
                 //destructor
                     destructor destroy(); override;
-                //accessors
-                    function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
                 //modifiers
                     procedure setGridEnabled(const enabledIn : boolean);
                     procedure setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
-                    procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
                 //redraw the graphic
                     procedure postRedrawGraphicMessage(const callingControlIn : TWinControl);
                     procedure updateBackgroundColour(const callingControlIn : TWinControl);
-                    procedure updateGeometry(const callingControlIn : TWinControl);
+                    procedure updateGraphics(   const callingControlIn      : TWinControl;
+                                                const graphicObjectListIn   : TGraphicObjectListBase);
                 //process windows messages
                     procedure processWindowsMessages(var messageInOut : TMessage; out graphicWasRedrawnOut : boolean);
                 //access graphic drawer
@@ -192,12 +188,6 @@ implementation
                     inherited destroy();
                 end;
 
-        //accessors
-            function TPaintBox.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
-                begin
-                    result := onGraphicUpdateGeometryEvent;
-                end;
-
         //modifiers
             procedure TPaintBox.setGridEnabled(const enabledIn : boolean);
                 begin
@@ -207,11 +197,6 @@ implementation
             procedure TPaintBox.setGridElementsVisiblity(const gridVisibilitySettingsIn : TGridVisibilitySettings);
                 begin
                     gridVisibilitySettings.copyOther( gridVisibilitySettingsIn );
-                end;
-
-            procedure TPaintBox.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
-                begin
-                    onGraphicUpdateGeometryEvent := graphicDrawEventIn;
                 end;
 
         //redraw the graphic
@@ -228,7 +213,8 @@ implementation
                     postRedrawGraphicMessage( callingControlIn );
                 end;
 
-            procedure TPaintBox.updateGeometry(const callingControlIn : TWinControl);
+            procedure TPaintBox.updateGraphics( const callingControlIn      : TWinControl;
+                                                const graphicObjectListIn   : TGraphicObjectListBase);
                 begin
                     //set background to match theme
                         setGraphicBackgroundColour();
@@ -236,13 +222,10 @@ implementation
                     //reset the stored geometry
                         D2DGraphicDrawer.resetDrawingGeometry();
 
-                    //update the D2DGraphicDrawer geometry
-                        if ( Assigned( onGraphicUpdateGeometryEvent ) ) then
-                            begin
-                                D2DGraphicDrawer.setGridElementsVisiblity( gridVisibilitySettings );
+                    //update the D2DGraphicDrawer graphics
+                        D2DGraphicDrawer.setGridElementsVisiblity( gridVisibilitySettings );
 
-                                onGraphicUpdateGeometryEvent( self, TGraphicDrawerObjectAdder( D2DGraphicDrawer ) );
-                            end;
+                        D2DGraphicDrawer.readGraphicObjectList( graphicObjectListIn );
 
                     //activate all drawing layers
                         D2DGraphicDrawer.activateAllDrawingLayers();

@@ -6,7 +6,7 @@ interface
         System.SysUtils, System.Classes,
         Vcl.Controls,
         CustomComponentPanelClass,
-        Drawer2DTypes,
+        Graphic2DTypes,
         Graphic2DFrame;
 
     type
@@ -14,8 +14,8 @@ interface
             private
                 var
                     customGraphic2D : TCustomGraphic2D;
-                procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
-                function getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
+                procedure setOnUpdateGraphicsEvent(const graphicDrawEventIn : TUpdateGraphicsEvent);
+                function getOnUpdateGraphicsEvent() : TUpdateGraphicsEvent;
             public
                 constructor Create(AOwner: TComponent); override;
                 destructor Destroy(); override;
@@ -24,20 +24,20 @@ interface
                 procedure updateGeometry();
                 procedure zoomAll();
             published
-                property OnUpdateGeometry : TGraphicUpdateGeometryEvent read getOnGraphicDrawEvent write setOnGraphicUpdateGeometryEvent;
+                property OnUpdateGraphics : TUpdateGraphicsEvent read getOnUpdateGraphicsEvent write setOnUpdateGraphicsEvent;
         end;
 
 implementation
 
     //private
-        procedure TJDBGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+        procedure TJDBGraphic2D.setOnUpdateGraphicsEvent(const graphicDrawEventIn : TUpdateGraphicsEvent);
             begin
-                customGraphic2D.setOnGraphicUpdateGeometryEvent(graphicDrawEventIn);
+                customGraphic2D.setOnUpdateGraphicsEvent(graphicDrawEventIn);
             end;
 
-        function TJDBGraphic2D.getOnGraphicDrawEvent() : TGraphicUpdateGeometryEvent;
+        function TJDBGraphic2D.getOnUpdateGraphicsEvent() : TUpdateGraphicsEvent;
             begin
-                result := customGraphic2D.getOnGraphicUpdateGeometryEvent();
+                result := customGraphic2D.getOnUpdateGraphicsEvent();
             end;
 
     //public

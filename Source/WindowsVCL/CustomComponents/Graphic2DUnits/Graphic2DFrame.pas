@@ -11,8 +11,8 @@ interface
         Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus, vcl.Themes, Vcl.CheckLst,
         GeneralComponentHelperMethods,
         GeometryTypes, GeomBox,
-        GraphicDrawerObjectAdderClass, Direct2DGraphicDrawingClass,
-        Drawer2DTypes,
+        GraphicsListClass, Direct2DGraphicDrawingClass,
+        Graphic2DTypes,
         Drawer2DPaintBoxClass
         ;
 
@@ -96,7 +96,8 @@ interface
                 var
                     axisSettingsVisible,
                     layerTableVisible,
-                    toolbarVisible      : boolean;
+                    toolbarVisible          : boolean;
+                    onUpdateGraphicsEvent   : TUpdateGraphicsEvent;
                 //axis Settings
                     procedure updateAxisSettingsValues();
                     procedure writeAxisSettingsValuesToAxisConverter();
@@ -119,9 +120,9 @@ interface
                 //destructor
                     destructor destroy(); override;
                 //accessors
-                    function getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
+                    function getOnUpdateGraphicsEvent() : TUpdateGraphicsEvent;
                 //modifiers
-                    procedure setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+                    procedure setOnUpdateGraphicsEvent(const onUpdateGraphicsEventIn : TUpdateGraphicsEvent);
                 //redraw the graphic
                     procedure redrawGraphic();
                     procedure updateBackgroundColour();
@@ -561,15 +562,15 @@ implementation
                 end;
 
         //accessors
-            function TCustomGraphic2D.getOnGraphicUpdateGeometryEvent() : TGraphicUpdateGeometryEvent;
+            function TCustomGraphic2D.getOnUpdateGraphicsEvent() : TUpdateGraphicsEvent;
                 begin
-                    result := PBDrawer2D.getOnGraphicUpdateGeometryEvent();
+                    result := onUpdateGraphicsEvent;
                 end;
 
         //modifiers
-            procedure TCustomGraphic2D.setOnGraphicUpdateGeometryEvent(const graphicDrawEventIn : TGraphicUpdateGeometryEvent);
+            procedure TCustomGraphic2D.setOnUpdateGraphicsEvent(const onUpdateGraphicsEventIn : TUpdateGraphicsEvent);
                 begin
-                    PBDrawer2D.setOnGraphicUpdateGeometryEvent( graphicDrawEventIn );
+                    onUpdateGraphicsEvent := onUpdateGraphicsEventIn;
                 end;
 
         //redraw the graphic
@@ -584,10 +585,23 @@ implementation
                 end;
 
             procedure TCustomGraphic2D.updateGeometry();
+                var
+                    graphicsList : TGraphicsList;
                 begin
-                    PBDrawer2D.updateGeometry( self );
+                    if NOT( Assigned( onUpdateGraphicsEvent ) ) then
+                        exit();
 
-                    updateLayerTable();
+                    try
+                        graphicsList := TGraphicsList.create();
+
+                        onUpdateGraphicsEvent( self, graphicsList );
+
+                        PBDrawer2D.updateGraphics( self, graphicsList );
+
+                        updateLayerTable();
+                    finally
+                        FreeAndNil( graphicsList );
+                    end;
                 end;
 
         //zooming methods

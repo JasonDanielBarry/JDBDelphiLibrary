@@ -158,7 +158,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DTypes.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas"/>
         <DCCReference Include="Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\CustomComponents\CustomStringGridClass.pas"/>
         <DCCReference Include="Source\Graphics\ColourMethods.pas"/>
@@ -172,7 +172,6 @@
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas"/>
         <DCCReference Include="Source\WindowsVCL\InputManagerClass.pas"/>
         <DCCReference Include="Source\FileManagement\FileReaderWriterClass.pas"/>
@@ -201,9 +200,12 @@
         <DCCReference Include="Source\Mathematics\RoundingMethods.pas"/>
         <DCCReference Include="Source\Mathematics\TEST_RoundingMethods.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas"/>
-        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\LayerGeometryMapClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\LayerGraphicObjectMapClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicMousePointTrackerClass.pas"/>
         <DCCReference Include="Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicLinePlotClass.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\Graphic2DUnits\GraphicsListClass.pas"/>
+        <DCCReference Include="Source\Graphics\Drawing\GraphicDrawer\GraphicObjectListBaseClass.pas"/>
+        <DCCReference Include="Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphPlotsListClass.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

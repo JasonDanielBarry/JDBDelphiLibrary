@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, system.UITypes, system.Math,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, vcl.Styles, vcl.Themes,
   CustomComponentPanelClass, Graphic2DComponent, GraphicDrawingTypes,
-  GraphicDrawerObjectAdderClass, GraphicArrowClass,
+  GraphicsListClass, GraphicArrowClass,
   GeometryTypes,
   GeomLineClass, GeomPolyLineClass, GeomPolygonClass, Vcl.StdCtrls;
 
@@ -17,18 +17,18 @@ type
     PanelTop: TPanel;
     ComboBox1: TComboBox;
     LabelSelectGraphic: TLabel;
-    procedure JDBGraphic2D1UpdateGeometry(  ASender         : TObject;
-                                            var AGeomDrawer : TGraphicDrawerObjectAdder );
+    procedure JDBGraphic2D1UpdateGraphics(  ASender             : TObject;
+                                            var AGraphicsList   : TGraphicsList );
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     //different graphics
-        procedure BlueBoxGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure FinPlateGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure SoilNailWallGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
-        procedure BendingBeamSection(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure BlueBoxGraphic(var graphicsListInOut : TGraphicsList);
+        procedure XYGraphs(var graphicsListInOut : TGraphicsList);
+        procedure FinPlateGraphic(var graphicsListInOut : TGraphicsList);
+        procedure SoilNailWallGraphic(var graphicsListInOut : TGraphicsList);
+        procedure BendingBeamSection(var graphicsListInOut : TGraphicsList);
   public
     { Public declarations }
         constructor create(AOwner: TComponent); override;
@@ -42,7 +42,7 @@ implementation
 {$R *.dfm}
 
     //different graphics
-        procedure TForm1.BlueBoxGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure TForm1.BlueBoxGraphic(var graphicsListInOut : TGraphicsList);
             var
                 i               : integer;
                 x, y            : double;
@@ -52,7 +52,7 @@ implementation
                 polygon         : TGeomPolygon;
             begin
                 //polygon
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Polygon Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Polygon Layer');
 
                     polygon := TGeomPolygon.create();
 
@@ -67,26 +67,26 @@ implementation
 
                     polygon.setCentrePoint(50, 100);
 
-                    GraphicDrawerInOut.addPolygon( polygon, True, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
+                    graphicsListInOut.addPolygon( polygon, True, 9, TColors.Aqua, TColors.Darkred, TPenStyle.psDashDot );
 
                     FreeAndNil( polygon );
 
-                    GraphicDrawerInOut.addText(50, 100, 'This is a polygon'#13'rotated 45'#176, True, 9, 45, taCenter, tlCenter);
+                    graphicsListInOut.addText(50, 100, 'This is a polygon'#13'rotated 45'#176, True, 9, 45, taCenter, tlCenter);
 
                 //line 1
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Line Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Line Layer');
 
                      point1 := TGeomPoint.create(-5, -5);
                      point2 := TGeomPoint.create(115, 115);
 
                      line := TGeomLine.create(point1, point2);
 
-                     GraphicDrawerInOut.addLine(line, 4, TColors.Black);
+                     graphicsListInOut.addLine(line, 4, TColors.Black);
 
-                    GraphicDrawerInOut.addText(115, 115, 'This is a line');
+                    graphicsListInOut.addText(115, 115, 'This is a line');
 
                 //polyline
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Polyline Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Polyline Layer');
 
                     polyline := TGeomPolyLine.create();
 
@@ -106,41 +106,41 @@ implementation
 
                     polyline.scale( 1.25 );
 
-                    GraphicDrawerInOut.addPolyline(polyline, 3, TColors.Blue);
+                    graphicsListInOut.addPolyline(polyline, 3, TColors.Blue);
 
                     FreeAndNil( line );
 
-                    GraphicDrawerInOut.addText( polyline.boundingBox().xMax, polyline.boundingBox().yMax, 'This is a polyline'#13'rotated 30'#176 );
+                    graphicsListInOut.addText( polyline.boundingBox().xMax, polyline.boundingBox().yMax, 'This is a polyline'#13'rotated 30'#176 );
 
                     FreeAndNil( polyline );
 
                 //rectangle
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Rectangle');
+                    graphicsListInOut.setCurrentDrawingLayer('Rectangle');
 
-                    GraphicDrawerInOut.addRectangle( 50, 75, 250, 10, True, 4, 10, TColors.Burlywood, TColors.Darkblue, TPenStyle.psDash );
+                    graphicsListInOut.addRectangle( 50, 75, 250, 10, True, 4, 10, TColors.Burlywood, TColors.Darkblue, TPenStyle.psDash );
 
-                    GraphicDrawerInOut.addText(250, 10, 'This is a round rectangle');
+                    graphicsListInOut.addText(250, 10, 'This is a round rectangle');
 
                 //ellipse
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Ellipse');
+                    graphicsListInOut.setCurrentDrawingLayer('Ellipse');
 
-                    GraphicDrawerInOut.addEllipse(75, 50, -100, 50, True, 6, Tcolors.Lightseagreen);
+                    graphicsListInOut.addEllipse(75, 50, -100, 50, True, 6, Tcolors.Lightseagreen);
 
-                    GraphicDrawerInOut.addText(-100, 50, 'This is an ellipse');
+                    graphicsListInOut.addText(-100, 50, 'This is an ellipse');
 
                 //text
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 1');
+                    graphicsListInOut.setCurrentDrawingLayer('Text Layer 1');
 
-                    GraphicDrawerInOut.addText(0, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, -30)');
+                    graphicsListInOut.addText(0, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (0, -30)');
 
-                    GraphicDrawerInOut.addText(100, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (100, -30)', False, 9, 0, taCenter, tlCenter);
+                    graphicsListInOut.addText(100, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (100, -30)', False, 9, 0, taCenter, tlCenter);
 
-                    GraphicDrawerInOut.addText(200, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, -30)', False, 9, 0, taRightJustify, tlBottom);
+                    graphicsListInOut.addText(200, -30, 'This is a short'#13'sentence of'#13'4 lines'#13'at (200, -30)', False, 9, 0, taRightJustify, tlBottom);
 
                 //vertical boundary test
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Text Layer 2');
+                    graphicsListInOut.setCurrentDrawingLayer('Text Layer 2');
 
-                    GraphicDrawerInOut.addText( 150, 200,
+                    graphicsListInOut.addText( 150, 200,
                                                 'This is a short'#13'sentence of'#13'3 lines',
                                                 False,
                                                 18,
@@ -150,18 +150,18 @@ implementation
                                                 Tcolors.Darkred,
                                                 [TFontStyle.fsBold, TFontStyle.fsItalic, TFontStyle.fsUnderline] );
 
-                    GraphicDrawerInOut.addText(150, -50, 'This is a short'#13'sentence of'#13'3 lines');
+                    graphicsListInOut.addText(150, -50, 'This is a short'#13'sentence of'#13'3 lines');
 
                 //arrow
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Arrow Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Arrow Layer');
 
                     var arrowOriginPoint : TGeomPoint := TGeomPoint.create( -50, 150 );
 
                     for var angle : double in [0, 30, 60, 90, 120, 150, 180] do
-                        GraphicDrawerInOut.addArrow( 25, angle, arrowOriginPoint );
+                        graphicsListInOut.addArrow( 25, angle, arrowOriginPoint );
 
                 //arrow group
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Arrow Group Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Arrow Group Layer');
 
                     polyline := TGeomPolyLine.create();
 
@@ -170,24 +170,24 @@ implementation
                     polyline.addVertex( -100, 200 );
                     polyline.addVertex( 0, 200 );
 
-                    GraphicDrawerInOut.addArrowGroup( 25, polyline, EArrowOrigin.aoHead );
+                    graphicsListInOut.addArrowGroup( 25, polyline, EArrowOrigin.aoHead );
 
                     FreeAndNil( polyline );
 
                 //arc
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Arc Layer');
+                    graphicsListInOut.setCurrentDrawingLayer('Arc Layer');
 
-                    GraphicDrawerInOut.addArc( -100, -125, 25, 25, 90, -90, True, 5, TColors.Red );
+                    graphicsListInOut.addArc( -100, -125, 25, 25, 90, -90, True, 5, TColors.Red );
 
-                    GraphicDrawerInOut.addArc( 0, -125, 20, 20, 45, 360-45, True, 5, TColors.Yellow );
-                    GraphicDrawerInOut.addEllipse( 8, 8, 0, -114, True, 1, tcolors.Black );
+                    graphicsListInOut.addArc( 0, -125, 20, 20, 45, 360-45, True, 5, TColors.Yellow );
+                    graphicsListInOut.addEllipse( 8, 8, 0, -114, True, 1, tcolors.Black );
 
 
-                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 0, -90, False, 5 );
-                    GraphicDrawerInOut.addArc( 100, -125, 50, 50, 350, -10 );
+                    graphicsListInOut.addArc( 100, -125, 50, 50, 0, -90, False, 5 );
+                    graphicsListInOut.addArc( 100, -125, 50, 50, 350, -10 );
             end;
 
-        procedure TForm1.XYGraphs(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+        procedure TForm1.XYGraphs(var graphicsListInOut : TGraphicsList);
             const
                 X_MAX = 500;
                 Y_MAX = 250;
@@ -195,20 +195,20 @@ implementation
                 x, y        : double;
                 polyLine    : TGeomPolyLine;
             begin
-                GraphicDrawerInOut.setCurrentDrawingLayer('XY - Axes');
+                graphicsListInOut.setCurrentDrawingLayer('XY - Axes');
 
                 //x-axis
-                    GraphicDrawerInOut.addText( X_MAX, 10, 'X', False, 15 );
+                    graphicsListInOut.addText( X_MAX, 10, 'X', False, 15 );
 
-                    GraphicDrawerInOut.addArrow( X_MAX, 0, TGeomPoint.create(0, 0) );
+                    graphicsListInOut.addArrow( X_MAX, 0, TGeomPoint.create(0, 0) );
 
                 //y-axis
-                    GraphicDrawerInOut.addText( 10, Y_MAX, 'Y', False, 15 );
+                    graphicsListInOut.addText( 10, Y_MAX, 'Y', False, 15 );
 
-                    GraphicDrawerInOut.addArrow( Y_MAX, 90, TGeomPoint.create(0, 0) );
+                    graphicsListInOut.addArrow( Y_MAX, 90, TGeomPoint.create(0, 0) );
 
                 //quadratic curve
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Quadratic curve');
+                    graphicsListInOut.setCurrentDrawingLayer('Quadratic curve');
 
                     polyLine := TGeomPolyLine.create();
 
@@ -224,14 +224,14 @@ implementation
                             x := x + 0.5;
                         end;
 
-                    GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
+                    graphicsListInOut.addPolyline(polyLine, 3, TColors.Blueviolet);
 
-                    GraphicDrawerInOut.addText( x, y, 'y = x'#178 );
+                    graphicsListInOut.addText( x, y, 'y = x'#178 );
 
                     FreeAndNil( polyLine );
 
                 //Trig curve
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Trig curve');
+                    graphicsListInOut.setCurrentDrawingLayer('Trig curve');
 
                     polyLine := TGeomPolyLine.create();
 
@@ -246,14 +246,14 @@ implementation
                             x := x + 0.2;
                         end;
 
-                    GraphicDrawerInOut.addPolyline(polyLine, 3, TColors.Green);
+                    graphicsListInOut.addPolyline(polyLine, 3, TColors.Green);
 
-                    GraphicDrawerInOut.addText( x, y, 'y = sin(x) + x'#178 );
+                    graphicsListInOut.addText( x, y, 'y = sin(x) + x'#178 );
 
                     FreeAndNil( polyLine );
             end;
 
-    procedure TForm1.FinPlateGraphic(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+    procedure TForm1.FinPlateGraphic(var graphicsListInOut : TGraphicsList);
         var
             i, j    : integer;
             line    : TGeomLine;
@@ -283,9 +283,9 @@ implementation
         begin
             //members
                 //beam
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Beam');
+                    graphicsListInOut.setCurrentDrawingLayer('Beam');
 
-                    GraphicDrawerInOut.addRectangle( 300, 500, 250 + 50, 300, True, 1, 0, TColors.Lightgreen );
+                    graphicsListInOut.addRectangle( 300, 500, 250 + 50, 300, True, 1, 0, TColors.Lightgreen );
 
                     //flanges
                         //bottom
@@ -295,7 +295,7 @@ implementation
 
                             line.shift(250 + 50, 300);
 
-                            GraphicDrawerInOut.addLine( line, 1 );
+                            graphicsListInOut.addLine( line, 1 );
 
                         //top
                             line := TGeomLine.create();
@@ -304,14 +304,14 @@ implementation
 
                             line.shift(250 + 50, 300);
 
-                            GraphicDrawerInOut.addLine( line, 1 );
+                            graphicsListInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
                 //column
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Column');
+                    graphicsListInOut.setCurrentDrawingLayer('Column');
 
-                    GraphicDrawerInOut.addRectangle( 250, 1000, 0, 0, True, 1, 0, TColors.Cornflowerblue );
+                    graphicsListInOut.addRectangle( 250, 1000, 0, 0, True, 1, 0, TColors.Cornflowerblue );
 
                     //flanges
                         //left
@@ -319,7 +319,7 @@ implementation
                             line.setStartPoint(15, 0);
                             line.setEndPoint(15, 1000);
 
-                            GraphicDrawerInOut.addLine( line, 1 );
+                            graphicsListInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
@@ -328,17 +328,17 @@ implementation
                             line.setStartPoint(250 - 15, 0);
                             line.setEndPoint(250 - 15, 1000);
 
-                            GraphicDrawerInOut.addLine( line, 1 );
+                            graphicsListInOut.addLine( line, 1 );
 
                             FreeAndNil( line );
 
                 //plate
-                    GraphicDrawerInOut.setCurrentDrawingLayer('Plate');
+                    graphicsListInOut.setCurrentDrawingLayer('Plate');
 
-                    GraphicDrawerInOut.addRectangle( 250, 350, 250, 400, True, 1, 0, TColors.Yellow );
+                    graphicsListInOut.addRectangle( 250, 350, 250, 400, True, 1, 0, TColors.Yellow );
 
             //weld
-                GraphicDrawerInOut.setCurrentDrawingLayer('Weld');
+                graphicsListInOut.setCurrentDrawingLayer('Weld');
 
                 polygon := TGeomPolygon.create();
 
@@ -349,12 +349,12 @@ implementation
 
                 polygon.shift(250, 400);
 
-                GraphicDrawerInOut.addPolygon( polygon, True, 1, TColors.Blue, TColors.Black );
+                graphicsListInOut.addPolygon( polygon, True, 1, TColors.Blue, TColors.Black );
 
                 FreeAndNil( polygon );
 
             //bolts
-                GraphicDrawerInOut.setCurrentDrawingLayer('Bolts');
+                graphicsListInOut.setCurrentDrawingLayer('Bolts');
 
                 for i := 0 to 5 do
                     for j := 0 to 2 do
@@ -368,20 +368,20 @@ implementation
 
                             polygon.shift(250, 400);
 
-                            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Lightseagreen, TColors.Black );
+                            graphicsListInOut.addPolygon( polygon, True, 2, TColors.Lightseagreen, TColors.Black );
 
                             FreeAndNil( polygon );
 
-                            GraphicDrawerInOut.addEllipse(14, 14, centreX + 250, centreY + 400, False, 1);
+                            graphicsListInOut.addEllipse(14, 14, centreX + 250, centreY + 400, False, 1);
                         end;
         end;
 
-    procedure TForm1.SoilNailWallGraphic(var GraphicDrawerInOut: TGraphicDrawerObjectAdder);
+    procedure TForm1.SoilNailWallGraphic(var graphicsListInOut: TGraphicsList);
         var
             line    : TGeomLine;
             polygon : TGeomPolygon;
         begin
-            GraphicDrawerInOut.setCurrentDrawingLayer('Soil');
+            graphicsListInOut.setCurrentDrawingLayer('Soil');
 
             polygon := TGeomPolygon.create();
 
@@ -392,11 +392,11 @@ implementation
             polygon.addVertex(0, 0);
             polygon.addVertex(-2, 0);
 
-            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Lightgreen );
+            graphicsListInOut.addPolygon( polygon, True, 2, TColors.Lightgreen );
 
             FreeAndNil( polygon );
 
-            GraphicDrawerInOut.setCurrentDrawingLayer('Failure Wedge');
+            graphicsListInOut.setCurrentDrawingLayer('Failure Wedge');
 
             polygon := TGeomPolygon.create();
 
@@ -404,26 +404,26 @@ implementation
             polygon.addVertex(20, 15);
             polygon.addVertex(0, 15);
 
-            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Orangered );
+            graphicsListInOut.addPolygon( polygon, True, 2, TColors.Orangered );
 
             FreeAndNil( polygon );
 
 
 
-            GraphicDrawerInOut.setCurrentDrawingLayer('Load');
+            graphicsListInOut.setCurrentDrawingLayer('Load');
 
             line := TGeomLine.create();
 
             line.setStartPoint(0, 15.15);
             line.setEndPoint(20, 15.15);
 
-            GraphicDrawerInOut.addArrowGroup( 1.5, line, EArrowOrigin.aoHead );
+            graphicsListInOut.addArrowGroup( 1.5, line, EArrowOrigin.aoHead );
 
             FreeAndNil( line );
 
 
 
-            GraphicDrawerInOut.setCurrentDrawingLayer('Soil Nails');
+            graphicsListInOut.setCurrentDrawingLayer('Soil Nails');
 
             begin
                 var y : double;
@@ -440,8 +440,8 @@ implementation
 
                 while (y > 1.0) do
                     begin
-                        GraphicDrawerInOut.addLine( line, 16, TColors.Grey);
-                        GraphicDrawerInOut.addLine( line, 4, TColors.Darkblue );
+                        graphicsListInOut.addLine( line, 16, TColors.Grey);
+                        graphicsListInOut.addLine( line, 4, TColors.Darkblue );
 
                         line.shift(0, -1.5);
 
@@ -451,7 +451,7 @@ implementation
                 FreeAndNil( line );
             end;
 
-            GraphicDrawerInOut.setCurrentDrawingLayer('Wall');
+            graphicsListInOut.setCurrentDrawingLayer('Wall');
 
             polygon := TGeomPolygon.create();
 
@@ -460,41 +460,41 @@ implementation
             polygon.addVertex(-0.35, 15);
             polygon.addVertex(-0.35, 0);
 
-            GraphicDrawerInOut.addPolygon( polygon, True, 2, TColors.Yellow );
+            graphicsListInOut.addPolygon( polygon, True, 2, TColors.Yellow );
 
             FreeAndNil( polygon );
         end;
 
-    procedure TForm1.BendingBeamSection(var GraphicDrawerInOut : TGraphicDrawerObjectAdder);
+    procedure TForm1.BendingBeamSection(var graphicsListInOut : TGraphicsList);
         var
             line : TGeomLine;
         begin
             //concrete
-                GraphicDrawerInOut.setCurrentDrawingLayer('Concrete');
+                graphicsListInOut.setCurrentDrawingLayer('Concrete');
 
-                GraphicDrawerInOut.addRectangle( 450, 450, -450, 0, True, 2, 0, TColors.Lightgreen );
+                graphicsListInOut.addRectangle( 450, 450, -450, 0, True, 2, 0, TColors.Lightgreen );
 
             //rebar
-                GraphicDrawerInOut.setCurrentDrawingLayer('Rebar');
+                graphicsListInOut.setCurrentDrawingLayer('Rebar');
 
-                GraphicDrawerInOut.addRectangle( 500, 16, -450, 75-8, True, 2, 0, TColors.Dodgerblue );
+                graphicsListInOut.addRectangle( 500, 16, -450, 75-8, True, 2, 0, TColors.Dodgerblue );
 
             //compressing stress
-                GraphicDrawerInOut.setCurrentDrawingLayer('Compression Stress');
+                graphicsListInOut.setCurrentDrawingLayer('Compression Stress');
 
                 line := TGeomLine.create();
 
                 line.setStartPoint( 5, 450 );
                 line.setEndPoint( 5, 275 );
 
-                GraphicDrawerInOut.addArrowGroup( 33, line, EArrowOrigin.aoHead );
+                graphicsListInOut.addArrowGroup( 33, line, EArrowOrigin.aoHead );
 
                 FreeAndNil( line );
 
             //rebar force
-                GraphicDrawerInOut.setCurrentDrawingLayer('Tension Force');
+                graphicsListInOut.setCurrentDrawingLayer('Tension Force');
 
-                GraphicDrawerInOut.addArrow( 200, 0, TGeomPoint.create( 55, 75 ) );
+                graphicsListInOut.addArrow( 200, 0, TGeomPoint.create( 55, 75 ) );
         end;
 
     constructor TForm1.create(AOwner: TComponent);
@@ -529,20 +529,20 @@ implementation
             JDBGraphic2D1.zoomAll();
         end;
 
-    procedure TForm1.JDBGraphic2D1UpdateGeometry(   ASender         : TObject;
-                                                    var AGeomDrawer : TGraphicDrawerObjectAdder );
+    procedure TForm1.JDBGraphic2D1UpdateGraphics(   ASender             : TObject;
+                                                    var AGraphicsList   : TGraphicsList );
         begin
             case (ComboBox1.ItemIndex) of
                 0:
-                    BlueBoxGraphic( AGeomDrawer );
+                    BlueBoxGraphic( AGraphicsList );
                 1:
-                    XYGraphs( AGeomDrawer );
+                    XYGraphs( AGraphicsList );
                 2:
-                    FinPlateGraphic( AGeomDrawer );
+                    FinPlateGraphic( AGraphicsList );
                 3:
-                    SoilNailWallGraphic( AGeomDrawer );
+                    SoilNailWallGraphic( AGraphicsList );
                 4:
-                    BendingBeamSection( AGeomDrawer );
+                    BendingBeamSection( AGraphicsList );
             end;
         end;
 

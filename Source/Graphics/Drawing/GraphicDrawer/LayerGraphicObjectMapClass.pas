@@ -1,4 +1,4 @@
-unit LayerGeometryMapClass;
+unit LayerGraphicObjectMapClass;
 
 interface
 
@@ -8,16 +8,19 @@ interface
             system.SysUtils, system.Generics.Collections,
         //custom
             DrawingAxisConversionClass,
-            GraphicObjectBaseClass, GraphicObjectGroupClass, GraphicGridClass,
-            GeomBox
+            GraphicObjectBaseClass, GraphicObjectGroupClass,
+            GeomBox,
+            GraphicObjectListBaseClass
             ;
 
     type
-        TLayerGeometryMap = class(TOrderedDictionary< string, TArray< TGraphicObject > >)
+        TLayerGraphicObjectMap = class(TOrderedDictionary< string, TArray< TGraphicObject > >)
             private
                 var
-                    currentDrawingLayer     : string;
-                    activeGraphicObjects    : TGraphicObjectGroup;
+                    activeGraphicObjects : TGraphicObjectGroup;
+                //add graphic drawing object
+                    procedure addGraphicObject( const layerIn           : string;
+                                                const graphicObjectIn   : TGraphicObject );
             public
                 //constructor
                     constructor create();
@@ -25,10 +28,8 @@ interface
                     destructor destroy(); override;
                 //clear graphic objects
                     procedure clear();
-                //set the drawing layer for adding objects
-                    procedure setCurrentDrawingLayer(const layerKeyIn : string);
-                //add graphic drawing object
-                    procedure addGraphicObject(const drawingGeometryIn : TGraphicObject);
+                //read in a graphic object list
+                    procedure readGraphicObjectList(const graphicObjectListIn : TGraphicObjectListBase);
                 //set active drawing layers
                     procedure setActiveDrawingLayers(const arrDrawingLayersToActiveIn : TArray<string>);
                     procedure activateAllDrawingLayers();
@@ -43,16 +44,15 @@ implementation
 
     //public
         //constructor
-            constructor TLayerGeometryMap.create();
+            constructor TLayerGraphicObjectMap.create();
                 begin
                     inherited Create();
 
-                    currentDrawingLayer     := '';
-                    activeGraphicObjects    := TGraphicObjectGroup.create();
+                    activeGraphicObjects := TGraphicObjectGroup.create();
                 end;
 
         //destructor
-            destructor TLayerGeometryMap.destroy();
+            destructor TLayerGraphicObjectMap.destroy();
                 begin
                     clear();
                     FreeAndNil( activeGraphicObjects );
@@ -61,48 +61,49 @@ implementation
                 end;
 
         //clear graphic objects
-            procedure TLayerGeometryMap.clear();
+            procedure TLayerGraphicObjectMap.clear();
                 begin
                     activateAllDrawingLayers();
 
                     activeGraphicObjects.clearGraphicObjectsGroup( True );
 
-                    currentDrawingLayer := '';
-
                     inherited clear();
                 end;
 
-        //set the drawing layer for adding objects
-            procedure TLayerGeometryMap.setCurrentDrawingLayer(const layerKeyIn : string);
-                begin
-                    currentDrawingLayer := layerKeyIn;
-                end;
-
         //add graphic drawing object
-            procedure TLayerGeometryMap.addGraphicObject(const drawingGeometryIn : TGraphicObject);
+            procedure TLayerGraphicObjectMap.addGraphicObject(  const layerIn           : string;
+                                                                const graphicObjectIn   : TGraphicObject    );
                 var
                     graphicObjectCount  : integer;
                     arrGraphicObjects   : TArray<TGraphicObject>;
                 begin
-                    //if the current layer is not set then set to default
-                        if (currentDrawingLayer = '') then
-                            setCurrentDrawingLayer( 'Default Layer' );
-
                     //get the drawing geometry array and add the new drawing geometry to it
-                        TryGetValue( currentDrawingLayer, arrGraphicObjects );
+                        TryGetValue( layerIn, arrGraphicObjects );
 
                         graphicObjectCount := length( arrGraphicObjects );
 
                         SetLength( arrGraphicObjects, graphicObjectCount + 1 );
 
-                        arrGraphicObjects[ graphicObjectCount ] := drawingGeometryIn;
+                        arrGraphicObjects[ graphicObjectCount ] := graphicObjectIn;
 
                     //add the array back to the map
-                        AddOrSetValue( currentDrawingLayer, arrGraphicObjects );
+                        AddOrSetValue( layerIn, arrGraphicObjects );
+                end;
+
+        //read in a graphic object list
+            procedure TLayerGraphicObjectMap.readGraphicObjectList(const graphicObjectListIn : TGraphicObjectListBase);
+                var
+                    layerGraphicObjectItem : TPair<string, TGraphicObject>;
+                begin
+                    for layerGraphicObjectItem in graphicObjectListIn do
+                        addGraphicObject(
+                                            layerGraphicObjectItem.Key,
+                                            layerGraphicObjectItem.Value
+                                        );
                 end;
 
         //set active drawing layers
-            procedure TLayerGeometryMap.setActiveDrawingLayers(const arrDrawingLayersToActiveIn : TArray<string>);
+            procedure TLayerGraphicObjectMap.setActiveDrawingLayers(const arrDrawingLayersToActiveIn : TArray<string>);
                 var
                     i, arrLen           : integer;
                     layer               : string;
@@ -129,7 +130,7 @@ implementation
                         end;
                 end;
 
-            procedure TLayerGeometryMap.activateAllDrawingLayers();
+            procedure TLayerGraphicObjectMap.activateAllDrawingLayers();
                 var
                     allDrawingLayers : TArray<string>;
                 begin
@@ -139,14 +140,14 @@ implementation
                 end;
 
         //active drawing layers bounding box
-            function TLayerGeometryMap.determineActiveBoundingBox() : TGeomBox;
+            function TLayerGraphicObjectMap.determineActiveBoundingBox() : TGeomBox;
                 begin
                     result := activeGraphicObjects.determineBoundingBox();
                 end;
 
         //draw active graphic objects
-            procedure TLayerGeometryMap.drawActiveGraphicObjectsToCanvas(   const axisConverter : TDrawingAxisConverter;
-                                                                            var D2DCanvasInOut : TDirect2DCanvas        );
+            procedure TLayerGraphicObjectMap.drawActiveGraphicObjectsToCanvas(  const axisConverter : TDrawingAxisConverter;
+                                                                                var D2DCanvasInOut : TDirect2DCanvas        );
                 begin
                     activeGraphicObjects.drawToCanvas( axisConverter, D2DCanvasInOut );
                 end;

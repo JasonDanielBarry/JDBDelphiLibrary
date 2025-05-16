@@ -4,11 +4,11 @@ interface
 
     uses
         system.SysUtils,
-        GraphicDrawerObjectAdderClass
+        GraphicObjectListClass
         ;
 
     type
-        TGraphicUpdateGeometryEvent = procedure(ASender : TObject; var AGeomDrawer : TGraphicDrawerObjectAdder) of object;
+        TUpdateGraphicsEvent = procedure(ASender : TObject; var AGraphicList : TGraphicObjectList) of object;
 
 implementation
 

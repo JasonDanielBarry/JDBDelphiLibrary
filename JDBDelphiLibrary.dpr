@@ -42,7 +42,7 @@ uses
   CustomComponentRegistrationUnit in 'Source\WindowsVCL\CustomComponents\CustomComponentRegistrationUnit.pas',
   Graphic2DComponent in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DComponent.pas',
   Graphic2DFrame in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DFrame.pas' {CustomGraphic2D: TFrame},
-  Drawer2DTypes in 'Source\WindowsVCL\CustomComponents\Drawer2DUnits\Drawer2DTypes.pas',
+  Graphic2DTypes in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\Graphic2DTypes.pas',
   PageControlHelperClass in 'Source\WindowsVCL\HelperClasses\PageControlHelperClass.pas',
   CustomStringGridClass in 'Source\WindowsVCL\CustomComponents\CustomStringGridClass.pas',
   ColourMethods in 'Source\Graphics\ColourMethods.pas',
@@ -56,7 +56,6 @@ uses
   GraphicDrawerBaseClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerBaseClass.pas',
   GraphicDrawerLayersClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerLayersClass.pas',
   Direct2DGraphicDrawingClass in 'Source\Graphics\Drawing\GraphicDrawer\Direct2D\Direct2DGraphicDrawingClass.pas',
-  GraphicDrawerObjectAdderClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicDrawerObjectAdderClass.pas',
   GraphicTextClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicTextClass.pas',
   InputManagerClass in 'Source\WindowsVCL\InputManagerClass.pas',
   FileReaderWriterClass in 'Source\FileManagement\FileReaderWriterClass.pas',
@@ -81,9 +80,12 @@ uses
   RoundingMethods in 'Source\Mathematics\RoundingMethods.pas',
   TEST_RoundingMethods in 'Source\Mathematics\TEST_RoundingMethods.pas',
   GraphicGridClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicGridClass.pas',
-  LayerGeometryMapClass in 'Source\Graphics\Drawing\GraphicDrawer\LayerGeometryMapClass.pas',
+  LayerGraphicObjectMapClass in 'Source\Graphics\Drawing\GraphicDrawer\LayerGraphicObjectMapClass.pas',
   GraphicMousePointTrackerClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicMousePointTrackerClass.pas',
-  GraphicLinePlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicLinePlotClass.pas';
+  GraphicLinePlotClass in 'Source\Graphics\Drawing\GraphicDrawingClasses\GraphicObjectPlottingClasses\GraphicLinePlotClass.pas',
+  GraphicsListClass in 'Source\WindowsVCL\CustomComponents\Graphic2DUnits\GraphicsListClass.pas',
+  GraphicObjectListBaseClass in 'Source\Graphics\Drawing\GraphicDrawer\GraphicObjectListBaseClass.pas',
+  GraphPlotsListClass in 'Source\WindowsVCL\CustomComponents\GraphXYUnits\GraphPlotsListClass.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

@@ -14,7 +14,7 @@ uses
     GraphicLinePlotClass,
     GraphicMousePointTrackerClass,
     GraphicGridClass,
-    GraphicDrawerObjectAdderClass,
+    GraphPlotsListClass,
     Direct2DGraphicDrawingClass,
     Drawer2DPaintBoxClass,
     GraphXYTypes
@@ -33,11 +33,8 @@ uses
                     graphPlotsMap           : TGraphPlotMap;
                 //add plots to list
                     procedure addPlotToMap(const graphPlotIn : TGraphXYPlot);
-                //send graph plot to geometry drawer
-                    procedure sendGraphPlotToGeometryDrawer(const graphPlotIn       : TGraphXYPlot;
-                                                            var geometryDrawerInOut : TGraphicDrawerObjectAdder);
                 //update geometry event
-                    procedure updateGeometryEvent(ASender : TObject; var AGeomDrawer : TGraphicDrawerObjectAdder);
+                    procedure updateGraphPlots();
                 //set graph boundaries
                     procedure setGraphBoundaries(const xMinIn, xMaxIn, yMinIn, yMaxIn : double);
             protected
@@ -81,57 +78,33 @@ implementation
                 begin
                     graphPlotsMap.AddOrSetValue( graphPlotIn.plotName, graphPlotIn );
 
-                    PBGraphXY.updateGeometry( self );
-                end;
-
-        //send graph plot to geometry drawer
-            procedure TCustomGraphXY.sendGraphPlotToGeometryDrawer( const graphPlotIn       : TGraphXYPlot;
-                                                                    var geometryDrawerInOut : TGraphicDrawerObjectAdder );
-                begin
-                    case ( graphPlotIn.graphPlotType ) of
-                        EGraphPlotType.gpLine:
-                            begin
-                                var graphicLinePlot := TGraphicLinePlot.create( graphPlotIn.plottingSize,
-                                                                                graphPlotIn.plotColour,
-                                                                                graphPlotIn.lineStyle,
-                                                                                graphPlotIn.arrDataPoints   );
-
-                                TDirect2DGraphicDrawer( geometryDrawerInOut ).addGraphicObject( graphicLinePlot );
-                            end;
-
-                        EGraphPlotType.gpScatter:
-                            begin
-                                var graphicScatterPlot : TGraphicScatterPlot := TGraphicScatterPlot.create( graphPlotIn.plottingSize,
-                                                                                                            graphPlotIn.plotColour,
-                                                                                                            graphPlotIn.arrDataPoints );
-
-                                TDirect2DGraphicDrawer( geometryDrawerInOut ).addGraphicObject( graphicScatterPlot );
-                            end;
-
-                        EGraphPlotType.gpFuntion:
-                            ;
-                    end;
+                    updateGraphPlots();
                 end;
 
         //update geometry event
-            procedure TCustomGraphXY.updateGeometryEvent(ASender : TObject; var AGeomDrawer : TGraphicDrawerObjectAdder);
+            procedure TCustomGraphXY.updateGraphPlots();
                 var
-                    tempGraphPlotItem : TPair<string, TGraphXYPlot>;
-                    mousePointTracker : TGraphicMousePointTracker;
+                    tempGraphPlotItem   : TPair<string, TGraphXYPlot>;
+                    mousePointTracker   : TGraphicMousePointTracker;
+                    graphPlotsList      : TGraphPlotsList;
                 begin
+                    graphPlotsList := TGraphPlotsList.create();
+
                     //grid - must be done first
                         PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
 
                     //graph plots
                         for tempGraphPlotItem in graphPlotsMap do
-                            sendGraphPlotToGeometryDrawer( tempGraphPlotItem.Value, AGeomDrawer );
+                            graphPlotsList.addGraphPlot( tempGraphPlotItem.Value );
 
                     //mouse tracker
                         mousePointTracker := TGraphicMousePointTracker.create( tempGraphPlotItem.Value );
 
-                        TDirect2DGraphicDrawer( AGeomDrawer ).addGraphicObject( mousePointTracker );
+                        graphPlotsList.addMousePointTracker( mousePointTracker );
 
-                        TDirect2DGraphicDrawer( AGeomDrawer ).setMousePointTrackingActive( True );
+                        PBGraphXY.GraphicDrawer.setMousePointTrackingActive( True );
+
+                    FreeAndNil( graphPlotsList );
                 end;
 
         //set graph boundaries
@@ -179,7 +152,6 @@ implementation
                     PBGraphXY.GraphicDrawer.setGeometryBorderPercentage( 0 );
 
                     PBGraphXY.setGridElementsVisiblity( gridVisibilitySettings );
-                    PBGraphXY.setOnGraphicUpdateGeometryEvent( updateGeometryEvent );
                 end;
 
         //destructor
